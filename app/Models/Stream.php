@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Stream extends Model
+{
+    use HasFactory;
+
+    //eager load creator
+    protected $with = ['creator'];
+    protected $attributes = [
+        'viewers' => 0
+    ];
+
+    //no mass assignment!
+    protected $guarded = [];
+
+    //Alphabetical order
+
+    public function creator() {
+    return $this->belongsTo(Creator::class, 'creator_id');
+    }
+    public function sources() {
+        return $this->hasMany(StreamSource::class, 'stream_id');
+    }
+    public function getPrimarySourceID() {
+        return $this->sources->where('source_name', $this->preferred_source)->first()['external_id'];
+    }
+    public function awards() {
+        return $this->hasMany(StreamAward::class);
+    }
+    public function category() {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+}
