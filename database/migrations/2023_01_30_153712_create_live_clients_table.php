@@ -13,16 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('live_clients', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
-            $table->string('email')->unique();
-            $table->date('DOB')->nullable();
-            $table->string('password');
-
-            $table->timestamp('email_verified_at')->nullable();
-            $table->rememberToken();
+            $table->string('token');
+            $table->integer('item_id'); //video or stream
+            $table->string('type');
+            $table->boolean('view_counted')->default(false);
+            $table->boolean('live_viewer_counted')->default(false);
             $table->timestamps();
         });
     }
@@ -34,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('live_clients');
     }
 };

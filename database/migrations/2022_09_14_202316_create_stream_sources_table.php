@@ -13,17 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('stream_sources', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
-            $table->string('email')->unique();
-            $table->date('DOB')->nullable();
-            $table->string('password');
-
-            $table->timestamp('email_verified_at')->nullable();
-            $table->rememberToken();
+            $table->foreignId('stream_id')->constrained()->cascadeOnDelete();
+            $table->enum('source_name',['YouTube','Twitch']); //use enum
+            $table->string('external_id');
             $table->timestamps();
+            $table->unique(['source_name', 'external_id']);
+
         });
     }
 
@@ -34,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('stream_sources');
     }
 };
