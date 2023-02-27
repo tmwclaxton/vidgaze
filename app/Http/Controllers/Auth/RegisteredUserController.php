@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -21,6 +22,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
+        Redirect::setIntendedUrl(url()->previous());
         return Inertia::render('Auth/Register');
     }
 
@@ -47,6 +49,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME)->with('success', 'Welcome to VidGaze!');
+        return redirect()->intended(RouteServiceProvider::HOME)->with('success', 'Welcome to VidGaze!');
     }
 }
