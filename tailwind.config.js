@@ -64,7 +64,7 @@ module.exports = {
                 "100v": "100vh",
             },
             colors: {
-                "vidgaze-blue": "#0e0e0e",
+                "vidgaze-blue": "rgba(14,14,14,0.9)",
             }
         },
     },
