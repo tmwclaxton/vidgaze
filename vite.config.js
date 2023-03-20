@@ -27,13 +27,7 @@ export default defineConfig({
         }
     }
 
-    // check with jamie about this
-    // resolve: {
-    //     alias: [{
-    //         '@': path.resolve(__dirname, 'resources/js'),
-    //         '~': path.resolve(__dirname, 'resources'),
-    //     }],
-    // }
+
 });
 
 //do we need a production mode?

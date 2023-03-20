@@ -1,10 +1,16 @@
 <script setup>
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+
+import HomeIcon from '~/images/icons/home.svg';
+import LivestreamIcon from '~/images/icons/livestreams.svg';
+import ShortsIcon from '~/images/icons/shorts.svg';
+import PodcastsIcon from '~/images/icons/podcast.svg';
+import MusicIcon from '~/images/icons/music.svg';
+import SearchIcon from '~/images/icons/search.svg';
 
 const props = defineProps({
     showingNavigationDropdown: {
@@ -19,15 +25,15 @@ import CloseNavSVG from '~/images/icons/exit.svg';
 </script>
 
 <template>
-    <!--Divider-->
-    <div class="h-24">
+    <div class="h-16">
+        <!--Nav is fixed so lets space things below-->
 
     </div>
-    <nav class="bg-vidgaze-blue fixed z-40 top-0 w-full " >
+    <nav class="bg-vidgaze-blue fixed z-40 top-0 w-full "  >
         <!-- Primary Navigation Menu -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
-                <div class="flex">
+                <div class="flex w-full">
                     <!-- Logo -->
                     <div class="shrink-0 flex items-center">
                         <Link :href="route('dashboard')">
@@ -36,20 +42,48 @@ import CloseNavSVG from '~/images/icons/exit.svg';
                     </div>
 
                     <!-- Navigation Links -->
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <div class="hidden gap-x-8 sm:-my-px sm:ml-10 sm:flex text-md font-medium ">
                         <NavLink :href="route('home')" :active="route().current('home')">
-                            Home
+                            <div class="flex flex-row gap-x-2 px-1 items-center">
+                                <HomeIcon class="text dark:textDark w-5 h-5"/>
+                                <span>Home</span>
+                            </div>
                         </NavLink>
                         <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            Live
+                            <div class="flex flex-row gap-x-2 px-1 items-center">
+                                <LivestreamIcon class="text dark:textDark w-5 h-5"/>
+                                <span>Live</span>
+                            </div>
                         </NavLink>
                         <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            Shorts
+                            <div class="flex flex-row gap-x-2 px-1 items-center">
+                                <ShortsIcon class="text dark:textDark w-5 h-5"/>
+                                <span>Shorts</span>
+                            </div>
                         </NavLink>
+                        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                            <div class="flex flex-row gap-x-2 px-1 items-center">
+                                <MusicIcon class="text dark:textDark w-5 h-5"/>
+                                <span>Music</span>
+                            </div>
+                        </NavLink>
+                        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                            <div class="flex flex-row gap-x-2 px-1 items-center">
+                                <PodcastsIcon class="text dark:textDark w-5 h-5"/>
+                                <span>Podcasts</span>
+                            </div>
+                        </NavLink>
+
+                    </div>
+                    <div class="flex flex-col flex-grow justify-center   align-middle">
+                        <div class="flex flex-row gap-x-2 items-center text-white p-2 px-3 mx-5 max-w-{20} rounded-xl bg-zinc-900">
+                            <SearchIcon class=" w-5 h-5"/>
+                            <span>Search</span>
+                        </div>
                     </div>
                 </div>
 
-                <div v-if="$page.props.auth.user != null"  class="hidden sm:flex sm:items-center sm:ml-6">
+                <div v-if="$page.props.auth.user != null"  class="hidden sm:flex sm:items-center sm:ml-6 flex-shrink-0">
                     <!-- Settings Dropdown -->
                     <div class="ml-3 relative">
                         <Dropdown align="right" width="48">
@@ -57,7 +91,7 @@ import CloseNavSVG from '~/images/icons/exit.svg';
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
+                                                class="inline-flex items-center px-3 py-2 border border-transparent text-md leading-4 font-medium rounded-md text-white bg-transparent hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
                                             >
                                                 {{ $page.props.auth.user.name }}
 
