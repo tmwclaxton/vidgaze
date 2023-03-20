@@ -1,22 +1,24 @@
 <script setup>
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import Dropdown from '@/Components/Dropdown/Dropdown.vue';
+import DropdownLink from '@/Components/Dropdown/DropdownLink.vue';
 
-import HomeIcon from '~/images/icons/home.svg';
-import LivestreamIcon from '~/images/icons/livestreams.svg';
-import ShortsIcon from '~/images/icons/shorts.svg';
-import PodcastsIcon from '~/images/icons/podcast.svg';
-import MusicIcon from '~/images/icons/music.svg';
+import ResponsiveNavLink from '@/Components/Links/ResponsiveNavLink.vue';
+import { Link } from '@inertiajs/vue3';
+import NavigationLinks from '@/Shared/Navigation/NavigationLinks.vue';
+
+
 import SearchIcon from '~/images/icons/search.svg';
 
 const props = defineProps({
     showingNavigationDropdown: {
         type: Boolean,
         required: true
-    }
+    },
+    showingStudioLinks: {
+        type: Boolean,
+        required: true
+    },
+
 })
 
 import OpenNavSVG from '~/images/icons/3lines.svg';
@@ -34,6 +36,25 @@ import CloseNavSVG from '~/images/icons/exit.svg';
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex w-full">
+
+                    <!-- Hamburger -->
+                    <div class=" flex items-center lg:hidden">
+                        <button
+                            @click="showingNavigationDropdown = !showingNavigationDropdown"
+                            class="inline-flex items-center justify-center p-2 rounded-md text-zinc-400 dark:text-zinc-500 hover:text-zinc-500 dark:hover:text-zinc-400  focus:outline-none  focus:text-zinc-400 transition duration-150 ease-in-out"
+                        >
+                            <OpenNavSVG class="h-6 w-6 fill-white" :class="{
+                                            hidden: showingNavigationDropdown,
+                                            'inline-flex': !showingNavigationDropdown,
+                                        }"/>
+                            <CloseNavSVG class="h-6 w-6 fill-white" :class="{
+                                            hidden: !showingNavigationDropdown,
+                                            'inline-flex': showingNavigationDropdown,
+                                        }"/>
+                        </button>
+                    </div>
+
+
                     <!-- Logo -->
                     <div class="shrink-0 flex items-center">
                         <Link :href="route('dashboard')">
@@ -42,77 +63,48 @@ import CloseNavSVG from '~/images/icons/exit.svg';
                     </div>
 
                     <!-- Navigation Links -->
-                    <div class="hidden gap-x-8 sm:-my-px sm:ml-10 sm:flex text-md font-medium ">
-                        <NavLink :href="route('home')" :active="route().current('home')">
-                            <div class="flex flex-row gap-x-2 px-1 items-center">
-                                <HomeIcon class="text dark:textDark w-5 h-5"/>
-                                <span>Home</span>
-                            </div>
-                        </NavLink>
-                        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            <div class="flex flex-row gap-x-2 px-1 items-center">
-                                <LivestreamIcon class="text dark:textDark w-5 h-5"/>
-                                <span>Live</span>
-                            </div>
-                        </NavLink>
-                        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            <div class="flex flex-row gap-x-2 px-1 items-center">
-                                <ShortsIcon class="text dark:textDark w-5 h-5"/>
-                                <span>Shorts</span>
-                            </div>
-                        </NavLink>
-                        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            <div class="flex flex-row gap-x-2 px-1 items-center">
-                                <MusicIcon class="text dark:textDark w-5 h-5"/>
-                                <span>Music</span>
-                            </div>
-                        </NavLink>
-                        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            <div class="flex flex-row gap-x-2 px-1 items-center">
-                                <PodcastsIcon class="text dark:textDark w-5 h-5"/>
-                                <span>Podcasts</span>
-                            </div>
-                        </NavLink>
-
-                    </div>
-                    <div class="flex flex-col flex-grow justify-center   align-middle">
-                        <div class="flex flex-row gap-x-2 items-center text-white p-2 px-3 mx-5 max-w-{20} rounded-xl bg-zinc-900">
-                            <SearchIcon class=" w-5 h-5"/>
-                            <span>Search</span>
+                    <NavigationLinks :showingStudioLinks="showingStudioLinks"/>
+                    <!--Search bar-->
+                    <div class="flex flex-col flex-grow  justify-center items-end sm:items-center sm:px-5">
+                        <div class="flex flex-row  sm:gap-x-2 items-center text-zinc-500 p-2 px-3  mx-4 w-max sm:w-full max-w-sm rounded-xl bg-zinc-900">
+                            <SearchIcon class="w-5 h-5 flex-shrink-0"/>
+                            <input type="text" class="w-0 sm:w-full peer bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white" placeholder="Search YouTube, Twitch and more...">
                         </div>
                     </div>
+
+                    <!--log in-->
+                    <div v-if="$page.props.auth.user == null" class="hidden lg:flex sm:items-center   flex-shrink-0">
+                        <div class="flex gap-x-2">
+                            <Link :href="route('login')" class="text-sm text-zinc-300 hover:text-zinc-400">Log In</Link>
+                            <p class="text-sm text-zinc-300">/</p>
+                            <Link :href="route('register')" class="text-sm text-zinc-300 hover:text-zinc-400">Sign Up</Link>
+                        </div>
+                    </div>
+
                 </div>
 
-                <div v-if="$page.props.auth.user != null"  class="hidden sm:flex sm:items-center sm:ml-6 flex-shrink-0">
-                    <!-- Settings Dropdown -->
-                    <div class="ml-3 relative">
-                        <Dropdown align="right" width="48">
+                <div v-if="$page.props.auth.user != null"  class=" flex  items-center   flex-shrink-0">
+                    <!-- Profile Dropdown -->
+                    <div class="relative">
+                        <Dropdown align="right" width="48" distance="1">
                             <template #trigger>
-                                        <span class="inline-flex rounded-md">
+                                        <span class="inline-flex rounded-md   ">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-md leading-4 font-medium rounded-md text-white bg-transparent hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
+                                                class="inline-flex items-center h-full border border-transparent  rounded-md bg-transparent hover:text-zinc-300 focus:outline-none transition ease-in-out duration-150"
                                             >
-                                                {{ $page.props.auth.user.name }}
+                                                <img class="h-9 aspect-square rounded-full bg-zinc-800 aspect-square  "
+                                                   v-bind:src="$page.props.auth.creator.avatar_url">
 
-                                                <svg
-                                                    class="ml-2 -mr-0.5 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fill-rule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clip-rule="evenodd"
-                                                    />
-                                                </svg>
                                             </button>
                                         </span>
                             </template>
 
                             <template #content>
-                                <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
+                                <DropdownLink :href="route('profile.edit')"> Manage Your Account </DropdownLink>
+                                <DropdownLink :href="route('profile.edit')"> Your Channel </DropdownLink>
+                                <DropdownLink :href="route('studio.dashboard')"> VidGaze Studio </DropdownLink>
+                                <DropdownLink :href="route('profile.edit')"> VidCoins </DropdownLink>
                                 <DropdownLink :href="route('logout')" method="post" as="button">
                                     Log Out
                                 </DropdownLink>
@@ -121,32 +113,14 @@ import CloseNavSVG from '~/images/icons/exit.svg';
                     </div>
                 </div>
 
-                <!-- Hamburger -->
-                <div class="-mr-2 flex items-center sm:hidden">
-                    <button
-                        @click="showingNavigationDropdown = !showingNavigationDropdown"
-                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
-                    >
-                        <OpenNavSVG class="h-6 w-6 fill-white" :class="{
-                                            hidden: showingNavigationDropdown,
-                                            'inline-flex': !showingNavigationDropdown,
-                                        }"/>
-                        <CloseNavSVG class="h-6 w-6 fill-white" :class="{
-                                            hidden: !showingNavigationDropdown,
-                                            'inline-flex': showingNavigationDropdown,
-                                        }"/>
 
-
-
-                    </button>
-                </div>
             </div>
         </div>
 
         <!-- Responsive Navigation Menu -->
         <div
             :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }"
-            class="sm:hidden"
+            class="lg:hidden"
         >
             <div class="pt-2 pb-3 space-y-1">
                 <ResponsiveNavLink :href="route('home')" :active="route().current('Home')">
@@ -155,12 +129,12 @@ import CloseNavSVG from '~/images/icons/exit.svg';
             </div>
 
             <!-- Responsive Settings Options -->
-            <div  v-if="$page.props.auth.user != null"  class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+            <div  v-if="$page.props.auth.user != null"  class="pt-4 pb-1 border-t border-zinc-200 dark:border-zinc-600">
                 <div class="px-4">
-                    <div class="font-medium text-base text-gray-800 dark:text-gray-200">
+                    <div class="font-medium text-base text-zinc-800 dark:text-zinc-200">
                         {{ $page.props.auth.user.name }}
                     </div>
-                    <div class="font-medium text-sm text-gray-500">{{ $page.props.auth.user.email }}</div>
+                    <div class="font-medium text-sm text-zinc-500">{{ $page.props.auth.user.email }}</div>
                 </div>
 
                 <div class="mt-3 space-y-1">

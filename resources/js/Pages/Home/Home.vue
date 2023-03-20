@@ -1,6 +1,24 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
+import toast from "@/Stores/toast";
+const form = useForm({});
+
+function submit() {
+
+    form.post("/test");
+
+}
+
+function addToast() {
+
+    toast.add({
+
+        message: "Hello from dashboard",
+
+    });
+
+}
 </script>
 
 <template>
@@ -9,7 +27,7 @@ import { Head } from '@inertiajs/vue3';
         </Head>
     <AuthenticatedLayout>
 
-
+        <button @click="addToast">Add toast</button>
     </AuthenticatedLayout>
         <!--<ContentHolder>-->
 

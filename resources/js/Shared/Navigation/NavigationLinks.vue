@@ -1,0 +1,106 @@
+<script setup>
+import HomeIcon from '~/images/icons/home.svg';
+import LivestreamIcon from '~/images/icons/livestreams.svg';
+import ShortsIcon from '~/images/icons/shorts.svg';
+import PodcastsIcon from '~/images/icons/podcast.svg';
+import MusicIcon from '~/images/icons/music.svg';
+import NavLink from '@/Components/Links/NavLink.vue';
+import ProfileIcon from '~/images/icons/profile.svg';
+import ContentIcon from '~/images/icons/categories.svg';
+import UploadIcon from '~/images/icons/upload.svg';
+import StreamIcon from '~/images/icons/stream.svg';
+import UnionIcon from '~/images/icons/union.svg';
+import CustomiseIcon from '~/images/icons/wand.svg';
+
+//name of the component
+const name = 'NavigationLinks';
+
+//accept props
+const props = defineProps({
+    showingStudioLinks: {
+        type: Boolean,
+        required: true
+    },
+})
+</script>
+
+<template>
+    <div v-if="!showingStudioLinks" class="hidden md:flex gap-x-8 sm:-my-px sm:ml-10 text-md font-medium ">
+        <NavLink :href="route('home')" :active="route().current('home')">
+            <div class="flex flex-row gap-x-2 px-1 items-center">
+                <HomeIcon class=" w-5 h-5"/>
+                <span>Home</span>
+            </div>
+        </NavLink>
+        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+            <div class="flex flex-row gap-x-2 px-1 items-center">
+                <LivestreamIcon class=" w-5 h-5"/>
+                <span>Live</span>
+            </div>
+        </NavLink>
+        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+            <div class="flex flex-row gap-x-2 px-1 items-center">
+                <ShortsIcon class=" w-5 h-5"/>
+                <span>Shorts</span>
+            </div>
+        </NavLink>
+        <span class="hidden lg:flex">
+            <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                <div class="flex flex-row gap-x-2 px-1 items-center">
+                    <MusicIcon class=" w-5 h-5"/>
+                    <span>Music</span>
+                </div>
+            </NavLink>
+        </span>
+        <span class="hidden lg:flex">
+            <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                <div class="flex flex-row gap-x-2 px-1 items-center">
+                    <PodcastsIcon class=" w-5 h-5"/>
+                    <span>Podcasts</span>
+                </div>
+            </NavLink>
+        </span>
+
+    </div>
+    <div v-if="showingStudioLinks" class="hidden md:flex gap-x-8 sm:-my-px sm:ml-10 text-md font-medium ">
+        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+            <div class="flex flex-row gap-x-2 px-1 items-center">
+                <ProfileIcon class=" w-5 h-5"/>
+                <span>Dashboard</span>
+            </div>
+        </NavLink>
+        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+            <div class="flex flex-row gap-x-2 px-1 items-center">
+                <ContentIcon class=" w-5 h-5"/>
+                <span>Content</span>
+            </div>
+        </NavLink>
+        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+            <div class="flex flex-row gap-x-2 px-1 items-center">
+                <UploadIcon class=" w-5 h-5"/>
+                <span>Upload</span>
+            </div>
+        </NavLink>
+        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+            <div class="flex flex-row gap-x-2 px-1 items-center">
+                <StreamIcon class=" w-5 h-5"/>
+                <span>Stream</span>
+            </div>
+        </NavLink>
+        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+            <div class="flex flex-row gap-x-2 px-1 items-center">
+                <UnionIcon class=" w-5 h-5"/>
+                <span>Unions</span>
+            </div>
+        </NavLink>
+        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+            <div class="flex flex-row gap-x-2 px-1 items-center">
+                <CustomiseIcon class=" w-5 h-5"/>
+                <span>Customise</span>
+            </div>
+        </NavLink>
+    </div>
+</template>
+
+
+

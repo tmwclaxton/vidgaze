@@ -11,6 +11,9 @@ const props = defineProps({
     contentClasses: {
         default: () => ['py-1', 'bg-white dark:bg-gray-700'],
     },
+    distance: {
+        default: '2',
+    },
 });
 
 const closeOnEscape = (e) => {
@@ -43,7 +46,7 @@ const open = ref(false);
 
 <template>
     <div class="relative">
-        <div @click="open = !open">
+        <div class="h-full flex align-middle" @click="open = !open">
             <slot name="trigger" />
         </div>
 
@@ -60,8 +63,9 @@ const open = ref(false);
         >
             <div
                 v-show="open"
-                class="absolute z-50 mt-2 rounded-md shadow-lg"
+                class="absolute z-50"
                 :class="[widthClass, alignmentClasses]"
+                :style="{ marginTop: `${props.distance}rem` }"
                 style="display: none"
                 @click="open = false"
             >

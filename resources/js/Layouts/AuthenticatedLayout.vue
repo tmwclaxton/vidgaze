@@ -2,7 +2,17 @@
 import { ref } from 'vue';
 
 import Nav from '@/Shared/Navigation/Nav.vue';
+import ToastList from "@/Components/Toast/ToastList.vue";
 const showingNavigationDropdown = ref(false);
+
+//accept props
+const props = defineProps({
+    showingStudioLinks: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+})
 </script>
 
 <template>
@@ -10,9 +20,10 @@ const showingNavigationDropdown = ref(false);
 
 
     <div>
+        <ToastList/>
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
 
-            <Nav :showingNavigationDropdown="showingNavigationDropdown"/>
+            <Nav :showingNavigationDropdown="showingNavigationDropdown" :showingStudioLinks="showingStudioLinks"/>
             <!-- Page Heading -->
             <header class="bg-white dark:bg-gray-800 shadow" v-if="$slots.header">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
