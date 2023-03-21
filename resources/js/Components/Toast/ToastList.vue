@@ -11,9 +11,28 @@ import toast from "@/Stores/toast"
 const page = usePage();
 
 let removeFinshEventListener = Inertia.on("finish", () => {
-    if (page.props.value.toast) {
+    if (page.props.flash.toast) {
         toast.add({
-            message: page.props.value.toast,
+            message: page.props.flash.toast,
+            type: "normal",
+        });
+    }
+    if (page.props.flash.error) {
+        toast.add({
+            message: page.props.flash.error,
+            type: "error",
+        });
+    }
+    if (page.props.flash.success) {
+        toast.add({
+            message: page.props.flash.success,
+            type: "success",
+        });
+    }
+    if (page.props.flash.status) {
+        toast.add({
+            message: page.props.flash.status,
+            type: "normal",
         });
     }
 });
@@ -31,12 +50,12 @@ function remove(index) {
         enter-active-class="duration-500"
         leave-active-class="duration-500"
         leave-to-class="translate-x-full opacity-0"
-        class="fixed top-4 right-4 z-50 w-full max-w-xs space-y-4">
+        class="fixed bottom-4 right-4 z-50 w-full max-w-xs space-y-4">
         <ToastListItem
             v-for="(item, index) in toast.items"
             :key="item.key"
             :message="item.message"
-            :duration="1000"
+            :duration="3000"
             @remove="remove(index)"
         />
     </TransitionGroup>

@@ -25,7 +25,7 @@ Route::get('/', function () {
     ]);
 });
 Route::get('/home', function () {
-    return Inertia::render('Home/Home');
+    return Inertia::render('Home/Home')->with('flash', ['success' => 'Home page']);
 })->name('home');
 
 Route::get('/dashboard', function () {
