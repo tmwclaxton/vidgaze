@@ -21,7 +21,7 @@ const props = defineProps({
 
     <div>
         <ToastList/>
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div class="  ">
 
             <Nav :showingNavigationDropdown="showingNavigationDropdown" :showingStudioLinks="showingStudioLinks"/>
             <!-- Page Heading -->

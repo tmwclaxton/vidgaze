@@ -57,7 +57,7 @@ import CloseNavSVG from '~/images/icons/exit.svg';
 
                     <!-- Logo -->
                     <div class="shrink-0 flex items-center">
-                        <Link :href="route('dashboard')">
+                        <Link :href="route('home')">
                             <img src="/images/logos/vidgaze/vidgaze_banner.png" alt="VidGaze Logo" class="h-10 w-auto">
                         </Link>
                     </div>
@@ -68,7 +68,7 @@ import CloseNavSVG from '~/images/icons/exit.svg';
                     <div class="flex flex-col flex-grow  justify-center items-end sm:items-center sm:px-5">
                         <div class="flex flex-row  sm:gap-x-2 items-center text-zinc-500 p-2 px-3  mx-4 w-max sm:w-full max-w-sm rounded-xl bg-zinc-900">
                             <SearchIcon class="w-5 h-5 flex-shrink-0"/>
-                            <input type="text" class="w-0 sm:w-full peer bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white" placeholder="Search YouTube, Twitch and more...">
+                            <input type="text" class="w-0 sm:w-full   bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white" placeholder="Search YouTube, Twitch and more...">
                         </div>
                     </div>
 

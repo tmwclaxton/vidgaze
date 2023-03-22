@@ -52,6 +52,6 @@ class AuthenticatedSessionController extends Controller
 //        dd(session()->all());
         $request->session()->regenerateToken();
 
-        return redirect()->back()->with('success', 'You have been logged out.');
+        return redirect()->intended(RouteServiceProvider::HOME)->with('success', 'You have been logged out.');
     }
 }

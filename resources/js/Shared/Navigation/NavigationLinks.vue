@@ -1,5 +1,5 @@
 <script setup>
-import HomeIcon from '~/images/icons/home.svg';
+import VideoIcon from '~/images/icons/play.svg';
 import LivestreamIcon from '~/images/icons/livestreams.svg';
 import ShortsIcon from '~/images/icons/shorts.svg';
 import PodcastsIcon from '~/images/icons/podcast.svg';
@@ -26,26 +26,26 @@ const props = defineProps({
 
 <template>
     <div v-if="!showingStudioLinks" class="hidden md:flex gap-x-8 sm:-my-px sm:ml-10 text-md font-medium ">
-        <NavLink :href="route('home')" :active="route().current('home')">
+        <NavLink :href="route('videos')" :active="route().current('videos')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
-                <HomeIcon class=" w-5 h-5"/>
-                <span>Home</span>
+                <VideoIcon class=" w-4 h-4"/>
+                <span>Videos</span>
             </div>
         </NavLink>
-        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+        <NavLink :href="route('streams')" :active="route().current('streams')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <LivestreamIcon class=" w-5 h-5"/>
                 <span>Live</span>
             </div>
         </NavLink>
-        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+        <NavLink :href="route('shorts')" :active="route().current('shorts')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <ShortsIcon class=" w-5 h-5"/>
                 <span>Shorts</span>
             </div>
         </NavLink>
         <span class="hidden lg:flex">
-            <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+            <NavLink :href="route('music')" :active="route().current('music')">
                 <div class="flex flex-row gap-x-2 px-1 items-center">
                     <MusicIcon class=" w-5 h-5"/>
                     <span>Music</span>
@@ -53,7 +53,7 @@ const props = defineProps({
             </NavLink>
         </span>
         <span class="hidden lg:flex">
-            <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+            <NavLink :href="route('podcasts')" :active="route().current('podcasts')">
                 <div class="flex flex-row gap-x-2 px-1 items-center">
                     <PodcastsIcon class=" w-5 h-5"/>
                     <span>Podcasts</span>

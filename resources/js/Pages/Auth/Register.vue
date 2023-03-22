@@ -4,6 +4,7 @@ import InputError from '@/Components/Inputs/InputError.vue';
 import InputLabel from '@/Components/Inputs/InputLabel.vue';
 import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
 import TextInput from '@/Components/Inputs/TextInput.vue';
+import Checkbox from "@/Components/Inputs/Checkbox.vue";
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
@@ -27,7 +28,7 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="username" value="Username" />
+                <InputLabel for="username" value="Channel Name" />
 
                 <TextInput
                     id="username"
@@ -85,6 +86,24 @@ const submit = () => {
                 />
 
                 <InputError class="mt-2" :message="form.errors.password_confirmation" />
+            </div>
+
+            <div class="mt-4  text-sm ">
+                <div class="flex items-center">
+                    <Checkbox v-model="form.terms" name="terms" id="terms"/>
+
+
+                    <div class="ml-2 select-none">
+                        I agree to the
+                        <Link :href="route('terms')" class="font-bold">Terms of Service</Link>
+                        and
+                        <Link :href="route('privacy')" class="font-bold">Privacy Policy</Link>
+                    </div>
+
+                </div>
+
+                <InputError class="mt-2" :message="form.errors.terms" />
+
             </div>
 
             <div class="flex items-center justify-end mt-4">

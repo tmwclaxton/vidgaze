@@ -20,13 +20,32 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Home/Home', [
+    return Inertia::render('Viewer/Landing', [
         'showingStudioLinks' => false,
     ]);
-});
-Route::get('/home', function () {
-    return Inertia::render('Home/Home')->with('flash', ['success' => 'Home page']);
 })->name('home');
+
+
+Route::get('/videos', function () {
+    return Inertia::render('Viewer/Videos/Popular');
+})->name('videos');
+
+Route::get('/streams', function () {
+    return Inertia::render('Viewer/Streams/Popular');
+})->name('streams');
+
+Route::get('/shorts', function () {
+    return Inertia::render('Viewer/Shorts/Popular');
+})->name('shorts');
+
+Route::get('/music', function () {
+    return Inertia::render('Viewer/Music/Popular');
+})->name('music');
+
+Route::get('/podcasts', function () {
+    return Inertia::render('Viewer/Podcasts/Popular');
+})->name('podcasts');
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -48,24 +67,16 @@ Route::middleware('auth')->group(function () {
     })->name("studio.dashboard")->middleware("auth");
 
 
-
-//    Route::get('studio/upload',  [VideoUploadController::class, 'show'])->name("upload.show");
-//    Route::post('studio/upload', [VideoUploadController::class, 'upload'])->name("upload.upload");
-//
-//    Route::get('studio/customise', [CreatorController::class,'edit'])->name("studio.customise.edit")->middleware(['auth']);
-//    Route::post('studio/customise', [CreatorController::class,'update'])->name("studio.customise.update")->middleware(['auth']);
-//    Route::get('studio/unionise', [UnionController::class,'index'])->name("studio/unionise")->middleware("auth");
-//    Route::get('studio/link/{platform}', [LinkingController::class,'link'])->middleware("auth");
-//    Route::post('studio/login/{platform}', [LinkingController::class,'logIn'])->middleware("auth");
-//
-
-
-//    Route::get('studio/video/{video:slug}', [VideoController::class,'edit'])->name("studio.video.edit");
-//    Route::get('studio/stream/{stream:slug}', [StreamController::class,'edit'])->name("studio.stream.edit");
-
 });
 
+//policy and terms
+Route::get('/terms_of_service', function () {
+    return Inertia::render('Legal/Terms');
+})->name('terms');
 
+Route::get('/privacy_policy', function () {
+    return Inertia::render('Legal/Policy');
+})->name('privacy');
 
 
 Route::post('/test', function() {

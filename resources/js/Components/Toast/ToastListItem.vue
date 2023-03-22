@@ -3,6 +3,10 @@ import {onMounted} from "vue";
 
 const props = defineProps({
     message: String,
+    type: {
+        type: String,
+        default: "normal"
+    },
     duration: {
         type: Number,
         default: 2000
