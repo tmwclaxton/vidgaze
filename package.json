@@ -22,6 +22,7 @@
         "@inertiajs/inertia": "^0.11.1",
         "@tailwindcss/line-clamp": "^0.4.2",
         "@tailwindcss/typography": "^0.5.9",
+        "@vueuse/core": "^9.13.0",
         "vue3-parallax": "^0.1.4"
     }
 }
