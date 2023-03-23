@@ -11,6 +11,8 @@ import UploadIcon from '~/images/icons/upload.svg';
 import StreamIcon from '~/images/icons/stream.svg';
 import UnionIcon from '~/images/icons/union.svg';
 import CustomiseIcon from '~/images/icons/wand.svg';
+import SubscriptionsIcon from '~/images/icons/subscriptions.svg';
+import LibraryIcon from '~/images/icons/library.svg';
 
 //name of the component
 const name = 'TopNavigationLinks';
@@ -44,19 +46,34 @@ const props = defineProps({
                 <span>Shorts</span>
             </div>
         </NavLink>
-        <span class="hidden lg:flex">
-            <NavLink :href="route('music')" :active="route().current('music')">
-                <div class="flex flex-row gap-x-2 px-1 items-center">
-                    <MusicIcon class=" w-5 h-5"/>
-                    <span>Music</span>
-                </div>
-            </NavLink>
-        </span>
-        <span class="hidden lg:flex">
+
+        <NavLink class="hidden lg:flex" :href="route('streams')" :active="route().current('streams')">
+            <div class="flex flex-row gap-x-2 px-1 items-center">
+                <SubscriptionsIcon class=" w-5 h-5"/>
+                <span>Subscriptions</span>
+            </div>
+        </NavLink>
+        <NavLink class="hidden xl:flex" :href="route('shorts')" :active="route().current('shorts')">
+            <div class="flex flex-row gap-x-2 px-1 items-center">
+                <LibraryIcon class=" w-5 h-5"/>
+                <span>Library</span>
+            </div>
+        </NavLink>
+
+        <!--I have mode these to the side nav to make it neater and also these won't be the main thing people are after -->
+        <span class="hidden  ">
             <NavLink :href="route('podcasts')" :active="route().current('podcasts')">
                 <div class="flex flex-row gap-x-2 px-1 items-center">
                     <PodcastsIcon class=" w-5 h-5"/>
                     <span>Podcasts</span>
+                </div>
+            </NavLink>
+        </span>
+        <span class="hidden  ">
+            <NavLink :href="route('music')" :active="route().current('music')">
+                <div class="flex flex-row gap-x-2 px-1 items-center">
+                    <MusicIcon class=" w-5 h-5"/>
+                    <span>Music</span>
                 </div>
             </NavLink>
         </span>
