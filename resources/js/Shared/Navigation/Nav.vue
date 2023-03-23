@@ -4,15 +4,25 @@ import DropdownLink from '@/Components/Dropdown/DropdownLink.vue';
 
 import ResponsiveNavLink from '@/Components/Links/ResponsiveNavLink.vue';
 import {Link} from '@inertiajs/vue3';
+import {useDark, useToggle} from "@vueuse/core";
+
+
 import TopNavigationLinks from '@/Shared/Navigation/TopNavigationLinks.vue';
 import ExpandableNavigationLinks from "@/Shared/Navigation/ExpandableNavigationLinks.vue";
-import {useDark, useToggle} from "@vueuse/core";
 
 import SearchIcon from '~/images/icons/search.svg';
 import OpenNavSVG from '~/images/icons/3lines.svg';
 import CloseNavSVG from '~/images/icons/exit.svg';
 import SunIcon from '~/images/icons/sun.svg';
 import MoonIcon from '~/images/icons/moon.svg';
+
+import LogoutIcon from '~/images/icons/logout.svg';
+import StudioIcon from '~/images/icons/light.svg';
+import SettingsIcon from '~/images/icons/settings.svg';
+import ProfileIcon from '~/images/icons/profile.svg';
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+// import { AiCrossref } from "oh-vue-icons/icons";
+
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
@@ -38,10 +48,13 @@ const props = defineProps({
         <!--Nav is fixed so lets space things below-->
 
     </div>
-    <nav class="bg-vidgaze-blue fixed z-40 top-0 w-full ">
+    <nav class=" fixed z-40 top-0 w-full " >
         <!-- Primary Navigation Menu -->
-        <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
+        <div class=" max-w-screen-2xl  bg-vidgaze-blue mx-auto px-4 sm:px-6 lg:px-8  flex flex-col trans" :class="{
+                                            'h-screen lg:h-max': showingNavigationDropdown,
+                                            '': !showingNavigationDropdown,
+                                        }">
+            <div class="flex justify-between h-16 ">
                 <div class="flex w-full">
 
                     <!-- Hamburger -->
@@ -63,7 +76,7 @@ const props = defineProps({
 
 
                     <!-- Logo -->
-                    <div class="shrink-0 flex items-center -mr-5">
+                    <div class="shrink-0 flex items-center  md:mr-5">
                         <Link :href="route('home')">
                             <img src="/images/logos/vidgaze/vidgaze_banner.png" alt="VidGaze Logo" class="h-10 w-auto">
                         </Link>
@@ -74,7 +87,7 @@ const props = defineProps({
                     <!--Search bar-->
                     <div class="flex flex-col flex-grow  justify-center items-end sm:items-center sm:px-5">
                         <div
-                            class="flex flex-row  sm:gap-x-2 items-center text-zinc-500 p-2 px-3  mx-4 w-max sm:w-full max-w-md rounded-xl bg-zinc-900">
+                            class="flex flex-row  sm:gap-x-2 items-center text-zinc-500 p-2 px-3  mx-2 w-max sm:w-full max-w-md rounded-xl bg-zinc-900">
                             <SearchIcon class="w-5 h-5 flex-shrink-0"/>
                             <input type="text"
                                    class="w-0 sm:w-full   bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white"
@@ -96,7 +109,7 @@ const props = defineProps({
 
                 <div v-if="$page.props.auth.user != null" class=" flex  items-center   flex-shrink-0">
                     <!-- Profile Dropdown -->
-                    <div class="relative">
+                    <div class="relative hidden sm:flex">
                         <Dropdown align="right" width="48" distance="1">
                             <template #trigger>
                                         <span class="inline-flex rounded-md   ">
@@ -126,58 +139,141 @@ const props = defineProps({
 
 
             </div>
-        </div>
+
+
 
         <!-- Responsive Navigation Menu -->
         <div
             :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }"
-            class=" max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 "
+            class=" pb-2 pt-2   flex flex-col justify-between flex-grow    "
         >
-            <ExpandableNavigationLinks :showingStudioLinks="showingStudioLinks"/>
-            <!--                dark/light mode-->
 
-            <div class="text-white cursor-pointer  " @click="toggleDark()">
-                <span v-if="isDark">
-                <ResponsiveNavLink span="true">
-                    <div  class="flex flex-row items-center gap-x-2">
-                        <SunIcon class="w-5 h-5"/>
-                        <span >Light Mode</span>
-                    </div>
-                </ResponsiveNavLink>
-                </span>
-                <span v-else>
+            <div id="top" class="">
+                <ExpandableNavigationLinks :showingStudioLinks="showingStudioLinks"/>
 
-                    <ResponsiveNavLink span="true">
-                        <div v-if="!isDark" class="flex flex-row items-center gap-x-2">
-                            <MoonIcon class="w-5 h-5"/>
-                            <span >Dark Mode</span>
+                <div   class="border-t border-zinc-600 my-1  lg:hidden"></div>
+
+                <div v-if="$page.props.auth.user != null" class="space-y-1 md:hidden">
+                    <ResponsiveNavLink :href="route('profile.edit')">
+                        <div class="flex flex-row items-center gap-x-2">
+                            <SettingsIcon class="w-5 h-5"/>
+                            <span>Manage Your Account</span>
                         </div>
                     </ResponsiveNavLink>
-                </span>
-            </div>
+                    <ResponsiveNavLink :href="route('profile.edit')">
+                        <div class="flex flex-row items-center gap-x-2">
+                            <ProfileIcon class="w-5 h-5"/>
+                            <span>Your Channel</span>
+                        </div>
+                    </ResponsiveNavLink>
+                    <ResponsiveNavLink :href="route('studio.dashboard')">
+                        <div class="flex flex-row items-center gap-x-2">
+                            <StudioIcon class="w-5 h-5"/>
+                            <span>VidGaze Studio</span>
+                        </div>
+                    </ResponsiveNavLink>
+                </div>
+                <div class="  lg:hidden  ">
 
-            <div class="pt-4 pb-1 border-t border-zinc-200 dark:border-zinc-600 md:hidden">
+                    <!-- Responsive Settings Options -->
+                    <div v-if="$page.props.auth.user != null" >
 
 
-                <!-- Responsive Settings Options -->
-                <div v-if="$page.props.auth.user != null" >
+                        <div class="mt-1 space-y-1">
+
+                            <ResponsiveNavLink :href="route('logout')" method="post" as="button">
+                                <div class="flex flex-row items-center gap-x-2">
+                                    <LogoutIcon class="w-5 h-5"/>
+                                    <span>Log Out</span>
+                                </div>
+                            </ResponsiveNavLink>
+                        </div>
+                    </div>
+                    <div v-else class="">
+                        <div class="mt-1 space-y-1">
+                            <!--                            <ResponsiveNavLink :href="route('login')"> Log In </ResponsiveNavLink>-->
+                            <ResponsiveNavLink :href="route('register')">
+                                <div class="flex flex-row items-center gap-x-2">
+                                    <ProfileIcon class="w-5 h-5"/>
+                                    <span>Sign Up</span>
+                                </div>
+                            </ResponsiveNavLink>
+                        </div>
+                    </div>
+                </div>
 
 
-                    <div class="mt-3 space-y-1">
-                        <!--                    <ResponsiveNavLink :href="route('profile.edit')"> Profile </ResponsiveNavLink>-->
-                        <ResponsiveNavLink :href="route('logout')" method="post" as="button">
-                            Log Out
+
+                <!--                dark/light mode-->
+                <div class="text-white cursor-pointer space-y-1" @click="toggleDark()">
+                    <span v-if="!isDark">
+                    <ResponsiveNavLink span="true">
+                        <div  class="flex flex-row items-center gap-x-2">
+                            <SunIcon class="w-5 h-5"/>
+                            <span >Light Mode</span>
+                        </div>
+                    </ResponsiveNavLink>
+                    </span>
+                        <span v-else>
+
+                        <ResponsiveNavLink span="true">
+                            <div v-if="isDark" class="flex flex-row items-center gap-x-2">
+                                <MoonIcon class="w-5 h-5"/>
+                                <span class="">Dark Mode</span>
+                            </div>
                         </ResponsiveNavLink>
-                    </div>
-                </div>
-                <div v-else class=""
-                >
-                    <div class="mt-3 space-y-1">
-                        <ResponsiveNavLink :href="route('login')"> Log In </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('register')"> Sign Up </ResponsiveNavLink>
-                    </div>
+                    </span>
                 </div>
             </div>
+            <div id="bottom" class=" pb-1">
+
+                <!--add about page-->
+                <div class="space-y-1">
+                    <ResponsiveNavLink :href="route('about')">
+                        <div class="flex flex-row items-center gap-x-2">
+                            <font-awesome-icon :icon="['fas', 'heart']" />
+                            <span>About</span>
+                        </div>
+                    </ResponsiveNavLink>
+                </div>
+                <!--add support page-->
+                <div class="space-y-1">
+                    <ResponsiveNavLink :href="route('about')">
+                        <div class="flex flex-row items-center gap-x-2">
+                            <font-awesome-icon :icon="['fass', 'phone']" />
+                            <span>Support</span>
+                        </div>
+                    </ResponsiveNavLink>
+                </div>
+                <!--add policy page-->
+                <div class="space-y-1">
+                    <ResponsiveNavLink :href="route('about')">
+                        <div class="flex flex-row items-center gap-x-2">
+                            <font-awesome-icon :icon="['fass', 'scroll']" />
+                            <span>Privacy Policy</span>
+                        </div>
+                    </ResponsiveNavLink>
+                </div>
+                <!--add terms page-->
+                <div class="space-y-1">
+                    <ResponsiveNavLink :href="route('about')">
+                        <div class="flex flex-row items-center gap-x-2">
+                            <font-awesome-icon :icon="['fass', 'asterisk']" />
+                            <span>Terms of Service</span>
+                        </div>
+                    </ResponsiveNavLink>
+                </div>
+
+            </div>
+        </div>
+
+
+
+
+
+
+
+
         </div>
     </nav>
 

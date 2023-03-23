@@ -32,7 +32,7 @@ const props = defineProps({
 
 
 
-    <div  v-if="!showingStudioLinks" class="pt-2 pb-1 space-y-1 ">
+    <div  v-if="!showingStudioLinks" class="  space-y-1 ">
 <!--        <div class=" md:hidden">-->
 <!--            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">-->
 <!--                <div class="flex flex-row items-center gap-x-2">-->

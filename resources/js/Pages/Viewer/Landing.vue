@@ -25,7 +25,7 @@ const addToast = () => {
         <div class="-mt-16"></div>
 
         <scroll-parallax speed="0.3" >
-            <img src="/images/logos/vidgaze/night_sky2.jpg" alt="very cool bg" class="h-screen w-screen">
+            <img style="filter: brightness(0.6);" src="/images/logos/vidgaze/night_sky2.jpg" alt="very cool bg" class="h-screen w-screen">
 
             <div class="absolute top-0 left-0 h-screen w-screen bg-gradient-to-b from-transparent to-gray-900 flex">
                 <div class="max-w-7xl m-auto px-4 sm:px-6 lg:px-8  ">

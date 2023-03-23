@@ -25,7 +25,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <div v-if="!showingStudioLinks" class="hidden md:flex gap-x-8 sm:-my-px sm:ml-10 text-md font-medium ">
+    <div v-if="!showingStudioLinks" class="hidden md:flex gap-x-8 sm:-my-px text-md font-medium ">
         <NavLink :href="route('videos')" :active="route().current('videos')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <VideoIcon class=" w-4 h-4"/>
@@ -62,7 +62,7 @@ const props = defineProps({
         </span>
 
     </div>
-    <div v-if="showingStudioLinks" class="hidden md:flex gap-x-8 sm:-my-px sm:ml-10 text-md font-medium ">
+    <div v-if="showingStudioLinks" class="hidden md:flex gap-x-8 sm:-my-px  text-md font-medium ">
         <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <ProfileIcon class=" w-5 h-5"/>

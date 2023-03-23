@@ -24,6 +24,11 @@ Route::get('/', function () {
         'showingStudioLinks' => false,
     ]);
 })->name('home');
+Route::get('/about', function () {
+    return Inertia::render('Viewer/Landing', [
+        'showingStudioLinks' => false,
+    ]);
+})->name('about');
 
 
 Route::get('/videos', function () {
