@@ -2,7 +2,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import toast from "@/Stores/toast";
-import Parallax from 'vue-parallaxy'
 import ScrollParallax from 'vue3-parallax/src/components/ScrollParallax.vue';
 import SearchIcon from '~/images/icons/search.svg';
 const submit = () => {

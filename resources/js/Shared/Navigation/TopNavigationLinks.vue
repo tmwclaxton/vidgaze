@@ -13,7 +13,7 @@ import UnionIcon from '~/images/icons/union.svg';
 import CustomiseIcon from '~/images/icons/wand.svg';
 
 //name of the component
-const name = 'NavigationLinks';
+const name = 'TopNavigationLinks';
 
 //accept props
 const props = defineProps({
