@@ -4,7 +4,7 @@ import DropdownLink from '@/Components/Dropdown/DropdownLink.vue';
 
 import ResponsiveNavLink from '@/Components/Links/ResponsiveNavLink.vue';
 import {Link} from '@inertiajs/vue3';
-import {useDark, useToggle} from "@vueuse/core";
+import {useDark, useToggle, useWindowSize} from "@vueuse/core";
 
 
 import TopNavigationLinks from '@/Shared/Navigation/TopNavigationLinks.vue';
@@ -21,13 +21,12 @@ import StudioIcon from '~/images/icons/light.svg';
 import SettingsIcon from '~/images/icons/settings.svg';
 import ProfileIcon from '~/images/icons/profile.svg';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {onMounted, onUnmounted, ref, watch} from "vue";
 // import { AiCrossref } from "oh-vue-icons/icons";
-
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
-
-
+const expandedSearchBar = ref(false);
 const props = defineProps({
     showingNavigationDropdown: {
         type: Boolean,
@@ -36,8 +35,35 @@ const props = defineProps({
     showingStudioLinks: {
         type: Boolean,
         required: true
-    },
+    }
+});
 
+const windowWidth = ref(window.innerWidth)
+
+const handleResize = () => {
+    windowWidth.value = window.innerWidth;
+    console.log(windowWidth.value);
+    if (windowWidth.value > 640) {
+        expandedSearchBar.value = false;
+    }
+}
+
+const toggleExpandedSearchBarOn = () => {
+    if (windowWidth.value <= 640) {
+        expandedSearchBar.value = true;
+    }
+}
+
+const toggleExpandedSearchBarOff = () => {
+        expandedSearchBar.value = false;
+}
+
+onMounted(() => {
+    window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+    window.removeEventListener('resize', handleResize)
 })
 
 
@@ -57,9 +83,13 @@ const props = defineProps({
                 <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8  flex flex-col">
                     <div class="flex justify-between h-16 ">
                         <div class="flex w-full">
-
-                            <!-- Hamburger -->
-                            <div class=" flex items-center  ">
+                            <!-- Hamburger, hide whenever search icon is clicked in mobile mode -->
+                            <div class=" flex items-center  "
+                                 :class="
+                                {
+                                    'hidden sm:flex': expandedSearchBar,
+                                    '': !expandedSearchBar,
+                                }">
                                 <button
                                     @click="showingNavigationDropdown = !showingNavigationDropdown"
                                     class="inline-flex items-center justify-center p-2 rounded-md text-zinc-400 dark:text-zinc-500 hover:text-zinc-500 dark:hover:text-zinc-400  focus:outline-none  focus:text-zinc-400 transition duration-150 ease-in-out"
@@ -77,7 +107,11 @@ const props = defineProps({
 
 
                             <!-- Logo -->
-                            <div class="shrink-0 flex items-center  md:mr-5">
+                            <div class="shrink-0 flex items-center  md:mr-5"  :class="
+                                {
+                                    'hidden sm:flex': expandedSearchBar,
+                                    '': !expandedSearchBar,
+                                }">
                                 <Link :href="route('home')">
                                     <img src="/images/logos/vidgaze/vidgaze_banner.png" alt="VidGaze Logo"
                                          class="h-10 w-auto">
@@ -86,15 +120,41 @@ const props = defineProps({
 
                             <!-- Navigation Links -->
                             <TopNavigationLinks :showingStudioLinks="showingStudioLinks"/>
+
+
                             <!--Search bar-->
                             <div class="flex flex-col flex-grow  justify-center items-end sm:items-center sm:px-5">
                                 <div
-                                    class="flex flex-row  sm:gap-x-2 items-center text-zinc-500 p-2 px-3  mx-2 w-max sm:w-full max-w-md rounded-xl bg-zinc-900">
-                                    <SearchIcon class="w-5 h-5 flex-shrink-0"/>
+                                    class="flex flex-row space-x-3 w-full justify-end sm:justify-center">
+
+                                    <div class="p-2 pl-1  " :class="{
+                                            hidden: !expandedSearchBar,
+                                            ' flex': expandedSearchBar,
+                                        }">
+                                        <!--Exit expanded search-->
+                                        <CloseNavSVG @click="toggleExpandedSearchBarOff" class="w-7 aspect-square flex-shrink-0 text-white inline-flex my-auto" />
+                                    </div>
+
+                                    <div :class="
+                                            {
+                                                'w-full flex-row-reverse': expandedSearchBar,
+                                                ' w-max sm:w-full max-w-md flex-row-reverse ': !expandedSearchBar,
+                                            }"
+                                         class="flex sm:gap-x-2 items-center text-zinc-500 p-2 px-3 rounded-xl bg-zinc-900">
+                                    <SearchIcon @click="toggleExpandedSearchBarOn" class="w-5 h-5 flex-shrink-0"  />
                                     <input type="text"
-                                           class="w-0 sm:w-full   bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white"
+                                           class="   bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white"
+                                           :class="
+                                            {
+                                                'w-full': expandedSearchBar,
+                                                'w-0 sm:w-full': !expandedSearchBar,
+                                            }"
                                            placeholder="Search YouTube, Twitch and more...">
+                                    </div>
+
                                 </div>
+
+
                             </div>
 
                             <!--log in-->
@@ -148,6 +208,10 @@ const props = defineProps({
                 </div>
 
             </div>
+
+
+
+
 
             <!-- Responsive Navigation Menu -->
             <div class=" bg-vidgaze-blue w-full flex flex-row flex-grow ">
