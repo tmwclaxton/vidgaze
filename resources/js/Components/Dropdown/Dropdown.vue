@@ -9,7 +9,7 @@ const props = defineProps({
         default: '48',
     },
     contentClasses: {
-        default: () => ['py-1', 'bg-white dark:bg-gray-700'],
+        default: () => ['py-1', 'bg-white dark:bg-zinc-900'],
     },
     distance: {
         default: '2',
@@ -28,6 +28,12 @@ onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
 const widthClass = computed(() => {
     return {
         48: 'w-48',
+        56: 'w-56',
+        64: 'w-64',
+        72: 'w-72',
+        80: 'w-80',
+        96: 'w-96',
+        112: 'w-112',
     }[props.width.toString()];
 });
 

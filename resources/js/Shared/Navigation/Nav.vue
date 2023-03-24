@@ -176,7 +176,7 @@ onUnmounted(() => {
                         <div v-if="$page.props.auth.user != null" class=" flex  items-center   flex-shrink-0">
                             <!-- Profile Dropdown -->
                             <div class="relative hidden sm:flex">
-                                <Dropdown align="right" width="48" distance="1">
+                                <Dropdown align="right" width="56" distance="1.5">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md   ">
                                             <button
@@ -191,12 +191,34 @@ onUnmounted(() => {
                                     </template>
 
                                     <template #content>
-                                        <DropdownLink :href="route('profile.edit')"> Manage Your Account</DropdownLink>
-                                        <DropdownLink :href="route('profile.edit')"> Your Channel</DropdownLink>
-                                        <DropdownLink :href="route('studio.dashboard')"> VidGaze Studio</DropdownLink>
-                                        <DropdownLink :href="route('profile.edit')"> VidCoins</DropdownLink>
-                                        <DropdownLink :href="route('logout')" method="post" as="button">
-                                            Log Out
+                                        <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
+                                            <!--Profile picture-->
+                                            <img class="h-9 aspect-square rounded-full bg-zinc-800 aspect-square  "
+                                                 v-bind:src="$page.props.auth.creator.avatar_url">
+                                            <div class="flex flex-col">
+                                                <span class="text-white font-bold">{{$page.props.auth.user.email}}</span>
+                                                <span class="text-blue-500 font-bold">Manage your account</span>
+                                            </div>
+
+
+
+
+                                        </DropdownLink>
+                                        <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
+                                            <ProfileIcon class="w-5 h-5 flex-shrink-0" />
+                                            <span class="font-bold">Your Channel</span>
+                                        </DropdownLink>
+                                        <DropdownLink :href="route('studio.dashboard')" class="flex flex-row space-x-2">
+                                            <StudioIcon class="w-5 h-5 flex-shrink-0" />
+                                            <span class="font-bold">VidGaze Studio</span>
+                                        </DropdownLink>
+                                        <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
+                                            <!--<SettingsIcon class="w-5 h-5 flex-shrink-0" />-->
+                                            <span class="font-bold">VidCoins</span>
+                                        </DropdownLink>
+                                        <DropdownLink :href="route('logout')" method="post" as="button" class="flex flex-row space-x-2">
+                                            <LogoutIcon class="w-5 h-5 flex-shrink-0" />
+                                            <span class="font-bold">Log Out</span>
                                         </DropdownLink>
                                     </template>
                                 </Dropdown>
