@@ -123,7 +123,7 @@ onUnmounted(() => {
 
 
                             <!--Search bar-->
-                            <div class="flex flex-col flex-grow  justify-center items-end sm:items-center sm:px-5">
+                            <div v-if="!showingStudioLinks" class="flex flex-col flex-grow  justify-center items-end sm:items-center sm:px-5">
                                 <div
                                     class="flex flex-row space-x-3 w-full justify-end sm:justify-center">
 
@@ -191,19 +191,15 @@ onUnmounted(() => {
                                     </template>
 
                                     <template #content>
-                                        <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
+                                        <div  class="flex flex-row space-x-2 block w-full px-4 py-2 text-left text-sm ">
                                             <!--Profile picture-->
                                             <img class="h-9 aspect-square rounded-full bg-zinc-800 aspect-square  "
                                                  v-bind:src="$page.props.auth.creator.avatar_url">
                                             <div class="flex flex-col">
-                                                <span class="text-white font-bold">{{$page.props.auth.user.email}}</span>
-                                                <span class="text-blue-500 font-bold">Manage your account</span>
+                                                <span class="text dark:text-white font-bold">{{$page.props.auth.user.email}}</span>
+                                                <Link :href="route('profile.edit')" class="text-blue-500 font-bold">Manage your account</Link>
                                             </div>
-
-
-
-
-                                        </DropdownLink>
+                                        </div>
                                         <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
                                             <ProfileIcon class="w-5 h-5 flex-shrink-0" />
                                             <span class="font-bold">Your Channel</span>
@@ -214,7 +210,8 @@ onUnmounted(() => {
                                         </DropdownLink>
                                         <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
                                             <!--<SettingsIcon class="w-5 h-5 flex-shrink-0" />-->
-                                            <span class="font-bold">VidCoins</span>
+                                            <img src="/images/vidcoins/coins/PileofCoins2.png" class="w-5 h-5 flex-shrink-0"  alt="VidCoins icon"/>
+                                            <span class="font-bold">Buy VidCoins</span>
                                         </DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button" class="flex flex-row space-x-2">
                                             <LogoutIcon class="w-5 h-5 flex-shrink-0" />

@@ -47,13 +47,14 @@ const props = defineProps({
             </div>
         </NavLink>
 
-        <NavLink class="hidden lg:flex" :href="route('streams')" :active="route().current('streams')">
+
+        <NavLink v-if="$page.props.auth.user != null" class="hidden lg:flex" :href="route('streams')" :active="route().current('streams')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <SubscriptionsIcon class=" w-5 h-5"/>
                 <span>Subscriptions</span>
             </div>
         </NavLink>
-        <NavLink class="hidden xl:flex" :href="route('shorts')" :active="route().current('shorts')">
+        <NavLink v-if="$page.props.auth.user != null" class="hidden xl:flex" :href="route('shorts')" :active="route().current('shorts')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <LibraryIcon class=" w-5 h-5"/>
                 <span>Library</span>

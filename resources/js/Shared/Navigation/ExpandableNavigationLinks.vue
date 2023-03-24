@@ -1,19 +1,22 @@
 <script setup>
-import VideoIcon from '~/images/icons/play.svg';
 import LivestreamIcon from '~/images/icons/livestreams.svg';
-import ShortsIcon from '~/images/icons/shorts.svg';
 import PodcastsIcon from '~/images/icons/podcast.svg';
-import MusicIcon from '~/images/icons/music.svg';
 import NavLink from '@/Components/Links/NavLink.vue';
 import ProfileIcon from '~/images/icons/profile.svg';
 import ContentIcon from '~/images/icons/categories.svg';
 import UploadIcon from '~/images/icons/upload.svg';
-import StreamIcon from '~/images/icons/stream.svg';
 import UnionIcon from '~/images/icons/union.svg';
 import CustomiseIcon from '~/images/icons/wand.svg';
-import PodcastIcon from '~/images/icons/podcast.svg';
 import ResponsiveNavLink from "@/Components/Links/ResponsiveNavLink.vue";
 
+
+import VideoIcon from '~/images/icons/play.svg';
+import ShortsIcon from '~/images/icons/shorts.svg';
+import MusicIcon from '~/images/icons/music.svg';
+import StreamIcon from '~/images/icons/livestreams.svg';
+import PodcastIcon from '~/images/icons/podcast.svg';
+import SubscriptionsIcon from '~/images/icons/subscriptions.svg';
+import LibraryIcon from '~/images/icons/library.svg';
 //name of the component
 const name = 'ExpandableNavigationLinks';
 
@@ -83,6 +86,26 @@ const props = defineProps({
             </ResponsiveNavLink>
         </div>
 
+        <!--subscriptions-->
+
+        <div v-if="$page.props.auth.user != null" class="lg:hidden">
+            <ResponsiveNavLink :href="route('music')" :active="route().current('music')">
+                <div class="flex flex-row items-center gap-x-2">
+                    <SubscriptionsIcon class="w-5 h-5"/>
+                    <span>Subscriptions</span>
+                </div>
+            </ResponsiveNavLink>
+        </div>
+
+        <!--library-->
+        <div v-if="$page.props.auth.user != null" class="xl:hidden">
+            <ResponsiveNavLink :href="route('music')" :active="route().current('music')">
+                <div class="flex flex-row items-center gap-x-2">
+                    <LibraryIcon class="w-5 h-5"/>
+                    <span>Library</span>
+                </div>
+            </ResponsiveNavLink>
+        </div>
     </div>
 
 
