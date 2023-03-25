@@ -25,13 +25,13 @@ const props = defineProps({
 
             <Nav :showingNavigationDropdown="showingNavigationDropdown" :showingStudioLinks="showingStudioLinks"/>
             <!-- Page Heading -->
-            <!--<header class="  " v-if="$slots.header">-->
-            <!--    <div class=" bg-white dark:bg-zinc-900 shadow mx-auto py-6 px-4 sm:px-6 lg:px-8">-->
-            <!--        <div class="max-w-screen-2xl mx-auto px-4 sm:px-2 2xl:px-10 ">-->
-            <!--            <slot name="header" />-->
-            <!--        </div>-->
-            <!--    </div>-->
-            <!--</header>-->
+            <header class="  " v-if="$slots.header">
+                <div class=" bg-white dark:bg-zinc-900 shadow mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <div class="max-w-screen-2xl mx-auto px-4 sm:px-2 2xl:px-10 ">
+                        <slot name="header" />
+                    </div>
+                </div>
+            </header>
 
             <!-- Page Content -->
             <main >
