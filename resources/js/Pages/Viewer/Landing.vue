@@ -3,7 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import toast from "@/Stores/toast";
 import ScrollParallax from 'vue3-parallax/src/components/ScrollParallax.vue';
 import SearchIcon from '~/images/icons/search.svg';
-import {onMounted, onUnmounted} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 
 const submit = () => {
     form.post("/test");
@@ -15,11 +15,10 @@ const addToast = () => {
     });
 }
 
+// this changes the opacity of the elements with the class "target" as you scroll
 let opacity = 1;
-
 const maxOpacity = 1;
 const minOpacity = 0.2;
-
 const updateOpacity = () => {
     const scrollPosition =
         document.documentElement.scrollTop || document.body.scrollTop;
@@ -35,13 +34,22 @@ const updateOpacity = () => {
     // console.log(opacity);
 };
 
+const welcomeMessageDiv = ref(null);
+
 onMounted(() => {
     window.addEventListener("scroll", updateOpacity);
+    //wait for 2 seconds before removing the opacity-0 class
+    setTimeout(() => {
+        welcomeMessageDiv.value.classList.remove('opacity-0')
+        welcomeMessageDiv.value.classList.remove('translate-y-52')
+    }, 200)
 });
 
 onUnmounted(() => {
     window.removeEventListener("scroll", updateOpacity);
 });
+
+
 </script>
 <style>
 .target {
@@ -75,27 +83,31 @@ onUnmounted(() => {
                 <!-- Page header -->
                 <div
                     class="relative h-screen w-screen bg-gradient-to-b from-transparent to-gray-900  dark:from-transparent flex flex-col py-auto justify-center align-middle   px-4 sm:px-6 lg:px-8">
-                    <div class="target max-w-7xl mx-auto text-center pb-12 md:pb-6 flex flex-col gap-y-3  ">
-                        <h1 class="text-4xl lg:text-5xl text-white font-bold">Welcome to VidGaze</h1>
-                        <p class="text-2xl text-gray-300"> The ultimate video-streaming platform for both creators and
-                            viewers alike </p>
-                    </div>
-                    <!-- Search -->
 
-                    <div class="target w-full max-w-xl mx-auto px-10">
-                        <div class="relative w-full">
-                            <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
-                                <SearchIcon class="h-5 w-5 text-gray-400"/>
-                            </div>
-                            <input
-                                type="text"
-                                class="form-input w-full pl-10 pr-4 py-2 border border-transparent rounded-md leading-5 bg-gray-800 bg-opacity-25
-                            text-white   text-sm sm:text-lg
-                            placeholder-gray-400 focus:outline-none focus:bg-white focus:bg-opacity-10 focus:placeholder-gray-300 focus:text-gray-300 focus:ring-0 transition duration-150 ease-in-out"
-                                placeholder="Search for a creator "
-                            />
+                   <div ref="welcomeMessageDiv" class=" transition duration-900 opacity-0 translate-y-52">
+                        <div class="target max-w-7xl mx-auto text-center pb-12 md:pb-6 flex flex-col gap-y-3  ">
+                            <h1 class="text-4xl lg:text-5xl text-white font-bold">Welcome to VidGaze</h1>
+                            <p class="text-2xl text-gray-300"> The ultimate video-streaming platform for both creators and
+                                viewers alike </p>
                         </div>
-                    </div>
+                        <!-- Search -->
+
+                        <div class="target w-full max-w-xl mx-auto px-10">
+                            <div class="relative w-full">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
+                                    <SearchIcon class="h-5 w-5 text-gray-400"/>
+                                </div>
+                                <input
+                                    type="text"
+                                    class="form-input w-full pl-10 pr-4 py-2 border border-transparent rounded-md leading-5 bg-gray-800 bg-opacity-25
+                                text-white   text-sm sm:text-lg
+                                placeholder-gray-400 focus:outline-none focus:bg-white focus:bg-opacity-10 focus:placeholder-gray-300 focus:text-gray-300 focus:ring-0 transition duration-150 ease-in-out"
+                                    placeholder="Search for a creator "
+                                />
+                            </div>
+                        </div>
+
+                   </div>
                 </div>
 
             </scroll-parallax>
