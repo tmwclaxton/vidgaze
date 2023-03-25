@@ -20,9 +20,16 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Viewer/Landing', [
-        'showingStudioLinks' => false,
-    ]);
+    //check if user is logged in
+    if (auth()->user() === null) {
+        return Inertia::render('Viewer/Landing', [
+            'showingStudioLinks' => false,
+        ]);
+    } else {
+        return Inertia::render('Viewer/Homepage', [
+
+        ]);
+    }
 })->name('home');
 Route::get('/about', function () {
     return Inertia::render('Viewer/Landing', [
