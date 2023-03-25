@@ -1,5 +1,6 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
 const colors = require("tailwindcss/colors");
+const plugin = require("tailwindcss/plugin");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -64,7 +65,8 @@ module.exports = {
                 "100v": "100vh",
             },
             colors: {
-                "vidgaze-blue": "rgba(13,13,13,0.9)",
+                "vidgaze-blue-nav": "rgba(9,9,9,0.9)",
+                "vidgaze-blue": "rgba(13,13,13)",
             },
             minWidth: {
                 '0': '0',

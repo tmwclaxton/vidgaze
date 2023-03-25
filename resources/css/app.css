@@ -4,257 +4,29 @@
 
 
 @layer components {
+    /*this removes default blue ring*/
+    .without-ring {
+        @apply border-transparent focus:ring-offset-0 focus:outline-none focus:border-transparent focus:ring-0 ring-transparent;
+    }
     /*default text color scheme*/
     .text {
-        @apply text-sm leading-tight text-zinc-800 ;
+        @apply text-zinc-800 ;
     }
     .textDark {
         @apply text-zinc-200;
     }
 
-    /*used for video&stream card options*/
-    .option {
-        @apply bg-white   text dark:textDark border border-zinc-200 rounded-2xl;
+    /*default background color scheme*/
+    .bgLight {
+        @apply bg-zinc-200;
     }
-    .option-dark {
-        @apply bg-zinc-900 border-zinc-900;
-    }
-
-
-    .option-hr-dark {
-        @apply bg-black border-zinc-800;
-    }
-
-
-    .option-item {
-        @apply text hover:bg-zinc-300 ;
-    }
-    .option-item-dark {
-        @apply hover:bg-zinc-800;
-    }
-
-    .tag {
-        @apply text-zinc-600 bg-zinc-200 hover:text-zinc-700 hover:bg-zinc-300 ;
-    }
-    .tag-dark {
-        @apply text-zinc-200 bg-zinc-700 hover:bg-zinc-600 hover:text-zinc-300;
-    }
-
-
-
-    .fill {
-        @apply fill-zinc-800 ;
-    }
-    .fill-dark {
-        @apply fill-zinc-200;
-    }
-
-    link {
-        @apply text-indigo-900 without-ring  hover:underline;
-    }
-    .link-dark {
-        @apply text-zinc-200;
-    }
-
-
-
-
-    .text-placeholder {
-        @apply text-sm leading-tight text-zinc-500 ;
-    }
-    .text-placeholder-dark {
-        @apply text-zinc-100;
-    }
-    /*used on laravel guard pages*/
-    .text-hover {
-        @apply hover:text-zinc-900;
-    }
-    .text-hover-dark {
-        @apply hover:text-zinc-200;
-    }
-
-    .tag-source {
-        @apply cursor-default w-max h-7 text-xs inline-flex items-center font-bold  uppercase  px-2 py-1 rounded-md;
-    }
-
-    /*couple of dependecies on category titles and forms*/
-    .title {
-        @apply mb-1 mb-3 text-xl font-bold ;
-    }
-    .subheading {
-        @apply text-xl font-bold leading-tight   ;
-    }
-
-    /*used on watch page*/
-    .divider-color {
-        @apply border-zinc-300  text-vidgaze-blue ;
-    }
-    .divider-color-dark {
-        @apply border-zinc-800 text-zinc-600;
-    }
-
-
-
-    /*/*used for routes*/
-    .nav-button {
-        @apply text-zinc-800 ;
-    }
-    .nav-button-dark {
-        @apply text-white;
-    }
-    /*used for buttons at top of page*/
-    .top-nav-button {
-        @apply text-zinc-200 ;
-    }
-
-    /*used for donate and contact button on index page*/
-    .cta_button {
-        @apply inline-block bg-zinc-900  mt-3 px-6 py-3 rounded-md font-bold  text-zinc-200;
-    }
-    .rect_button {
-        @apply  font-bold focus:outline-none  rounded-sm text-sm px-5 py-2.5  mb-2 uppercase;
-    }
-    /*used on some of the laravel guard pages like import subscriptions or login etc*/
-    .register-button {
-        @apply inline-flex items-center px-4 py-2 bg-zinc-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest   disabled:opacity-25 transition;
-    }
-    .register-button-dark {
-        @apply bg-zinc-800;
-    }
-
-    .info-tag {
-        @apply capitalize flex flex-row items-center h-5 p-1 text-xs font-bold leading-tight   rounded-sm w-max bg-zinc-200 ;
-    }
-    .info-tag-dark {
-        @apply bg-zinc-800;
-    }
-    .subscribe {
-        @apply w-max px-2 py-2 ml-auto text-sm font-bold text-white uppercase rounded-sm cursor-pointer h-max bg-red-700 hover:bg-red-700 select-none;
-    }
-    .subscribed {
-        @apply w-max px-2 py-2 ml-auto text-sm font-bold uppercase rounded-sm cursor-pointer h-max text-zinc-600  hover:bg-zinc-300 bg-zinc-200 select-none;
-    }
-    .subscribe-dark {
-        @apply text-zinc-200 hover:bg-zinc-800 hover:text-zinc-300 bg-zinc-800;
-    }
-
-    .channel_blue_buttons {
-        @apply px-2 py-2 ml-auto text-sm font-bold uppercase rounded-sm cursor-pointer h-max bg-blue-600  text-white ;
-    }
-    .channel_blue_buttons-dark {
-        @apply bg-blue-400 text-vidgaze-blue;
-    }
-
-    .union-button {
-        @apply select-none cursor-pointer text-zinc-800 bg-zinc-200 hover:bg-zinc-300    font-bold py-2 px-4 rounded inline-flex items-center;
-    }
-    .union-button-dark {
-        @apply text-zinc-500 bg-zinc-900 border-zinc-700 hover:bg-zinc-800 border-2 ;
-    }
-
-    /*These are used on the channel page for the tabs*/
-    .tab-option {
-        @apply inline-block p-4 px-6 font-bold uppercase border-b-2 border-transparent hover:border-zinc-200  hover:text-zinc-600 ;
-    }
-    .tab-option-dark {
-        @apply hover:border-transparent hover:text-zinc-300;
-    }
-    .tab-toggled {
-        @apply inline-block p-4 px-6 font-bold uppercase border-b-2 border-zinc-600 text-zinc-700 ;
-    }
-    .tab-toggled-dark {
-        @apply text-zinc-200 hover:text-zinc-300 border-zinc-400;
-    }
-
-    .without-ring {
-        @apply border-transparent focus:ring-offset-0 focus:outline-none focus:border-transparent focus:ring-0 ring-transparent;
-    }
-    .border-generic {
-        @apply border border-zinc-300;
-    }
-    .border-generic-dark {
-        @apply border-zinc-800;
-    }
-    .generic-textarea {
-        @apply h-9 w-full block p-2 resize-none text-sm text bg-transparent border-t-0 border-x-0  border-zinc-300 focus:border-vidgaze-blue  focus:ring-0 overflow-y-hidden;
-    }
-    .generic-textarea-dark {
-        @apply border-zinc-600 focus:border-zinc-400 textDark;
-    }
-
-    /*couldn't find where this is used*/
-    .generic-background {
-        @apply bg-zinc-100;
-    }
-    .generic-background-dark {
-        @apply bg-zinc-800;
-    }
-    .generic-background_2 {
-        @apply bg-zinc-100;
-    }
-    .generic-background-dark_2 {
+    .bgDark {
         @apply bg-zinc-900;
     }
 
-    .generic-background_3 {
-        @apply bg-white;
-    }
 
-    .generic-background-dark_3 {
-        @apply bg-zinc-800;
-    }
-
-    .colour_for_buttons_directly_on_bg {
-        @apply  bg-zinc-200 ;
-    }
-    .colour_for_buttons_directly_on_bg-dark {
-        @apply bg-zinc-800;
-    }
-    /*used on forms and shorts*/
-    .generic-background-inputs {
-        @apply bg-white;
-    }
-    .generic-background-inputs-dark {
-        @apply bg-zinc-900;
-    }
-    .award {
-        @apply col-span-1 py-3 rounded cursor-pointer select-none bg-zinc-100 text-zinc-600 without-ring h-min
-        hover:bg-zinc-200 focus:bg-zinc-200 ;
-    }
-    .award-dark {
-        @apply bg-zinc-800 text-zinc-200 hover:bg-zinc-700  focus:bg-zinc-700;
-    }
-    /*/*used on customise page*/
-    .generic-dropdown {
-        @apply bg-white border rounded border-zinc-300 focus:border-zinc-300;
-    }
-    .generic-dropdown-dark {
-        @apply bg-zinc-800 text-gray-400;
-    }
-    /*/*used on customise page*/
-    .generic_button {
-        @apply p-2 text-white rounded cursor-pointer text bg-zinc-800;
-    }
-
-    /*used on watch infinite scroo*/
-    .generic_button_2 {
-        @apply cursor-pointer bg-zinc-100  text-zinc-600 hover:bg-zinc-300  without-ring;
-    }
-    .generic_button-dark_2 {
-        @apply bg-zinc-800 text-zinc-200 ;
-    }
-
-    /*used for playlists*/
-    .generic_button_3 {
-        @apply cursor-pointer bg-zinc-200 text-zinc-600 hover:bg-zinc-300  without-ring;
-    }
-    .generic_button-dark_3_cancel {
-        @apply bg-zinc-700 text-zinc-200 hover:bg-zinc-700 ;
-    }
-    /*.generic_button_3_cancel {*/
-    /*    @apply cursor-pointer  text-zinc-600 dark:text-zinc-200     without-ring;*/
-    /*}*/
 }
+
 @layer utilities {
     .snap {
         scroll-snap-type: var(--scroll-snap-direction)

@@ -79,7 +79,7 @@ onUnmounted(() => {
         <div class="flex flex-col" :class="{'h-screen lg:h-max': showingNavigationDropdown,
                             '': !showingNavigationDropdown,
                         }">
-            <div class="bg-vidgaze-blue">
+            <div class="bg-vidgaze-blue-nav">
                 <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8  flex flex-col">
                     <div class="flex justify-between h-16 ">
                         <div class="flex w-full">
@@ -233,7 +233,7 @@ onUnmounted(() => {
 
 
             <!-- Responsive Navigation Menu -->
-            <div class=" bg-vidgaze-blue w-full flex flex-row flex-grow ">
+            <div class=" bg-vidgaze-blue-nav w-full flex flex-row flex-grow ">
                 <div
                     :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }"
                     class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 pb-2 pt-2   flex flex-col justify-between flex-grow    "
