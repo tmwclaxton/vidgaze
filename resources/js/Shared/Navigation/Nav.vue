@@ -22,7 +22,6 @@ import SettingsIcon from '~/images/icons/settings.svg';
 import ProfileIcon from '~/images/icons/profile.svg';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {onMounted, onUnmounted, ref, watch} from "vue";
-// import { AiCrossref } from "oh-vue-icons/icons";
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
@@ -38,8 +37,9 @@ const props = defineProps({
     }
 });
 
-const windowWidth = ref(window.innerWidth)
 
+// this is for the search bar so when you resize the window it will close the expanded search bar
+const windowWidth = ref(window.innerWidth)
 const handleResize = () => {
     windowWidth.value = window.innerWidth;
     console.log(windowWidth.value);

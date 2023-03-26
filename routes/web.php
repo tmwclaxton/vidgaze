@@ -31,6 +31,8 @@ Route::get('/', function () {
         ]);
     }
 })->name('home');
+
+
 Route::get('/about', function () {
     return Inertia::render('Viewer/Landing', [
         'showingStudioLinks' => false,

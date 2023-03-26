@@ -40,13 +40,29 @@ const props = defineProps({
                 <span>Live</span>
             </div>
         </NavLink>
-        <NavLink :href="route('shorts')" :active="route().current('shorts')">
-            <div class="flex flex-row gap-x-2 px-1 items-center">
-                <ShortsIcon class=" w-5 h-5"/>
-                <span>Shorts</span>
-            </div>
-        </NavLink>
+        <!--<NavLink :href="route('shorts')" :active="route().current('shorts')">-->
+        <!--    <div class="flex flex-row gap-x-2 px-1 items-center">-->
+        <!--        <ShortsIcon class=" w-5 h-5"/>-->
+        <!--        <span>Shorts</span>-->
+        <!--    </div>-->
+        <!--</NavLink>-->
+        <span class="hidden xl:flex ">
+            <NavLink :href="route('podcasts')" :active="route().current('podcasts')">
+                <div class="flex flex-row gap-x-2 px-1 items-center">
+                    <PodcastsIcon class=" w-5 h-5"/>
+                    <span>Podcasts</span>
+                </div>
+            </NavLink>
+        </span>
 
+        <span class="hidden  ">
+            <NavLink :href="route('music')" :active="route().current('music')">
+                <div class="flex flex-row gap-x-2 px-1 items-center">
+                    <MusicIcon class=" w-5 h-5"/>
+                    <span>Music</span>
+                </div>
+            </NavLink>
+        </span>
 
         <NavLink v-if="$page.props.auth.user != null" class="hidden lg:flex" :href="route('streams')" :active="route().current('streams')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
@@ -61,23 +77,7 @@ const props = defineProps({
             </div>
         </NavLink>
 
-        <!--I have mode these to the side nav to make it neater and also these won't be the main thing people are after -->
-        <span class="hidden  ">
-            <NavLink :href="route('podcasts')" :active="route().current('podcasts')">
-                <div class="flex flex-row gap-x-2 px-1 items-center">
-                    <PodcastsIcon class=" w-5 h-5"/>
-                    <span>Podcasts</span>
-                </div>
-            </NavLink>
-        </span>
-        <span class="hidden  ">
-            <NavLink :href="route('music')" :active="route().current('music')">
-                <div class="flex flex-row gap-x-2 px-1 items-center">
-                    <MusicIcon class=" w-5 h-5"/>
-                    <span>Music</span>
-                </div>
-            </NavLink>
-        </span>
+
 
     </div>
     <div v-if="showingStudioLinks" class="hidden md:flex gap-x-8 sm:-my-px  text-md font-medium ">

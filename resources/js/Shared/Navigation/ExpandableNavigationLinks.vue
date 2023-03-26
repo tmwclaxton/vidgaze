@@ -60,7 +60,7 @@ const props = defineProps({
                 </div>
             </ResponsiveNavLink>
         </div>
-        <div class="md:hidden">
+        <div class="hidden">
             <ResponsiveNavLink :href="route('shorts')" :active="route().current('shorts')">
                 <div class="flex flex-row items-center gap-x-2">
                     <ShortsIcon class="w-5 h-5"/>
@@ -68,7 +68,7 @@ const props = defineProps({
                 </div>
             </ResponsiveNavLink>
         </div>
-        <div class=" ">
+        <div class="xl:hidden ">
             <ResponsiveNavLink :href="route('podcasts')" :active="route().current('podcasts')">
                 <div class="flex flex-row items-center gap-x-2">
                     <PodcastIcon class="w-5 h-5"/>
