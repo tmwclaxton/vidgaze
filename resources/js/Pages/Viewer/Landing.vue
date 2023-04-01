@@ -1,19 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import toast from "@/Stores/toast";
 import ScrollParallax from 'vue3-parallax/src/components/ScrollParallax.vue';
 import SearchIcon from '~/images/icons/search.svg';
 import {onMounted, onUnmounted, ref} from "vue";
 
-const submit = () => {
-    form.post("/test");
-}
-
-const addToast = () => {
-    toast.add({
-        message: "Hello from dashboard",
-    });
-}
 
 // this changes the opacity of the elements with the class "target" as you scroll
 let opacity = 1;
@@ -82,7 +72,7 @@ onUnmounted(() => {
             <scroll-parallax :speed="0.4">
                 <!-- Page header -->
                 <div
-                    class="relative h-screen w-screen bg-gradient-to-b from-transparent to-gray-900  dark:from-transparent flex flex-col py-auto justify-center align-middle   px-4 sm:px-6 lg:px-8">
+                    class="relative h-screen w-screen bg-gradient-to-b from-transparent to-gray-900   flex flex-col py-auto justify-center align-middle   px-4 sm:px-6 lg:px-8">
 
                    <div ref="welcomeMessageDiv" class=" transition duration-900 opacity-0 translate-y-52">
                         <div class="target max-w-7xl mx-auto text-center pb-12 md:pb-6 flex flex-col gap-y-3  ">

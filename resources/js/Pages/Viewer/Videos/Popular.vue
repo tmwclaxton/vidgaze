@@ -1,14 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import DangerButton from "@/Components/Buttons/DangerButton.vue";
-import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
-import SecondaryButton from "@/Components/Buttons/SecondaryButton.vue";
-import Checkbox from "@/Components/Inputs/Checkbox.vue";
-import InputError from "@/Components/Inputs/InputError.vue";
-import InputLabel from "@/Components/Inputs/InputLabel.vue";
-import TextInput from "@/Components/Inputs/TextInput.vue";
-import FileUpload from "@/Components/Inputs/FileUpload.vue";
+
 </script>
 
 <template>
@@ -19,25 +12,6 @@ import FileUpload from "@/Components/Inputs/FileUpload.vue";
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-                <p class="font-bold">Buttons Overview</p>
-                <div>
-                    <DangerButton>Danger</DangerButton>
-                    <PrimaryButton>Primary</PrimaryButton>
-                    <SecondaryButton>Secondary</SecondaryButton>
-                </div>
-
-                <p class="font-bold">Inputs</p>
-                <div class="flex flex-col space-y-2">
-                    <Checkbox></Checkbox>
-                    <InputLabel>Input Label</InputLabel>
-                    <TextInput model-value="test"></TextInput>
-                    <InputError message="this is an error">Input Error</InputError>
-                </div>
-
-                <p class="font-bold">File upload</p>
-                <div class="flex flex-col space-y-2">
-                    <FileUpload></FileUpload>
-                </div>
 
             </div>
         </div>

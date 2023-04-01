@@ -37,7 +37,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME)->with('success', 'Welcome back ' . $request->user()->creator->name . '!');
+        return redirect()->intended(RouteServiceProvider::HOME)->with('status', 'Welcome back ' . $request->user()->creator->name . '!');
     }
 
     /**
@@ -46,12 +46,12 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
-
         $request->session()->invalidate();
         $request->session()->forget('flash');
-//        dd(session()->all());
         $request->session()->regenerateToken();
-
+        //
+        //Redirect::setIntendedUrl(url()->previous());
         return redirect()->intended(RouteServiceProvider::HOME)->with('success', 'You have been logged out.');
+
     }
 }

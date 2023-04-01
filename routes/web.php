@@ -19,6 +19,13 @@ use Inertia\Inertia;
 |
 */
 
+//component testing route
+Route::get('/component-testing', function () {
+    return Inertia::render('TestComponents');
+})->name('component-testing');
+
+
+
 Route::get('/', function () {
     //check if user is logged in
     if (auth()->user() === null) {

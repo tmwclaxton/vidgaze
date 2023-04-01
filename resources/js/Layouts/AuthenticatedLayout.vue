@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
 import Nav from '@/Shared/Navigation/Nav.vue';
 import ToastList from "@/Components/Toast/ToastList.vue";
-const showingNavigationDropdown = ref(false);
+let showingNavigationDropdown = ref(false);
 
 //accept props
 const props = defineProps({
@@ -20,8 +20,11 @@ const props = defineProps({
 
 
     <div>
+        <!-- this is where the toast message popup is added -->
+
         <ToastList/>
-        <div class="  ">
+
+        <div class="">
 
             <Nav :showingNavigationDropdown="showingNavigationDropdown" :showingStudioLinks="showingStudioLinks"/>
             <!-- Page Heading -->
