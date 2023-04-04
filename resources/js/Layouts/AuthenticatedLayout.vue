@@ -37,7 +37,7 @@ const props = defineProps({
             </header>
 
             <!-- Page Content -->
-            <main >
+            <main class="" >
                 <slot />
             </main>
         </div>
