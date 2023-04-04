@@ -125,7 +125,7 @@ onUnmounted(() => {
                             <!--Search bar-->
                             <div v-if="!showingStudioLinks" class="flex flex-col flex-grow  justify-center items-end sm:items-center sm:px-5">
                                 <div
-                                    class="flex flex-row space-x-3 w-full justify-end sm:justify-center">
+                                    class="relative flex flex-row space-x-3 w-full justify-end sm:justify-center">
 
                                     <div class="p-2 pl-1  " :class="{
                                             hidden: !expandedSearchBar,
@@ -140,7 +140,7 @@ onUnmounted(() => {
                                                 'w-full flex-row-reverse': expandedSearchBar,
                                                 ' w-max sm:w-full max-w-md flex-row-reverse ': !expandedSearchBar,
                                             }"
-                                         class="flex sm:gap-x-2 items-center text-zinc-500 p-2 px-3 rounded-xl bg-zinc-900">
+                                         class="relative flex sm:gap-x-2 items-center text-zinc-500 p-2 px-3 rounded-xl bg-zinc-900">
                                     <SearchIcon @click="toggleExpandedSearchBarOn" class="w-5 h-5 flex-shrink-0"  />
                                     <input type="text"
                                            class="   bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white"
@@ -150,6 +150,28 @@ onUnmounted(() => {
                                                 'w-0 sm:w-full': !expandedSearchBar,
                                             }"
                                            placeholder="Search YouTube, Twitch and more...">
+
+                                    <!--Search dropdown-->
+                                    <div :class="{'w-full': expandedSearchBar,' w-max sm:w-full max-w-md': !expandedSearchBar}"
+                                        class="absolute left-0 top-20 w-full bg-blue-100 p-2 px-3 rounded-xl ">
+                                            <div class="relative w-full pr-11 pl-9 sm:pl-0">
+                                                <div class="relative w-full opacity-0 fixed text-black   pointer-events absolute rounded-none inset-x-0 mx-auto py-3 z-20 ">
+
+                                                        <!-- Title -->
+                                                        <table class=" w-full text-sm text-left text-zinc-500 dark:text-zinc-200">
+                                                            <tbody>
+                                                                <tr class="border-b border-zinc-300 dark:border-zinc-600">
+                                                                    <td class="py-2">
+                                                                        <p class="font-bold ">Search Results</p>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+
+
+                                                </div>
+                                            </div>
+                                    </div>
                                     </div>
 
                                 </div>
