@@ -20,6 +20,8 @@ import LogoutIcon from '~/images/icons/logout.svg';
 import StudioIcon from '~/images/icons/light.svg';
 import SettingsIcon from '~/images/icons/settings.svg';
 import ProfileIcon from '~/images/icons/profile.svg';
+import BellIcon from '~/images/icons/bell.svg';
+import CloudIcon from '~/images/icons/cloud_upload.svg';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {onMounted, onUnmounted, ref, watch} from "vue";
 
@@ -55,7 +57,7 @@ const toggleExpandedSearchBarOn = () => {
 }
 
 const toggleExpandedSearchBarOff = () => {
-        expandedSearchBar.value = false;
+    expandedSearchBar.value = false;
 }
 
 onMounted(() => {
@@ -74,7 +76,7 @@ onUnmounted(() => {
         <!--Nav is fixed so lets space things below-->
 
     </div>
-    <nav class=" fixed z-40 top-0 w-full " >
+    <nav class=" fixed z-40 top-0 w-full ">
         <!-- Primary Navigation Menu -->
         <div class="flex flex-col" :class="{'h-screen lg:h-max': showingNavigationDropdown,
                             '': !showingNavigationDropdown,
@@ -107,7 +109,7 @@ onUnmounted(() => {
 
 
                             <!-- Logo -->
-                            <div class="shrink-0 flex items-center  md:mr-5"  :class="
+                            <div class="shrink-0 flex items-center  md:mr-5" :class="
                                 {
                                     'hidden sm:flex': expandedSearchBar,
                                     '': !expandedSearchBar,
@@ -123,7 +125,8 @@ onUnmounted(() => {
 
 
                             <!--Search bar-->
-                            <div v-if="!showingStudioLinks" class="flex flex-col flex-grow  justify-center items-end sm:items-center sm:px-5">
+                            <div v-if="!showingStudioLinks"
+                                 class="flex flex-col flex-grow  justify-center items-end sm:items-center sm:px-5">
                                 <div
                                     class="relative flex flex-row space-x-3 w-full justify-end sm:justify-center">
 
@@ -132,7 +135,8 @@ onUnmounted(() => {
                                             ' flex': expandedSearchBar,
                                         }">
                                         <!--Exit expanded search-->
-                                        <CloseNavSVG @click="toggleExpandedSearchBarOff" class="w-7 aspect-square flex-shrink-0 text-white inline-flex my-auto" />
+                                        <CloseNavSVG @click="toggleExpandedSearchBarOff"
+                                                     class="w-7 aspect-square flex-shrink-0 text-white inline-flex my-auto"/>
                                     </div>
 
                                     <div :class="
@@ -141,37 +145,52 @@ onUnmounted(() => {
                                                 ' w-max sm:w-full max-w-md flex-row-reverse ': !expandedSearchBar,
                                             }"
                                          class="relative flex sm:gap-x-2 items-center text-zinc-500 p-2 px-3 rounded-xl bg-zinc-900">
-                                    <SearchIcon @click="toggleExpandedSearchBarOn" class="w-5 h-5 flex-shrink-0"  />
-                                    <input type="text"
-                                           class="   bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white"
-                                           :class="
+                                        <SearchIcon @click="toggleExpandedSearchBarOn" class="w-5 h-5 flex-shrink-0"/>
+                                        <input type="text"
+                                               class="   bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white"
+                                               :class="
                                             {
                                                 'w-full': expandedSearchBar,
                                                 'w-0 sm:w-full': !expandedSearchBar,
                                             }"
-                                           placeholder="Search YouTube, Twitch and more...">
+                                               placeholder="Search YouTube, Twitch and more...">
 
-                                    <!--Search dropdown-->
-                                    <div :class="{'w-full': expandedSearchBar,' w-max sm:w-full max-w-md': !expandedSearchBar}"
-                                        class="absolute left-0 top-20 w-full bg-blue-100 p-2 px-3 rounded-xl ">
-                                            <div class="relative w-full pr-11 pl-9 sm:pl-0">
-                                                <div class="relative w-full opacity-0 fixed text-black   pointer-events absolute rounded-none inset-x-0 mx-auto py-3 z-20 ">
+                                        <!--Search dropdown-->
+                                        <div
+                                            :class="{'w-full': expandedSearchBar,' w-max sm:w-full max-w-md': !expandedSearchBar}"
+                                            class="absolute left-0 top-16 w-full pr-11 pl-9 sm:pl-0">
+                                            <div class="relative w-full  bg-vidgaze-blue dark:bg-zinc-900 border border-zinc-900
+                                            py-2 px-3 rounded-xl text-white">
+                                                <div
+                                                    class="relative w-full fixed pointer-events absolute rounded-none inset-x-0 mx-auto z-20 ">
 
-                                                        <!-- Title -->
-                                                        <table class=" w-full text-sm text-left text-zinc-500 dark:text-zinc-200">
-                                                            <tbody>
-                                                                <tr class="border-b border-zinc-300 dark:border-zinc-600">
-                                                                    <td class="py-2">
-                                                                        <p class="font-bold ">Search Results</p>
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
+                                                    <div
+                                                        class=" w-full text-sm text-left flex flex-col space-y-1">
+                                                            <!--<div class="pb-2 border-b border-zinc-600">-->
+                                                            <!--    <p class="font-bold ">Search Results for: </p>-->
+                                                            <!--</div>-->
+                                                            <!--list of search results-->
+                                                            <Link href="/" class="search-suggestion" >
+                                                                <div class="   overflow-x-hidden hover:bg-zinc-800 rounded-md ease-in-out duration-400 transition">
+                                                                    <div scope="row" class="h-8 overflow-y-hidden flex px-3 py-2 text-base font-medium text text-white ">
+                                                                        <div class="flex-shrink-0 w-4 mr-3 my-auto flex flex-col justify-center items-center">
+                                                                            <SearchIcon class="w-4 h-4"/>
+                                                                        </div>
+
+                                                                        <div class="line-clamp-1  overflow-y-hidden  flex flex-col justify-center items-center ">
+                                                                            <p class="font-semibold text-left leading-4 my-auto  line-clamp-1 break-words ">
+                                                                                 Pewdiepie
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </Link>
+                                                    </div>
 
 
                                                 </div>
                                             </div>
-                                    </div>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -195,9 +214,54 @@ onUnmounted(() => {
 
                         </div>
 
-                        <div v-if="$page.props.auth.user != null" class=" flex  items-center   flex-shrink-0">
-                            <!-- Profile Dropdown -->
+                        <div v-if="$page.props.auth.user != null" class=" flex flex-row space-x-5 items-center   flex-shrink-0">
+                            <!--Upload Dropdown-->
                             <div class="relative hidden sm:flex">
+                                <Dropdown align="right" width="56" distance="1.5">
+                                    <template #trigger>
+                                        <span class="inline-flex rounded-md  ">
+                                            <button
+                                                type="button"
+                                                class=" inline-flex items-center h-full  transition ease-in-out duration-150"
+                                            >
+                                                <CloudIcon class="w-6 aspect-square rounded-full text-white aspect-square  "/>
+                                            </button>
+                                        </span>
+                                    </template>
+
+                                    <template #content>
+                                        <div class="flex flex-row space-x-2 block w-full px-4 py-2 text-left text-sm ">
+                                            <!--Title-->
+                                            <p class="font-bold ">Upload dropdown</p>
+                                        </div>
+                                    </template>
+                                </Dropdown>
+                            </div>
+                            <!--Notifications Dropdown-->
+                            <div class="relative  flex">
+                                <Dropdown align="right" width="56" distance="1.5">
+                                    <template #trigger>
+                                        <span class="inline-flex rounded-md  ">
+                                            <button
+                                                type="button"
+                                                class=" inline-flex items-center h-full  transition ease-in-out duration-150"
+                                            >
+                                                <BellIcon class="w-6 aspect-square rounded-full text-white aspect-square  "/>
+                                            </button>
+                                        </span>
+                                    </template>
+
+                                    <template #content>
+                                        <div class="flex flex-row space-x-2 block w-full px-4 py-2 text-left text-sm ">
+                                            <!--Title-->
+                                            <p class="font-bold ">Notifications</p>
+                                        </div>
+                                    </template>
+                                </Dropdown>
+                            </div>
+
+                            <!-- Profile Dropdown -->
+                            <div class="relative  flex">
                                 <Dropdown align="right" width="56" distance="1.5">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md   ">
@@ -205,7 +269,7 @@ onUnmounted(() => {
                                                 type="button"
                                                 class="inline-flex items-center h-full border border-transparent  rounded-md bg-transparent hover:text-zinc-300 focus:outline-none transition ease-in-out duration-150"
                                             >
-                                                <img class="h-9 aspect-square rounded-full bg-zinc-800 aspect-square  "
+                                                <img class="h-8 aspect-square rounded-full bg-zinc-800 aspect-square  "
                                                      v-bind:src="$page.props.auth.creator.avatar_url">
 
                                             </button>
@@ -213,30 +277,35 @@ onUnmounted(() => {
                                     </template>
 
                                     <template #content>
-                                        <div  class="flex flex-row space-x-2 block w-full px-4 py-2 text-left text-sm ">
+                                        <div class="flex flex-row space-x-2 block w-full px-4 py-2 text-left text-sm ">
                                             <!--Profile picture-->
                                             <img class="h-9 aspect-square rounded-full bg-zinc-800 aspect-square  "
                                                  v-bind:src="$page.props.auth.creator.avatar_url">
                                             <div class="flex flex-col">
-                                                <span class="text dark:text-white font-bold">{{$page.props.auth.user.email}}</span>
-                                                <Link :href="route('profile.edit')" class="text-blue-500 font-bold">Manage your account</Link>
+                                                <span
+                                                    class="text dark:text-white font-bold">{{ $page.props.auth.user.email }}</span>
+                                                <Link :href="route('profile.edit')" class="text-blue-500 font-bold">
+                                                    Manage your account
+                                                </Link>
                                             </div>
                                         </div>
                                         <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
-                                            <ProfileIcon class="w-5 h-5 flex-shrink-0" />
+                                            <ProfileIcon class="w-5 h-5 flex-shrink-0"/>
                                             <span class="font-bold">Your Channel</span>
                                         </DropdownLink>
                                         <DropdownLink :href="route('studio.dashboard')" class="flex flex-row space-x-2">
-                                            <StudioIcon class="w-5 h-5 flex-shrink-0" />
+                                            <StudioIcon class="w-5 h-5 flex-shrink-0"/>
                                             <span class="font-bold">VidGaze Studio</span>
                                         </DropdownLink>
                                         <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
                                             <!--<SettingsIcon class="w-5 h-5 flex-shrink-0" />-->
-                                            <img src="/images/vidcoins/coins/PileofCoins2.png" class="w-5 h-5 flex-shrink-0"  alt="VidCoins icon"/>
+                                            <img src="/images/vidcoins/coins/PileofCoins2.png"
+                                                 class="w-5 h-5 flex-shrink-0" alt="VidCoins icon"/>
                                             <span class="font-bold">Buy VidCoins</span>
                                         </DropdownLink>
-                                        <DropdownLink :href="route('logout')" method="post" as="button" class="flex flex-row space-x-2">
-                                            <LogoutIcon class="w-5 h-5 flex-shrink-0" />
+                                        <DropdownLink :href="route('logout')" method="post" as="button"
+                                                      class="flex flex-row space-x-2">
+                                            <LogoutIcon class="w-5 h-5 flex-shrink-0"/>
                                             <span class="font-bold">Log Out</span>
                                         </DropdownLink>
                                     </template>
@@ -249,9 +318,6 @@ onUnmounted(() => {
                 </div>
 
             </div>
-
-
-
 
 
             <!-- Responsive Navigation Menu -->
@@ -305,7 +371,7 @@ onUnmounted(() => {
                             </div>
                             <div v-else class="lg:hidden">
                                 <div class="mt-1 space-y-1">
-                                    <!--                            <ResponsiveNavLink :href="route('login')"> Log In </ResponsiveNavLink>-->
+                                    <!-- <ResponsiveNavLink :href="route('login')"> Log In </ResponsiveNavLink>-->
                                     <ResponsiveNavLink :href="route('register')">
                                         <div class="flex flex-row items-center gap-x-2">
                                             <ProfileIcon class="w-5 h-5"/>
@@ -322,23 +388,23 @@ onUnmounted(() => {
 
                         <!--                dark/light mode-->
                         <div class="text-white cursor-pointer space-y-1" @click="toggleDark()">
-                    <span v-if="!isDark">
-                    <ResponsiveNavLink span="true">
-                        <div class="flex flex-row items-center gap-x-2">
-                            <SunIcon class="w-5 h-5"/>
-                            <span>Light Mode</span>
-                        </div>
-                    </ResponsiveNavLink>
-                    </span>
-                            <span v-else>
+                            <span v-if="!isDark">
+                            <ResponsiveNavLink span="true">
+                                <div class="flex flex-row items-center gap-x-2">
+                                    <SunIcon class="w-5 h-5"/>
+                                    <span>Light Mode</span>
+                                </div>
+                            </ResponsiveNavLink>
+                            </span>
+                                    <span v-else>
 
-                        <ResponsiveNavLink span="true">
-                            <div v-if="isDark" class="flex flex-row items-center gap-x-2">
-                                <MoonIcon class="w-5 h-5"/>
-                                <span class="">Dark Mode</span>
-                            </div>
-                        </ResponsiveNavLink>
-                    </span>
+                                <ResponsiveNavLink span="true">
+                                    <div v-if="isDark" class="flex flex-row items-center gap-x-2">
+                                        <MoonIcon class="w-5 h-5"/>
+                                        <span class="">Dark Mode</span>
+                                    </div>
+                                </ResponsiveNavLink>
+                            </span>
                         </div>
                     </div>
 
