@@ -1,14 +1,15 @@
 <script setup>
-import Dropdown from '@/Components/Dropdown/Dropdown.vue';
-import DropdownLink from '@/Components/Dropdown/DropdownLink.vue';
 
 import ResponsiveNavLink from '@/Components/Links/ResponsiveNavLink.vue';
 import {Link} from '@inertiajs/vue3';
-import {useDark, useToggle, useWindowSize} from "@vueuse/core";
+import {useDark, useToggle} from "@vueuse/core";
 
 
 import TopNavigationLinks from '@/Shared/Navigation/TopNavigationLinks.vue';
 import ExpandableNavigationLinks from "@/Shared/Navigation/ExpandableNavigationLinks.vue";
+import ProfileDropdown from "@/Components/Dropdown/ProfileDropdown.vue";
+import UploadDropdown from "@/Components/Dropdown/UploadDropdown.vue";
+import NotificationsDropdown from "@/Components/Dropdown/NotificationsDropdown.vue";
 
 import SearchIcon from '~/images/icons/search.svg';
 import OpenNavSVG from '~/images/icons/3lines.svg';
@@ -19,10 +20,9 @@ import MoonIcon from '~/images/icons/moon.svg';
 import LogoutIcon from '~/images/icons/logout.svg';
 import StudioIcon from '~/images/icons/light.svg';
 import SettingsIcon from '~/images/icons/settings.svg';
-import CoinsIcon from '~/images/icons/coins.svg';
 import ProfileIcon from '~/images/icons/profile.svg';
-import BellIcon from '~/images/icons/bell.svg';
-import CloudIcon from '~/images/icons/cloud_upload.svg';
+
+
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {onMounted, onUnmounted, ref, watch} from "vue";
 
@@ -148,7 +148,7 @@ onUnmounted(() => {
                                          class="relative flex sm:gap-x-2 items-center text-zinc-500 p-2 px-3 rounded-xl bg-zinc-900">
                                         <SearchIcon @click="toggleExpandedSearchBarOn" class="w-5 h-5 flex-shrink-0"/>
                                         <input type="text"
-                                               class="   bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white"
+                                               class="   bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white font-bold text-sm"
                                                :class="
                                             {
                                                 'w-full': expandedSearchBar,
@@ -167,10 +167,6 @@ onUnmounted(() => {
 
                                                     <div
                                                         class=" w-full text-sm text-left flex flex-col space-y-1">
-                                                            <!--<div class="pb-2 border-b border-zinc-600">-->
-                                                            <!--    <p class="font-bold ">Search Results for: </p>-->
-                                                            <!--</div>-->
-                                                            <!--list of search results-->
                                                             <Link href="/" class="search-suggestion" >
                                                                 <div class="   overflow-x-hidden hover:bg-zinc-800 rounded-md ease-in-out duration-400 transition">
                                                                     <div scope="row" class="h-8 overflow-y-hidden flex px-3 py-2 text-base font-medium text text-white ">
@@ -203,12 +199,16 @@ onUnmounted(() => {
                             <div v-if="$page.props.auth.user == null"
                                  class="hidden lg:flex sm:items-center   flex-shrink-0">
                                 <div class="flex gap-x-2">
-                                    <Link :href="route('login')" class="text-sm text-zinc-300 hover:text-zinc-400">
-                                        Log In
+                                    <Link :href="route('login')" >
+                                        <button class="text-sm capitalize bg-zinc-900 hover:bg-zinc-800 text-white p-2 px-5 rounded-md font-bold">
+                                                Log In
+                                        </button>
                                     </Link>
-                                    <p class="text-sm text-zinc-300">/</p>
-                                    <Link :href="route('register')" class="text-sm text-zinc-300 hover:text-zinc-400">
-                                        Sign Up
+                                    <Link :href="route('register')" >
+                                        <button class="text-sm capitalize bg-zinc-900 hover:bg-zinc-800 text-white p-2 px-5 rounded-md font-bold">
+                                            Sign Up
+                                        </button>
+
                                     </Link>
                                 </div>
                             </div>
@@ -217,103 +217,13 @@ onUnmounted(() => {
 
                         <div v-if="$page.props.auth.user != null" class=" flex flex-row space-x-5 items-center   flex-shrink-0">
                             <!--Upload Dropdown-->
-                            <div class="relative hidden sm:flex">
-                                <Dropdown align="right" width="56" distance="1.5">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md  ">
-                                            <button
-                                                type="button"
-                                                class=" inline-flex items-center h-full  transition ease-in-out duration-150"
-                                            >
-                                                <CloudIcon class="w-6 aspect-square rounded-full text-white aspect-square  "/>
-                                            </button>
-                                        </span>
-                                    </template>
+                            <UploadDropdown/>
 
-                                    <template #content>
-                                        <div class="flex flex-row space-x-2 block w-full px-4 py-2 text-left text-sm ">
-                                            <!--Title-->
-                                            <p class="font-bold ">Upload dropdown</p>
-                                        </div>
-                                    </template>
-                                </Dropdown>
-                            </div>
                             <!--Notifications Dropdown-->
-                            <div class="relative  flex">
-                                <Dropdown align="right" width="56" distance="1.5">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md  ">
-                                            <button
-                                                type="button"
-                                                class=" inline-flex items-center h-full  transition ease-in-out duration-150"
-                                            >
-                                                <BellIcon class="w-6 aspect-square rounded-full text-white aspect-square  "/>
-                                            </button>
-                                        </span>
-                                    </template>
-
-                                    <template #content>
-                                        <div class="flex flex-row space-x-2 block w-full px-4 py-2 text-left text-sm ">
-                                            <!--Title-->
-                                            <p class="font-bold ">Notifications</p>
-                                        </div>
-                                    </template>
-                                </Dropdown>
-                            </div>
+                            <NotificationsDropdown/>
 
                             <!-- Profile Dropdown -->
-                            <div class="relative  flex">
-                                <Dropdown align="right" width="56" distance="1.5">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md   ">
-                                            <button
-                                                type="button"
-                                                class="inline-flex items-center h-full border border-transparent  rounded-md bg-transparent hover:text-zinc-300 focus:outline-none transition ease-in-out duration-150"
-                                            >
-                                                <img class="h-8 aspect-square rounded-full bg-zinc-800 aspect-square  "
-                                                     v-bind:src="$page.props.auth.creator.avatar_url">
-
-                                            </button>
-                                        </span>
-                                    </template>
-
-                                    <template #content>
-                                        <div class="flex flex-row space-x-2 block w-full px-4 py-2 text-left text-sm ">
-                                            <!--Profile picture-->
-                                            <img class="h-9 aspect-square rounded-full bg-zinc-800 aspect-square  "
-                                                 v-bind:src="$page.props.auth.creator.avatar_url">
-                                            <div class="flex flex-col">
-                                                <span
-                                                    class="text dark:text-white font-bold">{{ $page.props.auth.user.email }}</span>
-                                                <Link :href="route('profile.edit')" class="text-blue-500 font-bold">
-                                                    Manage your account
-                                                </Link>
-                                            </div>
-                                        </div>
-                                        <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
-                                            <ProfileIcon class="w-5 h-5 flex-shrink-0"/>
-                                            <span class="font-bold">Your Channel</span>
-                                        </DropdownLink>
-                                        <DropdownLink :href="route('studio.dashboard')" class="flex flex-row space-x-2">
-                                            <StudioIcon class="w-5 h-5 flex-shrink-0"/>
-                                            <span class="font-bold">VidGaze Studio</span>
-                                        </DropdownLink>
-                                        <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
-                                            <CoinsIcon class="w-5 h-5 flex-shrink-0"/>
-                                            <span class="font-bold">Buy VidCoins</span>
-                                        </DropdownLink>
-                                        <DropdownLink v-if="$page.props.auth.admin" :href="route('admin.dashboard')" class="flex flex-row space-x-2">
-                                            <font-awesome-icon :icon="['fas', 'helmet-safety']" class="w-5 h-5 flex-shrink-0"/>
-                                            <span class="font-bold">Admin</span>
-                                        </DropdownLink>
-                                        <DropdownLink :href="route('logout')" method="post" as="button"
-                                                      class="flex flex-row space-x-2">
-                                            <LogoutIcon class="w-5 h-5 flex-shrink-0"/>
-                                            <span class="font-bold">Log Out</span>
-                                        </DropdownLink>
-                                    </template>
-                                </Dropdown>
-                            </div>
+                            <ProfileDropdown/>
                         </div>
 
 
