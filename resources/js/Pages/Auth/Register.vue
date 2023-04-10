@@ -108,15 +108,16 @@ const submit = () => {
 
             <div class="mt-4  text-sm ">
                 <div class="flex items-center">
-                    <Checkbox v-model="form.terms" name="terms" id="terms"/>
+                    <label class="flex items-center">
+                         <Checkbox v-model:checked="form.terms" name="terms" id="terms"/>
+                        <span class="ml-2 text-sm text-zinc-600 dark:text-zinc-400 select-none">
+                            I agree to the
+                            <Link :href="route('terms')" class="font-bold">Terms of Service</Link>
+                            and
+                            <Link :href="route('privacy')" class="font-bold">Privacy Policy</Link>
+                        </span>
+                    </label>
 
-
-                    <div class="ml-2 select-none">
-                        I agree to the
-                        <Link :href="route('terms')" class="font-bold">Terms of Service</Link>
-                        and
-                        <Link :href="route('privacy')" class="font-bold">Privacy Policy</Link>
-                    </div>
 
                 </div>
 
@@ -132,7 +133,7 @@ const submit = () => {
 
             </div>
 
-            <span class="flex-grow text-left text-sm pr-4   ">
+            <span class="flex-grow text-left text-sm pr-4  text-zinc-600 dark:text-zinc-400 ">
                                 Already have an account?
                             <a class="font-bold text-blue-700  dark:text-blue-400 hover:underline"
                                :href="route('login')">
