@@ -5,7 +5,10 @@ import InputLabel from '@/Components/Inputs/InputLabel.vue';
 import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
 import TextInput from '@/Components/Inputs/TextInput.vue';
 import Checkbox from "@/Components/Inputs/Checkbox.vue";
+import HorizontalLineText from "@/Components/HorizontalLineText.vue";
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import GoogleButton from "@/Components/Buttons/GoogleButton.vue";
+import AppleButton from "@/Components/Buttons/AppleButton.vue";
 
 const form = useForm({
     username: '',
@@ -25,6 +28,21 @@ const submit = () => {
 <template>
     <GuestLayout>
         <Head title="Register" />
+
+        <p class="font-bold text-xl text dark:textDark mb-6">Create your VidGaze Account</p>
+
+        <div class="flex flex-row justify-between w-full px-1">
+            <GoogleButton >
+                Sign up with Google
+            </GoogleButton>
+            <AppleButton >
+                Sign up with Apple
+            </AppleButton>
+
+        </div>
+
+
+        <HorizontalLineText text="or" class="select-none"/>
 
         <form @submit.prevent="submit">
             <div>
@@ -106,18 +124,21 @@ const submit = () => {
 
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <Link
-                    :href="route('login')"
-                    class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                >
-                    Already registered?
-                </Link>
+            <div class="flex items-center justify-end mt-4 mb-2">
 
-                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Register
+                <PrimaryButton class=" w-full rounded-full text-center px-auto dark:bg-zinc-900 hover:dark:bg-zinc-900/70" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    <p class="text-center w-full capitalize text-sm dark:textDark">Create an account</p>
                 </PrimaryButton>
+
             </div>
+
+            <span class="flex-grow text-left text-sm pr-4   ">
+                                Already have an account?
+                            <a class="font-bold text-blue-700  dark:text-blue-400 hover:underline"
+                               :href="route('login')">
+                                Log in
+                            </a>
+             </span>
         </form>
     </GuestLayout>
 </template>
