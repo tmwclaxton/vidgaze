@@ -23,16 +23,16 @@ const emit = defineEmits(["remove"]);
 </script>
 <template>
     <div
-        class="flex items-center rounded-lg p-4 shadow-md bg-white text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400"
+        class="flex items-center rounded-lg p-4 shadow shadow-md shadow-zinc-400 dark:shadow-zinc-800 text-zinc-500 bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-400"
         role="alert"
     >
         <div
             class="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg pl-0.5
              "
             :class="{
-          'bg-blue-200 text-blue-700 dark:bg-blue-800 dark:text-blue-100': props.type === 'normal',
-          'bg-green-200 text-zinc-900 dark:bg-green-900 dark:text-white': props.type === 'success',
-          'bg-red-200 text-red-900 dark:bg-red-800 dark:text-red-100': props.type === 'error'
+          'bg-blue-400 text-blue-700 dark:bg-blue-800 dark:text-blue-100': props.type === 'normal',
+          'bg-green-400 text-zinc-900 dark:bg-green-900 dark:text-white': props.type === 'success',
+          'bg-red-400 text-red-900 dark:bg-red-800 dark:text-red-100': props.type === 'error'
         }"
 
         >

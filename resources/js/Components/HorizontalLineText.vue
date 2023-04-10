@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center align-middle py-4">
+    <div class="flex items-center align-middle py-2">
         <!-- The left line -->
         <div class="flex-grow h-0.5 bg-gray-400 dark:bg-zinc-800"></div>
 
