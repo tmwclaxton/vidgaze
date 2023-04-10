@@ -31,6 +31,7 @@
         "@tailwindcss/typography": "^0.5.9",
         "@vueuse/core": "^9.13.0",
         "vue3-click-away": "^1.2.4",
-        "vue3-parallax": "^0.1.4"
+        "vue3-parallax": "^0.1.4",
+        "vuex": "^4.1.0"
     }
 }

@@ -50,7 +50,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->forget('flash');
         $request->session()->regenerateToken();
         //
-        //Redirect::setIntendedUrl(url()->previous());
+        Redirect::setIntendedUrl(url()->previous());
         return redirect()->intended(RouteServiceProvider::HOME)->with('success', 'You have been logged out.');
 
     }

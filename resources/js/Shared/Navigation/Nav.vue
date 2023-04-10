@@ -19,6 +19,7 @@ import MoonIcon from '~/images/icons/moon.svg';
 import LogoutIcon from '~/images/icons/logout.svg';
 import StudioIcon from '~/images/icons/light.svg';
 import SettingsIcon from '~/images/icons/settings.svg';
+import CoinsIcon from '~/images/icons/coins.svg';
 import ProfileIcon from '~/images/icons/profile.svg';
 import BellIcon from '~/images/icons/bell.svg';
 import CloudIcon from '~/images/icons/cloud_upload.svg';
@@ -298,10 +299,12 @@ onUnmounted(() => {
                                             <span class="font-bold">VidGaze Studio</span>
                                         </DropdownLink>
                                         <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
-                                            <!--<SettingsIcon class="w-5 h-5 flex-shrink-0" />-->
-                                            <img src="/images/vidcoins/coins/PileofCoins2.png"
-                                                 class="w-5 h-5 flex-shrink-0" alt="VidCoins icon"/>
+                                            <CoinsIcon class="w-5 h-5 flex-shrink-0"/>
                                             <span class="font-bold">Buy VidCoins</span>
+                                        </DropdownLink>
+                                        <DropdownLink v-if="$page.props.auth.admin" :href="route('admin.dashboard')" class="flex flex-row space-x-2">
+                                            <font-awesome-icon :icon="['fas', 'helmet-safety']" class="w-5 h-5 flex-shrink-0"/>
+                                            <span class="font-bold">Admin</span>
                                         </DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button"
                                                       class="flex flex-row space-x-2">

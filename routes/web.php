@@ -19,12 +19,10 @@ use Inertia\Inertia;
 |
 */
 
-//component testing route
-Route::get('/component-testing', function () {
-    return Inertia::render('TestComponents');
-})->name('component-testing');
-
-
+Route::middleware('admin')->group(function () {
+    Route::get('/admin', function () { return Inertia::render('Admin/AdminDashboard'); })->name('admin.dashboard');
+    Route::get('/component-testing', function () { return Inertia::render('Admin/TestComponents'); })->name('component-testing');
+});
 
 Route::get('/', function () {
     //check if user is logged in

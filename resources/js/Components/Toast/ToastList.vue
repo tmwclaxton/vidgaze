@@ -1,43 +1,81 @@
 <script setup>
 import ToastListItem from "@/Components/Toast/ToastListItem.vue";
 import {onUnmounted, ref} from "vue";
-// import {Inertia} from "@inertiajs/inertia";
-// import {usePage} from "@inertiajs/inertia-vue3";
-// import {Inertia} from "@inertiajs/inertia";
+
 import {Inertia} from "@inertiajs/inertia";
 import {usePage} from "@inertiajs/vue3";
-import toast from "@/Stores/toast"
+import toast from "@/Stores/toast";
+
 
 const page = usePage();
 
-let removeFinshEventListener = Inertia.on("finish", () => {
-    if (page.props.flash.toast) {
-        toast.add({
-            message: page.props.flash.toast,
-            type: "normal",
-        });
-    }
-    if (page.props.flash.error) {
-        toast.add({
-            message: page.props.flash.error,
-            type: "error",
-        });
-    }
-    if (page.props.flash.success) {
-        toast.add({
-            message: page.props.flash.success,
-            type: "success",
-        });
-    }
-    if (page.props.flash.status) {
-        toast.add({
-            message: page.props.flash.status,
-            type: "normal",
-        });
+const props = defineProps({
+    flash: {
+        type: Object,
+        required: false,
+        default: null
     }
 });
+// toast.add({
+//     message: 'test',
+//     type: "error",
+// });
+let timeoutId;
+let isToastMessageCalled = false;
 
-onUnmounted(() => removeFinshEventListener());
+function toastMessages() {
+    if (!isToastMessageCalled) {
+        if (props.flash.toast) {
+            toast.add({
+                message: props.flash.toast,
+                type: "normal",
+            });
+        }
+        if (props.flash.error) {
+            toast.add({
+                message: props.flash.error,
+                type: "error",
+            });
+        }
+        if (props.flash.success) {
+            toast.add({
+                message: props.flash.success,
+                type: "success",
+            });
+        }
+        if (props.flash.status) {
+            toast.add({
+                message: props.flash.status,
+                type: "normal",
+            });
+        }
+        isToastMessageCalled = true;
+    }
+}
+
+let removeSuccessEventListener = Inertia.on("success", () => {
+    if (timeoutId) {
+        clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+        toastMessages();
+        isToastMessageCalled = false;
+    }, 50);
+});
+let removeNavigateEventListener = Inertia.on("navigate", () => {
+    if (timeoutId) {
+        clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+        toastMessages();
+        isToastMessageCalled = false;
+    }, 50);
+});
+
+onUnmounted(() => {
+    removeSuccessEventListener();
+    removeNavigateEventListener();
+});
 
 function remove(index) {
     toast.remove(index);

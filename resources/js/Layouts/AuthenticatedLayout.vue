@@ -12,7 +12,7 @@ const props = defineProps({
         required: false,
         default: false
     },
-})
+});
 </script>
 
 <template>
@@ -22,7 +22,7 @@ const props = defineProps({
     <div>
         <!-- this is where the toast message popup is added -->
 
-        <ToastList/>
+        <ToastList :flash="$page.props.flash"/>
 
         <div class="">
 
@@ -38,6 +38,7 @@ const props = defineProps({
 
             <!-- Page Content -->
             <main class="" >
+
                 <slot />
             </main>
         </div>
