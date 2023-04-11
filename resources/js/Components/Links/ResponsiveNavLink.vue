@@ -6,8 +6,8 @@ const props = defineProps(['href', 'active','span']);
 
 const classes = computed(() =>
     props.active
-        ? 'w-max min-w-48 w-min rounded text-md block w-full pl-3 pr-4 py-2 border-l-4  border-zinc-600 text-left text-base font-medium  text-zinc-300  bg-zinc-900  focus:outline-none focus:text-zinc-200 focus:bg-zinc-900 focus:border-zinc-300 transition duration-150 ease-in-out'
-        : 'w-max min-w-48 rounded text-md block w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-left text-base font-medium text-white  hover:text-zinc-200  hover:bg-zinc-800  hover:border-zinc-600 focus:outline-none  focus:text-zinc-200  focus:bg-zinc-700  focus:border-zinc-600 transition duration-150 ease-in-out'
+        ? 'w-max min-w-24 w-min rounded text-md block w-full pl-3 pr-4 py-2 border-l-4  border-zinc-600 text-left text-base font-medium  text-zinc-300  bg-zinc-900  focus:outline-none focus:text-zinc-200 focus:bg-zinc-900 focus:border-zinc-300 transition duration-150 ease-in-out'
+        : 'w-max min-w-24 rounded text-md block w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-left text-base font-medium text-white  hover:text-zinc-200  hover:bg-zinc-800  hover:border-zinc-600 focus:outline-none  focus:text-zinc-200  focus:bg-zinc-700  focus:border-zinc-600 transition duration-150 ease-in-out'
 );
 </script>
 

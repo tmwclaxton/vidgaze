@@ -1,30 +1,22 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
-//accept props
-const props = defineProps({
-    showingStudioLinks: {
-        type: Boolean,
-        required: true
-    },
-})
 
 </script>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 export default {
-    layout: AuthenticatedLayout,
-
+    layout: AuthenticatedLayout
 };
 </script>
 <template>
-    <Head title="Dashboard" />
-
+    <Head title="Popular Videos" />
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-
             </div>
+
+
         </div>
     </div>
 </template>

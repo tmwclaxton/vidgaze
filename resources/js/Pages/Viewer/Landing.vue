@@ -1,5 +1,4 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ScrollParallax from 'vue3-parallax/src/components/ScrollParallax.vue';
 import SearchIcon from '~/images/icons/search.svg';
 import {onMounted, onUnmounted, ref} from "vue";
@@ -41,6 +40,19 @@ onUnmounted(() => {
 
 
 </script>
+<script>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+export default {
+    layout: AuthenticatedLayout,
+    props: {
+        showingStudioLinks: {
+            type: Boolean,
+            required: true
+        }
+    }
+};
+</script>
+
 <style>
 .target {
     transition: opacity 0.6s ease;
@@ -49,21 +61,8 @@ onUnmounted(() => {
 
 <template>
     <!--    <Head title="Landing" />-->
-    <AuthenticatedLayout>
         <div class="-mt-16 "></div>
-        <!--        <div class="mt-80">-->
-        <!--            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">-->
-        <!--                <div class="  overflow-hidden shadow-sm sm:rounded-lg">-->
-        <!--                    <div class="p-6 text-gray-900 dark:text-gray-100">You're logged in!</div>-->
-        <!--                    &lt;!&ndash;<ClockSVG class="w-5 fill-blue-400"/>&ndash;&gt;-->
-        <!--                    <div v-if="$page.props.flash.success" class="alert">-->
-        <!--                        {{ $page.props.flash.success }}-->
-        <!--                    </div>-->
 
-        <!--                    <button @click="addToast">Add toast</button>-->
-        <!--                </div>-->
-        <!--            </div>-->
-        <!--        </div>-->
 
         <div class="fixed top-0 left-0 h-screen w-screen z-0">
             <img style="filter: brightness(0.6);" src="/images/logos/vidgaze/night_sky2.jpg" alt="very cool bg"
@@ -154,5 +153,4 @@ onUnmounted(() => {
                     </div>
                 </div>
             </scroll-parallax>
-    </AuthenticatedLayout>
 </template>

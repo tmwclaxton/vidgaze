@@ -1,23 +1,14 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
-//accept props
-const props = defineProps({
-    showingStudioLinks: {
-        type: Boolean,
-        required: true
-    },
-})
-
 </script>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 export default {
-    layout: AuthenticatedLayout,
-
+    layout: AuthenticatedLayout
 };
 </script>
 <template>
-    <Head title="Dashboard" />
+    <Head title="Popular Streams" />
 
 
     <div class="py-12">

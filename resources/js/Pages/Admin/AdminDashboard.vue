@@ -1,19 +1,23 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+
 
 
 
 
 
 </script>
+<script>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+export default {
+    layout: AuthenticatedLayout,
 
+};
+</script>
 <template>
     <!--    <Head title="Landing" />-->
-    <AuthenticatedLayout class="h1 text dark:textDark">
+    <div class="h1 text dark:textDark">
 
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Admin Dashboard</h2>
-        </template>
+
 
         <div class="py-12">
             <div class="max-w-screen-2xl mx-auto px-4 sm:px-2 2xl:px-10 ">
@@ -26,5 +30,5 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </div>
 </template>

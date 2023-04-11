@@ -46,23 +46,23 @@ Route::get('/about', function () {
 
 
 Route::get('/videos', function () {
-    return Inertia::render('Viewer/Videos/Popular');
+    return Inertia::render('Viewer/Videos/VideosIndex');
 })->name('videos');
 
 Route::get('/streams', function () {
-    return Inertia::render('Viewer/Streams/Popular');
+    return Inertia::render('Viewer/Streams/StreamsIndex');
 })->name('streams');
 
 Route::get('/shorts', function () {
-    return Inertia::render('Viewer/Shorts/Popular');
+    return Inertia::render('Viewer/Shorts/ShortsIndex');
 })->name('shorts');
 
 Route::get('/music', function () {
-    return Inertia::render('Viewer/Music/Popular');
+    return Inertia::render('Viewer/Music/MusicIndex');
 })->name('music');
 
 Route::get('/podcasts', function () {
-    return Inertia::render('Viewer/Podcasts/Popular');
+    return Inertia::render('Viewer/Podcasts/PodcastsIndex');
 })->name('podcasts');
 
 

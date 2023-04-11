@@ -1,16 +1,22 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 </script>
-<style>
-.target {
-    transition: opacity 0.6s ease;
-}
-</style>
+<script>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+export default {
+    layout: AuthenticatedLayout,
+    props: {
+        showingStudioLinks: {
+            type: Boolean,
+            required: true
+        }
+    }
+};
+</script>
 
 <template>
-    <!--    <Head title="Landing" />-->
-    <AuthenticatedLayout>
+        <Head title="Home" />
+
         <div class="-mt-16 "></div>
                 <div class="mt-80">
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -21,5 +27,4 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
                 </div>
 
 
-    </AuthenticatedLayout>
 </template>

@@ -3,6 +3,7 @@ import { ref } from 'vue';
 
 import Nav from '@/Shared/Navigation/Nav.vue';
 import ToastList from "@/Components/Toast/ToastList.vue";
+import CookieConsent from "@/Components/Popup/CookieConsent.vue";
 let showingNavigationDropdown = ref(false);
 
 //accept props
@@ -21,26 +22,21 @@ const props = defineProps({
 
     <div>
         <!-- this is where the toast message popup is added -->
-
         <ToastList :flash="$page.props.flash"/>
 
         <div class="">
 
             <Nav :showingNavigationDropdown="showingNavigationDropdown" :showingStudioLinks="showingStudioLinks"/>
-            <!-- Page Heading -->
-            <header class="  " v-if="$slots.header">
-                <div class=" bg-white dark:bg-zinc-900 shadow mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <div class="max-w-screen-2xl mx-auto px-4 sm:px-2 2xl:px-10 ">
-                        <slot name="header" />
-                    </div>
-                </div>
-            </header>
 
             <!-- Page Content -->
             <main class="" >
 
                 <slot />
+                <!--<CookieConsent/>-->
+
+
             </main>
+
         </div>
     </div>
 </template>

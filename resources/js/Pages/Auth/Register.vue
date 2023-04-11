@@ -135,10 +135,10 @@ const submit = () => {
 
             <span class="flex-grow text-left text-sm pr-4  text-zinc-600 dark:text-zinc-400 ">
                                 Already have an account?
-                            <a class="font-bold text-blue-700  dark:text-blue-400 hover:underline"
+                            <Link class="font-bold text-blue-700  dark:text-blue-400 hover:underline"
                                :href="route('login')">
                                 Log in
-                            </a>
+                            </Link>
              </span>
         </form>
     </GuestLayout>
