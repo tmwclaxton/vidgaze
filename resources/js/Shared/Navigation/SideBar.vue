@@ -34,7 +34,7 @@ const props = defineProps({
 
 <template>
 
-    <div class="fixed top-0  flex flex-col h-screen " >
+    <div class="fixed top-0  flex flex-col h-screen w-screen sm:w-max" >
         <div class="h-16">
             <!--Nav is fixed so lets space things below-->
 

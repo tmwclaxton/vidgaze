@@ -2,6 +2,7 @@
 import SearchIcon from '~/images/icons/search.svg';
 import CloseNavSVG from '~/images/icons/exit.svg';
 import {Link} from "@inertiajs/inertia-vue3";
+import {defineProps, defineEmits} from "vue";
 //name of the component
 const name = 'Searchbar';
 
@@ -16,14 +17,23 @@ const props = defineProps({
         type: Boolean,
         required: true
     },
-})
+});
+
+//define emits
+const emits = defineEmits(['toggleExpandedSearchBarOff', 'toggleExpandedSearchResultsOff']);
+
+const onClickAway = (event) => {
+    if (props.expandedSearchResults) {
+        emits('toggleExpandedSearchResultsOff')
+    }
+}
 </script>
 
 
 <template>
 
     <!--Search bar-->
-    <div
+    <div v-click-away="onClickAway"
          class="flex flex-col flex-grow  justify-center items-end sm:items-center sm:px-5">
         <div
             class="relative flex flex-row space-x-3 w-full justify-end sm:justify-center">
@@ -41,7 +51,7 @@ const props = defineProps({
                 'rounded-t-md rounded-r-md': expandedSearchResults ,' rounded-md ': !expandedSearchResults}"
                  class="h-10 relative flex sm:gap-x-2 items-center text-zinc-500 p-2 px-3 bg-zinc-900 ">
                 <SearchIcon @click="$emit('toggleExpandedSearchBarOn')" class="w-5 h-5 flex-shrink-0"/>
-                <input type="text" @click="$emit('toggleExpandedSearchResults')"
+                <input type="text" @click="$emit('toggleExpandedSearchResultsOn')"
                        class="bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white font-bold text-sm"
                        :class="{'w-full': expandedSearchBar,'w-0 sm:w-full': !expandedSearchBar,}"
                        placeholder="Search YouTube, Twitch and more...">

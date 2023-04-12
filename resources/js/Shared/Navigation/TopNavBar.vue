@@ -50,7 +50,7 @@ const props = defineProps({
                     <div class=" flex items-center  "
                          :class="{'hidden sm:flex': expandedSearchBar,  '': !expandedSearchBar }">
                         <button
-                            @click="$emit('toggleDropdown')"
+                            @click="$emit('toggleSidenav')"
                             class="inline-flex items-center justify-center p-2 rounded-md text-zinc-400 dark:text-zinc-500 hover:text-zinc-500 dark:hover:text-zinc-400  focus:outline-none  focus:text-zinc-400 transition duration-150 ease-in-out"
                         >
                             <OpenNavSVG class="h-6 w-6 fill-white" :class="{
@@ -82,7 +82,8 @@ const props = defineProps({
 
                     <Searchbar @toggleExpandedSearchBarOn="$emit('toggleExpandedSearchBarOn')"
                                  @toggleExpandedSearchBarOff="$emit('toggleExpandedSearchBarOff')"
-                                    @toggleExpandedSearchResults="$emit('toggleExpandedSearchResults')"
+                               @toggleExpandedSearchResultsOn="$emit('toggleExpandedSearchResultsOn')"
+                               @toggleExpandedSearchResultsOff="$emit('toggleExpandedSearchResultsOff')"
                                v-if="!showingStudioLinks" :expandedSearchBar="expandedSearchBar" :expandedSearchResults="expandedSearchResults" />
 
                     <!--log in-->

@@ -66,8 +66,12 @@ onUnmounted(() => {
 const toggleShowingNavigationDropdown = () => {
     showingNavigationDropdown.value = !showingNavigationDropdown.value;
 }
-const toggleExpandedSearchResults = () => {
-    expandedSearchResults.value = !expandedSearchResults.value;
+const toggleExpandedSearchResultsOn = () => {
+    expandedSearchResults.value = true;
+}
+const toggleExpandedSearchResultsOff = () => {
+    expandedSearchResults.value = false;
+    toggleExpandedSearchBarOff();
 }
 
 </script>
@@ -80,10 +84,11 @@ const toggleExpandedSearchResults = () => {
     <nav class=" fixed z-40 top-0 w-full pointer-events-none">
         <!-- Primary Navigation Menu -->
 
-            <TopNavBar @toggleDropdown="toggleShowingNavigationDropdown()"
+            <TopNavBar @toggleSidenav="toggleShowingNavigationDropdown()"
                        @toggleExpandedSearchBarOn="toggleExpandedSearchBarOn()"
                        @toggleExpandedSearchBarOff="toggleExpandedSearchBarOff()"
-                       @toggleExpandedSearchResults="toggleExpandedSearchResults()"
+                       @toggleExpandedSearchResultsOn="toggleExpandedSearchResultsOn()"
+                       @toggleExpandedSearchResultsOff="toggleExpandedSearchResultsOff()"
                        :showingNavigationDropdown="showingNavigationDropdown"
                        :expandedSearchBar="expandedSearchBar"
                        :showingStudioLinks="showingStudioLinks"

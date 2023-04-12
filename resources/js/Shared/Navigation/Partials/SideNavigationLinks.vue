@@ -36,14 +36,6 @@ const props = defineProps({
 
 
     <div  v-if="!showingStudioLinks" class="  space-y-1 ">
-<!--        <div class=" md:hidden">-->
-<!--            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">-->
-<!--                <div class="flex flex-row items-center gap-x-2">-->
-<!--                    <HomeIcon class="w-5 h-5"/>-->
-<!--                    <span>Home</span>-->
-<!--                </div>-->
-<!--            </ResponsiveNavLink>-->
-<!--        </div>-->
         <div class="md:hidden">
             <ResponsiveNavLink :href="route('videos')" :active="route().current('videos')">
                 <div class="flex flex-row items-center gap-x-2">
