@@ -16,23 +16,23 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 <template>
 
 
-    <div class="relative  flex">
-        <Dropdown align="right" width="56" distance="1.5">
+    <div class="relative flex">
+        <Dropdown align="right" width="64" distance="1.5"  >
             <template #trigger>
-                                        <span class="inline-flex rounded-md   ">
-                                            <button
-                                                type="button"
-                                                class="inline-flex items-center h-full border border-transparent  rounded-md bg-transparent hover:text-zinc-300 focus:outline-none transition ease-in-out duration-150"
-                                            >
-                                                <img class="h-8 aspect-square rounded-full bg-zinc-800 aspect-square  "
-                                                     v-bind:src="$page.props.auth.creator.avatar_url">
+                <span class="inline-flex rounded-md   ">
+                    <button
+                        type="button"
+                        class="inline-flex items-center h-full border border-transparent  rounded-md bg-transparent hover:text-zinc-300 focus:outline-none transition ease-in-out duration-150"
+                    >
+                        <img class="h-8 aspect-square rounded-full bg-zinc-800 aspect-square  "
+                             v-bind:src="$page.props.auth.creator.avatar_url">
 
-                                            </button>
-                                        </span>
+                    </button>
+                </span>
             </template>
 
-            <template #content>
-                <div class="flex flex-row space-x-2 block w-full px-4 py-2 text-left text-sm ">
+            <template #content class="w-96">
+                <div class="flex flex-row space-x-2 block w-full px-4 py-2 text-left text-sm  ">
                     <!--Profile picture-->
                     <img class="h-9 aspect-square rounded-full bg-zinc-800 aspect-square  "
                          v-bind:src="$page.props.auth.creator.avatar_url">
@@ -44,6 +44,9 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
                         </Link>
                     </div>
                 </div>
+
+                <div class="border-t border-gray-200"></div>
+
                 <DropdownLink v-if="$page.props.auth.admin" :href="route('admin.dashboard')" class="flex flex-row space-x-2">
                     <font-awesome-icon :icon="['fas', 'helmet-safety']" class="w-5 h-5 flex-shrink-0"/>
                     <span class="font-bold">Admin Dashboard</span>

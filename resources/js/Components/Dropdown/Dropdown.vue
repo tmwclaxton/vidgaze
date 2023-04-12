@@ -9,7 +9,7 @@ const props = defineProps({
         default: '48',
     },
     contentClasses: {
-        default: () => ['py-1', 'bg-white dark:bg-zinc-900'],
+        default: () => ['py-1', 'bg-white dark:bg-zinc-900','shadow-lg', 'rounded-md', 'ring-1', 'ring-black', 'ring-opacity-5', 'focus:outline-none'],
     },
     distance: {
         default: '2',
@@ -69,11 +69,9 @@ const open = ref(false);
         >
             <div
                 v-show="open"
-                class="absolute z-50"
+                class="fixed z-50 right-8 top-20"
                 :class="[widthClass, alignmentClasses]"
-                :style="{ marginTop: `${props.distance}rem` }"
                 style="display: none"
-                @click="open = false"
             >
                 <div class="rounded-md ring-1 ring-black ring-opacity-5" :class="contentClasses">
                     <slot name="content" />

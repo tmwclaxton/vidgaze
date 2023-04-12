@@ -109,7 +109,7 @@
 <script setup>
 import axios from "axios";
 import { ref } from 'vue';
-import CreatorSearchCard from "@/Components/Creators/CreatorSearchCard.vue";
+import CreatorSearchCard from "@/Pages/Viewer/Search/Partials/CreatorSearchCard.vue";
 const props = defineProps({
     name: String,
     searchQuery: String,

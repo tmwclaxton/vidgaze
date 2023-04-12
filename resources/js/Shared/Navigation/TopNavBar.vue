@@ -51,16 +51,16 @@ const props = defineProps({
                          :class="{'hidden sm:flex': expandedSearchBar,  '': !expandedSearchBar }">
                         <button
                             @click="$emit('toggleSidenav')"
-                            class="inline-flex items-center justify-center p-2 rounded-md text-zinc-400 dark:text-zinc-500 hover:text-zinc-500 dark:hover:text-zinc-400  focus:outline-none  focus:text-zinc-400 transition duration-150 ease-in-out"
+                            :class="{
+                                'rotate-180 ': showingNavigationDropdown,
+                            }"
+                            class=" transition duration-900 ease-in-out inline-flex items-center justify-center p-2 rounded-md text-zinc-400 dark:text-zinc-500 hover:text-zinc-500 dark:hover:text-zinc-400  focus:outline-none  focus:text-zinc-400 transition duration-150 ease-in-out"
                         >
-                            <OpenNavSVG class="h-6 w-6 fill-white" :class="{
-                                            hidden: showingNavigationDropdown,
-                                            'inline-flex': !showingNavigationDropdown,
-                                        }"/>
-                            <CloseNavSVG class="h-6 w-6 fill-white" :class="{
-                                            hidden: !showingNavigationDropdown,
-                                            'inline-flex': showingNavigationDropdown,
-                                        }"/>
+                            <OpenNavSVG class="h-6 w-6 fill-white" />
+                            <!--<CloseNavSVG class="h-6 w-6 fill-white" :class="{-->
+                            <!--                hidden: !showingNavigationDropdown,-->
+                            <!--                'inline-flex': showingNavigationDropdown,-->
+                            <!--            }"/>-->
                         </button>
                     </div>
 

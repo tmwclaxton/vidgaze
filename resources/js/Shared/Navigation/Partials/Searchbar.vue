@@ -20,12 +20,17 @@ const props = defineProps({
 });
 
 //define emits
-const emits = defineEmits(['toggleExpandedSearchBarOff', 'toggleExpandedSearchResultsOff']);
+const emits = defineEmits(['toggleExpandedSearchBarOff', 'toggleExpandedSearchResultsOff', 'toggleExpandedSearchBarOn', 'toggleExpandedSearchResultsOn']);
 
 const onClickAway = (event) => {
     if (props.expandedSearchResults) {
         emits('toggleExpandedSearchResultsOff')
     }
+}
+
+const search = () => {
+
+    console.log('search');
 }
 </script>
 
@@ -33,7 +38,7 @@ const onClickAway = (event) => {
 <template>
 
     <!--Search bar-->
-    <div v-click-away="onClickAway"
+    <div
          class="flex flex-col flex-grow  justify-center items-end sm:items-center sm:px-5">
         <div
             class="relative flex flex-row space-x-3 w-full justify-end sm:justify-center">
@@ -47,14 +52,15 @@ const onClickAway = (event) => {
                              class="ml-1 w-6 aspect-square flex-shrink-0 text-white   my-auto"/>
             </div>
 
-            <div :class="{'w-full flex-row-reverse': expandedSearchBar,' w-max sm:w-full max-w-md flex-row-reverse ': !expandedSearchBar,
+            <div  v-click-away="onClickAway" @click="$emit('toggleExpandedSearchBarOn')"
+                  :class="{'w-full ': expandedSearchBar,' w-max sm:w-full max-w-md ': !expandedSearchBar,
                 'rounded-t-md rounded-r-md': expandedSearchResults ,' rounded-md ': !expandedSearchResults}"
-                 class="h-10 relative flex sm:gap-x-2 items-center text-zinc-500 p-2 px-3 bg-zinc-900 ">
-                <SearchIcon @click="$emit('toggleExpandedSearchBarOn')" class="w-5 h-5 flex-shrink-0"/>
+                 class="h-10 relative flex sm:gap-x-2 items-center text-zinc-500 px-3 bg-zinc-900 ">
                 <input type="text" @click="$emit('toggleExpandedSearchResultsOn')"
                        class="bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white font-bold text-sm"
                        :class="{'w-full': expandedSearchBar,'w-0 sm:w-full': !expandedSearchBar,}"
                        placeholder="Search YouTube, Twitch and more...">
+                <SearchIcon @click="search" class="w-5 h-5 flex-shrink-0"/>
 
                 <!--Search dropdown-->
                 <div  :class="{'w-full': expandedSearchBar,' w-max sm:w-full max-w-md': !expandedSearchBar,

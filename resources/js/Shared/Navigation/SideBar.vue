@@ -34,15 +34,17 @@ const props = defineProps({
 
 <template>
 
-    <div class="fixed top-0  flex flex-col h-screen w-screen sm:w-max" >
+    <div class="fixed top-0  flex flex-col h-screen w-screen sm:w-max pointer-events-none "
+         >
         <div class="h-16">
             <!--Nav is fixed so lets space things below-->
 
         </div>
     <!-- Responsive Navigation Menu -->
-    <div class="  w-full    flex flex-row flex-grow top-0 ">
+    <div class="w-full flex flex-row flex-grow top-0 transition-all duration-500 ease-in-out "
+         :class="{ '-ml-96 opacity-0 pointer-events-none': showingNavigationDropdown, 'ml-0 opacity-100 pointer-events-auto': !showingNavigationDropdown }">
         <div
-            :class="{ 'flex': showingNavigationDropdown, 'hidden': !showingNavigationDropdown }"
+
             class="w-full sm:w-max mx-auto px-4 sm:px-6 lg:px-8 pb-2 pt-2  bg-vidgaze-blue-nav flex flex-col justify-between flex-grow pointer-events-auto   "
         >
 
@@ -50,9 +52,9 @@ const props = defineProps({
                 <ExpandableNavigationLinks :showingStudioLinks="showingStudioLinks"/>
 
                 <div class="border-t border-zinc-600 my-1 "></div>
-                <div class="hidden">
+                <div class="">
 
-                    <div v-if="$page.props.auth.user != null" class="space-y-1 sm:hidden ">
+                    <div v-if="$page.props.auth.user != null" class="space-y-1 sm:hidden hidden">
                         <ResponsiveNavLink :href="route('profile.edit')">
                             <div class="flex flex-row items-center gap-x-2">
                                 <SettingsIcon class="w-5 h-5"/>
@@ -75,10 +77,10 @@ const props = defineProps({
 
 
                     <!-- Responsive Settings Options -->
-                    <div class="lg:hidden" v-if="$page.props.auth.user != null">
+                    <div v-if="$page.props.auth.user != null" class="lg:hidden" >
 
 
-                        <div class="mt-1 space-y-1">
+                        <div class="mt-1 space-y-1 hidden">
 
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 <div class="flex flex-row items-center gap-x-2">
