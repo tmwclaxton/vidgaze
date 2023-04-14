@@ -41,11 +41,11 @@ const props = defineProps({
 
         </div>
     <!-- Responsive Navigation Menu -->
-    <div class="w-full flex flex-row flex-grow top-0 transition-all duration-500 ease-in-out "
-         :class="{ '-ml-96 opacity-0 pointer-events-none': showingNavigationDropdown, 'ml-0 opacity-100 pointer-events-auto': !showingNavigationDropdown }">
+    <div class="  flex flex-row flex-grow top-0 transition-all duration-200 ease-in-out overflow-x-hidden"
+         :class="{ '-ml-96  opacity-0 pointer-events-none': !showingNavigationDropdown, 'ml-0 w-54 opacity-100 pointer-events-auto': showingNavigationDropdown }">
         <div
 
-            class="w-full sm:w-max mx-auto px-4 sm:px-6 lg:px-8 pb-2 pt-2  bg-vidgaze-blue-nav flex flex-col justify-between flex-grow pointer-events-auto   "
+            class="w-full sm:w-max mx-auto px-4 sm:px-6 lg:px-8 pb-2 pt-2  bg-vidgaze-blue-nav flex flex-col justify-between flex-grow    "
         >
 
             <div id="top" class="">

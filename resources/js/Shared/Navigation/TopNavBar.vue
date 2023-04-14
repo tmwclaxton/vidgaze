@@ -42,7 +42,7 @@ const props = defineProps({
 <template>
 
     <!--Top nav-->
-    <div class="bg-vidgaze-blue-nav pointer-events-auto">
+    <div class="bg-vidgaze-blue-nav pointer-events-auto backdrop-blur-sm " >
         <div class="max-w- screen-2xl mx-auto px-4 sm:px-6 lg:px-8  flex flex-col">
             <div class="flex justify-between h-16 ">
                 <div class="flex w-full">
@@ -86,6 +86,17 @@ const props = defineProps({
                                @toggleExpandedSearchResultsOff="$emit('toggleExpandedSearchResultsOff')"
                                v-if="!showingStudioLinks" :expandedSearchBar="expandedSearchBar" :expandedSearchResults="expandedSearchResults" />
 
+                    <!--Buy Vidcoins button-->
+                    <div v-if="!showingStudioLinks" class="hidden 2xl:flex sm:items-center mr-2 flex-shrink-0">
+                        <Link :href="route('login')"  >
+                            <button class="flex flex-row items-center justify-center
+                            text-sm capitalize bg-zinc-900 hover:bg-zinc-800 text-white p-2 px-5 rounded-md font-bold flex flex-row space-x-3">
+                                <img src="/images/vidcoins/coins/PileofCoins2.png" alt="VidCoins"
+                                     class="h-4 w-auto">
+                                <p>Get VidCoins</p>
+                            </button>
+                        </Link>
+                    </div>
                     <!--log in-->
                     <div v-if="$page.props.auth.user == null"
                          class="hidden lg:flex sm:items-center   flex-shrink-0">
@@ -106,11 +117,12 @@ const props = defineProps({
 
                 </div>
 
-                <div v-if="$page.props.auth.user != null" class=" flex flex-row space-x-5 items-center   flex-shrink-0"
+                <div v-if="$page.props.auth.user != null" @click="$emit('toggleSidenavOff')"
+                     class=" flex flex-row gap-x-5 items-center ml-4  flex-shrink-0  "
                      :class="{'hidden sm:flex': expandedSearchBar,  '': !expandedSearchBar }"
                 >
                     <!--Upload Dropdown-->
-                    <UploadDropdown/>
+                    <UploadDropdown v-if="!showingStudioLinks" />
 
                     <!--Notifications Dropdown-->
                     <NotificationsDropdown/>

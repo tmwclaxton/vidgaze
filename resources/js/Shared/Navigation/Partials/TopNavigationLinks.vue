@@ -27,7 +27,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <div v-if="!showingStudioLinks" class="hidden md:flex gap-x-4 xl:gap-x-6 ml-8 text-md font-medium ">
+    <div v-if="!showingStudioLinks" class="hidden ld:flex gap-x-4 xl:gap-x-6 ml-8 text-md font-medium ">
         <NavLink :href="route('videos')" :active="route().current('videos')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <VideoIcon class=" w-4 h-4"/>
@@ -46,7 +46,7 @@ const props = defineProps({
         <!--        <span>Shorts</span>-->
         <!--    </div>-->
         <!--</NavLink>-->
-        <span class="hidden xl:flex ">
+        <span class="hidden 2xl:flex ">
             <NavLink :href="route('podcasts')" :active="route().current('podcasts')">
                 <div class="flex flex-row gap-x-2 px-1 items-center">
                     <PodcastsIcon class=" w-5 h-5"/>
@@ -93,19 +93,19 @@ const props = defineProps({
                 <span>Content</span>
             </div>
         </NavLink>
-        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+        <NavLink class="hidden ld:flex" :href="route('dashboard')" :active="route().current('dashboard')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <UploadIcon class=" w-5 h-5"/>
                 <span>Upload</span>
             </div>
         </NavLink>
-        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+        <NavLink class="hidden xl:flex" :href="route('dashboard')" :active="route().current('dashboard')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <StreamIcon class=" w-5 h-5"/>
                 <span>Stream</span>
             </div>
         </NavLink>
-        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+        <NavLink class="hidden xl:flex" :href="route('dashboard')" :active="route().current('dashboard')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <UnionIcon class=" w-5 h-5"/>
                 <span>Unions</span>

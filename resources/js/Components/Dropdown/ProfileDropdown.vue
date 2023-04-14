@@ -31,43 +31,45 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
                 </span>
             </template>
 
-            <template #content class="w-96">
-                <div class="flex flex-row space-x-2 block w-full px-4 py-2 text-left text-sm  ">
-                    <!--Profile picture-->
-                    <img class="h-9 aspect-square rounded-full bg-zinc-800 aspect-square  "
-                         v-bind:src="$page.props.auth.creator.avatar_url">
-                    <div class="flex flex-col">
-                                                <span
-                                                    class="text dark:text-white font-bold">{{ $page.props.auth.user.email }}</span>
-                        <Link :href="route('profile.edit')" class="text-blue-500 font-bold">
-                            Manage your account
-                        </Link>
+            <template #content >
+                <div class="p-2">
+                    <div class="flex flex-row space-x-2 block w-full px-4 py-2 pb-4 text-left text-sm  ">
+                        <!--Profile picture-->
+                        <img class="h-10 aspect-square rounded-full bg-zinc-800 aspect-square  "
+                             v-bind:src="$page.props.auth.creator.avatar_url">
+                        <div class="flex flex-col">
+                            <span class="text dark:text-white font-bold">{{ $page.props.auth.user.email }}</span>
+                            <Link :href="route('profile.edit')" class="text-blue-500 font-bold">
+                                Manage your account
+                            </Link>
+                        </div>
                     </div>
+
+                    <div class="border-t border-gray-200 dark:border-gray-800"></div>
+
+                    <DropdownLink v-if="$page.props.auth.admin" :href="route('admin.dashboard')" class="flex flex-row space-x-2">
+                        <font-awesome-icon :icon="['fas', 'helmet-safety']" class="w-5 h-5 flex-shrink-0"/>
+                        <span class="font-bold">Admin Dashboard</span>
+                    </DropdownLink>
+                    <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
+                        <ProfileIcon class="w-5 h-5 flex-shrink-0"/>
+                        <span class="font-bold">Your Channel</span>
+                    </DropdownLink>
+                    <DropdownLink :href="route('studio.dashboard')" class="flex flex-row space-x-2">
+                        <StudioIcon class="w-5 h-5 flex-shrink-0"/>
+                        <span class="font-bold">VidGaze Studio</span>
+                    </DropdownLink>
+                    <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
+                        <CoinsIcon class="w-5 h-5 flex-shrink-0"/>
+                        <span class="font-bold">Buy VidCoins</span>
+                    </DropdownLink>
+                    <DropdownLink :href="route('logout')" method="post" as="button"
+                                  class="flex flex-row space-x-2">
+                        <LogoutIcon class="w-5 h-5 flex-shrink-0"/>
+                        <span class="font-bold">Log Out</span>
+                    </DropdownLink>
                 </div>
 
-                <div class="border-t border-gray-200"></div>
-
-                <DropdownLink v-if="$page.props.auth.admin" :href="route('admin.dashboard')" class="flex flex-row space-x-2">
-                    <font-awesome-icon :icon="['fas', 'helmet-safety']" class="w-5 h-5 flex-shrink-0"/>
-                    <span class="font-bold">Admin Dashboard</span>
-                </DropdownLink>
-                <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
-                    <ProfileIcon class="w-5 h-5 flex-shrink-0"/>
-                    <span class="font-bold">Your Channel</span>
-                </DropdownLink>
-                <DropdownLink :href="route('studio.dashboard')" class="flex flex-row space-x-2">
-                    <StudioIcon class="w-5 h-5 flex-shrink-0"/>
-                    <span class="font-bold">VidGaze Studio</span>
-                </DropdownLink>
-                <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
-                    <CoinsIcon class="w-5 h-5 flex-shrink-0"/>
-                    <span class="font-bold">Buy VidCoins</span>
-                </DropdownLink>
-                <DropdownLink :href="route('logout')" method="post" as="button"
-                              class="flex flex-row space-x-2">
-                    <LogoutIcon class="w-5 h-5 flex-shrink-0"/>
-                    <span class="font-bold">Log Out</span>
-                </DropdownLink>
             </template>
         </Dropdown>
     </div>
