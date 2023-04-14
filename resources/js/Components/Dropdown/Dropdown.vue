@@ -17,8 +17,8 @@ const props = defineProps({
 });
 
 const closeOnEscape = (e) => {
-    if (open.value && e.key === 'Escape') {
-        open.value = false;
+    if (e.key === 'Escape') {
+        close();
     }
 };
 
@@ -48,16 +48,22 @@ const alignmentClasses = computed(() => {
 });
 
 const open = ref(false);
+
+const close = () => {
+    if (open.value) {
+        open.value = false;
+    }
+};
 </script>
 
 <template>
-    <div class="relative">
+    <div  v-click-away="close" class="relative">
         <div class="h-full flex align-middle" @click="open = !open">
             <slot name="trigger" />
         </div>
 
         <!-- Full Screen Dropdown Overlay -->
-        <div v-show="open" class="fixed inset-0 z-40" @click="open = false"></div>
+        <!--<div v-show="open" class="fixed inset-0 z-40" @click="open = false"></div>-->
 
         <transition
             enter-active-class="transition ease-out duration-200"
@@ -73,7 +79,9 @@ const open = ref(false);
                 :class="[widthClass, alignmentClasses]"
                 style="display: none"
             >
-                <div class="rounded-md ring-1 ring-black ring-opacity-5" :class="contentClasses">
+                <div
+
+                    class="rounded-md ring-1 ring-black ring-opacity-5" :class="contentClasses">
                     <slot name="content" />
                 </div>
             </div>

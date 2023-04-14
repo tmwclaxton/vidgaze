@@ -1,9 +1,10 @@
 <template>
-    <Link tabindex="0" class="search-suggestion" v-bind:href="link" >
-        <div class="overflow-x-hidden bg-white dark:bg-zinc-900 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800">
-            <div class="h-8 overflow-y-hidden flex px-3 py-2 text-base font-medium text dark:textDark dark:text-white ">
-                <div class="flex-shrink-0 w-4 mr-3 text dark:textDark my-auto flex flex-col justify-center items-center">
-                    <!--<x-icon name="search"></x-icon>-->
+    <Link
+          v-bind:href="link" class="search-suggestion select-none" >
+        <div class=" overflow-x-hidden bg-zinc-800 hover:bg-zinc-700 rounded-md ease-in-out duration-400 transition shadow-md shadow">
+            <div scope="row" class="h-8 overflow-y-hidden flex px-3 py-2 text-base font-medium text text-white ">
+                <div class="flex-shrink-0 w-4 mr-3 my-auto flex flex-col justify-center items-center">
+                    <SearchIcon class="w-4 h-4"/>
                 </div>
 
                 <div class="line-clamp-1  overflow-y-hidden  flex flex-col justify-center items-center ">
@@ -12,7 +13,6 @@
             </div>
         </div>
     </Link>
-
 </template>
 
 <script setup>

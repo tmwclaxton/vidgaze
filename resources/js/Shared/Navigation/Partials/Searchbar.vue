@@ -2,7 +2,9 @@
 import SearchIcon from '~/images/icons/search.svg';
 import CloseNavSVG from '~/images/icons/exit.svg';
 import {Link} from "@inertiajs/vue3";
-import {defineProps, defineEmits} from "vue";
+import {defineProps, defineEmits, ref, watch} from "vue";
+import {Inertia} from "@inertiajs/inertia";
+import SearchSuggestion from "@/Shared/SearchDropdown/SearchSuggestion.vue";
 //name of the component
 const name = 'Searchbar';
 
@@ -28,9 +30,28 @@ const onClickAway = (event) => {
     }
 }
 
-const search = () => {
+//search query
+let searchInput = ref('');
+let results = ref([]);
 
-    console.log('search');
+
+watch(searchInput, (value) => {
+    // Inertia.get('/api/search-bar', {q: value})
+    axios.get('/api/search-bar', {params: {q: value}})
+        .then(response => {
+            results.value = response.data;
+        })
+        .catch(error => {
+            console.log(error);
+        });
+})
+
+//detect when search is entered
+function searchEntered() {
+    console.log(searchInput.value);
+    if (searchInput.value.length > 0 ) {
+        Inertia.get('/search', {q: searchInput.value});
+    }
 }
 </script>
 
@@ -56,36 +77,33 @@ const search = () => {
                   :class="{'w-full  ': expandedSearchBar,' w-max sm:w-full max-w-md ': !expandedSearchBar,
                 'rounded-t-md rounded-r-md  ': expandedSearchResults ,' rounded-md ': !expandedSearchResults}"
                  class="h-10 relative flex sm:gap-x-2 items-center text-zinc-500 px-3 bg-zinc-900 ">
-                <input type="text" @click="$emit('toggleExpandedSearchResultsOn')"
+                <input type="text"
+                       @click="$emit('toggleExpandedSearchResultsOn')"
+                       v-model="searchInput"
                        class="bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white font-bold text-sm"
                        :class="{'w-full': expandedSearchBar,'w-0 sm:w-full': !expandedSearchBar,' placeholder-zinc-400': expandedSearchResults}"
                        placeholder="Search YouTube, Twitch, Odysee and more...">
-                <SearchIcon @click="search" class="w-5 h-5 flex-shrink-0"/>
+                <SearchIcon @click="searchEntered" class="w-5 h-5 flex-shrink-0"/>
 
                 <!--Search dropdown-->
                 <div  :class="{'w-full': expandedSearchBar,' w-max sm:w-full max-w-md': !expandedSearchBar,
                     'flex ': expandedSearchResults ,'hidden': !expandedSearchResults}"
-                    class="absolute left-0 top-9 w-full pr-11 sm:pl-0  ">
+                      v-if="results.query !== null && Object.values(results).every(array => array.length === 0) === false"
 
-                    <div class="relative w-full bg-zinc-900 dark:bg-zinc-900 border border-zinc-900 h-96
+                      class="absolute left-0 top-9 w-full pr-11 sm:pl-0  ">
+
+                    <div class="relative w-full bg-zinc-900 dark:bg-zinc-900 border border-zinc-900 h-full
                                py-2 px-3  rounded-b-xl text-white shadow shadow-md  ">
                         <div class="relative w-full fixed pointer-events absolute rounded-none inset-x-0 mx-auto z-20 ">
                             <div class=" w-full text-sm text-left flex flex-col space-y-1">
-                                <Link :href="route('about')" class="search-suggestion select-none" >
-                                    <div class=" overflow-x-hidden bg-zinc-800 hover:bg-zinc-700 rounded-md ease-in-out duration-400 transition shadow-md shadow">
-                                        <div scope="row" class="h-8 overflow-y-hidden flex px-3 py-2 text-base font-medium text text-white ">
-                                            <div class="flex-shrink-0 w-4 mr-3 my-auto flex flex-col justify-center items-center">
-                                                <SearchIcon class="w-4 h-4"/>
-                                            </div>
+                                <!--for each creator or video in results show a search suggestion-->
+                                <SearchSuggestion v-for="category in results.categories" :link="'search?q=' + category.name" :text="category.name" :key="category.id"></SearchSuggestion>
+                                <SearchSuggestion v-for="stream in results.streams" :link="'search?q=' + stream.title" :text="stream.title" :key="stream.id"></SearchSuggestion>
+                                <SearchSuggestion v-for="creator in results.creators" :link="'search?q=' + creator.name" :text="creator.name" :key="creator.id"></SearchSuggestion>
+                                <SearchSuggestion v-for="video in results.videos" :link="'search?q=' + video.title" :text="video.title" :key="video.id"></SearchSuggestion>
+                                <SearchSuggestion v-for="podcast in results.podcasts" :link="'search?q=' + podcast.title" :text="podcast.title" :key="podcast.id"></SearchSuggestion>
+                                <SearchSuggestion v-for="playlist in results.playlists" :link="'search?q=' + playlist.title" :text="playlist.title" :key="playlist.id"></SearchSuggestion>
 
-                                            <div class="line-clamp-1  overflow-y-hidden  flex flex-col justify-center items-center ">
-                                                <p class="font-semibold text-left leading-4 my-auto  line-clamp-1 break-words ">
-                                                    Pewdiepie
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
                             </div>
 
 

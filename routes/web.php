@@ -5,6 +5,7 @@ use App\Http\Controllers\StreamController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\VideoUploadController;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\Search\SearchBarController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -88,19 +89,19 @@ Route::middleware('auth')->group(function () {
 
 });
 
+
+//search bar
+Route::get('/api/search-bar', [SearchBarController::class, 'get']);
+
 //policy and terms
-Route::get('/terms_of_service', function () {
-    return Inertia::render('Legal/Terms');
-})->name('terms');
+Route::get('/terms_of_service', function () { return Inertia::render('Legal/Terms'); })->name('terms');
+Route::get('/privacy_policy', function () { return Inertia::render('Legal/Policy'); })->name('privacy');
 
-Route::get('/privacy_policy', function () {
-    return Inertia::render('Legal/Policy');
-})->name('privacy');
+//testing routes
+if (App::environment('local')) {
+    Route::post('/test', function() { return redirect()->back()->with('toast', 'Toast endpoint!'); });
 
-
-Route::post('/test', function() {
-    return redirect()->back()->with('toast', 'Toast endpoint!');
-});
+}
 
 
 require __DIR__.'/auth.php';
