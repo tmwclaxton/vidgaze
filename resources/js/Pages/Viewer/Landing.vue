@@ -91,7 +91,7 @@ export default {
                                     class="form-input w-full pl-10 pr-4 py-2 border border-transparent rounded-md leading-5 bg-gray-800 bg-opacity-25
                                 text-white   text-sm sm:text-lg
                                 placeholder-gray-400 focus:outline-none focus:bg-white focus:bg-opacity-10 focus:placeholder-gray-300 focus:text-gray-300 focus:ring-0 transition duration-150 ease-in-out"
-                                    placeholder="Search for a creator "
+                                    placeholder="Search for a creator or a video from any platform"
                                 />
                             </div>
                         </div>
