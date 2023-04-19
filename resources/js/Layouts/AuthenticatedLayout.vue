@@ -37,7 +37,7 @@ const props = defineProps({
             <!-- Page Content -->
             <main class="flex flex-row" >
 
-                <div class="pointer-events-none opacity-0  transition duration-700 ease-in-out"  :class="{'w-52 mr-7': showingNavigationDropdown}">
+                <div class="pointer-events-none opacity-0  transition duration-700 ease-in-out"  :class="{'sm:w-52 sm:m r-7': showingNavigationDropdown}">
 
                 </div>
                 <div class="flex-grow  transition duration-700 ease-in-out">

@@ -90,7 +90,7 @@ const props = defineProps({
                             </ResponsiveNavLink>
                         </div>
                     </div>
-                    <div v-else class="lg:hidden">
+                    <div v-else class="sm:hidden">
                         <div class="mt-1 space-y-1">
                             <!-- <ResponsiveNavLink :href="route('login')"> Log In </ResponsiveNavLink>-->
                             <ResponsiveNavLink :href="route('register')">

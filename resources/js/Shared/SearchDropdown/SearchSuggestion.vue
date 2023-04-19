@@ -1,7 +1,8 @@
 <template>
     <Link
           v-bind:href="link" class="search-suggestion select-none" >
-        <div class=" overflow-x-hidden bg-zinc-800 hover:bg-zinc-700 rounded-md ease-in-out duration-400 transition shadow-md shadow">
+        <div class=" overflow-x-hidden bg-zinc-800  rounded-md ease-in-out duration-400 transition shadow-md shadow"
+        :class="{'bg-zinc-700  ': selected}">
             <div scope="row" class="h-8 overflow-y-hidden flex px-3 py-2 text-base font-medium text text-white ">
                 <div class="flex-shrink-0 w-4 mr-3 my-auto flex flex-col justify-center items-center">
                     <SearchIcon class="w-4 h-4"/>
@@ -17,6 +18,7 @@
 
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3'
+import SearchIcon from '~/images/icons/search.svg';
 const { text, link } = defineProps({
     text: {
         type: String,
@@ -24,6 +26,10 @@ const { text, link } = defineProps({
     },
     link: {
         type: String,
+        required: true
+    },
+    selected: {
+        type: Boolean,
         required: true
     }
 })

@@ -1,16 +1,16 @@
 <script setup>
 import SearchIcon from '~/images/icons/search.svg';
 import CloseNavSVG from '~/images/icons/exit.svg';
-import {Link} from "@inertiajs/vue3";
-import {defineProps, defineEmits, ref, watch} from "vue";
-import {Inertia} from "@inertiajs/inertia";
-import SearchSuggestion from "@/Shared/SearchDropdown/SearchSuggestion.vue";
-//name of the component
+import { Link } from '@inertiajs/vue3';
+import { defineProps, defineEmits, ref, watch, computed } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
+import SearchSuggestion from '@/Shared/SearchDropdown/SearchSuggestion.vue';
+
+// name of the component
 const name = 'Searchbar';
 
-//accept props
+// accept props
 const props = defineProps({
-
     expandedSearchBar: {
         type: Boolean,
         required: true
@@ -18,43 +18,113 @@ const props = defineProps({
     expandedSearchResults: {
         type: Boolean,
         required: true
-    },
+    }
 });
 
-//define emits
-const emits = defineEmits(['toggleExpandedSearchBarOff', 'toggleExpandedSearchResultsOff', 'toggleExpandedSearchBarOn', 'toggleExpandedSearchResultsOn']);
+// define emits
+const emits = defineEmits([
+    'toggleExpandedSearchBarOff',
+    'toggleExpandedSearchResultsOff',
+    'toggleExpandedSearchBarOn',
+    'toggleExpandedSearchResultsOn'
+]);
 
-const onClickAway = (event) => {
+const onClickAway = event => {
     if (props.expandedSearchResults) {
-        emits('toggleExpandedSearchResultsOff')
+        emits('toggleExpandedSearchResultsOff');
     }
-}
+};
 
-//search query
+// search query
 let searchInput = ref('');
 let results = ref([]);
+let selectedResultIndex = ref(-1);
 
-
-watch(searchInput, (value) => {
-    // Inertia.get('/api/search-bar', {q: value})
-    axios.get('/api/search-bar', {params: {q: value}})
+watch(searchInput, value => {
+    // reset the selected result index whenever a new search query is entered
+    selectedResultIndex.value = -1;
+    axios
+        .get('/api/search-bar', { params: { q: value } })
         .then(response => {
             results.value = response.data;
         })
         .catch(error => {
             console.log(error);
         });
-})
+});
 
-//detect when search is entered
 function searchEntered() {
-    console.log(searchInput.value);
-    if (searchInput.value.length > 0 ) {
-        Inertia.get('/search', {q: searchInput.value});
+    // console.log(searchInput.value);
+    if (searchInput.value.length > 0) {
+        Inertia.get('/search', { q: searchInput.value });
     }
 }
-</script>
 
+const showSearchResultsDropdown = computed(() => {
+    return (
+        props.expandedSearchResults &&
+        Object.keys(results.value)
+            .filter(key => key !== 'query')
+            .reduce((accumulator, key) => {
+                return accumulator + results.value[key].length;
+            }, 0) > 0
+    );
+});
+
+function selectResult(index) {
+    selectedResultIndex.value = index;
+}
+
+function selectNextResult() {
+    if (showSearchResultsDropdown.value) {
+        selectedResultIndex.value =
+            (selectedResultIndex.value + 1) %
+            (results.value.categories.length +
+                results.value.streams.length +
+                results.value.creators.length +
+                results.value.videos.length +
+                results.value.podcasts.length +
+                results.value.playlists.length);
+    }
+}
+
+function selectPreviousResult() {
+    const lengthOfAll =
+        results.value.categories.length +
+        results.value.streams.length +
+        results.value.creators.length +
+        results.value.videos.length +
+        results.value.podcasts.length +
+        results.value.playlists.length;
+
+    if (showSearchResultsDropdown.value) {
+        selectedResultIndex.value =
+            (selectedResultIndex.value - 1 +
+                lengthOfAll) %
+            (lengthOfAll);
+    }
+}
+function goToSelectedResult() {
+    if (showSearchResultsDropdown.value && selectedResultIndex.value >= 0) {
+        const resultTypes = ['categories', 'streams', 'creators', 'videos', 'podcasts', 'playlists'];
+        const allResults = resultTypes.map(type => results.value[type]).flat();
+        const selectedResult = allResults[selectedResultIndex.value];
+
+        if (selectedResult) {
+            const selectedResultValue = selectedResult.name || selectedResult.title;
+            if (selectedResultValue === searchInput.value || !selectedResultValue) {
+                searchEntered();
+            } else {
+                searchInput.value = selectedResultValue;
+            }
+        }
+    }else {
+        searchEntered();
+    }
+}
+
+
+</script>
 
 <template>
 
@@ -75,11 +145,14 @@ function searchEntered() {
 
             <div  v-click-away="onClickAway" @click="$emit('toggleExpandedSearchBarOn')"
                   :class="{'w-full  ': expandedSearchBar,' w-max sm:w-full max-w-md ': !expandedSearchBar,
-                'rounded-t-md rounded-r-md  ': expandedSearchResults ,' rounded-md ': !expandedSearchResults}"
+                'rounded-t-md rounded-r-md  ': showSearchResultsDropdown ,' rounded-md ': !showSearchResultsDropdown}"
                  class="h-10 relative flex sm:gap-x-2 items-center text-zinc-500 px-3 bg-zinc-900 ">
                 <input type="text"
                        @click="$emit('toggleExpandedSearchResultsOn')"
-                       v-model="searchInput"
+                       v-model.trim="searchInput"
+                       @keydown.arrow-down="selectNextResult"
+                       @keydown.arrow-up="selectPreviousResult"
+                       @keydown.enter="goToSelectedResult"
                        class="bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white font-bold text-sm"
                        :class="{'w-full': expandedSearchBar,'w-0 sm:w-full': !expandedSearchBar,' placeholder-zinc-400': expandedSearchResults}"
                        placeholder="Search YouTube, Twitch, Odysee and more...">
@@ -87,22 +160,63 @@ function searchEntered() {
 
                 <!--Search dropdown-->
                 <div  :class="{'w-full': expandedSearchBar,' w-max sm:w-full max-w-md': !expandedSearchBar,
-                    'flex ': expandedSearchResults ,'hidden': !expandedSearchResults}"
-                      v-if="results.query !== null && Object.values(results).every(array => array.length === 0) === false"
-
-                      class="absolute left-0 top-9 w-full pr-11 sm:pl-0  ">
+                    'flex ': expandedSearchResults ,'hidden': !showSearchResultsDropdown}"
+                          class="absolute left-0 top-9 w-full pr-11 sm:pl-0  ">
 
                     <div class="relative w-full bg-zinc-900 dark:bg-zinc-900 border border-zinc-900 h-full
                                py-2 px-3  rounded-b-xl text-white shadow shadow-md  ">
                         <div class="relative w-full fixed pointer-events absolute rounded-none inset-x-0 mx-auto z-20 ">
                             <div class=" w-full text-sm text-left flex flex-col space-y-1">
                                 <!--for each creator or video in results show a search suggestion-->
-                                <SearchSuggestion v-for="category in results.categories" :link="'search?q=' + category.name" :text="category.name" :key="category.id"></SearchSuggestion>
-                                <SearchSuggestion v-for="stream in results.streams" :link="'search?q=' + stream.title" :text="stream.title" :key="stream.id"></SearchSuggestion>
-                                <SearchSuggestion v-for="creator in results.creators" :link="'search?q=' + creator.name" :text="creator.name" :key="creator.id"></SearchSuggestion>
-                                <SearchSuggestion v-for="video in results.videos" :link="'search?q=' + video.title" :text="video.title" :key="video.id"></SearchSuggestion>
-                                <SearchSuggestion v-for="podcast in results.podcasts" :link="'search?q=' + podcast.title" :text="podcast.title" :key="podcast.id"></SearchSuggestion>
-                                <SearchSuggestion v-for="playlist in results.playlists" :link="'search?q=' + playlist.title" :text="playlist.title" :key="playlist.id"></SearchSuggestion>
+                                <!-- for each creator or video in results show a search suggestion -->
+                                <SearchSuggestion
+                                    v-for="(category, index) in results.categories"
+                                    :link="'search?q=' + category.name"
+                                    :text="category.name"
+                                    :key="category.id"
+                                    :selected="selectedResultIndex === index"
+                                    @mouseover="selectResult(index)"
+                                ></SearchSuggestion>
+                                <SearchSuggestion
+                                    v-for="(stream, index) in results.streams"
+                                    :link="'search?q=' + stream.title"
+                                    :text="stream.title"
+                                    :key="stream.id"
+                                    :selected="selectedResultIndex === index + results.categories.length"
+                                    @mouseover="selectResult(index + results.categories.length)"
+                                ></SearchSuggestion>
+                                <SearchSuggestion
+                                    v-for="(creator, index) in results.creators"
+                                    :link="'search?q=' + creator.name"
+                                    :text="creator.name"
+                                    :key="creator.id"
+                                    :selected="selectedResultIndex === index + results.categories.length + results.streams.length"
+                                    @mouseover="selectResult(index + results.categories.length + results.streams.length)"
+                                ></SearchSuggestion>
+                                <SearchSuggestion
+                                    v-for="(video, index) in results.videos"
+                                    :link="'search?q=' + video.title"
+                                    :text="video.title"
+                                    :key="video.id"
+                                    :selected="selectedResultIndex === index + results.categories.length + results.streams.length + results.creators.length"
+                                    @mouseover="selectResult(index + results.categories.length + results.streams.length + results.creators.length)"
+                                ></SearchSuggestion>
+                                <SearchSuggestion
+                                    v-for="(podcast, index) in results.podcasts"
+                                    :link="'search?q=' + podcast.title"
+                                    :text="podcast.title"
+                                    :key="podcast.id"
+                                    :selected="selectedResultIndex === index + results.categories.length + results.streams.length + results.creators.length + results.videos.length"
+                                    @mouseover="selectResult(index + results.categories.length + results.streams.length + results.creators.length + results.videos.length)"
+                                ></SearchSuggestion>
+                                <SearchSuggestion
+                                    v-for="(playlist, index) in results.playlists"
+                                    :link="'search?q=' + playlist.title"
+                                    :text="playlist.title"
+                                    :key="playlist.id"
+                                    :selected="selectedResultIndex === index + results.categories.length + results.streams.length + results.creators.length + results.videos.length + results.podcasts.length"
+                                    @mouseover="selectResult(index + results.categories.length + results.streams.length + results.creators.length + results.videos.length + results.podcasts.length)"
+                                ></SearchSuggestion>
 
                             </div>
 

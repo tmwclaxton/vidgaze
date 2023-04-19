@@ -87,19 +87,19 @@ const props = defineProps({
                                v-if="!showingStudioLinks" :expandedSearchBar="expandedSearchBar" :expandedSearchResults="expandedSearchResults" />
 
                     <!--Buy Vidcoins button-->
-                    <div v-if="!showingStudioLinks" class="hidden 2xl:flex sm:items-center mr-2 flex-shrink-0">
+                    <div v-if="!showingStudioLinks" class="hidden 2xl:flex sm:items-center mr-2 flex-shrink-0 group">
                         <Link :href="route('login')"  >
                             <button class="flex flex-row items-center justify-center
                             text-sm capitalize bg-zinc-900 hover:bg-zinc-800 text-white p-2 px-5 rounded-md font-bold flex flex-row space-x-3">
                                 <img src="/images/vidcoins/coins/PileofCoins2.png" alt="VidCoins"
-                                     class="h-4 w-auto">
+                                     class="h-4 w-auto group-hover:shake">
                                 <p>Get VidCoins</p>
                             </button>
                         </Link>
                     </div>
                     <!--log in-->
                     <div v-if="$page.props.auth.user == null"
-                         class="hidden lg:flex sm:items-center   flex-shrink-0">
+                         class="hidden sm:flex sm:items-center   flex-shrink-0">
                         <div class="flex gap-x-2">
                             <Link :href="route('login')" >
                                 <button class="text-sm capitalize bg-zinc-900 hover:bg-zinc-800 text-white p-2 px-5 rounded-md font-bold">
