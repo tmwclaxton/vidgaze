@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Content;
 
-use App\Enums\Platforms;
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\SearchResultDTO;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCreatorRequest;
 use App\Http\Requests\UpdateCreatorRequest;
 use App\Models\Creator;

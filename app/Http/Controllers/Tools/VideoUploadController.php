@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Tools;
 
+use App\Http\Controllers\Controller;
 use App\Models\VideoUpload;
 use Illuminate\Support\Facades\Auth;
 

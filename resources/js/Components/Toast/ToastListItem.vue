@@ -23,7 +23,7 @@ const emit = defineEmits(["remove"]);
 </script>
 <template>
     <div
-        class="flex items-center rounded-lg p-4 shadow shadow-md shadow-zinc-400 dark:shadow-zinc-800 text-zinc-500 bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-400"
+        class="flex items-center rounded-lg p-4 shadow shadow-md shadow-zinc-400 dark:shadow-zinc-900 text-zinc-500 bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-400"
         role="alert"
     >
         <div

@@ -1,14 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Content;
 
 
-use App\Models\Creator;
+use App\Http\Controllers\Controller;
 use App\Models\Stream;
-use App\Models\Union;
 use App\Models\Video;
-use Illuminate\Support\Facades\File;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class SubscriptionsController extends Controller

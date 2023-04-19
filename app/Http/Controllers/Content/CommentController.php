@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Content;
 
+use App\Http\Controllers\Controller;
 use App\Models\Video;
-use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {

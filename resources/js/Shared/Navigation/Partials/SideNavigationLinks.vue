@@ -35,7 +35,7 @@ const props = defineProps({
 
     <div  v-if="!showingStudioLinks" class="  space-y-1 ">
         <div class="ld:hidden">
-            <ResponsiveNavLink :href="route('videos')" :active="route().current('videos')">
+            <ResponsiveNavLink :href="route('videos.index')" :active="route().current('videos.index')">
                 <div class="flex flex-row items-center gap-x-2">
                     <VideoIcon class="w-5 h-5"/>
                     <span>Videos</span>
@@ -43,7 +43,7 @@ const props = defineProps({
             </ResponsiveNavLink>
         </div>
         <div class="ld:hidden">
-            <ResponsiveNavLink :href="route('streams')" :active="route().current('streams')">
+            <ResponsiveNavLink :href="route('streams.index')" :active="route().current('streams.index')">
                 <div class="flex flex-row items-center gap-x-2">
                     <StreamIcon class="w-5 h-5"/>
                     <span>Streams</span>
@@ -51,7 +51,7 @@ const props = defineProps({
             </ResponsiveNavLink>
         </div>
         <div class="">
-            <ResponsiveNavLink :href="route('shorts')" :active="route().current('shorts')">
+            <ResponsiveNavLink :href="route('videos.shorts')" :active="route().current('videos.shorts')">
                 <div class="flex flex-row items-center gap-x-2">
                     <ShortsIcon class="w-5 h-5"/>
                     <span>Shorts</span>
@@ -68,7 +68,7 @@ const props = defineProps({
         </div>
 
         <div class=" ">
-            <ResponsiveNavLink :href="route('music')" :active="route().current('music')">
+            <ResponsiveNavLink :href="route('music.index')" :active="route().current('music.index')">
                 <div class="flex flex-row items-center gap-x-2">
                     <MusicIcon class="w-5 h-5"/>
                     <span>Music</span>
@@ -79,7 +79,7 @@ const props = defineProps({
         <!--subscriptions-->
 
         <div v-if="$page.props.auth.user != null" class="lg:hidden">
-            <ResponsiveNavLink :href="route('music')" :active="route().current('music')">
+            <ResponsiveNavLink :href="route('feed.subscriptions')" :active="route().current('feed.subscriptions')">
                 <div class="flex flex-row items-center gap-x-2">
                     <SubscriptionsIcon class="w-5 h-5"/>
                     <span>Subscriptions</span>
@@ -89,7 +89,7 @@ const props = defineProps({
 
         <!--library-->
         <div v-if="$page.props.auth.user != null" class="xl:hidden">
-            <ResponsiveNavLink :href="route('music')" :active="route().current('music')">
+            <ResponsiveNavLink :href="route('feed.library')" :active="route().current('feed.library')">
                 <div class="flex flex-row items-center gap-x-2">
                     <LibraryIcon class="w-5 h-5"/>
                     <span>Library</span>
@@ -110,7 +110,7 @@ const props = defineProps({
                 </div>
             </ResponsiveNavLink>
         </div>
-        <!--dashboard-->
+        <!--content page-->
         <div v-if="$page.props.auth.user != null" class="md:hidden">
             <ResponsiveNavLink :href="route('music')" :active="route().current('music')">
                 <div class="flex flex-row items-center gap-x-2">
@@ -119,7 +119,7 @@ const props = defineProps({
                 </div>
             </ResponsiveNavLink>
         </div>
-        <!--dashboard-->
+        <!--upload page-->
         <div v-if="$page.props.auth.user != null" class="ld:hidden">
             <ResponsiveNavLink :href="route('music')" :active="route().current('music')">
                 <div class="flex flex-row items-center gap-x-2">
@@ -128,7 +128,7 @@ const props = defineProps({
                 </div>
             </ResponsiveNavLink>
         </div>
-        <!--dashboard-->
+        <!--creator streams-->
         <div v-if="$page.props.auth.user != null" class="xl:hidden">
             <ResponsiveNavLink :href="route('music')" :active="route().current('music')">
                 <div class="flex flex-row items-center gap-x-2">

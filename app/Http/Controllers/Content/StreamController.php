@@ -1,20 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Content;
 
 
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\SearchResultDTO;
 use App\Helpers\Tokens\TokenHelper;
+use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Creator;
 use App\Models\Stream;
-use App\Models\Union;
-use App\Models\Video;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\File;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class StreamController extends Controller
 {
@@ -34,15 +30,16 @@ class StreamController extends Controller
             ->take(1)->get()->first();
 
         $creatorID = Auth::user() ? Auth::user()->id : "empty";
-        $webhookToken = TokenHelper::generateToken(session()->getId(), $creatorID, $stream->id);
+        //$webhookToken = TokenHelper::generateToken(session()->getId(), $creatorID, $stream->id);
 
-        return view('livestreams',[
-            'stream'=> $stream,
-            'webhookToken' => $webhookToken,
-            'creator' => $stream->creator,
-            'external_id' => $stream->getPrimarySourceID(),
-            'categories' => $categories,
-        ]);
+        //return view('livestreams',[
+        //    'stream'=> $stream,
+        //    'webhookToken' => $webhookToken,
+        //    'creator' => $stream->creator,
+        //    'external_id' => $stream->getPrimarySourceID(),
+        //    'categories' => $categories,
+        //]);
+        return Inertia::render('Viewer/Streams/StreamsIndex');
 
     }
 

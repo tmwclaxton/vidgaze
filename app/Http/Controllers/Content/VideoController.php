@@ -1,23 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Content;
 
 use App\Helpers\Tokens\TokenHelper;
-use App\Models\Award;
-use App\Models\Comment;
+use App\Http\Controllers\Controller;
 use App\Models\Playlist;
 use App\Models\PlaylistVideo;
-use App\Models\VideoAward;
-use App\Models\VideoViewInfos;
-use DOMDocument;
-use DOMXPath;
-use Illuminate\Http\Request;
-use App\Models\Category;
 use App\Models\Video;
-use App\Models\User;
+use App\Models\VideoViewInfos;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\View\View;
 use Inertia\Inertia;
 use function Deployer\Support\array_merge_alternate;
 
@@ -34,10 +26,7 @@ class VideoController extends Controller
 
     public function index()
     {
-
-        return inertia('Home/Home', [
-
-        ]);
+        return Inertia::render('Viewer/Videos/VideosIndex');
     }
 
     public function users()
@@ -63,9 +52,10 @@ class VideoController extends Controller
 
     public function shorts()
     {
-        return view('shorts', [
-            'firstShortSlug' => null,
-        ]);
+        return Inertia::render('Viewer/Shorts/ShortsIndex');
+        //return view('shorts', [
+        //    'firstShortSlug' => null,
+        //]);
     }
 
     public function short(Request $request)

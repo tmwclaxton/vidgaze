@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Content;
 
-use App\Models\Creator;
+use App\Http\Controllers\Controller;
 use App\Models\Playlist;
-use App\Models\Video;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
 use function Deployer\error;
 
 class PlaylistController extends Controller
@@ -24,18 +23,19 @@ class PlaylistController extends Controller
 
     public function index()
     {
-        return view('/feed/library', [
-            'playlists' => Playlist::query()->where([
-                ['creator_id', '=', Auth::user()->creator->id,],['visibility', '!=', 'hidden']
-            ])
-                ->orderBy('server_made', 'DESC')
-                ->orderBy('video_count', 'DESC')
-                ->orderBy('updated_at','DESC')
-                ->get(),
-            'history' => Auth::user()->creator->getPlaylist('History',true)->videos->reverse()->skip(0)->take(4),
-            'later' => Auth::user()->creator->getPlaylist('Watch Later',true)->videos->reverse()->skip(0)->take(4),
-            'liked' => Auth::user()->creator->getPlaylist('Liked Videos',true)->videos->reverse()->skip(0)->take(4),
-        ]);
+        return Inertia::render('Viewer/Music/MusicIndex');
+        //return view('/feed/library', [
+        //    'playlists' => Playlist::query()->where([
+        //        ['creator_id', '=', Auth::user()->creator->id,],['visibility', '!=', 'hidden']
+        //    ])
+        //        ->orderBy('server_made', 'DESC')
+        //        ->orderBy('video_count', 'DESC')
+        //        ->orderBy('updated_at','DESC')
+        //        ->get(),
+        //    'history' => Auth::user()->creator->getPlaylist('History',true)->videos->reverse()->skip(0)->take(4),
+        //    'later' => Auth::user()->creator->getPlaylist('Watch Later',true)->videos->reverse()->skip(0)->take(4),
+        //    'liked' => Auth::user()->creator->getPlaylist('Liked Videos',true)->videos->reverse()->skip(0)->take(4),
+        //]);
     }
     public function later()
     {

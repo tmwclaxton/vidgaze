@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Content;
 
 
-use App\Models\Creator;
+use App\Http\Controllers\Controller;
 use App\Models\Podcast;
 use App\Models\Video;
 

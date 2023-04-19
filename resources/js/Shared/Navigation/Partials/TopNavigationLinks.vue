@@ -28,13 +28,13 @@ const props = defineProps({
 
 <template>
     <div v-if="!showingStudioLinks" class="hidden ld:flex gap-x-4 xl:gap-x-6 ml-8 text-md font-medium ">
-        <NavLink :href="route('videos')" :active="route().current('videos')">
+        <NavLink :href="route('videos.index')" :active="route().current('videos.index')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <VideoIcon class=" w-4 h-4"/>
                 <span>Videos</span>
             </div>
         </NavLink>
-        <NavLink :href="route('streams')" :active="route().current('streams')">
+        <NavLink :href="route('streams.index')" :active="route().current('streams.index')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <LivestreamIcon class=" w-5 h-5"/>
                 <span>Live</span>
@@ -56,7 +56,7 @@ const props = defineProps({
         </span>
 
         <span class="hidden  ">
-            <NavLink :href="route('music')" :active="route().current('music')">
+            <NavLink :href="route('music.index')" :active="route().current('music.index')">
                 <div class="flex flex-row gap-x-2 px-1 items-center">
                     <MusicIcon class=" w-5 h-5"/>
                     <span>Music</span>
@@ -64,13 +64,13 @@ const props = defineProps({
             </NavLink>
         </span>
 
-        <NavLink v-if="$page.props.auth.user != null" class="hidden lg:flex" :href="route('streams')" :active="route().current('streams')">
+        <NavLink v-if="$page.props.auth.user != null" class="hidden lg:flex" :href="route('streams.index')" :active="route().current('streams.index')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <SubscriptionsIcon class=" w-5 h-5"/>
                 <span>Subscriptions</span>
             </div>
         </NavLink>
-        <NavLink v-if="$page.props.auth.user != null" class="hidden xl:flex" :href="route('shorts')" :active="route().current('shorts')">
+        <NavLink v-if="$page.props.auth.user != null" class="hidden xl:flex" :href="route('feed.library')" :active="route().current('feed.library')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <LibraryIcon class=" w-5 h-5"/>
                 <span>Library</span>
@@ -81,13 +81,13 @@ const props = defineProps({
 
     </div>
     <div v-if="showingStudioLinks" class="hidden md:flex gap-x-8 sm:-my-px  text-md font-medium ">
-        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+        <NavLink :href="route('studio.dashboard')" :active="route().current('studio.dashboard')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <ProfileIcon class=" w-5 h-5"/>
                 <span>Dashboard</span>
             </div>
         </NavLink>
-        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+        <NavLink :href="route('studio.dashboard')" :active="route().current('dashboard')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <ContentIcon class=" w-5 h-5"/>
                 <span>Content</span>
