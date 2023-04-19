@@ -44,7 +44,7 @@ watch(searchInput, value => {
     // reset the selected result index whenever a new search query is entered
     selectedResultIndex.value = -1;
     axios
-        .get('/api/search-bar', { params: { q: value } })
+        .get('/search-bar', { params: { q: value } })
         .then(response => {
             results.value = response.data;
         })

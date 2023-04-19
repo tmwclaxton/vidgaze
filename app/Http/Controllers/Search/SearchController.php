@@ -1,23 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Search;
 
-use App\Enums\Platforms;
-use App\Helpers\PlatformAPIs\Dailymotion;
-use App\Helpers\PlatformAPIs\Twitch;
-use App\Helpers\PlatformAPIs\Vimeo;
-use App\Helpers\PlatformAPIs\YouTube;
+
 use App\Helpers\Search;
 use App\Helpers\SearchQueryDTO;
-use App\Helpers\SearchResultDTO;
 use App\Http\Controllers\Controller;
-use App\Services\MixPanelTrackingService;
-use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Redis;
+
+
 use Laravel\Octane\Exceptions\TaskException;
 use Laravel\Octane\Exceptions\TaskTimeoutException;
 use Laravel\Octane\Facades\Octane;

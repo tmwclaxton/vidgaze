@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\InfiniteVideosController;
+use App\Http\Controllers\Infinite\InfiniteVideosController;
+use App\Http\Controllers\Search\SearchController;
 use App\Http\Controllers\Content\MusicController;
 use App\Http\Controllers\Content\PlaylistController;
 use App\Http\Controllers\Content\PodcastController;
@@ -117,12 +118,14 @@ Route::get('create_account/import/{platform}', [ImportingController::class,'crea
 
 //oauth routes
 
+//search routes
+Route::get('/search/', [SearchController::class, 'get']);
 
 //search bar
-Route::get('/api/search-bar', [SearchBarController::class, 'get']);
+Route::get('/search-bar', [SearchBarController::class, 'get']);
 
 //infinite scroll routes
-Route::get('/api/infinite/videos', [InfiniteVideosController::class, 'get']);
+Route::get('/infinite/videos', [InfiniteVideosController::class, 'get']);
 
 //this is for updating how long a user has been watching a video / stream
 Route::post('/view-listener', [ViewListenerController::class,'message']);
