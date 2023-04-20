@@ -44,7 +44,7 @@ watch(searchInput, value => {
     // reset the selected result index whenever a new search query is entered
     selectedResultIndex.value = -1;
     axios
-        .get('/search-bar', { params: { q: value } })
+        .get('/search_suggestions', { params: { q: value } })
         .then(response => {
             results.value = response.data;
         })
@@ -225,7 +225,7 @@ function goToSelectedResult() {
                     </div>
                 </div>
             </div>
-
+        <!--<p v-text="selectedResultIndex" class="text-white"></p>-->
         </div>
 
 

@@ -122,7 +122,7 @@ Route::get('create_account/import/{platform}', [ImportingController::class,'crea
 Route::get('/search/', [SearchController::class, 'get']);
 
 //search bar
-Route::get('/search-bar', [SearchBarController::class, 'get']);
+Route::get('/search_suggestions', [SearchBarController::class, 'get']);
 
 //infinite scroll routes
 Route::get('/infinite/videos', [InfiniteVideosController::class, 'get']);
