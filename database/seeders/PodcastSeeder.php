@@ -13,7 +13,7 @@ class PodcastSeeder extends Seeder
     public function run()
     {
         $creator1 = Creator::firstOrCreate([
-            'slug' => 'p_abcdefg',
+            'slug' => rand(0, 999999),
         ],[
             'name' => "Pints With Aquinas",
             'avatar_url' => 'https://ssl-static.libsyn.com/p/assets/f/f/e/f/ffeff39ab8cef524/R1-fWQQV-1.jpg',
@@ -30,7 +30,7 @@ class PodcastSeeder extends Seeder
         ]);
 
         $ep1 = PodcastEpisode::firstOrCreate([
-            "slug" => "8c68bc1b-75d0-435e-9985-d062954f8e83", // guid
+            "slug" => rand(0, 999999), // guid
         ],[
             'podcast_id' => $podcast1->id,
             //'category_id' => $cat2->id,
@@ -44,7 +44,7 @@ class PodcastSeeder extends Seeder
         ]);
 
         $ep2 = PodcastEpisode::firstOrCreate([
-            "slug" => "a7ec6bd7-e471-4968-993c-4be942aef255", // guid
+            "slug" => rand(0, 999999), // guid
             ],[
             'podcast_id' => $podcast1->id,
             //'category_id' => $cat2->id,
@@ -58,7 +58,7 @@ class PodcastSeeder extends Seeder
         ]);
 
         $ep3 = PodcastEpisode::firstOrCreate([
-            "slug" => "12c1cac1-c284-472b-93e0-15f111058814", // guid
+            "slug" => rand(0, 999999), // guid
             ],[
             'podcast_id' => $podcast1->id,
             //'category_id' => $cat2->id,

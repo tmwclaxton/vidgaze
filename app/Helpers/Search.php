@@ -590,7 +590,7 @@ class Search
         }
 
 
-        dd($results);
+        //dd($results);
         /** @var SearchResultDTO $result */
         foreach ($results as $result) {
             match (Kind::fromValue($result->kind)) {

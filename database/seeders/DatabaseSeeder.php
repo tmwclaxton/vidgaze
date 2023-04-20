@@ -14,9 +14,11 @@ use App\Models\CreatorSource;
 use App\Models\Payment;
 use App\Models\Playlist;
 use App\Models\PlaylistVideo;
+use App\Models\Podcast;
 use App\Models\Product;
 use App\Models\Stream;
 use App\Models\StreamAward;
+use App\Models\StreamSource;
 use App\Models\Subscription;
 use App\Models\Union;
 use App\Models\UnionMembership;
@@ -43,41 +45,54 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
-
-        //////// wipe database for re-seeding ////////
         Schema::disableForeignKeyConstraints();
-
-        //Alphabetical
-        Award::truncate();
-        Category::truncate();
-        Comment::truncate();
-        CommentAward::truncate();
-        CommentInteraction::truncate();
-        //CommentLike::truncate();
-        Creator::truncate();
-        Playlist::truncate();
-        PlaylistVideo::truncate();
-        Stream::truncate();
-        StreamAward::truncate();
-        Subscription::truncate();
-        Union::truncate();
-        UnionMembership::truncate();
-        User::truncate();
         Video::truncate();
-        VideoAward::truncate();
-        VideoViewInfos::truncate();
-        Product::truncate();
-        Payment::truncate();
-        CreatorSource::truncate();
-        channelDisinterest::truncate();
-        videoDisinterest::truncate();
-        videoReport::truncate();
-        Schema::enableForeignKeyConstraints();
+        Stream::truncate();
+        Podcast::truncate();
+        VideoSource::truncate();
+        StreamSource::truncate();
+
+        $this->call(PodcastSeeder::class);
+        $this->call(VideoSeeder::class);
+        $this->call(StreamSeeder::class);
+
+
         ////////////////// end wipe //////////////////
 
+        // use individual seeders to populate database not this
         if (true === false) {
-            (new CategorySeeder())->run();
+
+            //////// wipe database for re-seeding ////////
+            Schema::disableForeignKeyConstraints();
+
+            //Alphabetical
+            Award::truncate();
+            Category::truncate();
+            Comment::truncate();
+            CommentAward::truncate();
+            CommentInteraction::truncate();
+            //CommentLike::truncate();
+            Creator::truncate();
+            Playlist::truncate();
+            PlaylistVideo::truncate();
+            Stream::truncate();
+            StreamAward::truncate();
+            Subscription::truncate();
+            Union::truncate();
+            UnionMembership::truncate();
+            User::truncate();
+            Video::truncate();
+            VideoAward::truncate();
+            VideoViewInfos::truncate();
+            Product::truncate();
+            Payment::truncate();
+            CreatorSource::truncate();
+            channelDisinterest::truncate();
+            videoDisinterest::truncate();
+            videoReport::truncate();
+            Schema::enableForeignKeyConstraints();
+
+            //(new CategorySeeder())->run();
 
             $products = [
                 [
