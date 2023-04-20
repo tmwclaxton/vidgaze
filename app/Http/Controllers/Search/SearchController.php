@@ -9,9 +9,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 
-use Laravel\Octane\Exceptions\TaskException;
-use Laravel\Octane\Exceptions\TaskTimeoutException;
-use Laravel\Octane\Facades\Octane;
 
 
 class SearchController extends Controller
