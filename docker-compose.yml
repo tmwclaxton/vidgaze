@@ -1,6 +1,6 @@
 version: '3'
 services:
-    laravel:
+    laravel.test:
         build:
             context: ./docker/8.2
             dockerfile: Dockerfile
@@ -19,6 +19,7 @@ services:
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
         volumes:
             - '.:/var/www/html'
+#        entrypoint: ["bash", "-c", "php artisan migrate && docker-entrypoint.sh php-fpm"]
         networks:
             - sail
         depends_on:

@@ -571,10 +571,10 @@ class Search
             $responses = Octane::concurrently(
                 [
                     fn()=>YouTube::search($searchQuery->query, $searchQuery->maxResults)['results'],
-                    //fn()=>Vimeo::search($searchQuery->query, $searchQuery->maxResults)['results'],
-                    //fn()=>Dailymotion::search($searchQuery->query, $searchQuery->maxResults)['results'],
-                    //fn()=>Twitch::search($searchQuery->query, 2)['results'],
-//                    fn()=>Podcasts::getPodcastsFromItunesResults(Podcasts::search($searchQuery->query, 3)["response"]->results)['results']
+                    fn()=>Vimeo::search($searchQuery->query, $searchQuery->maxResults)['results'],
+                    fn()=>Dailymotion::search($searchQuery->query, $searchQuery->maxResults)['results'],
+                    fn()=>Twitch::search($searchQuery->query, 2)['results'],
+                    fn()=>Podcasts::getPodcastsFromItunesResults(Podcasts::search($searchQuery->query, 3)["response"]->results)['results']
                 ], 13000);
 
             $results = array_merge(...$responses);
