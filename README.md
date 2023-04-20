@@ -3,6 +3,14 @@
 
 VidGaze is a website and mobile-ready video-streaming app designed to empower content creators and make viewing content from multiple platforms a delightful experience. 
 
+How to launch the VidGaze container:
+
+1. Clone the repo
+2. Run `sail build`
+3. Run `sail up`
+4. Run `sail artisan db:wipe`
+5. Run `sail artisan migrate`
+6. Run `sail artisan migrate --path=database/patches`
 
 ## Features
 
