@@ -3,7 +3,6 @@
 namespace App\Helpers;
 
 use App\Enums\Kind;
-use App\Enums\Platforms;
 use App\Helpers\PlatformAPIs\Dailymotion;
 use App\Helpers\PlatformAPIs\Podcasts;
 use App\Helpers\PlatformAPIs\Twitch;
@@ -178,7 +177,7 @@ class Search
 
     public static function fun(){
         error_log("2");
-        Redis::client()->set("toby", "sucks");
+        Redis::client()->set("joshua", "sucks");
         sleep(3);
     }
 
@@ -186,8 +185,8 @@ class Search
     public static function temp(string $str){
 
         $client = new Client();
-        $client->set("toby", "sucks");
-        echo $client->get("toby");
+        $client->set("joshua", "sucks");
+        echo $client->get("joshua");
 
         return $str;
     }
@@ -572,9 +571,9 @@ class Search
             $responses = Octane::concurrently(
                 [
                     fn()=>YouTube::search($searchQuery->query, $searchQuery->maxResults)['results'],
-                    fn()=>Vimeo::search($searchQuery->query, $searchQuery->maxResults)['results'],
-                    fn()=>Dailymotion::search($searchQuery->query, $searchQuery->maxResults)['results'],
-                    fn()=>Twitch::search($searchQuery->query, 2)['results'],
+                    //fn()=>Vimeo::search($searchQuery->query, $searchQuery->maxResults)['results'],
+                    //fn()=>Dailymotion::search($searchQuery->query, $searchQuery->maxResults)['results'],
+                    //fn()=>Twitch::search($searchQuery->query, 2)['results'],
 //                    fn()=>Podcasts::getPodcastsFromItunesResults(Podcasts::search($searchQuery->query, 3)["response"]->results)['results']
                 ], 13000);
 
@@ -591,7 +590,7 @@ class Search
         }
 
 
-
+        dd($results);
         /** @var SearchResultDTO $result */
         foreach ($results as $result) {
             match (Kind::fromValue($result->kind)) {
