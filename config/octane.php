@@ -190,6 +190,8 @@ return [
         'routes',
         'composer.lock',
         '.env',
+        'app/jobs/*.php'
+
     ],
 
     /*
