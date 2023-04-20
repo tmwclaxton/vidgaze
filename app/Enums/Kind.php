@@ -23,30 +23,19 @@ enum Kind : string
      if(!is_string($value)){
          return $value;
      }
-        switch($value) {
-            case 'video':
-                return self::Video;
-            case 'creator':
-                return self::Creator;
-            case 'playlist':
-                return self::Playlist;
-            case 'stream':
-                return self::Stream;
-            case 'category':
-                return self::Category;
-            case 'rss':
-                return self::RSS;
-            case 'podcast':
-                return self::Podcast;
-            case 'podcast_episode':
-                return self::PodcastEpisode;
-            case 'album':
-                return self::Album;
-            case 'track':
-                return self::Track;
-            default:
-                throw new InvalidArgumentException('Invalid value for Kind');
-        }
+        return match ($value) {
+            'video' => self::Video,
+            'creator' => self::Creator,
+            'playlist' => self::Playlist,
+            'stream' => self::Stream,
+            'category' => self::Category,
+            'rss' => self::RSS,
+            'podcast' => self::Podcast,
+            'podcast_episode' => self::PodcastEpisode,
+            'album' => self::Album,
+            'track' => self::Track,
+            default => throw new InvalidArgumentException('Invalid value for Kind'),
+        };
     }
 
     public function jsonSerialize(): string {
