@@ -3,7 +3,6 @@ import { ref } from 'vue';
 
 import Nav from '@/Shared/Navigation/Nav.vue';
 import ToastList from "@/Components/Toast/ToastList.vue";
-import CookieConsent from "@/Components/Popup/CookieConsent.vue";
 
 let showingNavigationDropdown = ref(false);
 
@@ -37,10 +36,10 @@ const props = defineProps({
             <!-- Page Content -->
             <main class="flex flex-row" >
 
-                <div class="pointer-events-none opacity-0  transition duration-700 ease-in-out"  :class="{'sm:w-52 sm:m r-7': showingNavigationDropdown}">
+                <div class="pointer-events-none opacity-0 flex-shrink-0 transition duration-700 ease-in-out"  :class="{'sm:w-56  ': showingNavigationDropdown}">
 
                 </div>
-                <div class="flex-grow  transition duration-700 ease-in-out">
+                <div class="flex-shrink w-full transition duration-700 ease-in-out overflow-x-hidden ">
                     <slot  />
                 </div>
                 <!--<CookieConsent/>-->

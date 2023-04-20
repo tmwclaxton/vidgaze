@@ -1,7 +1,9 @@
 
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PaddingLayout from "@/Layouts/PaddingLayout.vue";
 export default {
+    components: {PaddingLayout},
     layout: AuthenticatedLayout,
 
 };
@@ -10,13 +12,14 @@ export default {
 <template>
         <Head title="Home" />
 
-            <div class="mt-80">
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div class="  overflow-hidden shadow-sm sm:rounded-lg">
+        <PaddingLayout>
+            <!--<BoxVideoCard :channel_page="false" v-for="video in videos.data" :video="video" :key="video.id"></BoxVideoCard>-->
+            <!--show 8 videos-->
+            <!--show a line-->
+            <!--show categories i.e podcasts streams and shorts-->
+            <!--show a line-->
 
-                    </div>
-                </div>
-            </div>
+        </PaddingLayout>
 
 
 </template>

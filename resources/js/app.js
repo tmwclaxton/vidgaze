@@ -5,7 +5,7 @@ import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
-
+import { Link } from '@inertiajs/vue3';
 import VueClickAway from "vue3-click-away";
 
 /* import the fontawesome core - utility functions*/
@@ -30,6 +30,7 @@ createInertiaApp({
             .use(ZiggyVue, Ziggy)
             .use(VueClickAway)
             .component('font-awesome-icon', FontAwesomeIcon)
+            .component('Link', Link)
             .mount(el);
     },
     progress: {
