@@ -59,7 +59,7 @@ export default {
 }
 </style>
 
-<template>
+<template >
     <!--    <Head title="Landing" />-->
         <div class="-mt-16 "></div>
 
@@ -68,10 +68,10 @@ export default {
             <img style="filter: brightness(0.6);" src="/images/logos/vidgaze/night_sky2.jpg" alt="very cool bg"
                  class="h-full w-full">
         </div>
-            <scroll-parallax :speed="0.4">
+            <scroll-parallax :speed="0.6">
                 <!-- Page header -->
                 <div
-                    class="relative h-screen w-screen bg-gradient-to-b from-transparent to-gray-900   flex flex-col py-auto justify-center align-middle   px-4 sm:px-6 lg:px-8">
+                    class="relative h-screen w-screen  bg-gradient-to-b from-transparent to-gray-900   flex flex-col py-auto justify-center align-middle   px-4 sm:px-6 lg:px-8">
 
                    <div ref="welcomeMessageDiv" class=" transition duration-900 opacity-0 translate-y-52">
                         <div class="target max-w-7xl mx-auto text-center pb-12 md:pb-6 flex flex-col gap-y-3  ">
@@ -107,13 +107,9 @@ export default {
                 <div class="w-screen h-screen flex  bgLight dark:bg-vidgaze-blue">
                     <div class="max-w-7xl m-auto  px-4 sm:px-6 lg:px-8">
                         <div class="flex flex-col gap-y-8  ">
-                            <h2 class="text-4xl text dark:textDark">What is VidGaze?</h2>
-                            <p class="text-2xl  text dark:textDark ">VidGaze is a video-streaming platform that gives
-                                creators the benefits of small platforms without losing the audience of the big
-                                platforms. &nbsp;
-                                VidGaze can improve monetisation rates for creators
-                                and gives subscribers the ability to support their favorite creators without giving up
-                                their favourite content. </p>
+                            <h2 class="text-4xl text dark:textDark font-bold">Watch all your favourite content in one place!</h2>
+                            <p class="text-2xl text-center text dark:textDark ">YouTube, Twitch, Dailymotion, Odysee, Vimeo and more!
+                                <br>Watch these and more at VidGaze today! </p>
                         </div>
                     </div>
                 </div>
@@ -122,11 +118,14 @@ export default {
             <!--   explain the platform-->
             <scroll-parallax :speed="0.3">
                 <div
-                    class="w-screen h-screen flex bg-gradient-to-b to-transparent from-gray-900 dark:from-transparent ">
+                    class="w-screen h-screen flex bg-gradient-to-b to-transparent from-gray-900  ">
                     <div class="max-w-7xl m-auto  px-4 sm:px-6 lg:px-8">
-                        <div class="flex flex-col gap-y-8">
-                            <h2 class="text-4xl text-white">How does it work?</h2>
+                        <div class="flex flex-col gap-y-8 text-center">
+                            <h2 class="text-4xl text-white font-bold">Support your favourite content creators while your at it!</h2>
                             <p class="text-2xl text-zinc-300">
+                                VidGaze can improve monetisation rates for creators
+                                and gives subscribers the ability to support their favorite creators without giving up
+                                their favourite content.&nbsp;&nbsp;
                                 When multiple platforms have the same videos, VidGaze automatically selects the
                                 source that pays the most to the creator. This means that creators can earn more money.
                             </p>
@@ -137,20 +136,5 @@ export default {
                 </div>
             </scroll-parallax>
 
-            <!-- explain the platform-->
-            <scroll-parallax :speed="0.3">
-                <div class="w-screen h-screen flex bgLight dark:bg-vidgaze-blue">
-                    <div class="max-w-7xl m-auto  px-4 sm:px-6 lg:px-8">
-                        <div class="flex flex-col gap-y-8  ">
-                            <h2 class="text-4xl text dark:textDark ">What is VidGaze?</h2>
-                            <p class="text-2xl text dark:textDark ">VidGaze is a video-streaming platform that gives
-                                creators the benefits of small platforms without losing the audience of the big
-                                platforms. &nbsp;
-                                VidGaze can improve monetisation rates for creators
-                                and gives subscribers the ability to support their favorite creators without giving up
-                                their favourite content. </p>
-                        </div>
-                    </div>
-                </div>
-            </scroll-parallax>
+
 </template>

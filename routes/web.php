@@ -15,6 +15,7 @@ use App\Http\Controllers\Tools\LinkingController;
 use App\Http\Controllers\Tools\UnionController;
 use App\Http\Controllers\Tools\VideoUploadController;
 use App\Http\Controllers\Tools\ViewListenerController;
+use App\Models\Video;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -29,17 +30,21 @@ use Inertia\Inertia;
 |
 */
 
-// homepage route
+// landing route
 Route::get('/', function () {
     if (auth()->user() === null) {
-        return Inertia::render('Viewer/Landing', [
-            'showingStudioLinks' => false,
-        ]);
+        return redirect()->route('about');
     } else {
-        return Inertia::render('Viewer/Homepage', [
-
-        ]);
+        return redirect()->route('home');
     }
+})->name('landing');
+
+
+//home route
+Route::get('/home', function () {
+    return Inertia::render('Viewer/Homepage', [
+        'videos' => Video::orderBy('created_at', 'desc')->take(10)->get(),
+    ]);
 })->name('home');
 
 //video routes

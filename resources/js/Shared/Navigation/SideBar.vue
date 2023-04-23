@@ -30,48 +30,51 @@ const props = defineProps({
         required: false
     },
 })
+
+
 </script>
 
 <template>
 
-    <div class="fixed top-0  flex flex-col h-screen w-screen sm:w-56 pointer-events-none "
+    <div class="fixed top-0  flex flex-col h-screen pointer-events-none"
          >
         <div class="h-16">
             <!--Nav is fixed so lets space things below-->
 
         </div>
     <!-- Responsive Navigation Menu -->
-        <div class="  flex flex-row flex-grow top-0 transition-all duration-200 ease-in-out overflow-x-hidden w-full"
-             :class="{ '-ml-96  opacity-0 pointer-events-none': !showingNavigationDropdown, 'ml-0     opacity-100 pointer-events-auto': showingNavigationDropdown }">
-            <div
+        <div class="  flex flex-row flex-grow top-0 transition-all duration-100 ease-in-out overflow-x-hidden w-full ml-0 duration-50 ease-in-out"
+             :class="{ 'opacity-0 pointer-events-none  ': !showingNavigationDropdown,
+              'w-screen sm:w-56 opacity-100 pointer-events-auto': showingNavigationDropdown,
+               'sm:opacity-100 sm:pointer-events-auto sm:flex sm:w-24' : !route().current('about') && !showingNavigationDropdown
+        }">
 
-                class="w-full   mx-auto px-4 sm:px-6 lg:px-8 pb-2 pt-2  bg-vidgaze-blue-nav flex flex-col justify-between flex-grow    "
+            <div
+                class="w-full mx-auto px-4 sm:px-2 lg:px-2 pb-2 pt-2  bg-vidgaze-blue-nav flex flex-col justify-between flex-grow    "
             >
 
                 <div id="top" class="">
-                    <ExpandableNavigationLinks :showingStudioLinks="showingStudioLinks"/>
+                    <ExpandableNavigationLinks :showingStudioLinks="showingStudioLinks" :showingNavigationDropdown="showingNavigationDropdown"/>
 
                     <div class="border-t border-zinc-600 my-1 "></div>
                     <div class="">
 
                         <div v-if="$page.props.auth.user != null" class="space-y-1 sm:hidden hidden">
-                            <ResponsiveNavLink :href="route('profile.edit')">
-                                <div class="flex flex-row items-center gap-x-2">
-                                    <SettingsIcon class="w-5 h-5"/>
-                                    <span>Manage Your Account</span>
-                                </div>
+                            <ResponsiveNavLink :href="route('profile.edit')"
+                              :showingNavigationDropdown="showingNavigationDropdown"
+                            >
+                                <SettingsIcon class="w-5 h-5 flex-shrink-0"/>
+                                <span>Manage Your Account</span>
                             </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('profile.edit')">
-                                <div class="flex flex-row items-center gap-x-2">
-                                    <ProfileIcon class="w-5 h-5"/>
-                                    <span>Your Channel</span>
-                                </div>
+                            <ResponsiveNavLink :href="route('profile.edit')"
+                              :showingNavigationDropdown="showingNavigationDropdown"
+                            >
+                                <ProfileIcon class="w-5 h-5 flex-shrink-0"/>
+                                <span>Your Channel</span>
                             </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('studio.dashboard')">
-                                <div class="flex flex-row items-center gap-x-2">
-                                    <StudioIcon class="w-5 h-5"/>
-                                    <span>VidGaze Studio</span>
-                                </div>
+                                <StudioIcon class="w-5 h-5 flex-shrink-0"/>
+                                <span>VidGaze Studio</span>
                             </ResponsiveNavLink>
                         </div>
 
@@ -82,22 +85,20 @@ const props = defineProps({
 
                             <div class="mt-1 space-y-1 hidden">
 
-                                <ResponsiveNavLink :href="route('logout')" method="post" as="button">
-                                    <div class="flex flex-row items-center gap-x-2">
-                                        <LogoutIcon class="w-5 h-5"/>
+                                <ResponsiveNavLink :href="route('logout')" method="post" as="button"
+                                      :showingNavigationDropdown="showingNavigationDropdown">
+                                        <LogoutIcon class="w-5 h-5 flex-shrink-0"/>
                                         <span>Log Out</span>
-                                    </div>
                                 </ResponsiveNavLink>
                             </div>
                         </div>
                         <div v-else class="sm:hidden">
                             <div class="mt-1 space-y-1">
                                 <!-- <ResponsiveNavLink :href="route('login')"> Log In </ResponsiveNavLink>-->
-                                <ResponsiveNavLink :href="route('register')">
-                                    <div class="flex flex-row items-center gap-x-2">
-                                        <ProfileIcon class="w-5 h-5"/>
+                                <ResponsiveNavLink :href="route('register')"
+                                      :showingNavigationDropdown="showingNavigationDropdown">
+                                        <ProfileIcon class="w-5 h-5 flex-shrink-0"/>
                                         <span>Sign Up</span>
-                                    </div>
                                 </ResponsiveNavLink>
                             </div>
                         </div>
@@ -109,63 +110,60 @@ const props = defineProps({
 
                     <!--                dark/light mode-->
                     <div class="text-white cursor-pointer space-y-1" @click="toggleDark()">
-                                <span v-if="!isDark">
-                                <ResponsiveNavLink span="true">
-                                    <div class="flex flex-row items-center gap-x-2">
-                                        <SunIcon class="w-5 h-5"/>
-                                        <span>Light Mode</span>
-                                    </div>
-                                </ResponsiveNavLink>
-                                </span>
+                        <span v-if="!isDark">
+                            <ResponsiveNavLink span="true"
+                                  :showingNavigationDropdown="showingNavigationDropdown">
+                                    <SunIcon class="w-5 h-5 flex-shrink-0"/>
+                                    <span>Light</span>
+                            </ResponsiveNavLink>
+                        </span>
                         <span v-else>
-
-                                    <ResponsiveNavLink span="true">
-                                        <div v-if="isDark" class="flex flex-row items-center gap-x-2">
-                                            <MoonIcon class="w-5 h-5"/>
-                                            <span class="">Dark Mode</span>
-                                        </div>
-                                    </ResponsiveNavLink>
-                                </span>
+                            <ResponsiveNavLink span="true"
+                              :showingNavigationDropdown="showingNavigationDropdown">
+                                    <MoonIcon class="w-5 h-5 flex-shrink-0"/>
+                                    <span class="">Dark</span>
+                            </ResponsiveNavLink>
+                        </span>
                     </div>
                 </div>
 
 
-                <div id="bottom" class=" pb-1">
+                <div id="bottom" class=" pb-1" :class="{ 'hid den ': !showingNavigationDropdown} ">
 
                     <!--add about page-->
                     <div class="space-y-1">
-                        <ResponsiveNavLink :href="route('about')">
-                            <div class="flex flex-row items-center gap-x-2">
-                                <font-awesome-icon :icon="['fas', 'heart']"/>
-                                <span>About</span>
-                            </div>
+                        <ResponsiveNavLink :href="route('about')"
+                              :showingNavigationDropdown="showingNavigationDropdown">
+                                <font-awesome-icon :icon="['fas', 'heart']" class="w-5 h-5 flex-shrink-0 transition delay-900"
+                                                   :class="{ 'hidden ': !showingNavigationDropdown}" />
+                                <p>About</p>
                         </ResponsiveNavLink>
                     </div>
                     <!--add support page-->
                     <div class="space-y-1">
-                        <ResponsiveNavLink :href="route('about')">
-                            <div class="flex flex-row items-center gap-x-2">
-                                <font-awesome-icon :icon="['fass', 'phone']"/>
+                        <ResponsiveNavLink :href="route('about')"
+                          :showingNavigationDropdown="showingNavigationDropdown">
+                                <font-awesome-icon :icon="['fass', 'phone']" class="w-5 h-5 flex-shrink-0"
+                                                   :class="{ 'hidden ': !showingNavigationDropdown}" />
                                 <span>Support</span>
-                            </div>
                         </ResponsiveNavLink>
                     </div>
                     <!--add policy page-->
                     <div class="space-y-1">
-                        <ResponsiveNavLink :href="route('about')">
-                            <div class="flex flex-row items-center gap-x-2">
-                                <font-awesome-icon :icon="['fass', 'scroll']"/>
-                                <span>Privacy Policy</span>
-                            </div>
+                        <ResponsiveNavLink :href="route('about')"
+                          :showingNavigationDropdown="showingNavigationDropdown">
+                                <font-awesome-icon :icon="['fass', 'scroll']" class="w-5 h-5 flex-shrink-0"
+                                                   :class="{ 'hidden ': !showingNavigationDropdown}" />
+                                <span>Privacy</span>
                         </ResponsiveNavLink>
                     </div>
                     <!--add terms page-->
                     <div class="space-y-1">
-                        <ResponsiveNavLink :href="route('about')">
-                            <div class="flex flex-row items-center gap-x-2">
-                                <font-awesome-icon :icon="['fass', 'asterisk']"/>
-                                <span>Terms of Service</span>
-                            </div>
+                        <ResponsiveNavLink :href="route('about')"
+                              :showingNavigationDropdown="showingNavigationDropdown">
+                                <font-awesome-icon :icon="['fass', 'asterisk']" class="w-5 h-5 flex-shrink-0"
+                                                   :class="{ 'hidden ': !showingNavigationDropdown}" />
+                                <span>Terms</span>
                         </ResponsiveNavLink>
                     </div>
 

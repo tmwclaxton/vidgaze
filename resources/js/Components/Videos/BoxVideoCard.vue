@@ -1,3 +1,20 @@
+<script setup>
+import ClockSVG from "~/images/icons/clock.svg";
+
+//props below
+defineProps({
+    video: Object,
+    channel_page: Boolean,
+});
+
+</script>
+<script>
+export default {
+    name: "BoxVideo",
+}
+
+</script>
+
 <template>
     <div id="box_{{ video.id}}" class="relative group overflow-hidden">
 
@@ -6,9 +23,6 @@
             <a v-bind:href="'/watch/' + video.slug">
                 <img class="object-cover w-full h-full bg-zinc-900" v-bind:src="video.thumbnail_url"   alt=""/>
             </a>
-            <!--<livewire:watch-later-button wire:key="{{time().video.id}}" :video="$video"/>-->
-
-            <!--<x-duration :video="$video"/>-->
 
 
         </div>
@@ -91,21 +105,7 @@
     </div>
 </template>
 
-<script setup>
-import ClockSVG from "~/images/icons/clock.svg";
-defineProps({
-    video: Object,
-    channel_page: Boolean,
-});
 
-</script>
-<script>
-//accept prop for video
-export default {
-    name: "BoxVideo",
-}
-
-</script>
 
 <style scoped>
 

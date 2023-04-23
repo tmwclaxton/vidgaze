@@ -24,7 +24,7 @@ const props = defineProps({
         <!-- this is where the toast message popup is added -->
         <ToastList :flash="$page.props.flash"/>
 
-        <div class="">
+        <div class=" flex flex-col   ">
 
             <Nav
                 :showingNavigationDropdown="showingNavigationDropdown"
@@ -34,12 +34,12 @@ const props = defineProps({
             />
 
             <!-- Page Content -->
-            <main class="flex flex-row" >
+            <main class="flex flex-row flex-grow    " >
 
-                <div class="pointer-events-none opacity-0 flex-shrink-0 transition duration-700 ease-in-out"  :class="{'sm:w-56  ': showingNavigationDropdown}">
+                <div v-if="!route().current('about')" class="pointer-events-none opacity-0 flex-shrink-0 transition  ease-in-out"  :class="{'sm:w-56  ': showingNavigationDropdown, 'sm:w-24': !showingNavigationDropdown}">
 
                 </div>
-                <div class="flex-shrink w-full transition duration-700 ease-in-out overflow-x-hidden ">
+                <div class="flex-shrink transition duration-700 ease-in-out "  :class="{'   ': showingNavigationDropdown}">
                     <slot  />
                 </div>
                 <!--<CookieConsent/>-->

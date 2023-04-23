@@ -43,7 +43,7 @@ const props = defineProps({
 
     <!--Top nav-->
     <div class="bg-vidgaze-blue-nav pointer-events-auto backdrop-blur-sm " >
-        <div class="max-w- screen-2xl mx-auto px-4 sm:px-6 lg:px-8  flex flex-col">
+        <div class="max-w- screen-2xl mx-auto pl-5 sm:pl-8 pr-4 sm:pr-6 lg:pr-8  flex flex-col">
             <div class="flex justify-between h-16 ">
                 <div class="flex w-full">
                     <!-- Hamburger, hide whenever search icon is clicked in mobile mode -->
@@ -54,7 +54,7 @@ const props = defineProps({
                             :class="{
                                 'rotate-180 ': showingNavigationDropdown,
                             }"
-                            class=" transition duration-900 ease-in-out inline-flex items-center justify-center p-2 rounded-md text-zinc-400 dark:text-zinc-500 hover:text-zinc-500 dark:hover:text-zinc-400  focus:outline-none  focus:text-zinc-400 transition duration-150 ease-in-out"
+                            class="bg-zi nc-900 dark:bg-vid gaze-blue rounded-full  transition duration-900 ease-in-out inline-flex items-center justify-center p-2  text-zinc-400 dark:text-zinc-500 hover:text-zinc-500 dark:hover:text-zinc-400  focus:outline-none  focus:text-zinc-400 transition duration-300 ease-in-out"
                         >
                             <OpenNavSVG class="h-6 w-6 fill-white" />
                             <!--<CloseNavSVG class="h-6 w-6 fill-white" :class="{-->
@@ -66,7 +66,7 @@ const props = defineProps({
 
 
                     <!-- Logo -->
-                    <div class="shrink-0 flex items-center  md:mr-5" :class="
+                    <div class="shrink-0 flex items-center md:mr-5" :class="
                                 {
                                     'hidden sm:flex': expandedSearchBar,
                                     '': !expandedSearchBar,
@@ -78,7 +78,7 @@ const props = defineProps({
                     </div>
 
                     <!-- Navigation Links -->
-                    <TopNavigationLinks :showingStudioLinks="showingStudioLinks"/>
+                    <!--<TopNavigationLinks :showingStudioLinks="showingStudioLinks"/>-->
 
                     <Searchbar @toggleExpandedSearchBarOn="$emit('toggleExpandedSearchBarOn')"
                                  @toggleExpandedSearchBarOff="$emit('toggleExpandedSearchBarOff')"

@@ -2,20 +2,35 @@
 import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 
-const props = defineProps(['href', 'active','span']);
+const props = defineProps(['href', 'active','span','showingNavigationDropdown']);
 
-const classes = computed(() =>
-    props.active
-        ? 'w-max min-w-32 w-min rounded text-md block w-full pl-3 pr-4 py-2 border-l-4  border-zinc-600 text-left text-base font-medium  text-zinc-300  bg-zinc-900  focus:outline-none focus:text-zinc-200 focus:bg-zinc-900 focus:border-zinc-300 transition duration-150 ease-in-out'
-        : 'w-max min-w-32 rounded text-md block w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-left text-base font-medium text-white  hover:text-zinc-200  hover:bg-zinc-800  hover:border-zinc-600 focus:outline-none  focus:text-zinc-200  focus:bg-zinc-700  focus:border-zinc-600 transition duration-150 ease-in-out'
-);
+
+const classes = computed(() => {
+    let classString = '';
+    // if on the current page
+    if (props.active) {
+        classString = 'border-transparent text-white bg-vidgaze-blue dark:bg-zinc-900 dark:hover:bg-zinc-800  focus:s hake   ';
+    } else {
+        classString = 'border-transparent text-zinc-200  hover:text-white  hover:bg-zinc-700   dark:hover:bg-zinc-800     hover:border-zi nc-600 ';
+    }
+    // if side bar is expanded
+    if (props.showingNavigationDropdown) {
+        classString += ' mr-4 w-full min-w-40 flex-row text-base px-4 gap-x-3 ';
+    } else {
+        classString += 'w-10 sm:flex-col sm:text-xs align-middle justify-left sm:gap-2 gap-2 px-3 ';
+    }
+    classString += 'text-center py-2 items-center flex rounded text-md block w-full   text-left  font-medium transition duration-150 ease-in-out ';
+    // ... rest of the CSS classes
+    return classString;
+});
+
 </script>
 
 <template>
     <Link v-if="!span" :href="href" :class="classes">
         <slot />
     </Link>
-    <span v-else :class="classes" class="w-min-52 select-none cursor-pointer ">
+    <span v-else :class="classes" class=" select-none cursor-pointer ">
         <slot />
     </span>
 </template>
