@@ -42,7 +42,7 @@ Route::get('/', function () {
 
 //home route
 Route::get('/home', function () {
-    return Inertia::render('Viewer/Homepage', [
+    return Inertia::render('Viewer/Home/Homepage', [
         'videos' => Video::orderBy('created_at', 'desc')->take(10)->get(),
     ]);
 })->name('home');

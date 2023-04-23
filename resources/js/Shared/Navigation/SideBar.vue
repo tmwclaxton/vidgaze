@@ -43,7 +43,7 @@ const props = defineProps({
 
         </div>
     <!-- Responsive Navigation Menu -->
-        <div class="  flex flex-row flex-grow top-0 transition-all duration-100 ease-in-out overflow-x-hidden w-full ml-0 duration-50 ease-in-out"
+        <div class="  flex flex-row flex-grow top-0 overflow-x-hidden w-full ml-0 "
              :class="{ 'opacity-0 pointer-events-none  ': !showingNavigationDropdown,
               'w-screen sm:w-56 opacity-100 pointer-events-auto': showingNavigationDropdown,
                'sm:opacity-100 sm:pointer-events-auto sm:flex sm:w-24' : !route().current('about') && !showingNavigationDropdown
