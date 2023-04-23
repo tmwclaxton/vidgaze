@@ -4,15 +4,11 @@ import {onMounted, ref} from "vue";
 const carouselItems = [
     {
         imgSrc:
-            "https://yt3.googleusercontent.com/YYL2_SdOUsyoeHgeIdmy-pje47RTKWh95jMoJm8qY-g5Ib8yVPlUfarXJP6NPN_tUqOZkU1hgOo=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
-    },
-    {
-        imgSrc:
-            "https://yt3.googleusercontent.com/LK1dBgNSTK-3sjzaQBhJbOqVEfyFW7mD2l_hMn1H8lwl1q0E8x9ruLSWiLFHxYAvpFNjiq4ItA=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
-    },
-    {
-        imgSrc:
             "https://yt3.googleusercontent.com/MCKlDYo78cX-ODEurmP8J1q-Pkf27Sb2E0cD8kbgwDU8ZlmQVll7gLmbznsPrXvinS6577z-bA=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+    },
+    {
+        imgSrc:
+            "https://yt3.googleusercontent.com/YYL2_SdOUsyoeHgeIdmy-pje47RTKWh95jMoJm8qY-g5Ib8yVPlUfarXJP6NPN_tUqOZkU1hgOo=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
     },
     {
         imgSrc:
@@ -21,7 +17,7 @@ const carouselItems = [
 ];
 
 const activeIndex = ref(0);
-const carouselWrapper = ref(null);
+const carouselWrapper = ref("");
 const isMouseOverCarousel = ref(false);
 function scrollToPrevItem() {
     const desiredIndex = activeIndex.value > 0 ? activeIndex.value - 1 : carouselItems.length - 1;
@@ -63,11 +59,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="relative w-full group">
+    <div class="relative group overflow-hidden shadow-md">
         <!-- Carousel wrapper -->
-        <div @mouseenter="handleMouseEnter"
+        <div ref="carouselWrapper"
+             @mouseenter="handleMouseEnter"
              @mouseleave="handleMouseLeave"
-             class="overflow-y-hidden overflow-x-hidden snap-mandatory snap-x   w-full flex flex-row relative h-75 transition-all delay-75 duration-700 ease-in-out  opacity-100 point-events-auto" ref="carouselWrapper">
+             class="overflow-y-hidden overflow-x-hidden snap-mandatory snap-x   w-full flex flex-row relative h-75 transition-all delay-75 duration-700 ease-in-out  opacity-100 point-events-auto" >
             <!-- Item -->
             <div class="flex-shrink-0 h-full w-full relative snap-center"
                  v-for="(item, index) in carouselItems"
@@ -76,7 +73,7 @@ onMounted(() => {
             >
                 <img :src="item.imgSrc" class="block w-full " />
 
-                 <div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/50 h-screen w-full"></div>
+                 <!--<div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/50 h-screen w-full"></div>-->
             </div>
         </div>
         <!-- Slider controls -->

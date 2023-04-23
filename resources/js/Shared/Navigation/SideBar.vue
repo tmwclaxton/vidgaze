@@ -10,6 +10,7 @@ import SettingsIcon from '~/images/icons/settings.svg';
 import ProfileIcon from '~/images/icons/profile.svg';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {useDark, useToggle} from "@vueuse/core";
+import ResponsiveNavBottomLink from "@/Components/Links/ResponsiveNavBottomLink.vue";
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
@@ -128,43 +129,37 @@ const props = defineProps({
                 </div>
 
 
-                <div id="bottom" class=" pb-1" :class="{ 'hid den ': !showingNavigationDropdown} ">
+                <div id="bottom" class=" pb-1" >
 
                     <!--add about page-->
-                    <div class="space-y-1">
-                        <ResponsiveNavLink :href="route('about')"
+                    <div class="gap-1 grid grid-cols-1  " :class="{ ' grid-cols-3': showingNavigationDropdown} ">
+                        <ResponsiveNavBottomLink :href="route('about')" :active="route().current('about')"
                               :showingNavigationDropdown="showingNavigationDropdown">
-                                <font-awesome-icon :icon="['fas', 'heart']" class="w-5 h-5 flex-shrink-0 transition delay-900"
-                                                   :class="{ 'hidden ': !showingNavigationDropdown}" />
-                                <p>About</p>
-                        </ResponsiveNavLink>
-                    </div>
+                                <!--<font-awesome-icon :icon="['fas', 'heart']" class="w-4 h-4 flex-shrink-0  "-->
+                                <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
+                            <span >About</span>
+                        </ResponsiveNavBottomLink>
                     <!--add support page-->
-                    <div class="space-y-1">
-                        <ResponsiveNavLink :href="route('about')"
+                        <ResponsiveNavBottomLink :href="route('about')"
                           :showingNavigationDropdown="showingNavigationDropdown">
-                                <font-awesome-icon :icon="['fass', 'phone']" class="w-5 h-5 flex-shrink-0"
-                                                   :class="{ 'hidden ': !showingNavigationDropdown}" />
-                                <span>Support</span>
-                        </ResponsiveNavLink>
-                    </div>
+                                <!--<font-awesome-icon :icon="['fass', 'phone']" class="w-4 h-4 flex-shrink-0"-->
+                                <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
+                                <span >Support</span>
+                        </ResponsiveNavBottomLink>
                     <!--add policy page-->
-                    <div class="space-y-1">
-                        <ResponsiveNavLink :href="route('about')"
+                        <ResponsiveNavBottomLink :href="route('about')"
                           :showingNavigationDropdown="showingNavigationDropdown">
-                                <font-awesome-icon :icon="['fass', 'scroll']" class="w-5 h-5 flex-shrink-0"
-                                                   :class="{ 'hidden ': !showingNavigationDropdown}" />
-                                <span>Privacy</span>
-                        </ResponsiveNavLink>
-                    </div>
+                                <!--<font-awesome-icon :icon="['fass', 'scroll']" class="w-4 h-4 flex-shrink-0"-->
+                                <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
+                            <span >Privacy</span>
+                        </ResponsiveNavBottomLink>
                     <!--add terms page-->
-                    <div class="space-y-1">
-                        <ResponsiveNavLink :href="route('about')"
+                        <ResponsiveNavBottomLink :href="route('about')"
                               :showingNavigationDropdown="showingNavigationDropdown">
-                                <font-awesome-icon :icon="['fass', 'asterisk']" class="w-5 h-5 flex-shrink-0"
-                                                   :class="{ 'hidden ': !showingNavigationDropdown}" />
-                                <span>Terms</span>
-                        </ResponsiveNavLink>
+                                <!--<font-awesome-icon :icon="['fass', 'asterisk']" class="w-4 h-4 flex-shrink-0"-->
+                                <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
+                                <span  >Terms</span>
+                        </ResponsiveNavBottomLink>
                     </div>
 
                 </div>

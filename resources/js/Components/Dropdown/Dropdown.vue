@@ -9,7 +9,7 @@ const props = defineProps({
         default: '48',
     },
     contentClasses: {
-        default: () => ['py-1', 'bg-zinc-100','dark:bg-vidgaze-blue-nav','shadow-lg', 'rounded-md', 'ring-1', 'ring-black', 'ring-opacity-5', 'focus:outline-none'],
+        default: () => ['py-1', 'bg-zinc-100','dark:bg-vidgaze-blue-dropdown','shadow-lg', 'rounded-md', 'ring-1', 'ring-black', 'ring-opacity-5', 'focus:outline-none'],
     },
     distance: {
         default: '2',
