@@ -66,14 +66,14 @@ const props = defineProps({
 
 
                     <!-- Logo -->
-                    <div class="shrink-0 flex items-center md:mr-5" :class="
+                    <div class="shrink-0 flex items-center md:mr-5 ml-6" :class="
                                 {
                                     'hidden sm:flex': expandedSearchBar,
                                     '': !expandedSearchBar,
                                 }">
                         <Link :href="route('home')">
                             <img src="/images/logos/vidgaze/vidgaze_banner.png" alt="VidGaze Logo"
-                                 class="h-10 w-auto">
+                                 class="h-12 w-auto">
                         </Link>
                     </div>
 

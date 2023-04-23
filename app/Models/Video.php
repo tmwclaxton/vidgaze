@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,28 +25,15 @@ class Video extends Model
         'views' => 0
     ];
 
+    public function getTimePublishedAttribute($value)
+    {
+        return Carbon::parse($value)->diffForHumans();
+    }
+
     protected function views() : Attribute
     {
         return Attribute::make(get: fn($value)=>$value ?? 0);
     }
-
-//    public static function findOrCreate(string $externalVideoID, Platforms $source): Video
-//    {
-//        $video_source = VideoSource::where('external_id', '=', $externalVideoID)
-//            ->where('source_name', '=', $source->name)->first();
-//        if(!$video_source)
-//        {
-//            return match($source){
-//                Platforms::YouTube => YouTube::makeVideoModel($externalVideoID),
-//                Platforms::Dailymotion => Dailymotion::makeVideoModel($externalVideoID),
-//                Platforms::Vimeo => Vimeo::makeVideoModel($externalVideoID),
-//            };
-//        }
-//        else{
-//            return $video_source->video()->first();
-//        }
-//    }
-
     //Alphabetical order
 
     public function awards(): \Illuminate\Database\Eloquent\Relations\HasMany

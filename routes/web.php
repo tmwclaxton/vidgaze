@@ -43,7 +43,7 @@ Route::get('/', function () {
 //home route
 Route::get('/home', function () {
     return Inertia::render('Viewer/Home/Homepage', [
-        'videos' => Video::orderBy('created_at', 'desc')->take(10)->get(),
+        'videos' => Video::inRandomOrder()->take(6)->get(),
     ]);
 })->name('home');
 

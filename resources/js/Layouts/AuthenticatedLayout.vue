@@ -36,7 +36,7 @@ const props = defineProps({
             <!-- Page Content -->
             <main class="flex flex-row flex-grow    " >
 
-                <div v-if="!route().current('about')" class="pointer-events-none opacity-0 flex-shrink-0 transition  ease-in-out"  :class="{'sm:w-56  ': showingNavigationDropdown, 'sm:w-24': !showingNavigationDropdown}">
+                <div v-if="!route().current('about')" class="pointer-events-none opacity-0 flex-shrink-0 transition  ease-in-out"  :class="{'sm:w-64  ': showingNavigationDropdown, 'sm:w-24': !showingNavigationDropdown}">
 
                 </div>
                 <div class="flex-shrink transition duration-700 ease-in-out "  :class="{'   ': showingNavigationDropdown}">

@@ -37,24 +37,24 @@ const props = defineProps({
 
 <template>
 
-    <div class="fixed top-0  flex flex-col h-screen pointer-events-none"
+    <div class="fixed top-0  flex flex-col  overflow-y-auto h-full pointer-events-none"
          >
-        <div class="h-16">
+        <div class="h-16 flex-shrink-0">
             <!--Nav is fixed so lets space things below-->
 
         </div>
     <!-- Responsive Navigation Menu -->
-        <div class="  flex flex-row flex-grow top-0 overflow-x-hidden w-full ml-0 "
+        <div class="  flex flex-row flex-grow top-0 overflow-x-hidden w-full ml-0  bg-vidgaze-blue-nav "
              :class="{ 'opacity-0 pointer-events-none  ': !showingNavigationDropdown,
-              'w-screen sm:w-56 opacity-100 pointer-events-auto': showingNavigationDropdown,
+              'w-screen sm:w-64 opacity-100 pointer-events-auto': showingNavigationDropdown,
                'sm:opacity-100 sm:pointer-events-auto sm:flex sm:w-24' : !route().current('about') && !showingNavigationDropdown
         }">
 
             <div
-                class="w-full mx-auto px-4 sm:px-2 lg:px-2 pb-2 pt-2  bg-vidgaze-blue-nav flex flex-col justify-between flex-grow    "
+                class="w-full mx-auto px-4 sm:px-2 lg:px-2 pb-2 pt-2 flex flex-col justify-between flex-grow    "
             >
 
-                <div id="top" class="">
+                <div class="">
                     <ExpandableNavigationLinks :showingStudioLinks="showingStudioLinks" :showingNavigationDropdown="showingNavigationDropdown"/>
 
                     <div class="border-t border-zinc-600 my-1 "></div>
@@ -132,33 +132,33 @@ const props = defineProps({
                 <div id="bottom" class=" pb-1" >
 
                     <!--add about page-->
-                    <div class="gap-1 grid grid-cols-1  " :class="{ ' grid-cols-3': showingNavigationDropdown} ">
+                    <div class="gap-1 grid grid-cols-1 text-center " :class="{ ' grid-cols-3': showingNavigationDropdown} ">
                         <ResponsiveNavBottomLink :href="route('about')" :active="route().current('about')"
                               :showingNavigationDropdown="showingNavigationDropdown">
                                 <!--<font-awesome-icon :icon="['fas', 'heart']" class="w-4 h-4 flex-shrink-0  "-->
                                 <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
-                            <span >About</span>
+                            <span class="w-full">About</span>
                         </ResponsiveNavBottomLink>
                     <!--add support page-->
                         <ResponsiveNavBottomLink :href="route('about')"
                           :showingNavigationDropdown="showingNavigationDropdown">
                                 <!--<font-awesome-icon :icon="['fass', 'phone']" class="w-4 h-4 flex-shrink-0"-->
                                 <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
-                                <span >Support</span>
+                                <span class="w-full">Support</span>
                         </ResponsiveNavBottomLink>
                     <!--add policy page-->
                         <ResponsiveNavBottomLink :href="route('about')"
                           :showingNavigationDropdown="showingNavigationDropdown">
                                 <!--<font-awesome-icon :icon="['fass', 'scroll']" class="w-4 h-4 flex-shrink-0"-->
                                 <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
-                            <span >Privacy</span>
+                            <span class="w-full">Privacy</span>
                         </ResponsiveNavBottomLink>
                     <!--add terms page-->
                         <ResponsiveNavBottomLink :href="route('about')"
                               :showingNavigationDropdown="showingNavigationDropdown">
                                 <!--<font-awesome-icon :icon="['fass', 'asterisk']" class="w-4 h-4 flex-shrink-0"-->
                                 <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
-                                <span  >Terms</span>
+                                <span class="w-full">Terms</span>
                         </ResponsiveNavBottomLink>
                     </div>
 

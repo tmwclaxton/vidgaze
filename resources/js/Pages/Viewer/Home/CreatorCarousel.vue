@@ -17,7 +17,7 @@ const carouselItems = [
 ];
 
 const activeIndex = ref(0);
-const carouselWrapper = ref("");
+const carouselWrapper = ref(null);
 const isMouseOverCarousel = ref(false);
 function scrollToPrevItem() {
     const desiredIndex = activeIndex.value > 0 ? activeIndex.value - 1 : carouselItems.length - 1;
@@ -50,8 +50,10 @@ function handleMouseLeave() {
 }
 
 onMounted(() => {
+    // console.log(carouselWrapper.value);
+
     setInterval(() => {
-        if (!isMouseOverCarousel.value) {
+        if (!isMouseOverCarousel.value && carouselWrapper.value) {
             scrollToNextItem();
         }
     }, 7000); // scroll every 10 seconds
