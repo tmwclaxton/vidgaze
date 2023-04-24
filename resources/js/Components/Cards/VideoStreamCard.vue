@@ -11,7 +11,13 @@ defineProps({
     video: Object,
     channel_page: Boolean,
 });
+// Import the itemStore module
+import itemStore from "@/Stores/itemSelect.js";
 
+// Define the setItemId method to call the setItemId method of itemStore with the provided id
+const setItemId = (id) => {
+    itemStore.setItemId(id);
+};
 </script>
 <script>
 export default {
@@ -89,7 +95,7 @@ export default {
                 </div>
                 <!--3 dots button-->
                 <div class="col-span-1 ml-auto pt-2 w-8 without-ring" >
-                    <button class="flex without-ring m-0 mt-0 opacity-90 w-6 rounded-full text-zinc-500 ml-auto   pointer-events-auto">
+                    <button @click="setItemId(video.id)" class="flex without-ring m-0 mt-0 opacity-90 w-6 rounded-full text-zinc-500 ml-auto   pointer-events-auto">
                         <DotsIcon class="w-6 h-6"/>
                     </button>
                 </div>

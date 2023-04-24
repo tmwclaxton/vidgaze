@@ -21,6 +21,7 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.3.0",
+        "@fortawesome/free-brands-svg-icons": "^6.4.0",
         "@fortawesome/free-regular-svg-icons": "^6.4.0",
         "@fortawesome/free-solid-svg-icons": "^6.3.0",
         "@fortawesome/vue-fontawesome": "^3.0.3",
@@ -30,6 +31,7 @@
         "@tailwindcss/line-clamp": "^0.4.2",
         "@tailwindcss/typography": "^0.5.9",
         "@vueuse/core": "^9.13.0",
+        "pinia": "^2.0.35",
         "vue3-click-away": "^1.2.4",
         "vue3-parallax": "^0.1.4",
         "vuex": "^4.1.0"
