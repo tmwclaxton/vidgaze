@@ -15,11 +15,13 @@ class PlaylistVideo extends Model
 
     //Alphabetical order
 
-    public function playlist() {
+    public function playlist(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
         return $this->belongsTo(Playlist::class);
     }
 
-    public function video() {
+    public function video(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
         return $this->belongsTo(Video::class);
     }
 }

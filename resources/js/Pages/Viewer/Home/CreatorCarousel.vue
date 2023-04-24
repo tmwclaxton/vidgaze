@@ -61,19 +61,19 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="relative group overflow-hidden shadow-md">
+    <div class="relative group overflow-hidden h-75 shadow-md  ">
         <!-- Carousel wrapper -->
         <div ref="carouselWrapper"
              @mouseenter="handleMouseEnter"
              @mouseleave="handleMouseLeave"
-             class="overflow-y-hidden overflow-x-hidden snap-mandatory snap-x   w-full flex flex-row relative h-75 transition-all delay-75 duration-700 ease-in-out  opacity-100 point-events-auto" >
+             class="overflow-y-hidden overflow-x-hidden snap-mandatory snap-x  h-full w-full flex flex-row relative transition-all delay-75 duration-700 ease-in-out  opacity-100 point-events-auto" >
             <!-- Item -->
-            <div class="flex-shrink-0 h-full w-full relative snap-center"
+            <div class="flex-shrink-0 h-full w-full relative snap-center  "
                  v-for="(item, index) in carouselItems"
                  :key="index"
                  :class="{'    ': activeIndex !== index,'  ': activeIndex === index}"
             >
-                <img :src="item.imgSrc" class="block w-full " />
+                <img :src="item.imgSrc" class="block w-full h-full" />
 
                  <!--<div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/50 h-screen w-full"></div>-->
             </div>

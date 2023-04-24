@@ -104,9 +104,9 @@ class Creator extends Model
     {
         return $this->hasMany(Playlist::class);
     }
-    public function getPlaylist($name, $server_made)
+    public function getServerMadePlaylist($name)
     {   //for getting watch later / disliked / liked playlists
-        return $this->playlists()->whereName($name)->whereServerMade($server_made)->get()->first();
+        return $this->playlists()->whereName($name)->whereServerMade(true)->get()->first();
     }
     public function podcasts(): HasMany {
         return $this->hasMany(Podcast::class);

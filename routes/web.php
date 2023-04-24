@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Content\PlaylistVideoController;
 use App\Http\Controllers\Infinite\InfiniteVideosController;
 use App\Http\Controllers\Search\SearchController;
 use App\Http\Controllers\Content\MusicController;
@@ -124,16 +125,23 @@ Route::get('create_account/import/{platform}', [ImportingController::class,'crea
 //oauth routes
 
 //search routes
-Route::get('/search/', [SearchController::class, 'get']);
+    Route::get('/search/', [SearchController::class, 'get']);
+    //search bar
+    Route::get('/search_suggestions', [SearchBarController::class, 'get']);
 
-//search bar
-Route::get('/search_suggestions', [SearchBarController::class, 'get']);
+// adding or removing a video from a playlist
+Route::delete('/playlists/{playlistId}/videos/{videoId}', [PlaylistVideoController::class, 'destroy'])->name('playlist.video.destroy');
+Route::post('/playlists/{playlistId}/videos/{videoId}', [PlaylistVideoController::class, 'create'])->name('playlist.video.create');
 
-//infinite scroll routes
-Route::get('/infinite/videos', [InfiniteVideosController::class, 'get']);
 
-//this is for updating how long a user has been watching a video / stream
-Route::post('/view-listener', [ViewListenerController::class,'message']);
+
+
+
+
+
+
+
+
 
 //about
 Route::get('/about', function () { return Inertia::render('Viewer/Landing');})->name('about');

@@ -132,7 +132,7 @@ const props = defineProps({
                 <div id="bottom" class=" pb-1" >
 
                     <!--add about page-->
-                    <div class="gap-1 grid grid-cols-1 text-center " :class="{ ' grid-cols-3': showingNavigationDropdown} ">
+                    <div class="gap-1 grid grid-cols-1 text-center " :class="{ ' grid-cols-4': showingNavigationDropdown} ">
                         <ResponsiveNavBottomLink :href="route('about')" :active="route().current('about')"
                               :showingNavigationDropdown="showingNavigationDropdown">
                                 <!--<font-awesome-icon :icon="['fas', 'heart']" class="w-4 h-4 flex-shrink-0  "-->

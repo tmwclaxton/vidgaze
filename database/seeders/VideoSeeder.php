@@ -83,6 +83,7 @@ class VideoSeeder extends Seeder
                 'like_count' => rand(0, 50),
                 'thumbnail_url' => $thumbnail_url,
                 'time_published' => now(),
+                'live_viewer_count' => rand(0, 1),
             ]);
 
             $source_count = rand(1, 3);

@@ -9,7 +9,7 @@ export default {
 };
 </script>
 <script setup>
-import BoxVideoCard from "@/Components/Videos/BoxVideoCard.vue";
+import VideoStreamCard from "@/Components/Cards/VideoStreamCard.vue";
 import {computed} from "vue";
 import CreatorCarousel from "@/Pages/Viewer/Home/CreatorCarousel.vue";
 
@@ -27,16 +27,15 @@ const props = defineProps({
             <!--show 12 videos, hide videos if they don't fill the row completely-->
             <div class="w-full hidden md:flex">
                 <CreatorCarousel />
-
             </div>
 
         <PaddingLayout>
-
             <p class="font-bold text-2xl -mt-4 mb-4">Trending Videos</p>
 
-            <div :class="`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4`">
+            <!--Show a row of popular videos-->
+            <div :class="`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4`">
                 <template v-for="(video, index) in videos" :key="video.id">
-                    <BoxVideoCard  :video="video" />
+                    <VideoStreamCard  :video="video" />
                 </template>
             </div>
 <div class="h-96 mb-96">
