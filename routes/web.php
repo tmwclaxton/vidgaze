@@ -43,10 +43,15 @@ Route::get('/', function () {
 
 //home route
 Route::get('/home', function () {
+    $videos = Video::inRandomOrder()->take(6)->get()->map(function ($video) {
+        return $video->frontEndDetails();
+    });
+
     return Inertia::render('Viewer/Home/Homepage', [
-        'videos' => Video::inRandomOrder()->take(6)->get(),
+        'videos' => $videos,
     ]);
 })->name('home');
+
 
 //video routes
 Route::get('/videos',[VideoController::class,'index'])->name('videos.index');
@@ -129,9 +134,14 @@ Route::get('create_account/import/{platform}', [ImportingController::class,'crea
     //search bar
     Route::get('/search_suggestions', [SearchBarController::class, 'get']);
 
-// adding or removing a video from a playlist
-Route::delete('/playlists/{playlistId}/videos/{videoId}', [PlaylistVideoController::class, 'destroy'])->name('playlist.video.destroy');
-Route::post('/playlists/{playlistId}/videos/{videoId}', [PlaylistVideoController::class, 'create'])->name('playlist.video.create');
+// adding or removing a video from a playlist //throttle to 20 requests per minute
+Route::middleware(['throttle:15,1','auth'])->group(function () {
+    Route::delete('/playlists/{playlistId}/videos/{videoId}', [PlaylistVideoController::class, 'destroy'])
+        ->name('playlist.video.destroy');
+
+    Route::post('/playlists/{playlistId}/videos/{videoId}', [PlaylistVideoController::class, 'create'])
+        ->name('playlist.video.create');
+});
 
 
 

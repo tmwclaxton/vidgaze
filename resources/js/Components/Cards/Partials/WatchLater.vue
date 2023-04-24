@@ -24,7 +24,7 @@ const addToWatchLater = () => {
         });
         return;
     }
-    console.log('addToWatchLater');
+
     const url = '/playlists/' + watchLaterId + '/videos/' + props.video.id;
     const method = inPlaylist.value ? 'delete' : 'post';
 
@@ -40,21 +40,25 @@ const addToWatchLater = () => {
         })
         .catch(error => {
             console.error(error);
+            inPlaylist.value = !inPlaylist.value;
             if (error.response.status === 404) {
-                inPlaylist.value = !inPlaylist.value;
                 toast.add({
                     message: 'This video is not in your Watch Later playlist',
                     type: 'error',
                 });
             } else if (error.response.status === 400) {
-                inPlaylist.value = !inPlaylist.value;
                 toast.add({
                     message: 'This video is already in your Watch Later playlist',
                     type: 'error',
                 });
+            } else if (error.response.status === 429) {
+                toast.add({
+                    message: 'Woah there, slow down!',
+                    type: 'error',
+                });
             } else {
                 toast.add({
-                    message: 'An error occurred' + error,
+                    message: 'An error occurred',
                     type: 'error',
                 });
             }

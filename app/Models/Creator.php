@@ -24,6 +24,22 @@ class Creator extends Model
 
 //    protected $with = ['sources']; //eager load creator sources
 
+    public function frontEndDetails(): array
+    {
+        return [
+            //'id' => $this->id,
+            'slug' => $this->slug,
+            'name' => $this->name,
+            'bio' => $this->bio,
+            'avatar_url' => $this->avatar_url,
+            'banner_url' => $this->banner_url,
+            'karma' => $this->karma,
+            'subscriber_count' => $this->subscriber_count,
+            'is_live' => $this->is_live,
+            'contact_email' => $this->contact_email,
+            ];
+    }
+
 
     public function updateAllContentByApi() : void
     {
