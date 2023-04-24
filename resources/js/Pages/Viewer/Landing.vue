@@ -79,22 +79,17 @@ export default {
                             <p class="text-2xl text-gray-300"> The ultimate video-streaming platform for both creators and
                                 viewers alike </p>
                         </div>
-                        <!-- Search -->
+                       <!--get started button-->
 
-                        <div class="target w-full max-w-xl mx-auto px-10">
-                            <div class="relative w-full">
-                                <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
-                                    <SearchIcon class="h-5 w-5 text-gray-400"/>
+                        <div class="target cursor-pointer w-max mx-auto px-10 transition duration-300 ease-in-out">
+                            <Link :href="route('home')" >
+                                <div class="bg-transparent shine text-white font-semibold  py-2 px-20 border border-white  rounded ">
+                                    Get Started
                                 </div>
-                                <input
-                                    type="text"
-                                    class="form-input w-full pl-10 pr-4 py-2 border border-transparent rounded-md leading-5 bg-gray-800 bg-opacity-25
-                                text-white   text-sm sm:text-lg
-                                placeholder-gray-400 focus:outline-none focus:bg-white focus:bg-opacity-10 focus:placeholder-gray-300 focus:text-gray-300 focus:ring-0 transition duration-150 ease-in-out"
-                                    placeholder="Search for a creator or a video from any platform"
-                                />
-                            </div>
+                            </Link>
+
                         </div>
+
 
                    </div>
                 </div>
@@ -105,34 +100,61 @@ export default {
             <!-- explain the platform-->
             <scroll-parallax :speed="0.3">
                 <div class="w-screen h-screen flex  bgLight dark:bg-vidgaze-blue">
-                    <div class="max-w-7xl m-auto  px-4 sm:px-6 lg:px-8">
-                        <div class="flex flex-col gap-y-8  ">
-                            <h2 class="text-4xl text dark:textDark font-bold">Watch all your favourite content in one place!</h2>
-                            <p class="text-2xl text-center text dark:textDark ">YouTube, Twitch, Dailymotion, Odysee, Vimeo and more!
-                                <br>Watch these and more at VidGaze today! </p>
+
+                    <!--awards-->
+
+                    <div class="  m-auto  py-4">
+                        <div class="container mx-auto px-4">
+                            <h2 class="text-4xl font-bold mb-4 mx-auto text-center ">Kindly Supported By</h2>
+                            <div class="flex flex-wrap justify-center">
+                                <div class="w-1/2 sm:w-1/4 p-4 align-middle flex flex-row">
+                                    <img class="w-64 mx-auto object-contain" src="https://images.squarespace-cdn.com/content/v1/631a0fdf324dc751c8d24b33/b2ea62b4-5c04-409e-b01a-0727d468d6f6/CoFo_WithNavyBG_RGB.png?format=1500w"/>
+
+                                </div>
+                                <div class="w-1/2 sm:w-1/4 p-4 align-middle flex flex-row">
+                                    <img class="w-64 mx-auto object-contain" src="https://www.scaleupinstitute.org.uk/wp-content/uploads/2019/11/techstart.png"/>
+                                </div>
+                                <div class="w-1/2 sm:w-1/4 p-4 align-middle flex flex-row">
+                                    <img class="w-64 mx-auto object-contain" src="https://www.qub.ac.uk/home/media/Media,891905,smxx.png"/>
+                                </div>
+                                <div class="w-1/2 sm:w-1/4 p-4 align-middle flex flex-row">
+                                    <img class="w-64 mx-auto object-contain" src="https://www.qub.ac.uk/home/media/Media,891905,smxx.png"/>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+
                 </div>
             </scroll-parallax>
 
             <!--   explain the platform-->
             <scroll-parallax :speed="0.3">
+
                 <div
                     class="w-screen h-screen flex bg-gradient-to-b to-transparent from-gray-900  ">
-                    <div class="max-w-7xl m-auto  px-4 sm:px-6 lg:px-8">
-                        <div class="flex flex-col gap-y-8 text-center">
-                            <h2 class="text-4xl text-white font-bold">Support your favourite content creators while your at it!</h2>
-                            <p class="text-2xl text-zinc-300">
-                                VidGaze can improve monetisation rates for creators
-                                and gives subscribers the ability to support their favorite creators without giving up
-                                their favourite content.&nbsp;&nbsp;
-                                When multiple platforms have the same videos, VidGaze automatically selects the
-                                source that pays the most to the creator. This means that creators can earn more money.
-                            </p>
-                        </div>
 
 
-                    </div>
+                    <!--<div class="max-w-7xl m-auto  px-4 sm:px-6 lg:px-8">-->
+                    <!--    <div class="flex flex-col gap-y-8  ">-->
+                    <!--        <h2 class="text-4xl text dark:textDark font-bold">Watch all your favourite content in one place!</h2>-->
+                    <!--        <p class="text-2xl text-center text dark:textDark ">YouTube, Twitch, Dailymotion, Odysee, Vimeo and more!-->
+                    <!--            <br>Watch these and more at VidGaze today! </p>-->
+                    <!--    </div>-->
+                    <!--</div>-->
+
+                    <!--<div class="max-w-7xl m-auto  px-4 sm:px-6 lg:px-8">-->
+                    <!--    <div class="flex flex-col gap-y-8 text-center">-->
+                    <!--        <h2 class="text-4xl text-white font-bold">Support your favourite content creators while your at it!</h2>-->
+                    <!--        <p class="text-2xl text-zinc-300">-->
+                    <!--            VidGaze can improve monetisation rates for creators-->
+                    <!--            and gives subscribers the ability to support their favorite creators without giving up-->
+                    <!--            their favourite content.&nbsp;&nbsp;-->
+                    <!--            When multiple platforms have the same videos, VidGaze automatically selects the-->
+                    <!--            source that pays the most to the creator. This means that creators can earn more money.-->
+                    <!--        </p>-->
+                    <!--    </div>-->
+                    <!--</div>-->
                 </div>
             </scroll-parallax>
 

@@ -39,7 +39,7 @@ const props = defineProps({
                 <div v-if="!route().current('about')" class="pointer-events-none opacity-0 flex-shrink-0 transition  ease-in-out"  :class="{'sm:w-64  ': showingNavigationDropdown, 'sm:w-24': !showingNavigationDropdown}">
 
                 </div>
-                <div class="flex-shrink transition duration-700 ease-in-out "  :class="{'   ': showingNavigationDropdown}">
+                <div class="flex-shrink transition duration-700 ease-in-out w-full"  :class="{'   ': showingNavigationDropdown}">
                     <slot  />
                 </div>
                 <!--<CookieConsent/>-->

@@ -18,11 +18,9 @@ const open = ref(false);
 const watchLaterId = usePage().props.auth.watchLaterId;
 const addToWatchLater = () => {
     if (usePage().props.auth.user == null) {
-        toast.add({
-            message: 'You must be logged in to add to your Watch Later playlist!',
-            type: 'normal',
-        });
-        return;
+        //redirect to login page
+        // Navigate to the login page URL
+        window.location.href = route('login');
     }
 
     const url = '/playlists/' + watchLaterId + '/videos/' + props.video.id;

@@ -14,6 +14,9 @@ const carouselItems = [
         imgSrc:
             "https://yt3.googleusercontent.com/lns9gHx-jrwkKHjn5rm6leWtyPb-pBv3XsyxH3bdcwC9aXPK7EqcldpQBY7q6fYhchC0o2kbJQ=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
     },
+    {
+        imgSrc: "https://yt3.googleusercontent.com/eQLr0tOKbUf2UqOfIZ2WQGxXouOl3xxA8VN4bCjG9_WyduAvNYBWRv9nWkLrTBQ9rhx9YEH5mA=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"
+    }
 ];
 
 const activeIndex = ref(0);

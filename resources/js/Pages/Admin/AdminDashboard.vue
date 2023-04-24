@@ -15,7 +15,7 @@ export default {
         <div class="h1 text dark:textDark">
 
 
-            <div class="  px-2 sm:rounded-lg">
+            <div class="  px-2 sm:rounded-lg w-full flex flex-col align-middle justify-center justify-items-center">
 
                 <!--Welcome message + name-->
                 <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-200 mb-5 text-center select-none">Welcome back, {{ $page.props.auth.user.creator.name }}!</h1>

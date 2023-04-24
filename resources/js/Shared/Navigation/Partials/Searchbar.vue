@@ -166,7 +166,8 @@ function goToSelectedResult() {
                     <div class="relative w-full bg-zinc-900 dark:bg-zinc-900 border border-zinc-900 h-full
                                py-2 px-3  rounded-b-xl text-white shadow shadow-md  ">
                         <div class="relative w-full fixed pointer-events absolute rounded-none inset-x-0 mx-auto z-20 ">
-                            <div class=" w-full text-sm text-left flex flex-col space-y-1">
+                            <div class=" w-full text-sm text-left flex flex-col space-y-1 cursor-pointer"
+                                 @click="goToSelectedResult">
                                 <!--for each creator or video in results show a search suggestion-->
                                 <!-- for each creator or video in results show a search suggestion -->
                                 <SearchSuggestion
