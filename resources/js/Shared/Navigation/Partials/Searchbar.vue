@@ -5,33 +5,17 @@ import { Link } from '@inertiajs/vue3';
 import { defineProps, defineEmits, ref, watch, computed } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import SearchSuggestion from '@/Shared/SearchDropdown/SearchSuggestion.vue';
+import {useNavStore} from "@/Stores/NavStore";
+const navStore = useNavStore();
 
 // name of the component
 const name = 'Searchbar';
 
-// accept props
-const props = defineProps({
-    expandedSearchBar: {
-        type: Boolean,
-        required: true
-    },
-    expandedSearchResults: {
-        type: Boolean,
-        required: true
-    }
-});
 
-// define emits
-const emits = defineEmits([
-    'toggleExpandedSearchBarOff',
-    'toggleExpandedSearchResultsOff',
-    'toggleExpandedSearchBarOn',
-    'toggleExpandedSearchResultsOn'
-]);
 
 const onClickAway = event => {
-    if (props.expandedSearchResults) {
-        emits('toggleExpandedSearchResultsOff');
+    if ( navStore.getExpandedSearchResults() ) {
+        navStore.toggleExpandedSearchResultsOff();
     }
 };
 
@@ -55,14 +39,14 @@ watch(searchInput, value => {
 
 function searchEntered() {
     // console.log(searchInput.value);
-    if (searchInput.value.length > 0) {
+    if (searchInput.value.length > 0 && navStore.getExpandedSearchResults()) {
         Inertia.get('/search', { q: searchInput.value });
     }
 }
 
 const showSearchResultsDropdown = computed(() => {
     return (
-        props.expandedSearchResults &&
+        navStore.getExpandedSearchResults() &&
         Object.keys(results.value)
             .filter(key => key !== 'query')
             .reduce((accumulator, key) => {
@@ -135,36 +119,36 @@ function goToSelectedResult() {
             class="relative flex flex-row space-x-3 w-full justify-end sm:justify-center">
 
             <div class="p-2 pl-1  " :class="{
-                                            'hidden': !expandedSearchBar,
-                                            ' flex': expandedSearchBar,
+                                            'hidden': !navStore.getExpandedSearchBar(),
+                                            ' flex': navStore.getExpandedSearchBar(),
                                         }">
                 <!--Exit expanded search-->
-                <CloseNavSVG @click="$emit('toggleExpandedSearchBarOff')"
+                <CloseNavSVG @click="navStore.toggleShowingNavigationDropdownOff()"
                              class="ml-1 w-6 aspect-square flex-shrink-0 text-white   my-auto"/>
             </div>
 
-            <div  v-click-away="onClickAway" @click="$emit('toggleExpandedSearchBarOn')"
-                  :class="{'w-full  ': expandedSearchBar,' w-max sm:w-full max-w-md ': !expandedSearchBar,
+            <div  v-click-away="onClickAway" @click="navStore.toggleExpandedSearchBarOn()"
+                  :class="{'w-full  ': navStore.getExpandedSearchBar(),' w-max sm:w-full max-w-md ': !navStore.getExpandedSearchBar(),
                 'rounded-t-md rounded-r-md  ': showSearchResultsDropdown ,' rounded-md ': !showSearchResultsDropdown}"
                  class="h-10 relative flex sm:gap-x-2 items-center text-zinc-500 px-3 bg-zinc-900 ">
                 <input type="text"
-                       @click="$emit('toggleExpandedSearchResultsOn')"
+                       @click="navStore.toggleExpandedSearchResultsOn"
                        v-model.trim="searchInput"
                        @keydown.arrow-down="selectNextResult"
                        @keydown.arrow-up="selectPreviousResult"
                        @keydown.enter="goToSelectedResult"
                        class="bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white font-bold text-sm"
-                       :class="{'w-full': expandedSearchBar,'w-0 sm:w-full': !expandedSearchBar,' placeholder-zinc-400': expandedSearchResults}"
+                       :class="{'w-full': navStore.getExpandedSearchBar(),'w-0 sm:w-full': !navStore.getExpandedSearchBar(),' placeholder-zinc-400': navStore.getExpandedSearchResults()}"
                        placeholder="Joshua you suck and your search code sucks Search YouTube, Twitch, Odysee and more...">
                 <SearchIcon @click="searchEntered" class="w-5 h-5 flex-shrink-0"/>
 
                 <!--Search dropdown-->
-                <div  :class="{'w-full': expandedSearchBar,' w-max sm:w-full max-w-md': !expandedSearchBar,
-                    'flex ': expandedSearchResults ,'hidden': !showSearchResultsDropdown}"
-                          class="absolute left-0 top-9 w-full pr-11 sm:pl-0  ">
+                <div  :class="{'w-full': navStore.getExpandedSearchBar(),' w-max sm:w-full max-w-md': !navStore.getExpandedSearchBar(),
+                    'flex ': navStore.getExpandedSearchResults ,'hidden': !showSearchResultsDropdown}"
+                          class="absolute left-0 top-9 w-full  sm:pl-0 pointer-events-none ">
 
-                    <div class="relative w-full bg-zinc-900 dark:bg-zinc-900 border border-zinc-900 h-full
-                               py-2 px-3  rounded-b-xl text-white shadow shadow-md  ">
+                    <div class="relative w-full bg-zinc-900 dark:bg-zinc-900 border border-zinc-900 h-full pointer-events-auto
+                               py-2 px-3  rounded-b-xl text-white shadow shadow-md mr-11 ">
                         <div class="relative w-full fixed pointer-events absolute rounded-none inset-x-0 mx-auto z-20 ">
                             <div class=" w-full text-sm text-left flex flex-col space-y-1 cursor-pointer"
                                  @click="goToSelectedResult">

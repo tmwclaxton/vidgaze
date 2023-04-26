@@ -1,14 +1,83 @@
 import { defineStore } from 'pinia'
+import {ref} from "vue";
 export const useNavStore = defineStore('NavStore', {
     state: () => {
         return {
             showingStudioLinks: false,
-            showingSearch: false,
-            expandedSearch: false,
-
+            showingNavigationDropdown: false,
+            expandedSearchBar: false, //this is for mobile search bar when you click the search icon it hides the hamburger and stuff
+            expandedSearchResults: false,
+            // this is for the search bar so when you resize the window it will close the expanded search bar
+            windowWidth: ref(window.innerWidth),
         }
     },
     actions: {
+        setStudioLinks(value) {
+            this.showingStudioLinks = value;
+        },
+        getStudioLinks() {
+            return this.showingStudioLinks;
+        },
+        getExpandedSearchBar() {
+            return this.expandedSearchBar;
+        },
+        getNavigationDropdown() {
+            return this.showingNavigationDropdown;
+        },
+        getExpandedSearchResults() {
+            return this.expandedSearchResults;
+        },
 
+        handleResize() {
+            this.windowWidth = window.innerWidth
+            if (this.windowWidth > 640) {
+                this.expandedSearchBar = false
+            } else {
+                // it makes sense to close sidenav when you resize the window to mobile cause otherwise it is a bit annoying
+                this.showingNavigationDropdown = false
+
+                // check if the search results are expanded if so then expand the search bar for mobile
+                if (this.expandedSearchResults) {
+                    this.expandedSearchBar = true
+                } else {
+                    this.expandedSearchBar = false
+                }
+                //if sidebar is open and search results are expanded then close the sidebar
+                if (this.showingNavigationDropdown && this.expandedSearchResults) {
+                    this.showingNavigationDropdown = false
+                }
+            }
+        },
+        toggleShowingNavigationDropdown() {
+            this.showingNavigationDropdown = !this.showingNavigationDropdown
+        },
+
+        // this is for mobile so when you click the profile / upload / notification icon it will close the sidenav
+        toggleShowingNavigationDropdownOff() {
+            if (this.windowWidth <= 640) {
+                this.showingNavigationDropdown = false;
+            }
+        },
+
+        toggleExpandedSearchBarOn() {
+            if (this.windowWidth <= 640) {
+                this.expandedSearchBar = true
+                this.showingNavigationDropdown = false
+                this.expandedSearchResults = true
+            } else {
+                this.expandedSearchBar = false
+            }
+        },
+        toggleExpandedSearchBarOff() {
+            this.expandedSearchBar = false;
+            this.expandedSearchResults = false;
+        },
+        toggleExpandedSearchResultsOn() {
+            this.expandedSearchResults = true
+        },
+        toggleExpandedSearchResultsOff() {
+            this.expandedSearchResults = false;
+            this.toggleExpandedSearchBarOff();
+        },
     }
 })

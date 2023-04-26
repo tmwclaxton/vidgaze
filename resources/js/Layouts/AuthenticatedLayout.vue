@@ -1,8 +1,10 @@
 <script setup>
-import { ref } from 'vue';
+import {ref, watch} from 'vue';
 
 import Nav from '@/Shared/Navigation/Nav.vue';
 import ToastList from "@/Components/Toast/ToastList.vue";
+import {useNavStore} from "@/Stores/NavStore";
+const navStore = useNavStore();
 
 let showingNavigationDropdown = ref(false);
 
@@ -13,6 +15,10 @@ const props = defineProps({
         required: false,
         default: false
     },
+});
+
+watch(() => props.showingStudioLinks, (newVal) => {
+    navStore.setStudioLinks(newVal);
 });
 </script>
 
@@ -26,20 +32,15 @@ const props = defineProps({
 
         <div class=" flex flex-col   ">
 
-            <Nav
-                :showingNavigationDropdown="showingNavigationDropdown"
-                 :showingStudioLinks="showingStudioLinks"
-                @toggleSidenav="showingNavigationDropdown = !showingNavigationDropdown"
-                @toggleSidenavOff="showingNavigationDropdown = false"
-            />
+            <Nav/>
 
             <!-- Page Content -->
             <main class="flex flex-row flex-grow    " >
 
-                <div v-if="!route().current('about')" class="pointer-events-none opacity-0 flex-shrink-0 transition  ease-in-out"  :class="{'sm:w-64  ': showingNavigationDropdown, 'sm:w-24': !showingNavigationDropdown}">
+                <div v-if="!route().current('about')" class="pointer-events-none opacity-0 flex-shrink-0 transition  ease-in-out"  :class="{'sm:w-64  ': navStore.getNavigationDropdown(), 'sm:w-24': !navStore.getNavigationDropdown()}">
 
                 </div>
-                <div class="flex-shrink transition duration-700 ease-in-out w-full"  :class="{'   ': showingNavigationDropdown}">
+                <div class="flex-shrink transition duration-700 ease-in-out w-full"  :class="{'   ': navStore.getNavigationDropdown()}">
                     <slot  />
                 </div>
                 <!--<CookieConsent/>-->

@@ -8,32 +8,14 @@ import CloseNavSVG from '~/images/icons/exit.svg';
 
 import {Link} from "@inertiajs/vue3";
 import Searchbar from "@/Shared/Navigation/Partials/Searchbar.vue";
+import {useNavStore} from "@/Stores/NavStore";
+const navStore = useNavStore();
+
 
 //name of the component
 const name = 'TopNavBar';
 
-//accept props
-const props = defineProps({
-    expandedSearchBar: {
-        type: Boolean,
-        required: true,
-        default: false
-    },
-    showingNavigationDropdown: {
-        type: Boolean,
-        required: true,
-        default: false
-    },
-    showingStudioLinks: {
-        type: Boolean,
-        required: false
-    },
-    expandedSearchResults: {
-        type: Boolean,
-        required: false,
-        default: false
-    },
-});
+
 
 
 
@@ -48,11 +30,11 @@ const props = defineProps({
                 <div class="flex w-full">
                     <!-- Hamburger, hide whenever search icon is clicked in mobile mode -->
                     <div class=" flex items-center  "
-                         :class="{'hidden sm:flex': expandedSearchBar,  '': !expandedSearchBar }">
+                         :class="{'hidden sm:flex': navStore.getExpandedSearchBar(),  '': !navStore.getExpandedSearchBar() }">
                         <button
-                            @click="$emit('toggleSidenav')"
+                            @click="navStore.toggleShowingNavigationDropdown()"
                             :class="{
-                                'rotate-180 ': showingNavigationDropdown,
+                                'rotate-180 ': navStore.getNavigationDropdown(),
                             }"
                             class="bg-zi nc-900 dark:bg-vid gaze-blue rounded-full  transition duration-900 ease-in-out inline-flex items-center justify-center p-2  text-zinc-400 dark:text-zinc-500 hover:text-zinc-500 dark:hover:text-zinc-400  focus:outline-none  focus:text-zinc-400 transition duration-300 ease-in-out"
                         >
@@ -68,8 +50,8 @@ const props = defineProps({
                     <!-- Logo -->
                     <div class="shrink-0 flex items-center md:mr-5 ml-6" :class="
                                 {
-                                    'hidden sm:flex': expandedSearchBar,
-                                    '': !expandedSearchBar,
+                                    'hidden sm:flex': navStore.getExpandedSearchBar(),
+                                    '': !navStore.getExpandedSearchBar(),
                                 }">
                         <Link :href="route('home')">
                             <img src="/images/logos/vidgaze/vidgaze_banner.png" alt="VidGaze Logo"
@@ -78,16 +60,12 @@ const props = defineProps({
                     </div>
 
                     <!-- Navigation Links -->
-                    <!--<TopNavigationLinks :showingStudioLinks="showingStudioLinks"/>-->
+                    <!--<TopNavigationLinks />-->
 
-                    <Searchbar @toggleExpandedSearchBarOn="$emit('toggleExpandedSearchBarOn')"
-                                 @toggleExpandedSearchBarOff="$emit('toggleExpandedSearchBarOff')"
-                               @toggleExpandedSearchResultsOn="$emit('toggleExpandedSearchResultsOn')"
-                               @toggleExpandedSearchResultsOff="$emit('toggleExpandedSearchResultsOff')"
-                               v-if="!showingStudioLinks" :expandedSearchBar="expandedSearchBar" :expandedSearchResults="expandedSearchResults" />
+                    <Searchbar v-if="!navStore.getStudioLinks()"  />
 
                     <!--Buy Vidcoins button-->
-                    <div v-if="!showingStudioLinks" class="hidden 2xl:flex sm:items-center mr-2 flex-shrink-0 group">
+                    <div v-if="!navStore.getStudioLinks()" class="hidden 2xl:flex sm:items-center mr-2 flex-shrink-0 group">
                         <Link :href="route('login')"  >
                             <button class="flex flex-row items-center justify-center
                             text-sm capitalize bg-zinc-900 hover:bg-zinc-800 text-white p-2 px-5 rounded-md font-bold flex flex-row space-x-3">
@@ -119,10 +97,10 @@ const props = defineProps({
 
                 <div v-if="$page.props.auth.user != null" @click="$emit('toggleSidenavOff')"
                      class=" flex flex-row gap-x-5 items-center ml-4  flex-shrink-0  "
-                     :class="{'hidden sm:flex': expandedSearchBar,  '': !expandedSearchBar }"
+                     :class="{'hidden sm:flex': navStore.getExpandedSearchBar(),  '': !navStore.getExpandedSearchBar() }"
                 >
                     <!--Upload Dropdown-->
-                    <UploadDropdown v-if="!showingStudioLinks" />
+                    <UploadDropdown v-if="!navStore.getStudioLinks()" />
 
                     <!--Notifications Dropdown-->
                     <NotificationsDropdown/>

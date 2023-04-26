@@ -16,20 +16,12 @@ import StreamIcon from '~/images/icons/livestreams.svg';
 import PodcastIcon from '~/images/icons/podcast.svg';
 import SubscriptionsIcon from '~/images/icons/subscriptions.svg';
 import LibraryIcon from '~/images/icons/library.svg';
+import {useNavStore} from "@/Stores/NavStore";
+const navStore = useNavStore();
+
 //name of the component
 const name = 'ExpandableNavigationLinks';
 
-//accept props
-const props = defineProps({
-    showingStudioLinks: {
-        type: Boolean,
-        required: true
-    },
-    showingNavigationDropdown: {
-        type: Boolean,
-        required: true
-    }
-})
 </script>
 
 
@@ -38,11 +30,10 @@ const props = defineProps({
 
 
 
-    <div  v-if="!showingStudioLinks" class="  space-y-1 ">
+    <div  v-if="!navStore.getStudioLinks()" class="  space-y-1 ">
         <!--<p v-text="showingNavigationDropdown" class="text-white"></p>-->
         <div class="ld:hid den">
-            <ResponsiveNavLink :href="route('home')" :active="route().current('home')"
-                   :showingNavigationDropdown="showingNavigationDropdown">
+            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                     <!--<VideoIcon class="w-5 h-5 flex-shrink-0"/>-->
                     <HomeIcon class="w-5 h-5 flex-shrink-0"/>
                     <span>Home</span>
@@ -50,30 +41,26 @@ const props = defineProps({
             </ResponsiveNavLink>
         </div>
         <div class="ld:hid den">
-            <ResponsiveNavLink :href="route('streams.index')" :active="route().current('streams.index')"
-                       :showingNavigationDropdown="showingNavigationDropdown">
+            <ResponsiveNavLink :href="route('streams.index')" :active="route().current('streams.index')">
                     <StreamIcon class="w-5 h-5 flex-shrink-0"/>
                     <span>Streams</span>
             </ResponsiveNavLink>
         </div>
         <div class="">
-            <ResponsiveNavLink :href="route('videos.shorts')" :active="route().current('videos.shorts')"
-                              :showingNavigationDropdown="showingNavigationDropdown">
+            <ResponsiveNavLink :href="route('videos.shorts')" :active="route().current('videos.shorts')">
                     <ShortsIcon class="w-5 h-5 flex-shrink-0"/>
                     <span>Shorts</span>
             </ResponsiveNavLink>
         </div>
         <div class="2xl:hid den ">
-            <ResponsiveNavLink :href="route('podcasts')" :active="route().current('podcasts')"
-                              :showingNavigationDropdown="showingNavigationDropdown">
+            <ResponsiveNavLink :href="route('podcasts')" :active="route().current('podcasts')">
                     <PodcastIcon class="w-5 h-5 flex-shrink-0"/>
                     <span>Podcasts</span>
             </ResponsiveNavLink>
         </div>
 
         <div class=" ">
-            <ResponsiveNavLink :href="route('music.index')" :active="route().current('music.index')"
-                      :showingNavigationDropdown="showingNavigationDropdown">
+            <ResponsiveNavLink :href="route('music.index')" :active="route().current('music.index')">
                     <MusicIcon class="w-5 h-5 flex-shrink-0"/>
                     <span>Music</span>
             </ResponsiveNavLink>
@@ -82,8 +69,7 @@ const props = defineProps({
         <!--subscriptions-->
 
         <div v-if="$page.props.auth.user != null" class="lg:hid den">
-            <ResponsiveNavLink :href="route('feed.subscriptions')" :active="route().current('feed.subscriptions')"
-                          :showingNavigationDropdown="showingNavigationDropdown">
+            <ResponsiveNavLink :href="route('feed.subscriptions')" :active="route().current('feed.subscriptions')">
                     <SubscriptionsIcon class="w-5 h-5 flex-shrink-0"/>
                     <span>Subscriptions</span>
             </ResponsiveNavLink>
@@ -91,8 +77,7 @@ const props = defineProps({
 
         <!--library-->
         <div v-if="$page.props.auth.user != null" class="xl:hid den">
-            <ResponsiveNavLink :href="route('feed.library')" :active="route().current('feed.library')"
-                          :showingNavigationDropdown="showingNavigationDropdown">
+            <ResponsiveNavLink :href="route('feed.library')" :active="route().current('feed.library')">
                     <LibraryIcon class="w-5 h-5 flex-shrink-0"/>
                     <span>Library</span>
             </ResponsiveNavLink>
@@ -101,51 +86,45 @@ const props = defineProps({
 
 
     <!--studio links-->
-    <div  v-if="showingStudioLinks" class="  space-y-1 ">
+    <div  v-if="navStore.getStudioLinks()" class="  space-y-1 ">
         <!--dashboard-->
         <div v-if="$page.props.auth.user != null" class="md:hid den">
-            <ResponsiveNavLink :href="route('home')" :active="route().current('home')"
-                          :showingNavigationDropdown="showingNavigationDropdown">
+            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                     <ProfileIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Dashboard</span>
             </ResponsiveNavLink>
         </div>
         <!--content page-->
         <div v-if="$page.props.auth.user != null" class="md:hid den">
-            <ResponsiveNavLink :href="route('home')" :active="route().current('home')"
-                      :showingNavigationDropdown="showingNavigationDropdown">
+            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                     <ContentIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Content</span>
             </ResponsiveNavLink>
         </div>
         <!--upload page-->
         <div v-if="$page.props.auth.user != null" class="ld:hid den">
-            <ResponsiveNavLink :href="route('home')" :active="route().current('home')"
-                              :showingNavigationDropdown="showingNavigationDropdown">
+            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                     <UploadIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Upload</span>
             </ResponsiveNavLink>
         </div>
         <!--creator streams-->
         <div v-if="$page.props.auth.user != null" class="xl:hid den">
-            <ResponsiveNavLink :href="route('home')" :active="route().current('home')"
-                              :showingNavigationDropdown="showingNavigationDropdown">
+            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                     <LivestreamIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Stream</span>
             </ResponsiveNavLink>
         </div>
         <!--dashboard-->
         <div v-if="$page.props.auth.user != null" class="xl:hid den">
-            <ResponsiveNavLink :href="route('home')" :active="route().current('home')"
-                              :showingNavigationDropdown="showingNavigationDropdown">
+            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                     <UnionIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Unions</span>
             </ResponsiveNavLink>
         </div>
         <!--Customise-->
         <div v-if="$page.props.auth.user != null" class="md:hid den">
-            <ResponsiveNavLink :href="route('home')" :active="route().current('home')"
-                              :showingNavigationDropdown="showingNavigationDropdown">
+            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                     <CustomiseIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Customise</span>
             </ResponsiveNavLink>

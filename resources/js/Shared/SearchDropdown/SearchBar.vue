@@ -1,3 +1,29 @@
+<script setup>
+import SearchSuggestion from "./SearchSuggestion";
+
+import {ref, watch} from "vue";
+import {Inertia} from "@inertiajs/inertia";
+import axios from "axios";
+let search = ref('');
+let results = ref([]);
+
+watch(search, (value) => {
+    // Inertia.get('/api/search-bar', {q: value})
+    axios.get('/api/search-bar', {params: {q: value}})
+        .then(response => {
+            results.value = response.data;
+        })
+        .catch(error => {
+            console.log(error);
+        });
+})
+
+//detect when search is entered
+function searchEntered() {
+    Inertia.get('/search', {q: search.value});
+}
+</script>
+
 <template>
     <div class="h-full w-full max-w-2xl mx-auto">
         <div class="flex w-full h-full "  >
@@ -71,28 +97,4 @@
 
 </template>
 
-<script setup>
-import SearchSuggestion from "./SearchSuggestion";
 
-import {ref, watch} from "vue";
-import {Inertia} from "@inertiajs/inertia";
-import axios from "axios";
-let search = ref('');
-let results = ref([]);
-
-watch(search, (value) => {
-    // Inertia.get('/api/search-bar', {q: value})
-    axios.get('/api/search-bar', {params: {q: value}})
-        .then(response => {
-            results.value = response.data;
-        })
-        .catch(error => {
-            console.log(error);
-        });
-})
-
-//detect when search is entered
-function searchEntered() {
-    Inertia.get('/search', {q: search.value});
-}
-</script>

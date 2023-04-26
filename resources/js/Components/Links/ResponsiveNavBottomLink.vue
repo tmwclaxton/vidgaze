@@ -2,7 +2,10 @@
 import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 
-const props = defineProps(['href', 'active','span','showingNavigationDropdown']);
+import {useNavStore} from "@/Stores/NavStore";
+const navStore = useNavStore();
+
+const props = defineProps(['href', 'active','span']);
 
 
 const classes = computed(() => {
@@ -14,7 +17,7 @@ const classes = computed(() => {
         classString = 'border-transparent text-zinc-200   hover:text-white  hover:bg-zinc-700   dark:hover:bg-zinc-800     hover:border-zi nc-600 ';
     }
     // if side bar is expanded
-    if (props.showingNavigationDropdown) {
+    if (navStore.getNavigationDropdown()) {
         classString += '   flex-row text-base    px-1 py-2 ';
     } else {
         classString += 'sm:flex-col  align-middle justify-left sm:gap-2 gap-2 px-3 py-2 w-10 ';
