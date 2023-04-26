@@ -7,12 +7,15 @@ import {useNavStore} from "@/Stores/NavStore";
 const navStore = useNavStore();
 
 onMounted(() => {
+    navStore.handleResize();
     window.addEventListener('resize', navStore.handleResize)
+
 })
 
 onUnmounted(() => {
     window.removeEventListener('resize', navStore.handleResize)
 })
+
 
 
 

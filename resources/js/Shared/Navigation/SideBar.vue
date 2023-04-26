@@ -118,7 +118,7 @@ const name = 'SideBar';
                 </div>
 
 
-                <div id="bottom" class=" pb-1" >
+                <div id="bottom" class=" pb-1" v-if="navStore.getBottomNavLinks()">
 
                     <!--add about page-->
                     <div class="gap-1 grid grid-cols-1 text-center " :class="{ ' grid-cols-4': navStore.getNavigationDropdown()} ">
