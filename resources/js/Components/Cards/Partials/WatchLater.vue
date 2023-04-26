@@ -3,9 +3,11 @@
 import ClockIcon from '#icons/clock.svg';
 import TickIcon from '#icons/tick.svg';
 import {ref} from "vue";
-import toast from "@/Stores/toast";
+import {useToastStore} from "@/Stores/ToastStore.js";
 import {usePage} from "@inertiajs/vue3";
 import axios from 'axios';
+
+const toastStore = useToastStore();
 
 //props below
 const props = defineProps({
@@ -31,7 +33,7 @@ const addToWatchLater = () => {
             inPlaylist.value = !inPlaylist.value;
             const message = inPlaylist.value ? 'Added to Watch Later' : 'Removed from Watch Later';
             const type = inPlaylist.value ? 'success' : 'error';
-            toast.add({
+            toastStore.add({
                 message,
                 type,
             });
@@ -40,22 +42,22 @@ const addToWatchLater = () => {
             console.error(error);
             inPlaylist.value = !inPlaylist.value;
             if (error.response.status === 404) {
-                toast.add({
+                toastStore.add({
                     message: 'This video is not in your Watch Later playlist',
                     type: 'error',
                 });
             } else if (error.response.status === 400) {
-                toast.add({
+                toastStore.add({
                     message: 'This video is already in your Watch Later playlist',
                     type: 'error',
                 });
             } else if (error.response.status === 429) {
-                toast.add({
+                toastStore.add({
                     message: 'Woah there, slow down!',
                     type: 'error',
                 });
             } else {
-                toast.add({
+                toastStore.add({
                     message: 'An error occurred',
                     type: 'error',
                 });

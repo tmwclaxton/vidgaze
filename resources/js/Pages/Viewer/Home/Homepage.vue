@@ -38,9 +38,12 @@ const props = defineProps({
                     <VideoStreamCard  :video="video" />
                 </template>
             </div>
-<div class="h-96 mb-96">
 
-</div>
+            <p class="font-bold text-2xl my-4 mb-4">Popular Streams</p>
+
+            <div class="h-96 mb-96">
+
+            </div>
 
 
             <!--show a line-->

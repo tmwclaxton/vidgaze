@@ -4,8 +4,9 @@ import {onUnmounted, ref} from "vue";
 
 import {Inertia} from "@inertiajs/inertia";
 import {usePage} from "@inertiajs/vue3";
-import toast from "@/Stores/toast";
+import { useToastStore } from '@/Stores/ToastStore.js'
 
+const toastStore = useToastStore();
 
 const page = usePage();
 
@@ -26,25 +27,25 @@ let isToastMessageCalled = false;
 function toastMessages() {
     if (!isToastMessageCalled) {
         if (props.flash.toast) {
-            toast.add({
+            toastStore.add({
                 message: props.flash.toast,
                 type: "normal",
             });
         }
         if (props.flash.error) {
-            toast.add({
+            toastStore.add({
                 message: props.flash.error,
                 type: "error",
             });
         }
         if (props.flash.success) {
-            toast.add({
+            toastStore.add({
                 message: props.flash.success,
                 type: "success",
             });
         }
         if (props.flash.status) {
-            toast.add({
+            toastStore.add({
                 message: props.flash.status,
                 type: "normal",
             });
@@ -78,7 +79,7 @@ onUnmounted(() => {
 });
 
 function remove(index) {
-    toast.remove(index);
+    toastStore.remove(index);
 }
 </script>
 <template>
@@ -90,7 +91,7 @@ function remove(index) {
         leave-to-class="translate-x-full opacity-0"
         class="fixed bottom-4 right-4 z-50 w-full max-w-xs space-y-4">
         <ToastListItem
-            v-for="(item, index) in toast.items"
+            v-for="(item, index) in toastStore.items"
             :key="item.key"
             :message="item.message"
             :type="item.type"

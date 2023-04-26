@@ -11,6 +11,9 @@ import ProfileIcon from '~/images/icons/profile.svg';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {useDark, useToggle} from "@vueuse/core";
 import ResponsiveNavBottomLink from "@/Components/Links/ResponsiveNavBottomLink.vue";
+import {computed} from "vue";
+import {usePage} from "@inertiajs/vue3";
+
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
@@ -32,7 +35,10 @@ const props = defineProps({
     },
 })
 
-
+// const isScreenLess = computed(() => {
+//     return (window.innerWidth < 1200 && usePage().props.auth.user != null && !props.showingNavigationDropdown);
+// });
+// :class="{ 'hidden': $page.props.auth.user != null && !showingNavigationDropdown} "
 </script>
 
 <template>
@@ -134,14 +140,14 @@ const props = defineProps({
                     <!--add about page-->
                     <div class="gap-1 grid grid-cols-1 text-center " :class="{ ' grid-cols-4': showingNavigationDropdown} ">
                         <ResponsiveNavBottomLink :href="route('about')" :active="route().current('about')"
-                              :showingNavigationDropdown="showingNavigationDropdown">
+                                     :showingNavigationDropdown="showingNavigationDropdown">
                                 <!--<font-awesome-icon :icon="['fas', 'heart']" class="w-4 h-4 flex-shrink-0  "-->
                                 <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
                             <span class="w-full">About</span>
                         </ResponsiveNavBottomLink>
                     <!--add support page-->
                         <ResponsiveNavBottomLink :href="route('about')"
-                          :showingNavigationDropdown="showingNavigationDropdown">
+                                 :showingNavigationDropdown="showingNavigationDropdown">
                                 <!--<font-awesome-icon :icon="['fass', 'phone']" class="w-4 h-4 flex-shrink-0"-->
                                 <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
                                 <span class="w-full">Support</span>

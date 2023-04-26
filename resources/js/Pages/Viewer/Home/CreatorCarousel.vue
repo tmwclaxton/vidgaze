@@ -76,7 +76,7 @@ onMounted(() => {
                  :key="index"
                  :class="{'    ': activeIndex !== index,'  ': activeIndex === index}"
             >
-                <img :src="item.imgSrc" class="block w-full h-full" />
+                <img :src="item.imgSrc" class="block w-full h-full max-h-72" />
 
                  <!--<div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/50 h-screen w-full"></div>-->
             </div>

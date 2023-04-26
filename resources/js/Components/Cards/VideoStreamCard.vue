@@ -12,12 +12,14 @@ defineProps({
     channel_page: Boolean,
 });
 // Import the itemStore module
-import itemStore from "@/Stores/itemSelect.js";
-
+import {useContentMenuStore} from "@/Stores/ContentMenuStore.js";
+const itemStore = useContentMenuStore();
 // Define the setItemId method to call the setItemId method of itemStore with the provided id
 const setItemId = (id) => {
     itemStore.setItemId(id);
+    itemStore.setShowVideoMenu(true);
 };
+
 </script>
 <script>
 export default {

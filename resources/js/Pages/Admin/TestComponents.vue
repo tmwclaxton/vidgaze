@@ -8,17 +8,17 @@ import InputError from "@/Components/Inputs/InputError.vue";
 import InputLabel from "@/Components/Inputs/InputLabel.vue";
 import TextInput from "@/Components/Inputs/TextInput.vue";
 import FileUpload from "@/Components/Inputs/FileUpload.vue";
-import toast from "@/Stores/toast";
+// import toast from "@/Stores/toast";
 
 const submit = () => {
     form.post("/test");
 }
 
-const addToast = () => {
-    toast.add({
-        message: "Hello from dashboard",
-    });
-}
+// const addToast = () => {
+//     toast.add({
+//         message: "Hello from dashboard",
+//     });
+// }
 
 
 
