@@ -17,7 +17,6 @@ const props = defineProps({
 const name = 'WatchLater';
 const inPlaylist = ref(false);
 const open = ref(false);
-const watchLaterId = usePage().props.auth.watchLaterId;
 const addToWatchLater = () => {
     if (usePage().props.auth.user == null) {
         //redirect to login page
@@ -25,7 +24,7 @@ const addToWatchLater = () => {
         window.location.href = route('login');
     }
 
-    const url = '/playlists/' + watchLaterId + '/videos/' + props.video.id;
+    const url = '/playlists/watch_later/videos/' + props.video.id;
     const method = inPlaylist.value ? 'delete' : 'post';
 
     axios[method](url)

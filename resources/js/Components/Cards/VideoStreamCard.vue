@@ -6,25 +6,25 @@ import FireIcon from '#icons/shorts.svg';
 import DotsIcon from '#icons/3dots.svg';
 import Duration from "@/Components/Cards/Partials/Duration.vue";
 import WatchLater from "@/Components/Cards/Partials/WatchLater.vue";
+// Import the contentModalStore module
+import {useContentModalStore} from "@/Stores/ContentModalStore.js";
+import {computed, onMounted, onUnmounted, ref} from "vue";
+const contentModalStore = useContentModalStore();
+
+const name = "VideoStreamCard";
 //props below
-defineProps({
+const props = defineProps({
     video: Object,
     channel_page: Boolean,
 });
-// Import the itemStore module
-import {useContentMenuStore} from "@/Stores/ContentMenuStore.js";
-const itemStore = useContentMenuStore();
-// Define the setItemId method to call the setItemId method of itemStore with the provided id
+
+// Define the setItemId method to call the setItemId method of contentModalStore with the provided id
+
 const setItemId = (id) => {
-    itemStore.setItemId(id);
-    itemStore.setShowVideoMenu(true);
+    contentModalStore.setItemId(id);
+    contentModalStore.setMenuShow(true);
 };
 
-</script>
-<script>
-export default {
-    name: "BoxVideo",
-}
 
 </script>
 
@@ -96,7 +96,7 @@ export default {
 
                 </div>
                 <!--3 dots button-->
-                <div class="col-span-1 ml-auto pt-2 w-8 without-ring" >
+                <div :id="'dotsButton_' + video.id" class="col-span-1 ml-auto pt-2 w-8 without-ring" >
                     <button @click="setItemId(video.id)" class="flex without-ring m-0 mt-0 opacity-90 w-6 rounded-full text-zinc-500 ml-auto   pointer-events-auto">
                         <DotsIcon class="w-6 h-6"/>
                     </button>
@@ -108,9 +108,3 @@ export default {
 
     </div>
 </template>
-
-
-
-<style scoped>
-
-</style>

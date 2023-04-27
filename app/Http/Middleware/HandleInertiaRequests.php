@@ -36,8 +36,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
                 'creator' => $request->user()->creator ?? null,
-                'admin' => $request->user() ? $request->user()->isAdmin() : false,
-                'watchLaterId' => $request->user() ? $request->user()->creator->getServerMadePlaylist('Watch Later')->id : null,
+                'admin' => $request->user() ? $request->user()->isAdmin() : false
             ],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [

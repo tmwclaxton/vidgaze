@@ -13,6 +13,12 @@ class PlaylistVideoController extends Controller
 {
     public function create(Request $request, $playlistId, $videoId)
     {
+
+
+        if ($playlistId === "watch_later") {
+            $playlistId = Auth::user()->creator->getServerMadePlaylist('Watch Later')->id;
+        }
+
         // get playlist and video
         $playlist = Playlist::findOrFail($playlistId);
         $video = Video::findOrFail($videoId);
@@ -62,6 +68,10 @@ class PlaylistVideoController extends Controller
 
     public function destroy(Request $request, $playlistId, $videoId)
     {
+        if ($playlistId === "watch_later") {
+            $playlistId = Auth::user()->creator->getServerMadePlaylist('Watch Later')->id;
+        }
+
         // get if record exists
         $playlistVideo = PlaylistVideo::where('playlist_id', $playlistId)
             ->where('video_id', $videoId)
