@@ -40,13 +40,14 @@ const addToWatchLater = () => {
         })
         .catch(error => {
             console.error(error);
-            inPlaylist.value = !inPlaylist.value;
             if (error.response.status === 404) {
+                inPlaylist.value = !inPlaylist.value;
                 toastStore.add({
                     message: 'This video is not in your Watch Later playlist',
                     type: 'error',
                 });
             } else if (error.response.status === 400) {
+                inPlaylist.value = !inPlaylist.value;
                 toastStore.add({
                     message: 'This video is already in your Watch Later playlist',
                     type: 'error',
@@ -68,7 +69,7 @@ const addToWatchLater = () => {
 </script>
 <template>
     <div  @mouseenter="open = true" @mouseleave="open = false" @click="addToWatchLater()"
-         class="h-8 m-2 text-sm px-2 z-1 pointer-events-auto cursor-pointer flex flex-row gap-x-3
+         class="h-7  text-sm px-1.5 z-1 pointer-events-auto cursor-pointer flex flex-row gap-x-3
       group-hover:opacity-100 opacity-0 transition duration-300
        bg-zinc-900 rounded ">
         <div v-if="open"

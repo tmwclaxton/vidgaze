@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import {ref} from "vue";
+import {usePage} from "@inertiajs/vue3";
 export const useNavStore = defineStore('NavStore', {
     state: () => {
         return {
@@ -62,7 +63,7 @@ export const useNavStore = defineStore('NavStore', {
         },
 
         checkBottomNavLinks() {
-            if (this.windowHeight > 850 || this.showingNavigationDropdown) {
+            if (this.windowHeight > 850 || this.showingNavigationDropdown || (usePage().props.auth.user === null && this.windowHeight > 665)) {
                 this.showingBottomNavLinks = true
             } else {
                 this.showingBottomNavLinks = false
