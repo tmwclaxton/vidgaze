@@ -9,6 +9,7 @@ import WatchLater from "@/Components/Cards/Partials/WatchLater.vue";
 // Import the contentModalStore module
 import {useContentModalStore} from "@/Stores/ContentModalStore.js";
 import {computed, onMounted, onUnmounted, ref} from "vue";
+import Queue from "@/Components/Cards/Partials/Queue.vue";
 const contentModalStore = useContentModalStore();
 
 const name = "VideoStreamCard";
@@ -38,6 +39,7 @@ const setItemId = (id) => {
             </a>
             <Duration v-if="video.duration != null" :video="video" class="absolute bottom-0 right-0 m-1.5"/>
             <WatchLater :video="video" class="absolute top-0 right-0 m-1.5"/>
+            <Queue :video="video" class="absolute top-8 right-0 m-1.5"/>
 
 
         </div>
