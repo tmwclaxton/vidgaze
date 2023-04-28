@@ -70,7 +70,7 @@ const addToWatchLater = () => {
     <div  @mouseenter="open = true" @mouseleave="open = false" @click="addToWatchLater()"
          class="h-7  text-sm px-1.5 z-1 pointer-events-auto cursor-pointer flex flex-row gap-x-3
       group-hover:opacity-100 opacity-0 transition duration-300
-       bg-zinc-900 rounded ">
+       bg-zinc-900/90 rounded ">
         <div v-if="open"
              class="   text-white text-xs font-bold text-center my-auto pl-1 ">
             <p  v-if="inPlaylist">Added to Watch Later</p>

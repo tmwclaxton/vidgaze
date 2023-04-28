@@ -23,24 +23,34 @@ const open = ref(false);
 const addToQueue = () => {
 
     if (inQueue.value) {
-        queueStore.remove(props.video.id);
+        if(queueStore.remove(props.video.id)) {
+            inQueue.value = false;
+            toastStore.add({
+                message: 'Removed from Queue',
+                type: "error",
+            });
+        } else {
+            toastStore.add({
+                message: 'Error removing from Queue',
+                type: "error",
+            });
+        }
 
-        inQueue.value = false;
-        toastStore.add({
-            message: 'Removed from Queue',
-            type: "error",
-        });
+
     } else {
-        queueStore.add({
-            id: props.video.id,
-            type: "video",
-        });
+        if (queueStore.add({id: props.video.id,type: "video",}) ) {
+            inQueue.value = true;
+            toastStore.add({
+                message: 'Added to Queue',
+                type: "success",
+            });
+        } else {
+            toastStore.add({
+                message: 'Error adding to Queue',
+                type: "error",
+            });
+        }
 
-        inQueue.value = true;
-        toastStore.add({
-            message: 'Added to Queue',
-            type: "success",
-        });
     }
 
 }
@@ -50,7 +60,7 @@ const addToQueue = () => {
     <div  @mouseenter="open = true" @mouseleave="open = false" @click="addToQueue()"
          class="h-7  text-sm px-1.5 z-1 pointer-events-auto cursor-pointer flex flex-row gap-x-3
       group-hover:opacity-100 opacity-0 transition duration-300
-       bg-zinc-900 rounded ">
+       bg-zinc-900/90 rounded ">
         <div v-if="open"
              class="   text-white text-xs font-bold text-center my-auto pl-1 ">
             <p  v-if="inQueue">Added to Queue</p>

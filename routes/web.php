@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\Content\ChannelDisinterestController;
 use App\Http\Controllers\Content\PlaylistVideoController;
+use App\Http\Controllers\Content\VideoDisinterestController;
+use App\Http\Controllers\Content\VideoReportController;
 use App\Http\Controllers\Infinite\InfiniteVideosController;
 use App\Http\Controllers\Search\SearchController;
 use App\Http\Controllers\Content\MusicController;
@@ -131,16 +134,42 @@ Route::get('create_account/import/{platform}', [ImportingController::class,'crea
 
 //search routes
     Route::get('/search/', [SearchController::class, 'get']);
+
+
+Route::middleware('throttle:60,1')->group(function () {
     //search bar
-    Route::get('/search_suggestions', [SearchBarController::class, 'get']);
+    Route::get('/search_suggestions', [SearchBarController::class, 'get'])->name('search_suggestions');
+});
+
 
 // adding or removing a video from a playlist //throttle to 20 requests per minute
 Route::middleware(['throttle:15,1','auth'])->group(function () {
+    // This allows users to create and destroy PlaylistVideo records, indicating that they have added/removed a particular video to a particular playlist.
     Route::delete('/playlists/{playlistId}/videos/{videoId}', [PlaylistVideoController::class, 'destroy'])
         ->name('playlist.video.destroy');
 
     Route::post('/playlists/{playlistId}/videos/{videoId}', [PlaylistVideoController::class, 'create'])
         ->name('playlist.video.create');
+    // This allows users to create and destroy VideoDisinterest records, indicating that they are not interested in a particular video.
+    Route::post('/videos/{videoId}/disinterest', [VideoDisinterestController::class, 'create'])
+        ->name('video.disinterest.create');
+
+    Route::delete('/videos/{videoId}/disinterest', [VideoDisinterestController::class, 'destroy'])
+        ->name('video.disinterest.destroy');
+
+    // this allows users to create and destroy ChannelDisinterest records, indicating that they are not interested in a particular creator's channel.
+    Route::post('/channels/{channelId}/disinterest', [ChannelDisinterestController::class, 'create'])
+        ->name('channel.disinterest.create');
+
+    Route::delete('/channels/{channelId}/disinterest', [ChannelDisinterestController::class, 'destroy'])
+        ->name('channel.disinterest.destroy');
+
+    // this allows users to create and destroy VideoReport records, indicating that they are reporting a particular video.
+    Route::post('/videos/{videoId}/report', [VideoReportController::class, 'create'])
+        ->name('video.report.create');
+
+    Route::delete('/videos/{videoId}/report', [VideoReportController::class, 'destroy'])
+        ->name('video.report.destroy');
 });
 
 

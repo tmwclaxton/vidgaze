@@ -48,7 +48,7 @@ const name = 'TopNavBar';
 
 
                     <!-- Logo -->
-                    <div class="shrink-0 flex items-center md:mr-5 ml-6" :class="
+                    <div class="shrink-0 flex items-center md:mr-5 sm:ml-6" :class="
                                 {
                                     'hidden sm:flex': navStore.getExpandedSearchBar(),
                                     '': !navStore.getExpandedSearchBar(),

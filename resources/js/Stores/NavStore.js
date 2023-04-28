@@ -9,10 +9,7 @@ export const useNavStore = defineStore('NavStore', {
             showingNavigationDropdown: false,
             expandedSearchBar: false, //this is for mobile search bar when you click the search icon it hides the hamburger and stuff
             expandedSearchResults: false,
-            // this is for the search bar so when you resize the window it will close the expanded search bar
-            windowWidth: ref(window.innerWidth),
-            // this is for bottom nav links
-            windowHeight: ref(window.innerHeight),
+
         }
     },
     actions: {
@@ -37,9 +34,7 @@ export const useNavStore = defineStore('NavStore', {
 
         // there is an event listener for this in nav.vue
         handleResize() {
-            this.windowWidth = window.innerWidth
-            this.windowHeight = window.innerHeight
-            if (this.windowWidth > 640) {
+            if (window.innerWidth > 640) {
                 this.expandedSearchBar = false
             } else {
                 // it makes sense to close sidenav when you resize the window to mobile cause otherwise it is a bit annoying
@@ -63,7 +58,7 @@ export const useNavStore = defineStore('NavStore', {
         },
 
         checkBottomNavLinks() {
-            if (this.windowHeight > 850 || this.showingNavigationDropdown || (usePage().props.auth.user === null && this.windowHeight > 665)) {
+            if (window.innerHeight > 850 || this.showingNavigationDropdown || (usePage().props.auth.user === null && window.innerHeight > 665)) {
                 this.showingBottomNavLinks = true
             } else {
                 this.showingBottomNavLinks = false
@@ -77,13 +72,13 @@ export const useNavStore = defineStore('NavStore', {
 
         // this is for mobile so when you click the profile / upload / notification icon it will close the sidenav
         toggleShowingNavigationDropdownOff() {
-            if (this.windowWidth <= 640) {
+            if (window.innerWidth <= 640) {
                 this.showingNavigationDropdown = false;
             }
         },
 
         toggleExpandedSearchBarOn() {
-            if (this.windowWidth <= 640) {
+            if (window.innerWidth <= 640) {
                 this.expandedSearchBar = true
                 this.showingNavigationDropdown = false
                 this.expandedSearchResults = true
