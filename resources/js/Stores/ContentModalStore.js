@@ -13,14 +13,16 @@ export const useContentModalStore = defineStore('ContentModalStore', {
     actions: {
         setItemId(id) {
             this.itemId = id;
+        },
+        setMenuShow(value) {
+            this.showMenu = value;
+            // menu can't hidden or else can't find it to get width and height
+            // update doesn't seem to work
             const menuRef = document.getElementById("menu");
             if (menuRef !== null) {
                 this.setMenuSize(menuRef.offsetWidth, menuRef.offsetHeight);
             }
             this.setCoordinates();
-        },
-        setMenuShow(value) {
-            this.showMenu = value;
 
         },
         setCoordinates() {
