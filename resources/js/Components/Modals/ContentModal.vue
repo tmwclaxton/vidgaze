@@ -32,6 +32,10 @@ const toggleWatchLater = () => {
     contentModalStore.toggleWatchLater(contentModalStore.itemId, contentModalStore.inWatchLater);
 }
 
+const toggleVideoDisinterest = () => {
+    contentModalStore.toggleVideoDisinterest(contentModalStore.itemId, contentModalStore.videoDisinterest);
+}
+
 const toggleChannelDisinterest = () => {
     contentModalStore.toggleChannelDisinterest(contentModalStore.creatorId, contentModalStore.channelDisinterest);
 }
@@ -68,11 +72,11 @@ const toggleChannelDisinterest = () => {
             </Option>
             <hr class="border-1 border-zinc-300 dark:border-zinc-800 my-0.5 mt-1">
             <div v-if=" $page.props.auth.user !== null" class="flex flex-col ">
-                <Option v-if="!contentModalStore.videoDisinterest">
+                <Option v-if="!contentModalStore.videoDisinterest" @click="toggleVideoDisinterest">
                     <BanIcon class="w-5 h-5" />
                     <p>Not interested</p>
                 </Option>
-                <Option v-if="contentModalStore.videoDisinterest">
+                <Option v-if="contentModalStore.videoDisinterest" @click="toggleVideoDisinterest">
                     <TickIcon class="w-5 h-5" />
                     <p>You won't see this again!</p>
                 </Option>

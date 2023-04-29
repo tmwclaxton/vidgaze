@@ -74,6 +74,32 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             }
         },
 
+        async toggleVideoDisinterest(video_id, toggle) {
+            const url = '/videos/' + video_id + '/disinterest' ;
+            const method = toggle ? 'delete' : 'post';
+            let toastStore = useToastStore();
+
+            axios[method](url)
+                .then(response => {
+                    const message = toggle ? 'Got it, we will show you more videos like this' : 'Got it, we will show you less videos like this' ;
+                    const type = toggle ? 'success' : 'error';
+                    toastStore.add({
+                        message,
+                        type,
+                    });
+                    this.videoDisinterest = !this.videoDisinterest;
+                    this.showMenu = false;
+                })
+                .catch(error => {
+                    toastStore.add({
+                        message: error.response.data.error,
+                        type: 'error',
+                    });
+                    return false;
+                });
+            return true;
+        },
+
         async toggleChannelDisinterest(creator_id, toggle) {
             const url = '/channels/' + creator_id + '/disinterest' ;
             const method = toggle ? 'delete' : 'post';
@@ -88,12 +114,13 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                         type,
                     });
                     this.channelDisinterest = !this.channelDisinterest;
+                    this.showMenu = false;
                 })
                 .catch(error => {
-                        toastStore.add({
-                            message: error.response.data.error,
-                            type: 'error',
-                        });
+                    toastStore.add({
+                        message: error.response.data.error,
+                        type: 'error',
+                    });
                     return false;
                 });
             return true;
@@ -114,6 +141,11 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     });
                     // not really needed because we reload the modal each time it opens
                     this.inWatchLater = !this.inWatchLater;
+                    if (this.inWatchLater) {
+                        document.getElementById('toggleInWatchLater_' + this.itemId).click();
+                    } else  {
+                        document.getElementById('toggleNotInWatchLater_' + this.itemId).click();
+                    }
                 })
                 .catch(error => {
                     // console.log(error.response.data.error);

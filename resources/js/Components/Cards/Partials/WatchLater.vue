@@ -21,8 +21,20 @@ const toggleWatchLater = () => {
         inPlaylist.value = !inPlaylist.value;
     }
 }
+
+// this is used when the modal is used to add a video to the watch later playlist instead
+const inWatchLater = () => {
+    inPlaylist.value = true;
+}
+const notInWatchLater = () => {
+    inPlaylist.value = false;
+}
 </script>
 <template>
+    <div class="flex flex-row h-0 -mt-1">
+        <div :id="'toggleInWatchLater_' + video.id" @click="inWatchLater" class="w-0 h-0 opacity-0 pointer-events-none " key="watch_later_simple"></div>
+        <div :id="'toggleNotInWatchLater_' + video.id" @click="notInWatchLater" class="w-0 h-0 opacity-0 pointer-events-none  " key="watch_later_simple"></div>
+    </div>
     <div  @mouseenter="open = true" @mouseleave="open = false" @click="toggleWatchLater()" key="watch_later"
          class="h-7 w-max text-sm px-1.5 z-1 pointer-events-auto cursor-pointer flex flex-row gap-x-3
       group-hover:opacity-100 opacity-0 transition duration-300
@@ -37,7 +49,6 @@ const toggleWatchLater = () => {
             <ClockIcon v-if="!inPlaylist" class="w-4 my-auto mx-auto"/>
         </div>
     </div>
-
 </template>
 
 
