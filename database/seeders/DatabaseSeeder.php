@@ -89,7 +89,6 @@ class DatabaseSeeder extends Seeder
             CreatorSource::truncate();
             channelDisinterest::truncate();
             videoDisinterest::truncate();
-            videoReport::truncate();
             Schema::enableForeignKeyConstraints();
 
             //(new CategorySeeder())->run();

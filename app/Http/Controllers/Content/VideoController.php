@@ -68,16 +68,19 @@ class VideoController extends Controller
         // check if user has disinterested channel
         $channelDisinterest = ChannelDisinterest::where('creator_id', $creatorId)->where('channel_id', $video->creator->id)->exists();
 
-        // check if user has reported video
-        $reportVideo = VideoReport::where('creator_id', $creatorId)->where('video_id', $videoId)->exists();
 
         return response()->json([
             'inWatchLater' => $inWatchLater,
             'videoDisinterest' => $videoDisinterest,
             'channelDisinterest' => $channelDisinterest,
-            'reportVideo' => $reportVideo,
         ], 200);
     }
 
+    public function report(Request $request, $videoId)
+    {
+        $video = Video::findOrFail($videoId);
+        $video->increment('report_count');
+        return response()->json(['message' => 'Report added successfully.']);
+    }
 
 }

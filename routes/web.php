@@ -166,19 +166,17 @@ Route::middleware(['throttle:60,1','auth'])->group(function () {
     Route::delete('/videos/{videoId}/disinterest', [VideoDisinterestController::class, 'destroy'])
         ->name('video.disinterest.destroy');
 
-    // this allows users to create and destroy VideoReport records, indicating that they are reporting a particular video.
-    Route::post('/videos/{videoId}/report', [VideoReportController::class, 'create'])
-        ->name('video.report.create');
-
-    Route::delete('/videos/{videoId}/report', [VideoReportController::class, 'destroy'])
-        ->name('video.report.destroy');
 
     // this get the details of a video for the content modal
     Route::get('/videos/{videoId}/details', [VideoController::class,"details"])->name('videos.details');
 
+
 });
 
-
+// limit to 2 requests per hour
+Route::post('/videos/{videoId}/report', [VideoController::class, 'report'])
+    ->name('video.report.add')
+    ->middleware('throttle:2,60');
 
 
 

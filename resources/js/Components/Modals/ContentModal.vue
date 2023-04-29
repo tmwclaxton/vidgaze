@@ -89,7 +89,7 @@ const toggleChannelDisinterest = () => {
                     <p>Channel hidden</p>
                 </Option>
             </div>
-            <Option v-if="!contentModalStore.reportVideo" >
+            <Option @click="contentModalStore.reportContent(contentModalStore.itemId,'video')" >
                 <ReportIcon class="w-5 h-5" />
                 <p>Report</p>
             </Option>

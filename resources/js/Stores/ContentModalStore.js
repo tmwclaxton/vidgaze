@@ -15,7 +15,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             inWatchLater: false,
             videoDisinterest: false,
             channelDisinterest: false,
-            reportVideo: false,
+            reportedContent: false,
             x: 0,
             y: 0,
             widthOfMenu: 250,
@@ -67,7 +67,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     this.inWatchLater = data.inWatchLater;
                     this.videoDisinterest = data.videoDisinterest;
                     this.channelDisinterest = data.channelDisinterest;
-                    this.reportVideo = data.reportVideo;
+                    this.reportedContent = data.reportedContent;
                 } catch (error) {
                     console.log(error);
                 }
@@ -83,12 +83,17 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                 .then(response => {
                     const message = toggle ? 'Got it, we will show you more videos like this' : 'Got it, we will show you less videos like this' ;
                     const type = toggle ? 'success' : 'error';
+                    this.videoDisinterest = !this.videoDisinterest;
+                    this.showMenu = false;
+                    // show toast
                     toastStore.add({
                         message,
                         type,
                     });
-                    this.videoDisinterest = !this.videoDisinterest;
-                    this.showMenu = false;
+                    // this will hide the video and show the hidden content cover
+                    if (!toggle) {
+                        document.getElementById('hide_' + this.itemId).click();
+                    }
                 })
                 .catch(error => {
                     toastStore.add({
@@ -98,6 +103,36 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     return false;
                 });
             return true;
+        },
+
+        async reportContent(videoId, type) {
+            let url = '';
+            if (type === 'video') {
+                url = '/videos/' + videoId + '/report'; ///videos/{videoId}/report
+            }
+            const method = 'post';
+            let toastStore = useToastStore();
+
+            axios[method](url)
+                .then(response => {
+                    const message = 'Thank you for reporting this video. We will review it as soon as possible.';
+                    const type = 'success';
+                    this.reportedContent = true;
+                    this.showMenu = false;
+                    toastStore.add({
+                        message,
+                        type,
+                    });
+                    // this will hide the video and show the hidden content cover
+                    document.getElementById('hide_' + this.itemId).click();
+                })
+                .catch(error => {
+                    toastStore.add({
+                        message: "Sorry, we couldn't report this video. Please try again later.",
+                        type: 'error',
+                    });
+                    return false;
+                });
         },
 
         async toggleChannelDisinterest(creator_id, toggle) {
@@ -115,6 +150,10 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     });
                     this.channelDisinterest = !this.channelDisinterest;
                     this.showMenu = false;
+                    // this will hide the video
+                    if (!toggle) {
+                        document.getElementById('hide_' + this.itemId).click();
+                    }
                 })
                 .catch(error => {
                     toastStore.add({
