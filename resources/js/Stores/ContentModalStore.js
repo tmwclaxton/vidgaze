@@ -96,10 +96,17 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     }
                 })
                 .catch(error => {
-                    toastStore.add({
-                        message: error.response.data.error,
-                        type: 'error',
-                    });
+                    if (error.response.data.error !== undefined) {
+                        toastStore.add({
+                            message: error.response.data.error,
+                            type: 'error',
+                        });
+                    } else {
+                        toastStore.add({
+                            message: "Something went wrong.",
+                            type: 'error',
+                        });
+                    }
                     return false;
                 });
             return true;
@@ -156,7 +163,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     }
                 })
                 .catch(error => {
-                    if (error.response.data.error !== "") {
+                    if (error.response.data.error === undefined) {
                         toastStore.add({
                             message: error.response.data.error,
                             type: 'error',
@@ -194,7 +201,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     }
                 })
                 .catch(error => {
-                    if (error.response.data.error !== "") {
+                    if (error.response.data.error !== undefined) {
                         // console.log(error.response.data.error);
                         toastStore.add({
                             message: error.response.data.error,
