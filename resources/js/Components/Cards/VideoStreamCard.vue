@@ -21,11 +21,12 @@ const props = defineProps({
 
 // Define the setItemId method to call the setItemId method of contentModalStore with the provided id
 
-const setItemId = (id) => {
-    contentModalStore.setItemId(id);
-    contentModalStore.setMenuShow(true);
+function setContentModalValues() {
+    contentModalStore.setItemId(props.video.id);
+    contentModalStore.creatorId = props.video.creator.id ;
+    contentModalStore.itemType = "video";
+    contentModalStore.setMenuShow(!contentModalStore.showMenu);
 };
-
 
 </script>
 
@@ -38,8 +39,10 @@ const setItemId = (id) => {
                 <img class="object-cover w-full h-full bg-zinc-900" v-bind:src="video.thumbnail_url"   alt=""/>
             </a>
             <Duration v-if="video.duration != null" :video="video" class="absolute bottom-0 right-0 m-1.5"/>
-            <WatchLater :video="video" class="absolute top-0 right-0 m-1.5"/>
-            <Queue :video="video" class="absolute top-8 right-0 m-1.5"/>
+            <div class="flex flex-col absolute top-0 right-0 m-1.5 space-y-1 items-end ">
+                <WatchLater v-if="$page.props.auth.user != null" :video="video" />
+                <Queue :video="video" />
+            </div>
 
 
         </div>
@@ -86,7 +89,7 @@ const setItemId = (id) => {
                                 <!--<x-source-tag :source="video.preferred_source" class="inline-flex "/>-->
 
                                 <div v-if="video.live_viewer_count > 0" class="
-                                    capitalize flex flex-row items-center  text-xs font-bold
+                                    capitalize flex flex-row items-center  text-xs font-semibold
                                     text text-red-600 dark:text-red-400   ">
                                     <!--<FireIcon class="w-3 h-3 mr-1.5"/>-->
                                     <p class="line-clamp-1 " v-text="video.live_viewer_count + ' Watching'"></p>
@@ -99,7 +102,7 @@ const setItemId = (id) => {
                 </div>
                 <!--3 dots button-->
                 <div :id="'dotsButton_' + video.id" class="col-span-1 ml-auto pt-2 w-8 without-ring" >
-                    <button @click="setItemId(video.id)" class="flex without-ring m-0 mt-0 opacity-90 w-6 rounded-full text-zinc-500 ml-auto   pointer-events-auto">
+                    <button @click="setContentModalValues()" class="flex without-ring m-0 mt-0 opacity-90 w-6 rounded-full text-zinc-500 ml-auto   pointer-events-auto">
                         <DotsIcon class="w-6 h-6"/>
                     </button>
                 </div>

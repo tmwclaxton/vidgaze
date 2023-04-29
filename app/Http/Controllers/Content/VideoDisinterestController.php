@@ -35,7 +35,7 @@ class VideoDisinterestController extends Controller
         if ($disinterest) {
             return response()->json([
                 'error' => 'You have already disinterested this video'
-            ], 200);
+            ], 400);
         }
 
         $disinterest = VideoDisinterest::create([
@@ -53,7 +53,7 @@ class VideoDisinterestController extends Controller
         if (!$disinterest) {
             return response()->json([
                 'error' => 'You have not disinterested this video'
-            ], 200);
+            ], 400);
         }
 
         $disinterest->delete();

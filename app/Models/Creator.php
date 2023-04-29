@@ -27,7 +27,7 @@ class Creator extends Model
     public function frontEndDetails(): array
     {
         return [
-            //'id' => $this->id,
+            'id' => $this->id,
             'slug' => $this->slug,
             'name' => $this->name,
             'bio' => $this->bio,

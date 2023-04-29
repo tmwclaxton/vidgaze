@@ -35,7 +35,7 @@ class ChannelDisinterestController extends Controller
         if ($disinterest) {
             return response()->json([
                 'error' => 'You have already disinterested this channel'
-            ], 200);
+            ], 400);
         }
 
         $disinterest = ChannelDisinterest::create([
@@ -53,7 +53,7 @@ class ChannelDisinterestController extends Controller
         if (!$disinterest) {
             return response()->json([
                 'error' => 'You have not disinterested this channel'
-            ], 200);
+            ], 400);
         }
 
         $disinterest->delete();

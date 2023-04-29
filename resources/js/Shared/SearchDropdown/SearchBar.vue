@@ -9,7 +9,7 @@ let results = ref([]);
 
 watch(search, (value) => {
     // Inertia.get('/api/search-bar', {q: value})
-    axios.get('/api/search-bar', {params: {q: value}})
+    axios.get(route('search_suggestions'), {params: {q: value}})
         .then(response => {
             results.value = response.data;
         })

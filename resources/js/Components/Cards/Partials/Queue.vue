@@ -19,7 +19,7 @@ const props = defineProps({
 });
 const name = 'QueueList';
 const inQueue = ref(false);
-const open = ref(false);
+const QueueOpen = ref(false);
 const addToQueue = () => {
 
     if (inQueue.value) {
@@ -57,11 +57,11 @@ const addToQueue = () => {
 
 </script>
 <template>
-    <div  @mouseenter="open = true" @mouseleave="open = false" @click="addToQueue()"
-         class="h-7  text-sm px-1.5 z-1 pointer-events-auto cursor-pointer flex flex-row gap-x-3
+    <div  @mouseenter="QueueOpen = true" @mouseleave="QueueOpen = false" @click="addToQueue()" key="queue"
+         class="h-7 w-max text-sm px-1.5 z-1 pointer-events-auto cursor-pointer flex flex-row gap-x-3
       group-hover:opacity-100 opacity-0 transition duration-300
        bg-zinc-900/90 rounded ">
-        <div v-if="open"
+        <div v-if="QueueOpen"
              class="   text-white text-xs font-bold text-center my-auto pl-1 ">
             <p  v-if="inQueue">Added to Queue</p>
             <p  v-if="!inQueue">Add to Queue</p>

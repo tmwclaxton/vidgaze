@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Content;
 
 use App\Helpers\Tokens\TokenHelper;
 use App\Http\Controllers\Controller;
+use App\Models\channelDisinterest;
 use App\Models\Playlist;
 use App\Models\PlaylistVideo;
 use App\Models\Video;
+use App\Models\videoDisinterest;
+use App\Models\videoReport;
 use App\Models\VideoViewInfos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,156 +32,52 @@ class VideoController extends Controller
         return Inertia::render('Viewer/Videos/VideosIndex');
     }
 
-    public function users()
+
+    // this is for the video modal
+    public function details(Request $request, $videoId)
     {
+        $video = Video::findOrFail($videoId);
 
-        return inertia('Users', [
-            'name' => "Toby Claxton",
-            'frameworks' => [
-                'laravel','vue','inertia'
-            ],
-            'time' => now()->toDateTimeString(),
-        ]);
-    }
-    public function settings()
-    {
-        return inertia('Settings', [
-            'name' => "Toby Claxton",
-            'frameworks' => [
-                'laravel','vue','inertia'
-            ],
-        ]);
-    }
-
-    public function shorts()
-    {
-        return Inertia::render('Viewer/Shorts/ShortsIndex');
-        //return view('shorts', [
-        //    'firstShortSlug' => null,
-        //]);
-    }
-
-    public function short(Request $request)
-    {
-        $firstShort = Video::where('slug', '=', $request->video)->first();
-        //forbidden because visibility is set to private and you don't own it
-        if ($firstShort->visibility == 'private' && $firstShort->creator_id != Auth::user()->creator->id) {
-            abort(401);
-        }
-        return view('shorts', [
-            'firstShortSlug' => $request->video,
-            'firstShort' => $firstShort,
-        ]);
-    }
-
-    public function show(Video $video, Request $request)
-    {
-        return $this->renderVideoView($video, null, $request->comment);
-    }
-
-    public function playlist(Video $video, Playlist $playlist)
-    {
-        $playlistVideos = $playlist->videos->reverse()->values();
-        $key = $playlistVideos->search(function ($item) use ($video) {
-            return $item->id === $video->id;
-        });
-
-        if (Auth::user() && $playlist->slug != Auth::user()->creator->getPlaylist('history', true)->slug) {
-            $this->add2History($video);
-        }
-        $extraData = [];
-        $nextVideo = $playlistVideos->values()->get($key + 1);
-        if ($nextVideo != null) {
-            $extraData = ['videoNext' => $nextVideo];
-        }
-        $extraData = array_merge($extraData,
-            [
-                'playlist' => $playlist,
-                'playlist_videos' => $playlistVideos->all(),
-                'current_video_key' => $key,
-            ]
-        );
-//        dd($playlistVideos);
-        return $this->renderVideoView($video, $playlist, null, $extraData);
-    }
-
-    public function shuffle(Video $video, Playlist $playlist)
-    {
-        $this->add2History($video);
-        return $this->renderVideoView($video, $playlist, null, [
-            'playlist' => $playlist,
-            'playlist_videos' => $playlist->videos->shuffle()->all(),
-        ]);
-    }
-
-
-    protected function renderVideoView(Video $video, $playlist = null, $commentSlug = null, $extraData = [])
-    {
-        if ($video->visibility == 'private' && $video->creator_id != Auth::user()->creator->id) {
-            abort(401);
+        // check if video exists
+        if (!$video) {
+            return response()->json([
+                'error' => 'Video not found'
+            ], 404);
         }
 
-        $this->add2History($video);
-        $creatorID = Auth::user() ? Auth::user()->id : "empty";
-        $webhookToken = TokenHelper::generateToken(session()->getId(), $creatorID, $video->id);
+        // check if user is authenticated
+        if (!Auth::user()) {
+            return response()->json([
+                'error' => 'You are not authenticated'
+            ], 401);
+        }
 
-        if ($creatorID != 'empty') {
-            $videoViewInfo = VideoViewInfos::where(
-                [
-                    ['viewer_id', '=', $creatorID],
-                    ['video_id', '=', $video->id]
-                ]
-            )->get();
+        $creatorId = Auth::user()->creator->id;
 
-            if (!$videoViewInfo->isEmpty()) {
-                //check video isn't just about to end it
-                //if it is you don't need to set video view point to it
-                if ($videoViewInfo->first()->view_point < ($video->duration - 20)) {
-                    $extraData = array_merge($extraData, ['videoViewInfo' => $videoViewInfo->first()]);
-                }
+        // check if video is in watch later playlist
+        $inWatchLater = false;
+        if ($watchLaterPlaylist = Playlist::where('name', 'Watch Later')->where('creator_id', $creatorId)->first()) {
+            if (PlaylistVideo::where('playlist_id', $watchLaterPlaylist->id)->where('video_id', $videoId)->first()) {
+                $inWatchLater = true;
             }
-
         }
 
-        return view('watch', array_merge([
-            'video' => $video,
-            'webhookToken' => $webhookToken,
-            'external_id' => $video->getPrimarySourceID(),
-            'creator' => $video->creator,
-            'videoNext' => Video::inRandomOrder()->first(),
-            'endScreenSuggestions' => Video::inRandomOrder()->take(6)->get(),
-            'firstCommentSlug' => $commentSlug,
-        ], $extraData));
+        // check if user has disinterested video
+        $videoDisinterest = VideoDisinterest::where('creator_id', $creatorId)->where('video_id', $videoId)->exists();
+
+        // check if user has disinterested channel
+        $channelDisinterest = ChannelDisinterest::where('creator_id', $creatorId)->where('channel_id', $video->creator->id)->exists();
+
+        // check if user has reported video
+        $reportVideo = VideoReport::where('creator_id', $creatorId)->where('video_id', $videoId)->exists();
+
+        return response()->json([
+            'inWatchLater' => $inWatchLater,
+            'videoDisinterest' => $videoDisinterest,
+            'channelDisinterest' => $channelDisinterest,
+            'reportVideo' => $reportVideo,
+        ], 200);
     }
 
 
-    public function edit(Video $video)
-    {
-        if ($video->visibility == 'private' && $video->creator_id != Auth::user()->creator->id) {
-            abort(401);
-        }
-        return view('studio.video', [
-            'item' => $video,
-        ]);
-    }
-
-    public function add2History(Video $video)
-    {
-
-        if (Auth::user() !== null) {
-            //find playlist
-            $playlist = Auth::user()->creator->getPlaylist('history', true);
-            //if video already in watch history bring to top by deleting old
-            $playlistVideo = PlaylistVideo::where("playlist_id", $playlist->id)->where("video_id", $video->id)->get()->first();
-            if ($playlistVideo) {
-                $playlist->alterPlaylist($playlist, $video, 'remove');
-
-            } else {
-
-            }
-            //and adding back
-            $playlist->alterPlaylist($playlist, $video, 'add');
-        }
-
-    }
 }

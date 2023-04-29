@@ -33,8 +33,7 @@ class PlaylistVideoController extends Controller
         // check if user is the owner of the playlist
         if ($playlist->owner->id !== Auth::user()->creator->id) {
             return response()->json([
-                'error' => 'You do not have permission to add this video to the playlist',
-                'playlist' => $playlist->owner()->id,
+                'error' => 'You do not have permission to add this video to the playlist'
             ], 403);
         }
 
@@ -75,7 +74,7 @@ class PlaylistVideoController extends Controller
         // get if record exists
         $playlistVideo = PlaylistVideo::where('playlist_id', $playlistId)
             ->where('video_id', $videoId)
-            ->firstOrFail();
+            ->first();
 
         // if not found return 404
         if (!$playlistVideo) {

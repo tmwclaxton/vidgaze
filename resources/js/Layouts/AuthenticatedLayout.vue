@@ -4,7 +4,7 @@ import {ref, watch} from 'vue';
 import Nav from '@/Shared/Navigation/Nav.vue';
 import ToastList from "@/Components/Toast/ToastList.vue";
 import {useNavStore} from "@/Stores/NavStore";
-import VideoStreamModal from "@/Components/Modals/VideoStreamModal.vue";
+import VideoStreamModal from "@/Components/Modals/ContentModal.vue";
 const navStore = useNavStore();
 
 let showingNavigationDropdown = ref(false);
