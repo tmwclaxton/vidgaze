@@ -5,6 +5,7 @@ import Nav from '@/Shared/Navigation/Nav.vue';
 import ToastList from "@/Components/Toast/ToastList.vue";
 import {useNavStore} from "@/Stores/NavStore";
 import VideoStreamModal from "@/Components/Modals/ContentModal.vue";
+import PlaylistModal from "@/Components/Modals/PlaylistModal.vue";
 const navStore = useNavStore();
 
 let showingNavigationDropdown = ref(false);
@@ -46,6 +47,7 @@ watch(() => props.showingStudioLinks, (newVal) => {
                 </div>
                 <!--<CookieConsent/>-->
                 <VideoStreamModal/>
+                <PlaylistModal/>
 
             </main>
 

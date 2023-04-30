@@ -10,9 +10,11 @@ import OptionHolder from "@/Components/Modals/Partials/OptionHolder.vue";
 import Option from "@/Components/Modals/Partials/Option.vue";
 import { useContentModalStore } from "@/Stores/ContentModalStore";
 import {onMounted, ref, watch} from "vue";
+import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 
 const contentModalStore = useContentModalStore();
 const name = "ContentModal";
+const playlistModalStore = usePlaylistModalStore();
 
 function hideMenu() {
     if (contentModalStore.showMenu) {
@@ -40,6 +42,12 @@ const toggleChannelDisinterest = () => {
     contentModalStore.toggleChannelDisinterest(contentModalStore.creatorId, contentModalStore.channelDisinterest);
 }
 
+const togglePlaylistModal = () => {
+    playlistModalStore.videoIds = [contentModalStore.itemId];
+    playlistModalStore.showMenu = !playlistModalStore.showMenu;
+    contentModalStore.showMenu = !contentModalStore.showMenu;
+}
+
 </script>
 
 
@@ -59,8 +67,8 @@ const toggleChannelDisinterest = () => {
                     <p>Saved to Watch later</p>
                 </Option>
                 <!--Playlist-->
-                <Option  >
-                    <PlaylistIcon class="w-5 h-5" />
+                <Option   @click="togglePlaylistModal">
+                    <PlaylistIcon class="w-5 h-5"/>
                     <p>Save to playlist</p>
                 </Option>
             </div>

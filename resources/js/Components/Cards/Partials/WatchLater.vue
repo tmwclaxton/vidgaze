@@ -31,7 +31,7 @@ const notInWatchLater = () => {
 }
 </script>
 <template>
-    <div class="flex flex-row h-0 -mt-1">
+    <div class="flex flex-row h-0 pointer-events-none -mt-1">
         <div :id="'toggleInWatchLater_' + video.id" @click="inWatchLater" class="w-0 h-0 opacity-0 pointer-events-none " key="watch_later_simple"></div>
         <div :id="'toggleNotInWatchLater_' + video.id" @click="notInWatchLater" class="w-0 h-0 opacity-0 pointer-events-none  " key="watch_later_simple"></div>
     </div>

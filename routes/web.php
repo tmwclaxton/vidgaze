@@ -80,10 +80,12 @@ Route::get('music/track', [MusicController::class,'track'])->name('music.track')
 
 //feed routes
 Route::middleware('auth')->group(function () {
+
+
     Route::get('feed/library', [PlaylistController::class, 'index'])->name("feed.library");
     Route::post('feed/playlist/{playlist:slug}', [PlaylistController::class, 'update'])->name("playlist.update");
-    Route::get('feed/watch-later', [PlaylistController::class, 'later'])->name("feed.watch-later");
-    Route::get('feed/liked-videos', [PlaylistController::class, 'liked'])->name("feed.liked-videos");
+    Route::get('feed/watch_later', [PlaylistController::class, 'later'])->name("feed.watch-later");
+    Route::get('feed/liked_videos', [PlaylistController::class, 'liked'])->name("feed.liked-videos");
     Route::get('feed/history', [PlaylistController::class, 'history'])->name("feed.history");
     Route::get('feed/subscriptions', [SubscriptionsController::class, 'index'])->name("feed.subscriptions");
 });
@@ -142,8 +144,12 @@ Route::middleware('throttle:60,1')->group(function () {
 });
 
 
-// adding or removing a video from a playlist //throttle to 20 requests per minute
+// modal routes //throttle to 20 requests per minute
 Route::middleware(['throttle:60,1','auth'])->group(function () {
+
+    //get user playlists
+    Route::get('/playlist_modal_refresh', [PlaylistController::class, 'playlist_modal_refresh'])->name('playlists.modal.refresh');
+
     // This allows users to create and destroy PlaylistVideo records, indicating that they have added/removed a particular video to a particular playlist.
     Route::delete('/playlists/{playlistId}/videos/{videoId}', [PlaylistVideoController::class, 'destroy'])
         ->name('playlist.video.destroy');
@@ -173,10 +179,10 @@ Route::middleware(['throttle:60,1','auth'])->group(function () {
 
 });
 
-// limit to 2 requests per hour
+// limit to 5 requests per 15 minutes
 Route::post('/videos/{videoId}/report', [VideoController::class, 'report'])
     ->name('video.report.add')
-    ->middleware('throttle:2,60');
+    ->middleware('throttle:5,15');
 
 
 

@@ -66,7 +66,7 @@ module.exports = {
             },
             colors: {
                 "vidgaze-blue-nav": "rgba(9,9,9,0.9)",
-                "vidgaze-blue-dropdown": "rgba(9,9,9)",
+                "vidgaze-blue-dropdown": "rgb(24,24,24)",
                 "vidgaze-blue": "rgba(13,13,13)",
             },
             minWidth: {

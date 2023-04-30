@@ -18,7 +18,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             reportedContent: false,
             x: 0,
             y: 0,
-            widthOfMenu: 250,
+            widthOfMenu: usePage().props.auth.user !== null ? 250 : 120,
             heightOfMenu: 0,
         }
     },
@@ -68,6 +68,13 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     this.videoDisinterest = data.videoDisinterest;
                     this.channelDisinterest = data.channelDisinterest;
                     this.reportedContent = data.reportedContent;
+                    // this sets the watch later button to the correct state
+                    if (this.inWatchLater) {
+                        document.getElementById('toggleInWatchLater_' + this.itemId).click();
+                    } else  {
+                        document.getElementById('toggleNotInWatchLater_' + this.itemId).click();
+                    }
+                    this.showMenu = true;
                 } catch (error) {
                     console.log(error);
                 }
