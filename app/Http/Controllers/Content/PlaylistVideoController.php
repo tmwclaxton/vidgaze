@@ -11,98 +11,123 @@ use Illuminate\Http\Request;
 
 class PlaylistVideoController extends Controller
 {
-    public function create(Request $request, $playlistId, $videoId)
+    public function create(Request $request, $playlistId)
     {
-
+        $videoIds = explode(',', $request->video_ids);
 
         if ($playlistId === "watch_later") {
             $playlistId = Auth::user()->creator->getServerMadePlaylist('Watch Later')->id;
         }
 
-        // get playlist and video
+        // get playlist
         $playlist = Playlist::findOrFail($playlistId);
-        $video = Video::findOrFail($videoId);
 
-        // check both playlist and video exist
-        if (!$playlist || !$video) {
+        // check playlist exists
+        if (!$playlist) {
             return response()->json([
-                'error' => 'Playlist or video not found'
+                'error' => 'Playlist not found'
             ], 404);
         }
 
         // check if user is the owner of the playlist
         if ($playlist->owner->id !== Auth::user()->creator->id) {
             return response()->json([
-                'error' => 'You do not have permission to add this video to the playlist'
+                'error' => 'You do not have permission to add videos to the playlist'
             ], 403);
         }
 
-        // check if video is already in the playlist
-        $existingPlaylistVideo = PlaylistVideo::where('playlist_id', $playlist->id)
-            ->where('video_id', $video->id)
-            ->first();
+        // add videos to playlist
+        $successCount = 0;
+        foreach ($videoIds as $videoId) {
+            $video = Video::find($videoId);
 
-        // check if video is already in the playlist
-        if ($existingPlaylistVideo) {
-            return response()->json([
-                'error' => 'Video already exists in playlist'
-            ], 400);
+            // check if video exists
+            if (!$video) {
+                continue;
+            }
+
+            // check if video is already in the playlist
+            $existingPlaylistVideo = PlaylistVideo::where('playlist_id', $playlist->id)
+                ->where('video_id', $video->id)
+                ->first();
+
+            if (!$existingPlaylistVideo) {
+                // add video to playlist
+                $playlistVideo = new PlaylistVideo();
+                $playlistVideo->playlist_id = $playlist->id;
+                $playlistVideo->video_id = $video->id;
+                $playlistVideo->save();
+
+                $playlist->video_count++;
+                $playlist->recent_video_image = $video->thumbnail_url;
+                $playlist->save();
+
+                $successCount++;
+            }
         }
-        // add video to playlist
-        $playlistVideo = new PlaylistVideo();
-        $playlistVideo->playlist_id = $playlist->id;
-        $playlistVideo->video_id = $video->id;
-        $playlistVideo->save();
 
-        $playlist->video_count++;
-        $playlist->recent_video_image = $video->thumbnail_url;
-        $playlist->save();
+        if ($successCount == 0) {
+            return response()->json([
+                'error' => 'No videos added to playlist'
+            ], 200);
+        }
 
         return response()->json([
-            'success' => 'Video added to playlist'
+            'success' => "$successCount videos added to playlist"
         ], 200);
     }
-
-
-
-    public function destroy(Request $request, $playlistId, $videoId)
+    public function destroy(Request $request, $playlistId)
     {
+        $videoIds = explode(',', $request->video_ids);
+
         if ($playlistId === "watch_later") {
             $playlistId = Auth::user()->creator->getServerMadePlaylist('Watch Later')->id;
         }
 
-        // get if record exists
-        $playlistVideo = PlaylistVideo::where('playlist_id', $playlistId)
-            ->where('video_id', $videoId)
-            ->first();
-
-        // if not found return 404
-        if (!$playlistVideo) {
+        // check if user is the owner of the playlist
+        $playlist = Playlist::findOrFail($playlistId);
+        if ($playlist->owner->id !== Auth::user()->creator->id) {
             return response()->json([
-                'error' => 'Record not found in playlist'
-            ], 404);
-        }
-
-        if ($playlistVideo->playlist->owner->id !== Auth::user()->creator->id) {
-            return response()->json([
-                'error' => 'You do not have permission to remove this video from the playlist'
+                'error' => 'You do not have permission to remove videos from the playlist'
             ], 403);
         }
-        // delete record
-        $playlistVideo->delete();
 
-        // update playlist video count and recent video image
-        $playlist = Playlist::findOrFail($playlistId);
-        $playlist->video_count--;
-        if($playlist->videos->first()) {
-            $playlist->recent_video_image = $playlist->videos->first()->thumbnail_url;
-        } else {
-            $playlist->recent_video_image = null;
+        // remove each video from the playlist
+        $successCount = 0;
+        foreach ($videoIds as $videoId) {
+            // get if record exists
+            $playlistVideo = PlaylistVideo::where('playlist_id', $playlistId)
+                ->where('video_id', $videoId)
+                ->first();
+
+            // if not found continue with next video
+            if (!$playlistVideo) {
+                continue;
+            }
+
+            // delete record
+            $playlistVideo->delete();
+
+            // update playlist video count and recent video image
+            $playlist->video_count--;
+            if($playlist->videos->first()) {
+                $playlist->recent_video_image = $playlist->videos->first()->thumbnail_url;
+            } else {
+                $playlist->recent_video_image = null;
+            }
+            $playlist->save();
+
+            $successCount++;
         }
-        $playlist->save();
+
+        if ($successCount == 0) {
+            return response()->json([
+                'error' => 'No videos removed from playlist'
+            ], 200);
+        }
 
         return response()->json([
-            'success' => 'Video removed from playlist'
+            'success' => "$successCount videos removed from playlist"
         ], 200);
     }
 

@@ -187,11 +187,11 @@ export const useContentModalStore = defineStore('ContentModalStore', {
         },
 
         async toggleWatchLater(id, toggle) {
-            const url = '/playlists/watch_later/videos/' + id;
+            const url = '/playlists/watch_later/videos';
             const method = toggle ? 'delete' : 'post';
             let toastStore = useToastStore();
 
-            axios[method](url)
+            axios[method](url, { video_ids: id })
                 .then(response => {
                     const message = toggle ? 'Removed from Watch Later' : 'Added to Watch Later' ;
                     const type = toggle ? 'error' : 'success';
@@ -223,7 +223,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     return false;
                 });
             return true;
-
         }
+
     }
 })

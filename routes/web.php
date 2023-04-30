@@ -151,10 +151,10 @@ Route::middleware(['throttle:60,1','auth'])->group(function () {
     Route::get('/playlist_modal_refresh', [PlaylistController::class, 'playlist_modal_refresh'])->name('playlists.modal.refresh');
 
     // This allows users to create and destroy PlaylistVideo records, indicating that they have added/removed a particular video to a particular playlist.
-    Route::delete('/playlists/{playlistId}/videos/{videoId}', [PlaylistVideoController::class, 'destroy'])
+    Route::delete('/playlists/{playlistId}/videos/', [PlaylistVideoController::class, 'destroy'])
         ->name('playlist.video.destroy');
 
-    Route::post('/playlists/{playlistId}/videos/{videoId}', [PlaylistVideoController::class, 'create'])
+    Route::post('/playlists/{playlistId}/videos/', [PlaylistVideoController::class, 'create'])
         ->name('playlist.video.create');
 
     // this allows users to create and destroy ChannelDisinterest records, indicating that they are not interested in a particular creator's channel.
