@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import {usePage} from "@inertiajs/vue3";
 import {useToastStore} from "@/Stores/ToastStore";
-// import {useToastStore} from "@/Stores/ToastStore";
-// import {useToastStore} from "@/Stores/ToastStore.js";
+import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
+
 export const useContentModalStore = defineStore('ContentModalStore', {
 
     state: () => {
@@ -185,47 +185,27 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                 });
             return true;
         },
-
         async toggleWatchLater(id, toggle) {
-            console.log(id);
-
             const url = '/playlists/watch_later/videos';
-            const method = toggle ? 'delete' : 'post';
-            let toastStore = useToastStore();
-
-            axios[method](url, { video_ids: id })
-                .then(response => {
-                    const message = toggle ? 'Removed from Watch Later' : 'Added to Watch Later' ;
-                    const type = toggle ? 'error' : 'success';
-                    toastStore.add({
-                        message,
-                        type,
-                    });
-                    // not really needed because we reload the modal each time it opens
-                    this.inWatchLater = !this.inWatchLater;
-                    if (this.inWatchLater) {
-                        document.getElementById('toggleInWatchLater_' + this.itemId).click();
-                    } else  {
-                        document.getElementById('toggleNotInWatchLater_' + this.itemId).click();
-                    }
-                })
-                .catch(error => {
-                    if (error.response.data.error !== undefined) {
-                        // console.log(error.response.data.error);
-                        toastStore.add({
-                            message: error.response.data.error,
-                            type: 'error',
-                        });
-                    } else {
-                        toastStore.add({
-                            message: "Something went wrong.",
-                            type: 'error',
-                        });
-                    }
-                    return false;
-                });
+            let playlistModalStore = usePlaylistModalStore();
+            // set the video id in the playlist modal store
+            playlistModalStore.videoIds = [id];
+            // add or remove the video from the watch later playlist
+            if (toggle) {
+                await playlistModalStore.removeVideosFromPlaylist("watch_later");
+            } else {
+                await playlistModalStore.addVideosToPlaylist("watch_later");
+            }
+            // not really needed because we reload the modal each time it opens
+            this.inWatchLater = !this.inWatchLater;
+            if (this.inWatchLater) {
+                document.getElementById('toggleInWatchLater_' + this.itemId).click();
+            } else  {
+                document.getElementById('toggleNotInWatchLater_' + this.itemId).click();
+            }
             return true;
-        }
+        },
+
 
     }
 })
