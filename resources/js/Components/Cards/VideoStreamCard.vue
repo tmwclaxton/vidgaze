@@ -39,7 +39,7 @@ function hideItemToggle() {
     <div :id="'box_'+ video.id" class="relative group overflow-hidden  text dark:textDark">
         <!--hide content hidden button and cover-->
         <div :id="'hide_' + video.id" @click="hideItemToggle" class="w-0 h-0 opacity-0 pointer-events-none " ></div>
-        <div  v-if="hideItem" class="w-full h-full   rounded-lg overflow-hidden bg-zinc-50 dark:bg-zinc-900 flex flex-col align-middle justify-center items-center select-none">
+        <div  v-if="hideItem" class="w-full h-full   rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex flex-col align-middle justify-center items-center select-none">
             <p class="text-md font-bold">Content Hidden</p>
             <button  @click="hideItemToggle()" class="text-blue-600 dark:text-blue-400 font-semibold cursor-pointer">
                 Show
@@ -113,7 +113,7 @@ function hideItemToggle() {
 
                     </div>
                     <!--3 dots button-->
-                    <div :id="'dotsButton_' + video.id" class="col-span-1 ml-auto pt-2 w-8 without-ring" >
+                    <div :id="'dotsButton_' + video.id" class="col-span-1 ml-auto pt-2 w-8 without-ring h-max" >
                         <button @click="setContentModalValues()" class="flex without-ring m-0 mt-0 opacity-90 w-6 rounded-full text-zinc-500 ml-auto   pointer-events-auto">
                             <DotsIcon class="w-6 h-6"/>
                         </button>

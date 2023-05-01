@@ -25,7 +25,7 @@ const props = defineProps({
         <Head title="Home" />
 
             <!--show 12 videos, hide videos if they don't fill the row completely-->
-            <div class="w-full hidden md:flex">
+            <div class="flex-grow hidden md:flex">
                 <CreatorCarousel />
             </div>
 

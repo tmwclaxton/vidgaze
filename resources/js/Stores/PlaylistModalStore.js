@@ -4,7 +4,7 @@ import {useToastStore} from "@/Stores/ToastStore";
 export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
     state: () => {
         return {
-            videoIds: [53],
+            videoIds: [],
             playlists: [],
             showMenu: false,
         }

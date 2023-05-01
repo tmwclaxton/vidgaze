@@ -42,12 +42,12 @@ watch(() => props.showingStudioLinks, (newVal) => {
                 <div v-if="!route().current('about')" class="pointer-events-none opacity-0 flex-shrink-0 transition  ease-in-out"  :class="{'sm:w-64  ': navStore.getNavigationDropdown(), 'sm:w-24': !navStore.getNavigationDropdown()}">
 
                 </div>
-                <div class="flex-shrink transition duration-700 ease-in-out w-full"  :class="{'   ': navStore.getNavigationDropdown()}">
+                <div class="relative flex-shrink transition duration-700 ease-in-out w-full"  :class="{'   ': navStore.getNavigationDropdown()}">
                     <slot  />
+                    <PlaylistModal/>
                 </div>
                 <!--<CookieConsent/>-->
                 <VideoStreamModal/>
-                <PlaylistModal/>
 
             </main>
 

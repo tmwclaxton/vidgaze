@@ -9,7 +9,7 @@ import ReportIcon from '#icons/report.svg';
 import OptionHolder from "@/Components/Modals/Partials/OptionHolder.vue";
 import Option from "@/Components/Modals/Partials/Option.vue";
 import { useContentModalStore } from "@/Stores/ContentModalStore";
-import {onMounted, ref, watch} from "vue";
+import {onMounted, onUnmounted, ref, watch} from "vue";
 import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 
 const contentModalStore = useContentModalStore();
@@ -28,6 +28,10 @@ onMounted(() => {
 
 });
 
+onUnmounted(() => {
+    window.removeEventListener('scroll', contentModalStore.setCoordinates);
+    window.removeEventListener('resize', contentModalStore.setCoordinates);
+} );
 
 
 const toggleWatchLater = () => {

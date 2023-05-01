@@ -123,6 +123,8 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             let url = '';
             if (type === 'video') {
                 url = '/videos/' + videoId + '/report'; ///videos/{videoId}/report
+                // this will hide the video and show the hidden content cover
+                document.getElementById('hide_' + this.itemId).click();
             }
             const method = 'post';
             let toastStore = useToastStore();
@@ -137,8 +139,6 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                         message,
                         type,
                     });
-                    // this will hide the video and show the hidden content cover
-                    document.getElementById('hide_' + this.itemId).click();
                 })
                 .catch(error => {
                     toastStore.add({
@@ -187,6 +187,8 @@ export const useContentModalStore = defineStore('ContentModalStore', {
         },
 
         async toggleWatchLater(id, toggle) {
+            console.log(id);
+
             const url = '/playlists/watch_later/videos';
             const method = toggle ? 'delete' : 'post';
             let toastStore = useToastStore();
