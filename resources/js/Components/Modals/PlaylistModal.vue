@@ -79,7 +79,7 @@ const createPlaylist = () => {
 
 
 <template>
-    <div v-if="playlistModalStore.showMenu"  class="z-10 absolute left-1/2 right-1/2 flex-grow h-max flex flex-row justify-center">
+    <div v-if="playlistModalStore.showMenu"  class="z-40 absolute left-1/2 right-1/2 flex-grow h-max flex flex-row justify-center">
         <div class="fixed my-auto inset-y-0 h-max">
             <OptionHolder class="min-w-64 shadow-md h-max" v-on-click-outside="onClickOutsideHandler" >
                 <!--<div class="w-full flex flex-row p-4 select-none ">-->
@@ -108,7 +108,7 @@ const createPlaylist = () => {
                 </Option>
 
                 <div class="flex flex-col space-y-2 my-2 px-3" v-if="showPlaylistCreate" >
-                    <Option class="  dark:bg-zinc-900 shadow dark:shadow-zinc-800"  @click="showPlaylistCreate = false">
+                    <Option class="  dark:bg-zinc-900  dark:border dark:border-zinc-800"  @click="showPlaylistCreate = false">
                         <font-awesome-icon :icon="['fas', 'square-caret-left']" class="w-4 pb-0.5 -mr-0.5 aspect-square my-auto"/>
                         <!--<font-awesome-icon :icon="['fas', 'pen']" class="w-4 pb-0.5 -mr-0.5 aspect-square my-auto"/>-->
                         <p class="">Back</p>
