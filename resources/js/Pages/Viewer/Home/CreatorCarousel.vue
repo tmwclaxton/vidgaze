@@ -76,16 +76,16 @@ onMounted(() => {
                  :key="index"
                  :class="{'    ': activeIndex !== index,'  ': activeIndex === index}"
             >
-                <img :src="item.imgSrc" class="block w-full h-full max-h-72" />
+                <img :src="item.imgSrc" class="block w-full h-full max-h-72 cursor-pointer" />
 
                  <!--<div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/50 h-screen w-full"></div>-->
             </div>
         </div>
         <!-- Slider controls -->
-        <div class="absolute z-30 flex space-x-3 -translate-x-1/2 bottom-5 left-1/2 ">
+        <div class="absolute z-30 flex space-x-3 -translate-x-1/2 bottom-5 left-1/2 pointer-events-none cursor-pointer ">
 
             <button @click="scrollToItem(index)"
-                    class="w-3 h-3 rounded-full"
+                    class="w-3 h-3 rounded-full pointer-events-auto"
                     v-for="(item, index) in carouselItems"
                     :key="index"
                     type="button"
@@ -97,9 +97,9 @@ onMounted(() => {
         </div>
 
         <!-- previous button -->
-        <div class="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-8 ">
+        <div class="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-8 pointer-events-none">
             <span @click="scrollToPrevItem"
-              class="cursor-pointer inline-flex items-center justify-center w-8 h-8 rounded-full
+              class="cursor-pointer inline-flex items-center justify-center w-8 h-8 rounded-full pointer-events-auto
               sm:w-16 sm:h-16 bg-vidgaze-blue/50 hover:bg-vidgaze-blue opacity-0 group-hover:opacity-100 transition duration-200 ease-in-out">
                 <font-awesome-icon :icon="['fas', 'chevron-left']" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 <span class="sr-only">Previous</span>
@@ -107,9 +107,9 @@ onMounted(() => {
         </div>
 
         <!--next button-->
-        <div class="absolute top-0 right-0 flex items-center justify-center h-full px-4">
+        <div class="absolute top-0 right-0 flex items-center justify-center h-full px-4 pointer-events-none">
             <span @click="scrollToNextItem"
-                  class=" cursor-pointer inline-flex items-center justify-center w-8 h-8 rounded-full
+                  class=" cursor-pointer inline-flex items-center justify-center w-8 h-8 rounded-full pointer-events-auto
                   sm:w-16 sm:h-16 bg-vidgaze-blue/50 hover:bg-vidgaze-blue opacity-0 group-hover:opacity-100 transition duration-200 ease-in-out">
                 <font-awesome-icon :icon="['fas', 'chevron-right']" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 <span class="sr-only">Next</span>

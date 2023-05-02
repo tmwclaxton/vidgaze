@@ -5,18 +5,15 @@
             :value="modelValue"
             @input="$emit('update:modelValue', $event.target.value)"
             class="block w-full px-4 py-1 text-base font-semibold text-zinc-700 dark:text-zinc-200
-           rounded-lg appearance-none
-            focus:outline-none focus:shadow-outline-blue focus:border-blue-300
+           rounded-lg appearance-none focus:outline-none focus:shadow-outline-blue focus:border-blue-300
             bg-white dark:bg-zinc-800 placeholder-zinc-400 dark:placeholder-zinc-500  border border-zinc-300 dark:border-zinc-600"
         >
             <option v-for="option in options" :key="option.value" :value="option.value" class="py-1">
                 {{ option.label }}
             </option>
         </select>
-        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-            <svg class="w-4 h-4 text-zinc-400 fill-current" viewBox="0 0 20 20">
-                <path d="M7 7l3-3 3 3m0 6l-3 3-3-3" />
-            </svg>
+        <div class="absolute inset-y-0 right-2 flex items-center px-2 pointer-events-none">
+            <font-awesome-icon :icon="['fas', 'caret-down']" />
         </div>
     </div>
 </template>

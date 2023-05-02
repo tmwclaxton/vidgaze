@@ -27,7 +27,14 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             this.itemId = id;
         },
         setMenuShow(value) {
-            this.showMenu = value;
+            // if logged in, get video details like is the video in watch later playlist etc
+            if (usePage().props.auth.user !== null && value === true) {
+                if (this.itemType === 'video') {
+                    this.getVideoDetails().then(r => {
+
+                    });
+                }
+            }
             // menu can't hidden or else can't find it to get width and height
             // update doesn't seem to work
             const menuRef = document.getElementById("menu");
@@ -37,13 +44,8 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             }
             // position menu so it doesn't go off screen
             this.setCoordinates();
-            // if logged in, get video details like is the video in watch later playlist etc
-            if (usePage().props.auth.user !== null && this.showMenu === true) {
-                if (this.itemType === 'video') {
-                    this.getVideoDetails().then(r => {
-                    });
-                }
-            }
+
+            this.showMenu = value;
         },
         // position menu so it doesn't go off screen
         setCoordinates() {

@@ -26,6 +26,7 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                     this.getPlaylists();
                     toastStore.add({
                         message:"Added to playlist",
+                        type: 'success',
                     });
                 })
                 .catch(error => {
@@ -40,6 +41,20 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                     toastStore.add({
                         message:"Removed from playlist",
                         type: 'error',
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        async createPlaylist(name, visibility) {
+            let toastStore = useToastStore();
+            axios.post('/playlist/create', { name: name, visibility: visibility })
+                .then(response => {
+                    this.getPlaylists();
+                    toastStore.add({
+                        message:"Playlist created",
+                        type: 'success',
                     });
                 })
                 .catch(error => {

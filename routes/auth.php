@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
@@ -56,4 +57,15 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
+});
+
+//admin routes
+Route::middleware('admin')->group(function () {
+    Route::get('/admin', function () { return Inertia::render('Admin/AdminDashboard'); })->name('admin.dashboard');
+    Route::get('/component-testing', function () { return Inertia::render('Admin/TestComponents'); })->name('component-testing');
+
+    //testing routes
+    if (App::environment('local')) {
+        Route::post('/test', function() { return redirect()->back()->with('toast', 'Toast endpoint!'); });
+    }
 });
