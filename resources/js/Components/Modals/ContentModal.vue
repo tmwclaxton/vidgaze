@@ -10,11 +10,13 @@ import OptionHolder from "@/Components/Modals/Partials/OptionHolder.vue";
 import Option from "@/Components/Modals/Partials/Option.vue";
 import { useContentModalStore } from "@/Stores/ContentModalStore";
 import {onMounted, onUnmounted, ref, watch} from "vue";
-import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
+import { usePlaylistModalStore } from "@/Stores/PlaylistModalStore";
+import { useShareModalStore } from "@/Stores/ShareModelStore";
 
+const shareModelStore = useShareModalStore();
 const contentModalStore = useContentModalStore();
-const name = "ContentModal";
 const playlistModalStore = usePlaylistModalStore();
+const name = "ContentModal";
 
 function hideMenu() {
     if (contentModalStore.showMenu) {
@@ -35,19 +37,34 @@ onUnmounted(() => {
 
 
 const toggleWatchLater = () => {
-    contentModalStore.toggleWatchLater(contentModalStore.itemId, contentModalStore.inWatchLater);
+    contentModalStore.toggleWatchLater(contentModalStore.item.id, contentModalStore.inWatchLater);
 }
 
 const toggleVideoDisinterest = () => {
-    contentModalStore.toggleVideoDisinterest(contentModalStore.itemId, contentModalStore.videoDisinterest);
+    contentModalStore.toggleVideoDisinterest(contentModalStore.item.id, contentModalStore.videoDisinterest);
 }
 
 const toggleChannelDisinterest = () => {
-    contentModalStore.toggleChannelDisinterest(contentModalStore.creatorId, contentModalStore.channelDisinterest);
+    contentModalStore.toggleChannelDisinterest(contentModalStore.item.creator.id, contentModalStore.channelDisinterest);
+}
+
+const toggleShare = () => {
+    shareModelStore.showMenu = true;
+    contentModalStore.showMenu = false;
+    const type = contentModalStore.itemType;
+    let link = '';
+    let title = '';
+    if (type === 'video') {
+        link = route('watch.show', { video: {slug: contentModalStore.item.slug } });
+
+        title = "Check out this cool video on VidGaze" + contentModalStore.item.title
+        // console.log(link);
+    }
+    shareModelStore.getShareLinks(link, title);
 }
 
 const togglePlaylistModal = () => {
-    playlistModalStore.videoIds = [contentModalStore.itemId];
+    playlistModalStore.videoIds = [contentModalStore.item.id];
     playlistModalStore.showMenu = !playlistModalStore.showMenu;
     contentModalStore.showMenu = !contentModalStore.showMenu;
     playlistModalStore.getPlaylists();
@@ -79,7 +96,7 @@ const togglePlaylistModal = () => {
             </div>
 
             <!--Share-->
-            <Option  >
+            <Option @click="toggleShare" >
                 <ShareIcon class="w-5 h-5" />
                 <p>Share</p>
             </Option>
@@ -102,7 +119,7 @@ const togglePlaylistModal = () => {
                     <p>Channel hidden</p>
                 </Option>
             </div>
-            <Option @click="contentModalStore.reportContent(contentModalStore.itemId,'video')" >
+            <Option @click="contentModalStore.reportContent(contentModalStore.item.id,'video')" >
                 <ReportIcon class="w-5 h-5" />
                 <p>Report</p>
             </Option>

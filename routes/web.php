@@ -59,9 +59,14 @@ Route::get('/home', function () {
 //video routes
 Route::get('/videos',[VideoController::class,'index'])->name('videos.index');
 Route::get('/shorts', [VideoController::class,'shorts'])->name('videos.shorts');
-Route::get('/watch/{video:slug}', [VideoController::class,'show'])->name("watch");
-Route::get('/watch/{video:slug}/{playlist:slug}', [VideoController::class,'playlist'])->name("watch.playlist");
-Route::get('/watch/{video:slug}/{playlist:slug}/shuffle', [VideoController::class,'shuffle'])->name("watch.playlist.shuffle");
+
+//view routes
+Route::prefix('watch/{video:slug}')->name('watch.')->group(function () {
+    Route::get('/', [VideoController::class, 'show'])->name('show');
+    Route::get('{playlist:slug}', [VideoController::class, 'playlist'])->name('playlist');
+    Route::get('{playlist:slug}/shuffle', [VideoController::class, 'shuffle'])->name('playlist.shuffle');
+});
+
 
 //stream routes
 Route::get('/livestreams', [StreamController::class,'index'])->name("streams.index");

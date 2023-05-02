@@ -47,8 +47,7 @@ class PlaylistController extends Controller
             ['name', '!=', 'Liked Videos'],
             ['name', '!=', 'History'],
 
-        ])->orderByDesc('server_made')
-            ->orderByDesc('updated_at')
+        ])->orderByDesc('updated_at')
             ->get();
 
         $video_ids = explode(',', $request->video_ids);
@@ -72,6 +71,9 @@ class PlaylistController extends Controller
         //order playlists by server_made then videos_present_in_playlist then updated_at
         // can't cause computed order doesn't work or something
         $playlists = $playlists->where('videos_present_in_playlist' , true)->merge($playlists->where('videos_present_in_playlist' , false));
+
+        //put server made playlists at the top
+        $playlists = $playlists->where('server_made' , true)->merge($playlists->where('server_made' , false));
 
         return ['playlists' => $playlists];
 

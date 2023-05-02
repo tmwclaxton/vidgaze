@@ -23,8 +23,7 @@ const props = defineProps({
 // Define the setItemId method to call the setItemId method of contentModalStore with the provided id
 
 function setContentModalValues() {
-    contentModalStore.setItemId(props.video.id);
-    contentModalStore.creatorId = props.video.creator.id ;
+    contentModalStore.item = props.video;
     contentModalStore.itemType = "video";
     contentModalStore.setMenuShow(!contentModalStore.showMenu);
 };

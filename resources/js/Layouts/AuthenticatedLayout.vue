@@ -6,6 +6,7 @@ import ToastList from "@/Components/Toast/ToastList.vue";
 import {useNavStore} from "@/Stores/NavStore";
 import VideoStreamModal from "@/Components/Modals/ContentModal.vue";
 import PlaylistModal from "@/Components/Modals/PlaylistModal.vue";
+import ShareModel from "@/Components/Modals/ShareModel.vue";
 const navStore = useNavStore();
 
 let showingNavigationDropdown = ref(false);
@@ -45,6 +46,7 @@ watch(() => props.showingStudioLinks, (newVal) => {
                 <div class="relative flex-shrink transition duration-700 ease-in-out w-full"  :class="{'   ': navStore.getNavigationDropdown()}">
                     <slot  />
                     <PlaylistModal/>
+                    <ShareModel/>
                 </div>
                 <!--<CookieConsent/>-->
                 <VideoStreamModal/>

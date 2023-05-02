@@ -8,8 +8,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
 
     state: () => {
         return {
-            itemId: null,
-            creatorId: null,
+            item: null,
             itemType: null,
             showMenu: false,
             inWatchLater: false,
@@ -23,9 +22,6 @@ export const useContentModalStore = defineStore('ContentModalStore', {
         }
     },
     actions: {
-        setItemId(id) {
-            this.itemId = id;
-        },
         setMenuShow(value) {
             // if logged in, get video details like is the video in watch later playlist etc
             if (usePage().props.auth.user !== null && value === true) {
@@ -49,8 +45,8 @@ export const useContentModalStore = defineStore('ContentModalStore', {
         },
         // position menu so it doesn't go off screen
         setCoordinates() {
-            if (this.itemId !== null) {
-                const buttonRect = document.getElementById('dotsButton_' + this.itemId).getBoundingClientRect();
+            if (this.item.id !== null) {
+                const buttonRect = document.getElementById('dotsButton_' + this.item.id).getBoundingClientRect();
                 this.y = buttonRect.top + window.scrollY + 37;
                 this.x = buttonRect.left + window.scrollX ;
 
@@ -61,8 +57,8 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             }
         },
         async getVideoDetails() {
-            if (this.itemId !== null) {
-                const videoId = this.itemId;
+            if (this.item.id !== null) {
+                const videoId = this.item.id;
                 try {
                     const response = await axios.get(route('videos.details', { videoId: videoId }));
                     const data = response.data;
@@ -72,9 +68,9 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     this.reportedContent = data.reportedContent;
                     // this sets the watch later button to the correct state
                     if (this.inWatchLater) {
-                        document.getElementById('toggleInWatchLater_' + this.itemId).click();
+                        document.getElementById('toggleInWatchLater_' + this.item.id).click();
                     } else  {
-                        document.getElementById('toggleNotInWatchLater_' + this.itemId).click();
+                        document.getElementById('toggleNotInWatchLater_' + this.item.id).click();
                     }
                     this.showMenu = true;
                 } catch (error) {
@@ -101,7 +97,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     });
                     // this will hide the video and show the hidden content cover
                     if (!toggle) {
-                        document.getElementById('hide_' + this.itemId).click();
+                        document.getElementById('hide_' + this.item.id).click();
                     }
                 })
                 .catch(error => {
@@ -126,7 +122,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             if (type === 'video') {
                 url = '/videos/' + videoId + '/report'; ///videos/{videoId}/report
                 // this will hide the video and show the hidden content cover
-                document.getElementById('hide_' + this.itemId).click();
+                document.getElementById('hide_' + this.item.id).click();
             }
             const method = 'post';
             let toastStore = useToastStore();
@@ -168,7 +164,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     this.showMenu = false;
                     // this will hide the video
                     if (!toggle) {
-                        document.getElementById('hide_' + this.itemId).click();
+                        document.getElementById('hide_' + this.item.id).click();
                     }
                 })
                 .catch(error => {
@@ -201,9 +197,9 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             // not really needed because we reload the modal each time it opens
             this.inWatchLater = !this.inWatchLater;
             if (this.inWatchLater) {
-                document.getElementById('toggleInWatchLater_' + this.itemId).click();
+                document.getElementById('toggleInWatchLater_' + this.item.id).click();
             } else  {
-                document.getElementById('toggleNotInWatchLater_' + this.itemId).click();
+                document.getElementById('toggleNotInWatchLater_' + this.item.id).click();
             }
             return true;
         },

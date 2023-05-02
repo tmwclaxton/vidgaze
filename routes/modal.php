@@ -4,6 +4,7 @@
 use App\Http\Controllers\Content\ChannelDisinterestController;
 use App\Http\Controllers\Content\PlaylistController;
 use App\Http\Controllers\Content\PlaylistVideoController;
+use App\Http\Controllers\Content\ShareController;
 use App\Http\Controllers\Content\VideoController;
 use App\Http\Controllers\Content\VideoDisinterestController;
 
@@ -15,7 +16,6 @@ Route::middleware(['throttle:60,1','auth'])->group(function () {
 
     //create playlist
     Route::post('/playlist/create', [PlaylistController::class, 'create']);
-
 
     // This allows users to create and destroy PlaylistVideo records, indicating that they have added/removed a particular video to a particular playlist.
     Route::delete('/playlists/{playlistId}/videos/', [PlaylistVideoController::class, 'destroy'])
@@ -46,6 +46,7 @@ Route::middleware(['throttle:60,1','auth'])->group(function () {
 
 });
 
+Route::get('/shares', [ShareController::class, 'index'])->name('share.index');
 // limit to 5 requests per 15 minutes
 Route::post('/videos/{videoId}/report', [VideoController::class, 'report'])
     ->name('video.report.add')

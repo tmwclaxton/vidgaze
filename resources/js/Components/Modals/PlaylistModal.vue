@@ -8,7 +8,7 @@ import Checkbox from "@/Components/Inputs/Checkbox.vue";
 import OptionHolder from "@/Components/Modals/Partials/OptionHolder.vue";
 import Option from "@/Components/Modals/Partials/Option.vue";
 import { ref, onMounted } from 'vue';
-import { vOnClickOutside } from '@vueuse/components'
+import { vOnClickOutside } from '@vueuse/components';
 import TextInput from "@/Components/Inputs/TextInput.vue";
 import SelectInput from "@/Components/Inputs/SelectInput.vue";
 import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
@@ -88,7 +88,7 @@ const createPlaylist = () => {
                     <ExitIcon class="w-6 aspect-square ml-auto my-auto cursor-pointer" @click="close"/>
                 </div>
                 <!--</div>-->
-                <div v-if="!showPlaylistCreate">
+                <div v-if="!showPlaylistCreate" class="h-52 overflow-y-auto ">
                     <hr class="border-1 border-zinc-300 dark:border-zinc-800 my-1">
                     <Option class="items-center w-full" v-for="playlist in playlistModalStore.playlists"  :key="playlist.id" @click="toggle(playlist.videos_present_in_playlist,playlist.id)">
                         <Checkbox :checked="playlist.videos_present_in_playlist" class="my-auto" :id="'playlist_' + playlist.id" :name="'playlist_' + playlist.id" :value="playlist.id" />
@@ -109,7 +109,7 @@ const createPlaylist = () => {
 
                 <div class="flex flex-col space-y-2 my-2 px-3" v-if="showPlaylistCreate" >
                     <Option class="  dark:bg-zinc-900  dark:border dark:border-zinc-800"  @click="showPlaylistCreate = false">
-                        <font-awesome-icon :icon="['fas', 'square-caret-left']" class="w-4 pb-0.5 -mr-0.5 aspect-square my-auto"/>
+                        <font-awesome-icon :icon="['fas', 'square-caret-left']" class="w-4  -mr-1 aspect-square my-auto"/>
                         <!--<font-awesome-icon :icon="['fas', 'pen']" class="w-4 pb-0.5 -mr-0.5 aspect-square my-auto"/>-->
                         <p class="">Back</p>
                     </Option>

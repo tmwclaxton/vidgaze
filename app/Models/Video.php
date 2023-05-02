@@ -31,6 +31,7 @@ class Video extends Model
     {
         return [
             'id' => $this->id,
+            'slug' => $this->slug,
             'title' => $this->title,
             'duration' => convertDuration($this->duration),
             'views' =>  number_format_short($this->views) . " " . Str::plural('View', $this->views) ,
