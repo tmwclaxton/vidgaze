@@ -108,7 +108,7 @@ class VideoController extends Controller
         }
 
         //this doesn't work for some reason
-        if (Auth::user()->creator->id) {
+        if (Auth::user()) {
             $channelDisinterestIDs = ChannelDisinterest::where('creator_id', Auth::user()->creator->id)
                 ->pluck('channel_id')
                 ->toArray();
