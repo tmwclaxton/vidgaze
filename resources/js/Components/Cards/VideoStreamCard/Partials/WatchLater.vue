@@ -9,7 +9,7 @@ const contentModalStore = useContentModalStore();
 
 //props below
 const props = defineProps({
-    video: Object,
+    item: Object,
     channel_page: Boolean,
 });
 const name = 'WatchLater';
@@ -17,12 +17,12 @@ const inPlaylist = ref(false);
 const open = ref(false);
 
 const toggleWatchLater = () => {
-    if (contentModalStore.toggleWatchLater(props.video.id, inPlaylist.value)) {
+    if (contentModalStore.toggleWatchLater(props.item.id, inPlaylist.value)) {
         inPlaylist.value = !inPlaylist.value;
     }
 }
 
-// this is used when the modal is used to add a video to the watch later playlist instead
+// this is used when the modal is used to add a item to the watch later playlist instead
 const inWatchLater = () => {
     inPlaylist.value = true;
 }
@@ -32,8 +32,8 @@ const notInWatchLater = () => {
 </script>
 <template>
     <div class="flex flex-row h-0 pointer-events-none -mt-1">
-        <div :id="'toggleInWatchLater_' + video.id" @click="inWatchLater" class="w-0 h-0 opacity-0 pointer-events-none " key="watch_later_simple"></div>
-        <div :id="'toggleNotInWatchLater_' + video.id" @click="notInWatchLater" class="w-0 h-0 opacity-0 pointer-events-none  " key="watch_later_simple"></div>
+        <div :id="'toggleInWatchLater_' + item.id" @click="inWatchLater" class="w-0 h-0 opacity-0 pointer-events-none " key="watch_later_simple"></div>
+        <div :id="'toggleNotInWatchLater_' + item.id" @click="notInWatchLater" class="w-0 h-0 opacity-0 pointer-events-none  " key="watch_later_simple"></div>
     </div>
     <div  @mouseenter="open = true" @mouseleave="open = false" @click="toggleWatchLater()" key="watch_later"
          class="h-7 w-max text-sm px-1.5 z-1 pointer-events-auto cursor-pointer flex flex-row gap-x-3

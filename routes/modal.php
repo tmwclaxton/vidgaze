@@ -46,8 +46,10 @@ Route::middleware(['throttle:60,1','auth'])->group(function () {
 
 });
 
+
 Route::get('/shares', [ShareController::class, 'index'])->name('share.index');
 // limit to 5 requests per 15 minutes
+
 Route::post('/videos/{videoId}/report', [VideoController::class, 'report'])
     ->name('video.report.add')
     ->middleware('throttle:5,15');

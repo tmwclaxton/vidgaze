@@ -14,7 +14,7 @@ const queueStore = useQueueStore();
 
 //props below
 const props = defineProps({
-    video: Object,
+    item: Object,
     channel_page: Boolean,
 });
 const name = 'QueueList';
@@ -23,7 +23,7 @@ const QueueOpen = ref(false);
 const addToQueue = () => {
 
     if (inQueue.value) {
-        if(queueStore.remove(props.video.id)) {
+        if(queueStore.remove(props.item.id)) {
             inQueue.value = false;
             toastStore.add({
                 message: 'Removed from Queue',
@@ -38,7 +38,7 @@ const addToQueue = () => {
 
 
     } else {
-        if (queueStore.add({id: props.video.id,type: "video",}) ) {
+        if (queueStore.add({id: props.item.id,type: "video",}) ) {
             inQueue.value = true;
             toastStore.add({
                 message: 'Added to Queue',

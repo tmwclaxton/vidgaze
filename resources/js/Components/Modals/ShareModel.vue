@@ -27,17 +27,16 @@ const onClickOutsideHandler = [
         <div class="fixed my-auto inset-y-0 h-max">
             <OptionHolder class="min-w-64 shadow-md h-max" v-on-click-outside="onClickOutsideHandler" >
                 <!--<div class="w-full flex flex-row p-4 select-none ">-->
-                <div class="flex justify-between px-4 py-2  ">
+                <div class="flex justify-between px-4 py-1  select-none">
                     <p class="text-lg my-auto font-semibold ">Share</p>
-                    <ExitIcon class="w-6 aspect-square ml-auto my-auto cursor-pointer" @click="close"/>
+                    <div class=" cursor-pointer p-2 rounded-full hover:bg-zinc-100 dark:bg-zinc-900 ml-auto my-auto">
+                        <ExitIcon class="w-6 aspect-square " @click="close"/>
+
+                    </div>
                 </div>
 
                 <hr class="border-1 border-zinc-300 dark:border-zinc-800 mb-4 mt-2">
-                <!--<div   v-for="link in ShareModalStore.links" >-->
-                <!--    <a :href="link">-->
-                <!--        <p>test</p>-->
-                <!--    </a>-->
-                <!--</div>-->
+
                 <SocialMediaLinks />
 
             </OptionHolder>

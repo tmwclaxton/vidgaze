@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Str;
 
 class Stream extends Model
 {
@@ -17,6 +19,27 @@ class Stream extends Model
 
     //no mass assignment!
     protected $guarded = [];
+
+    //this is being used in the frontend and because I can't use functions in the frontend I have to use this
+    public function frontEndDetails(): array
+    {
+        return [
+            'id' => $this->id,
+            'slug' => $this->slug,
+            'title' => $this->title,
+            'description' => $this->description,
+            'language' => $this->language,
+            'is_live' => $this->is_live,
+            'tags' => $this->tags,
+            'category' => $this->category()->first()->name,
+            'preferred_source' => $this->preferred_source,
+            'viewers' =>  number_format_short($this->viewers) . " " . Str::plural('Viewer', $this->viewers) ,
+            'live_viewer_count' => number_format_short($this->live_viewer_count),
+            'thumbnail_url' => $this->thumbnail_url,
+            'creator' => $this->creator()->first()->frontEndDetails(),
+        ];
+    }
+
 
     //Alphabetical order
 

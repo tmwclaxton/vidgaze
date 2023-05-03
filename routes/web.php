@@ -3,8 +3,6 @@
 use App\Http\Controllers\Content\ChannelDisinterestController;
 use App\Http\Controllers\Content\PlaylistVideoController;
 use App\Http\Controllers\Content\VideoDisinterestController;
-use App\Http\Controllers\Content\VideoReportController;
-use App\Http\Controllers\Infinite\InfiniteVideosController;
 use App\Http\Controllers\Search\SearchController;
 use App\Http\Controllers\Content\MusicController;
 use App\Http\Controllers\Content\PlaylistController;
@@ -46,18 +44,13 @@ Route::get('/', function () {
 
 //home route
 Route::get('/home', function () {
-    $videos = Video::inRandomOrder()->take(6)->get()->map(function ($video) {
-        return $video->frontEndDetails();
-    });
-
-    return Inertia::render('Viewer/Home/Homepage', [
-        'videos' => $videos,
-    ]);
+    return Inertia::render('Viewer/Home/Homepage');
 })->name('home');
 
 
 //video routes
 Route::get('/videos',[VideoController::class,'index'])->name('videos.index');
+Route::get('/videos/infinite', [VideoController::class, 'infinite'])->name('videos.infinite');
 Route::get('/shorts', [VideoController::class,'shorts'])->name('videos.shorts');
 
 //view routes
@@ -70,6 +63,7 @@ Route::prefix('watch/{video:slug}')->name('watch.')->group(function () {
 
 //stream routes
 Route::get('/livestreams', [StreamController::class,'index'])->name("streams.index");
+Route::get('/streams/top', [StreamController::class,'topStreams'])->name("streams.top");
 Route::get('/stream/{stream:slug}', [StreamController::class,'show'])->name("stream");
 
 //podcast routes

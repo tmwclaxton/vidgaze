@@ -25,12 +25,7 @@ class StreamController extends Controller
             ->take(8)
             ->get();
 
-        $stream = Stream::orderBy('viewers', 'DESC')->where('visibility', '=','public')
-            ->where('streams.is_live', '=',true)
-            ->take(1)->get()->first();
 
-        $creatorID = Auth::user() ? Auth::user()->id : "empty";
-        //$webhookToken = TokenHelper::generateToken(session()->getId(), $creatorID, $stream->id);
 
         //return view('livestreams',[
         //    'stream'=> $stream,
@@ -42,6 +37,18 @@ class StreamController extends Controller
         return Inertia::render('Viewer/Streams/StreamsIndex');
 
     }
+
+    public function topStreams()
+    {
+        $streams = Stream::orderBy('viewers', 'DESC')->where('visibility', '=','public')
+            ->where('streams.is_live', '=',true)
+            ->take(6)->get()->map(function ($stream) {
+                return $stream->frontEndDetails();
+            });
+        return $streams;
+
+    }
+
 
 
     public function create()
