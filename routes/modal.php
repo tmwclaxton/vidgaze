@@ -5,6 +5,7 @@ use App\Http\Controllers\Content\ChannelDisinterestController;
 use App\Http\Controllers\Content\PlaylistController;
 use App\Http\Controllers\Content\PlaylistVideoController;
 use App\Http\Controllers\Content\ShareController;
+use App\Http\Controllers\Content\StreamController;
 use App\Http\Controllers\Content\VideoController;
 use App\Http\Controllers\Content\VideoDisinterestController;
 
@@ -50,9 +51,13 @@ Route::middleware(['throttle:60,1','auth'])->group(function () {
 Route::get('/shares', [ShareController::class, 'index'])->name('share.index');
 // limit to 5 requests per 15 minutes
 
-Route::post('/videos/{videoId}/report', [VideoController::class, 'report'])
+Route::post('/videos/{id}/report', [VideoController::class, 'report'])
     ->name('video.report.add')
-    ->middleware('throttle:5,15');
+    ->middleware('throttle:555,15');
+
+Route::post('/streams/{id}/report', [StreamController::class, 'report'])
+    ->name('stream.report.add')
+    ->middleware('throttle:555,15');
 
 
 

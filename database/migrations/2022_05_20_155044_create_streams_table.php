@@ -28,6 +28,7 @@ return new class extends Migration
             $table->boolean('is_live')->default(false)->nullable();
             $table->enum('audience',['kids','mature','all'])->default('all');
             $table->enum('visibility', ['public', 'unlisted', 'private'])->default('public');
+            $table->integer('report_count')->default('0')->unsigned();
 
             $table->string('language', 3)->nullable()->index(); //ISO 639-3:2007
             $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();

@@ -21,12 +21,20 @@ const props = defineProps({
 });
 
 // Define the setItemId method to call the setItemId method of contentModalStore with the provided id
-
-function setContentModalValues() {
+const itemType = computed(() => {
+    if ( props.item['duration'] === undefined ) {
+        return "stream";
+    } else {
+        return "video";
+    }
+});
+async function setContentModalValues() {
     contentModalStore.item = props.item;
-    contentModalStore.itemType = "video";
+    contentModalStore.itemType = itemType.value;
+    await new Promise(resolve => setTimeout(resolve, 100)); // wait for 100 milliseconds
     contentModalStore.setMenuShow(!contentModalStore.showMenu);
 };
+
 
 function hideItemToggle() {
     hideItem.value = !hideItem.value;
@@ -35,9 +43,9 @@ function hideItemToggle() {
 </script>
 
 <template>
-    <div :id="'box_'+ item.id" class="relative group overflow-hidden text dark:textDark min-h-64">
+    <div :id="'box_' + itemType + '_' + item.id" class="relative group overflow-hidden text dark:textDark min-h-64">
         <!--hide content hidden button and cover-->
-        <div :id="'hide_' + item.id" @click="hideItemToggle" class="w-0 h-0 opacity-0 pointer-events-none " ></div>
+        <div :id="'hide_' + itemType + '_' + item.id" @click="hideItemToggle" class="w-0 h-0 opacity-0 pointer-events-none " ></div>
         <div  v-if="hideItem" class="w-full h-full rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex flex-col align-middle justify-center items-center select-none">
             <p class="text-md font-bold">Content Hidden</p>
             <button  @click="hideItemToggle()" class="text-blue-600 dark:text-blue-400 font-semibold cursor-pointer">
@@ -112,7 +120,7 @@ function hideItemToggle() {
 
                     </div>
                     <!--3 dots button-->
-                    <div :id="'dotsButton_' + item.id" class="col-span-1 ml-auto pt-2 w-8 without-ring h-max" >
+                    <div :id="'dotsButton_' + itemType + '_' + item.id" class="col-span-1 ml-auto pt-2 w-8 without-ring h-max" >
                         <button @click="setContentModalValues()" class="flex without-ring m-0 mt-0 opacity-90 w-6 rounded-full text-zinc-500 ml-auto   pointer-events-auto">
                             <DotsIcon class="w-6 h-6"/>
                         </button>

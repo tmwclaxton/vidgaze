@@ -11,6 +11,7 @@ use App\Models\Category;
 use App\Models\Stream;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Request;
 
 class StreamController extends Controller
 {
@@ -103,5 +104,12 @@ class StreamController extends Controller
     public function destroy()
     {
         //
+    }
+
+        public function report(Request $request, $id)
+    {
+        $stream = Stream::findOrFail($id);
+        $stream->increment('report_count');
+        return response()->json(['message' => 'Report added successfully.'],200);
     }
 }

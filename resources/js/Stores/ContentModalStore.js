@@ -45,8 +45,8 @@ export const useContentModalStore = defineStore('ContentModalStore', {
         },
         // position menu so it doesn't go off screen
         setCoordinates() {
-            if (this.item.id !== null) {
-                const buttonRect = document.getElementById('dotsButton_' + this.item.id).getBoundingClientRect();
+            if (this.item.id !== null && this.itemType !== null) {
+                const buttonRect = document.getElementById('dotsButton_' + this.itemType + '_' + this.item.id).getBoundingClientRect();
                 this.y = buttonRect.top + window.scrollY + 37;
                 this.x = buttonRect.left + window.scrollX ;
 
@@ -97,7 +97,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     });
                     // this will hide the video and show the hidden content cover
                     if (!toggle) {
-                        document.getElementById('hide_' + this.item.id).click();
+                        document.getElementById('hide_' + this.itemType + '_' + this.item.id).click();
                     }
                 })
                 .catch(error => {
@@ -117,35 +117,36 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             return true;
         },
 
-        async reportContent(videoId, type) {
+        async reportContent(id) {
             let url = '';
-            if (type === 'video') {
-                url = '/videos/' + videoId + '/report'; ///videos/{videoId}/report
-                // this will hide the video and show the hidden content cover
-                document.getElementById('hide_' + this.item.id).click();
+            if ( this.itemType === 'video') {
+                url = route('video.report.add', {id: id}); ///videos/{id}/report
+            } else if ( this.itemType === 'stream') {
+                url = route('stream.report.add', {id: id});
             }
+            // this will hide the video and show the hidden content cover
+            document.getElementById('hide_' + this.itemType + '_' + this.item.id).click();
             const method = 'post';
             let toastStore = useToastStore();
 
             axios[method](url)
                 .then(response => {
-                    const message = 'Thank you for reporting this video. We will review it as soon as possible.';
-                    const type = 'success';
                     this.reportedContent = true;
                     this.showMenu = false;
                     toastStore.add({
-                        message,
-                        type,
+                        message: 'Thank you for reporting this ' + this.itemType + '. We will review it as soon as possible.',
+                        type: 'success',
                     });
                 })
                 .catch(error => {
                     toastStore.add({
-                        message: "Sorry, we couldn't report this video. Please try again later.",
+                        message: "Sorry, we couldn't report this " + this.itemType + ". Please try again later.",
                         type: 'error',
                     });
                     return false;
                 });
         },
+
 
         async toggleChannelDisinterest(creator_id, toggle) {
             const url = '/channels/' + creator_id + '/disinterest' ;
@@ -164,7 +165,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     this.showMenu = false;
                     // this will hide the video
                     if (!toggle) {
-                        document.getElementById('hide_' + this.item.id).click();
+                        document.getElementById('hide_' + this.itemType + '_' + this.item.id).click();
                     }
                 })
                 .catch(error => {

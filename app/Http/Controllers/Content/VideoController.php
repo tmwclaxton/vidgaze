@@ -183,11 +183,11 @@ class VideoController extends Controller
         ], 200);
     }
 
-    public function report(Request $request, $videoId)
+    public function report(Request $request, $id)
     {
-        $video = Video::findOrFail($videoId);
+        $video = Video::findOrFail($id);
         $video->increment('report_count');
-        return response()->json(['message' => 'Report added successfully.']);
+        return response()->json(['message' => 'Report added successfully.'],200);
     }
 
 }

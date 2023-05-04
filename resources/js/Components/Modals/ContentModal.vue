@@ -50,15 +50,16 @@ const toggleChannelDisinterest = () => {
 
 const toggleShare = () => {
     shareModelStore.showMenu = true;
-    contentModalStore.showMenu = false;
-    const type = contentModalStore.itemType;
+    contentModalStore.showMenu = false; ;
     let link = '';
     let title = '';
-    if (type === 'video') {
+    if (contentModalStore.itemType === 'video') {
         link = route('watch.show', { video: {slug: contentModalStore.item.slug } });
-
         title = "Check out this cool video on VidGaze" + contentModalStore.item.title
         // console.log(link);
+    } else if (contentModalStore.itemType === 'stream') {
+        link = route('stream.show', { stream: {slug: contentModalStore.item.slug } });
+        title = "Check out this cool stream on VidGaze" + contentModalStore.item.title
     }
     shareModelStore.getShareLinks(link, title);
 }
@@ -77,8 +78,8 @@ const togglePlaylistModal = () => {
 <template>
     <div id="menu" v-if="contentModalStore.showMenu" v-click-away="hideMenu"
          v-bind:style="{'top': contentModalStore.y + 'px', 'left': contentModalStore.x + 'px'}" class="z-10 absolute w-max h-max">
-        <OptionHolder v-if="contentModalStore.itemType === 'video'">
-            <div v-if=" $page.props.auth.user !== null" class="flex flex-col ">
+        <OptionHolder >
+            <div v-if=" $page.props.auth.user !== null && contentModalStore.itemType === 'video'" class="flex flex-col ">
                 <!--Watch later-->
                 <Option v-if="!contentModalStore.inWatchLater " @click="toggleWatchLater">
                     <ClockIcon class="w-5 h-5" />
@@ -102,11 +103,11 @@ const togglePlaylistModal = () => {
             </Option>
             <hr class="border-1 border-zinc-300 dark:border-zinc-800 my-0.5 mt-1">
             <div v-if=" $page.props.auth.user !== null" class="flex flex-col ">
-                <Option v-if="!contentModalStore.videoDisinterest" @click="toggleVideoDisinterest">
+                <Option v-if="!contentModalStore.videoDisinterest && contentModalStore.itemType === 'video'" @click="toggleVideoDisinterest">
                     <BanIcon class="w-5 h-5" />
                     <p>Not interested</p>
                 </Option>
-                <Option v-if="contentModalStore.videoDisinterest" @click="toggleVideoDisinterest">
+                <Option v-if="contentModalStore.videoDisinterest && contentModalStore.itemType === 'video'" @click="toggleVideoDisinterest">
                     <TickIcon class="w-5 h-5" />
                     <p>You won't see this again!</p>
                 </Option>
@@ -119,7 +120,7 @@ const togglePlaylistModal = () => {
                     <p>Channel hidden</p>
                 </Option>
             </div>
-            <Option @click="contentModalStore.reportContent(contentModalStore.item.id,'video')" >
+            <Option @click="contentModalStore.reportContent(contentModalStore.item.id)" >
                 <ReportIcon class="w-5 h-5" />
                 <p>Report</p>
             </Option>

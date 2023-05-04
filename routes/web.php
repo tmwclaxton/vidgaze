@@ -64,7 +64,7 @@ Route::prefix('watch/{video:slug}')->name('watch.')->group(function () {
 //stream routes
 Route::get('/livestreams', [StreamController::class,'index'])->name("streams.index");
 Route::get('/streams/top', [StreamController::class,'topStreams'])->name("streams.top");
-Route::get('/stream/{stream:slug}', [StreamController::class,'show'])->name("stream");
+Route::get('/stream/{stream:slug}', [StreamController::class,'show'])->name("stream.show");
 
 //podcast routes
 Route::get('/podcasts', [PodCastController::class,'index'])->name("podcast.index");

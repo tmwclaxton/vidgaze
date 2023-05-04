@@ -14,6 +14,7 @@ import {computed, onMounted, ref} from "vue";
 import CreatorCarousel from "@/Pages/Viewer/Home/CreatorCarousel.vue";
 import Skeleton from "@/Components/Cards/VideoStreamCard/VideoStreamSkeleton.vue";
 import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCard/VideoStreamSkeleton.vue";
+import ShortsSkeleton from "@/Components/Cards/ShortsCard/ShortsSkeleton.vue";
 
 
 
@@ -65,7 +66,7 @@ const fetchStreams = async () => {
             <p class="font-bold text-2xl -mt-4 mb-4">Trending Videos</p>
 
             <!--Show a row of popular videos-->
-            <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+            <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                 <template v-for="(video, index) in videos" :key="video.id">
                     <VideoStreamCard :item="video" />
                 </template>
@@ -77,7 +78,7 @@ const fetchStreams = async () => {
 
             <p   class="font-bold text-2xl my-4 mb-4">Popular Streams</p>
 
-            <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+            <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                 <template v-for="(stream, index) in streams" :key="stream.id">
                     <VideoStreamCard :item="stream" />
                 </template>
@@ -87,6 +88,16 @@ const fetchStreams = async () => {
                 </template>
             </div>
 
+            <p class="font-bold text-2xl mt-4 mb-8">Rising Shorts</p>
+            <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-y-14 ">
+                <!--<template v-for="(stream, index) in streams" :key="stream.id">-->
+                <!--    <VideoStreamCard :item="stream" />-->
+                <!--</template>-->
+                <!--skeleton loading-->
+                <template  v-for="i in 6">
+                    <ShortsSkeleton />
+                </template>
+            </div>
             <!--show a line-->
             <!--show categories i.e podcasts streams and shorts-->
             <!--show a line-->
