@@ -5,8 +5,8 @@ namespace Database\Factories;
 use App\Models\Category;
 use App\Models\Creator;
 use App\Models\User;
-use Delight\Random\Random;
 use Illuminate\Database\Eloquent\Factories\Factory;
+
 
 
 /**
@@ -27,11 +27,10 @@ class VideoFactory extends Factory
             'title' => $this->faker->sentence(),
             'description' => '<p>'.$this->faker->paragraph(2, true). '</p>',
 //            'body' => '<p>'.$this->faker->paragraph(10, true). '</p>',
-            'slug' => Random::alphanumericHumanString(7),
-            'duration' => random_int(1,5000),
+            'slug' => rand(1, 333000),
+            'duration' => rand(1, 60),
             'preferred_source' => $items[array_rand($items)],
-//            'category_id' => random_int(100,100000),
-            'thumbnail_url' => 'https://picsum.photos/id/'. random_int(0,33) .'/800/800',
+            'thumbnail_url' => 'https://picsum.photos/id/'. rand(0,33) .'/800/800',
         ];
     }
 }

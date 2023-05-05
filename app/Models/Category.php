@@ -12,7 +12,19 @@ class Category extends Model
     // TODO: no mass assignment!
     protected $guarded = [''];
 
-    //Alphabetical order
+
+    public function frontEndDetails(): array
+    {
+        return [
+            'id' => $this->id,
+            'slug' => $this->slug,
+            'name' => $this->name,
+            'description' => $this->description,
+            'tags_json' => $this->tags_json,
+            'thumbnail_url' => $this->thumbnail_url,
+        ];
+    }
+
 
     public function creators() {
         return $this->hasMany(Creator::class);

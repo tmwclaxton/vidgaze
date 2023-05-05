@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Content\CategoryController;
 use App\Http\Controllers\Content\ChannelDisinterestController;
+use App\Http\Controllers\Content\CreatorController;
 use App\Http\Controllers\Content\PlaylistVideoController;
 use App\Http\Controllers\Content\VideoDisinterestController;
 use App\Http\Controllers\Search\SearchController;
@@ -60,11 +62,16 @@ Route::prefix('watch/{video:slug}')->name('watch.')->group(function () {
     Route::get('{playlist:slug}/shuffle', [VideoController::class, 'shuffle'])->name('playlist.shuffle');
 });
 
+//channel routes
+Route::get('channel/{creator:slug}', [CreatorController::class,'show'])->name("channel.show");
 
 //stream routes
 Route::get('/livestreams', [StreamController::class,'index'])->name("streams.index");
 Route::get('/streams/top', [StreamController::class,'topStreams'])->name("streams.top");
 Route::get('/stream/{stream:slug}', [StreamController::class,'show'])->name("stream.show");
+
+Route::get('category/{category:slug}', [CategoryController::class,'show'])->name("category.show");
+
 
 //podcast routes
 Route::get('/podcasts', [PodCastController::class,'index'])->name("podcast.index");

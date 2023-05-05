@@ -37,8 +37,7 @@ const notInWatchLater = () => {
     </div>
     <div  @mouseenter="open = true" @mouseleave="open = false" @click="toggleWatchLater()" key="watch_later"
          class="h-7 w-max text-sm px-1.5 z-1 pointer-events-auto cursor-pointer flex flex-row gap-x-3
-      group-hover:opacity-100 opacity-0 transition duration-300
-       bg-zinc-900/90 rounded ">
+      group-hover:opacity-100 opacity-0 transition duration-300 bg-zinc-900/90 rounded ">
         <div v-if="open"
              class="   text-white text-xs font-bold text-center my-auto pl-1 ">
             <p  v-if="inPlaylist">Added to Watch Later</p>

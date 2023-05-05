@@ -31,7 +31,7 @@ class Stream extends Model
             'language' => $this->language,
             'is_live' => $this->is_live,
             'tags' => $this->tags,
-            'category' => $this->category()->first()->name,
+            'category' => $this->category->frontEndDetails(),
             'preferred_source' => $this->preferred_source,
             'viewers' =>  number_format_short($this->viewers) . " " . Str::plural('Viewer', $this->viewers) ,
             'live_viewer_count' => number_format_short($this->live_viewer_count),

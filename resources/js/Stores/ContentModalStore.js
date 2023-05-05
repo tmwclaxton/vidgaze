@@ -23,6 +23,8 @@ export const useContentModalStore = defineStore('ContentModalStore', {
     },
     actions: {
         setMenuShow(value) {
+
+            if (this.item !== null) {
             // if logged in, get video details like is the video in watch later playlist etc
             if (usePage().props.auth.user !== null && value === true) {
                 if (this.itemType === 'video') {
@@ -42,10 +44,11 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             this.setCoordinates();
 
             this.showMenu = value;
+            }
         },
         // position menu so it doesn't go off screen
         setCoordinates() {
-            if (this.item.id !== null && this.itemType !== null) {
+            if (this.item !== null && this.itemType !== null) {
                 const buttonRect = document.getElementById('dotsButton_' + this.itemType + '_' + this.item.id).getBoundingClientRect();
                 this.y = buttonRect.top + window.scrollY + 37;
                 this.x = buttonRect.left + window.scrollX ;
@@ -57,7 +60,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             }
         },
         async getVideoDetails() {
-            if (this.item.id !== null) {
+            if (this.item !== null) {
                 const videoId = this.item.id;
                 try {
                     const response = await axios.get(route('videos.details', { videoId: videoId }));

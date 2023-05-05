@@ -42,6 +42,7 @@ class VideoController extends Controller
         $videoIds = $request->ids ?? [];
         // Get the selected category
         $selectedCategory = $request->input('category') ?? 'popular';
+        $shorts = $request->input('shorts') ?? false;
 
         if (!is_array($videoIds) ) {
             //explode the ids into an array
@@ -101,6 +102,10 @@ class VideoController extends Controller
 
         // Only get public videos
         $query->where('visibility', '=','public');
+
+        if ($shorts) {
+            $query->where('duration', '<=', 60);
+        }
 
         // Filter by video platform
         if (!empty($selectedVideoPlatforms)) {
