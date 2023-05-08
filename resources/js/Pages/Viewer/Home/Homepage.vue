@@ -18,6 +18,7 @@ import ShortsSkeleton from "@/Components/Cards/ShortsCard/ShortsSkeleton.vue";
 import ShortsCard from "@/Components/Cards/ShortsCard/ShortsCard.vue";
 import {debounce} from "lodash";
 
+import StreamIcon from '~/images/icons/livestreams.svg';
 
 
 const trending_videos = ref([]);
@@ -125,8 +126,8 @@ const fetchShorts = async () => {
             </div>
 
         <PaddingLayout>
-            <div class="flex flex-row -mt-4 mb-4 ">
-                <!--<font-awesome-icon class="my-auto h-6" :icon="['fas', 'play']" />-->
+            <div class="flex flex-row gap-2 mb-8 ">
+                <font-awesome-icon :icon="['fas', 'burst']" class="my-auto h-6"/>
                 <p class="font-bold text-2xl select-none">Trending Videos</p>
             </div>
 
@@ -143,7 +144,10 @@ const fetchShorts = async () => {
 
             <hr class="my-8 border-2 border-zinc-100 dark:border-zinc-800" />
 
-            <p   class="font-bold text-2xl select-none my-4 mb-4">Popular Streams</p>
+            <div class="flex flex-row gap-2  my-4 mb-8 ">
+                <StreamIcon class="w-6 h-6 my-auto"/>
+                <p class="font-bold text-2xl select-none">Popular Streams</p>
+            </div>
 
             <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                 <template v-for="(stream, index) in streams" :key="stream.id">
@@ -155,9 +159,15 @@ const fetchShorts = async () => {
                 </template>
             </div>
 
-            <hr class="my-8 border-2 border-zinc-100 dark:border-zinc-800" />
-            <p class="font-bold text-2xl select-none mt-4 mb-8">Rising Shorts</p>
-            <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-7 mx-10">
+            <hr class="hidden md:flex my-8 border-2 border-zinc-100 dark:border-zinc-800" />
+
+
+            <div class="hidden md:flex flex-row gap-2  my-4 mb-8 ">
+                <font-awesome-icon :icon="['fas', 'fire']"  class="my-auto h-6"/>
+                <p class="font-bold text-2xl select-none">Rising Shorts</p>
+            </div>
+
+            <div class="hidden md:grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-7 mx-10">
                 <template  v-for="(short, index) in shorts" :key="short.id">
                     <ShortsCard :item="short" />
                 </template>
@@ -169,7 +179,13 @@ const fetchShorts = async () => {
 
 
             <hr class="my-8 border-2 border-zinc-100 dark:border-zinc-800" />
-            <p class="font-bold text-2xl select-none mt-4 mb-8">Explore</p>
+
+
+            <div class="flex flex-row gap-2  my-4 mb-8 ">
+                <font-awesome-icon :icon="['fas', 'compass']" class="my-auto h-6" />
+                <p class="font-bold text-2xl select-none">Explore</p>
+            </div>
+
 
             <div class="mb-15 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                 <template v-for="(video, index) in videos" :key="video.id">

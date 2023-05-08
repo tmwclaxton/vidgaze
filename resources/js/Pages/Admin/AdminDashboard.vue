@@ -23,15 +23,15 @@ export default {
                 <!--Horizon and Telescope links-->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mx-auto max-w-md lg:max-w-screen-xl mb-5 select-none">
 
-                    <Link :href="route('horizon.index')"
+                    <a :href="route('horizon.index')"
                           class=" flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-zinc-800 hover:bg-zinc-700  transition-colors duration-200">
                         <span class="text-sm font-semibold uppercase tracking-wider">Horizon</span>
-                    </Link>
+                    </a>
 
-                    <Link :href="route('telescope')"
+                    <a :href="route('telescope')"
                           class=" flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-zinc-800 hover:bg-zinc-700 transition-colors duration-200">
                         <span class="text-sm font-semibold uppercase tracking-wider">Telescope</span>
-                    </Link>
+                    </a>
 
                     <Link :href="route('component-testing')"
                           class=" flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-zinc-800 hover:bg-zinc-700 transition-colors duration-200">
