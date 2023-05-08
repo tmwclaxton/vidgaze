@@ -41,7 +41,7 @@ const dotsIconShow = computed(() => {
 </script>
 
 <template>
-    <div :id="'box_' + itemType + '_' + item.id" class="relative group overflow-hidden text dark:textDark min-h-64">
+    <div :id="'box_' + itemType + '_' + item.id" class="relative group overflow-hidden text dark:textDark min-h-64 ">
         <!--hide content hidden button and cover-->
         <div :id="'hide_' + itemType + '_' + item.id" @click="hideItemToggle" class="w-0 h-0 opacity-0 pointer-events-none " ></div>
         <div  v-if="hideItem" class="w-full h-full rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex flex-col align-middle justify-center items-center select-none">
@@ -57,10 +57,11 @@ const dotsIconShow = computed(() => {
                 </a>
 
 
-                <div v-if="item.viewers != null" class="absolute bottom-0 right-0 m-1.5 py-auto px-2 flex flex-col align-middle text-white font-semibold text-sm bg-black opacity-75
-                    rounded dark:text-zinc-200">
-
-                    <p class="my-auto" v-text="item.viewers"/>
+                <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2
+                opacity-0 group-hover:opacity-100 flex duration-300 ease-in-out transition
+                p-3  cursor-pointer
+                bg-zinc-100/75 dark:bg-black/75 rounded-xl  ">
+                    <font-awesome-icon :icon="['fas', 'play']" class="h-4 aspect-square text-zinc-800 dark:text-white" />
                 </div>
 
                 <div  class="flex flex-col absolute top-0 right-0 m-1.5 space-y-1 items-end ">
