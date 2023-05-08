@@ -107,7 +107,7 @@ onMounted(() => {
         </div>
 
         <!--next button-->
-        <div class="absolute top-0 right-0 flex items-center justify-center h-full px-4 pointer-events-none">
+        <div class="absolute top-0 right-0 flex items-center justify-center h-full px-8 pointer-events-none">
             <span @click="scrollToNextItem"
                   class=" cursor-pointer inline-flex items-center justify-center w-8 h-8 rounded-full pointer-events-auto
                   sm:w-16 sm:h-16 bg-vidgaze-blue/50 hover:bg-vidgaze-blue opacity-0 group-hover:opacity-100 transition duration-200 ease-in-out">
