@@ -10,31 +10,78 @@ export default {
 </script>
 <script setup>
 import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.vue";
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import CreatorCarousel from "@/Pages/Viewer/Home/CreatorCarousel.vue";
 import Skeleton from "@/Components/Cards/VideoStreamCard/VideoStreamSkeleton.vue";
 import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCard/VideoStreamSkeleton.vue";
 import ShortsSkeleton from "@/Components/Cards/ShortsCard/ShortsSkeleton.vue";
 import ShortsCard from "@/Components/Cards/ShortsCard/ShortsCard.vue";
+import {debounce} from "lodash";
 
 
 
+const trending_videos = ref([]);
 const videos = ref([]);
 const streams = ref([]);
 const shorts = ref([]);
-const category = ref('trending');
+const category = ref('');
 
 onMounted(async () => {
-    await fetchVideos();
+    await fetchTrendingVideos();
     await fetchStreams();
     await fetchShorts();
+
+    //wait , this gives time for trending_videos to be populated
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await debouncedFetchVideos(); // call it immediately on mount
+
+    window.addEventListener('scroll', handleScroll);
 });
 
-const fetchVideos = async () => {
-    axios.get(route('videos.infinite'),  { params: { category: category.value, perPage: 6  } } )
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll);
+    debouncedFetchVideos.cancel(); // cancel any pending debounced calls
+});
+
+const handleScroll = () => {
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const bodyHeight = document.body.offsetHeight;
+    // console.log(scrollPosition, bodyHeight)
+
+    // check if user has reached the bottom of the page
+    if (scrollPosition >= bodyHeight - 100) {
+        // console.log('bottom of page')
+        debouncedFetchVideos(); // call the debounced version of fetchVideos
+    }
+};
+
+// debounced version of fetchVideos that waits for 500ms before calling
+const debouncedFetchVideos = debounce(async () => {
+    await fetchVideos([...trending_videos.value, ...videos.value]);
+}, 500);
+
+const fetchTrendingVideos = async () => {
+    axios.get(route('videos.infinite'),  { params: { category: 'trending', perPage: 6  } } )
         .then(response => {
             setTimeout(() => {
-                videos.value = response.data.data;
+                trending_videos.value = response.data.data;
+            }, 500); // 500ms delay
+        })
+        .catch(error => {
+            console.log(error);
+        });
+};
+const fetchVideos = async (videoArray) => {
+    const videoIds = videoArray.map(video => video.id).join(',');
+    axios.get(route('videos.infinite'),  {
+        params: {
+            category: 'popular',
+            perPage: 40,
+            videoIds
+        } } )
+        .then(response => {
+            setTimeout(() => {
+                videos.value = videos.value.concat(response.data.data);
             }, 500); // 500ms delay
         })
         .catch(error => {
@@ -85,11 +132,11 @@ const fetchShorts = async () => {
 
             <!--Show a row of popular videos-->
             <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-                <template v-for="(video, index) in videos" :key="video.id">
+                <template v-for="(video, index) in trending_videos" :key="video.id">
                     <VideoStreamCard :item="video" />
                 </template>
                 <!--skeleton loading-->
-                <template v-if="videos.length === 0" v-for="i in 6">
+                <template v-if="trending_videos.length === 0" v-for="i in 6">
                     <VideoStreamSkeleton />
                 </template>
             </div>
@@ -124,6 +171,15 @@ const fetchShorts = async () => {
             <hr class="my-8 border-2 border-zinc-100 dark:border-zinc-800" />
             <p class="font-bold text-2xl select-none mt-4 mb-8">Explore</p>
 
+            <div class="mb-15 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                <template v-for="(video, index) in videos" :key="video.id">
+                    <VideoStreamCard :item="video" />
+                </template>
+                <!--skeleton loading-->
+                <template v-if="videos.length === 0" v-for="i in 6">
+                    <VideoStreamSkeleton />
+                </template>
+            </div>
         </PaddingLayout>
 
 

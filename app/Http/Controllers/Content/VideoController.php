@@ -141,6 +141,7 @@ class VideoController extends Controller
         $data['data'] = $videos->shuffle();
         $data['category'] = $selectedCategory;
         $data['perPage'] = $perPage;
+        $data['ids'] = $videoIds;
         return $data;
     }
 
