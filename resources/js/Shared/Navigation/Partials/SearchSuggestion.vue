@@ -16,7 +16,7 @@
 
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3'
-import SearchIcon from '~/images/icons/search.svg';
+import SearchIcon from '#icons/search.svg';
 const { text, link } = defineProps({
     text: {
         type: String,

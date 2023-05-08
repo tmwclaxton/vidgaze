@@ -4,7 +4,7 @@ import CloseNavSVG from '~/images/icons/exit.svg';
 import { Link } from '@inertiajs/vue3';
 import { defineProps, defineEmits, ref, watch, computed } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
-import SearchSuggestion from '@/Shared/SearchDropdown/SearchSuggestion.vue';
+import SearchSuggestion from '@/Shared/Navigation/Partials/SearchSuggestion.vue';
 import {useNavStore} from "@/Stores/NavStore";
 const navStore = useNavStore();
 
@@ -139,7 +139,7 @@ function goToSelectedResult() {
                        @keydown.enter="goToSelectedResult"
                        class="bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white font-bold text-sm"
                        :class="{'w-full': navStore.getExpandedSearchBar(),'w-0 sm:w-full': !navStore.getExpandedSearchBar(),' placeholder-zinc-400': navStore.getExpandedSearchResults()}"
-                       placeholder="Joshua you suck and your search code sucks Search YouTube, Twitch, Odysee and more...">
+                       placeholder="Joshua you suck Search YouTube, Twitch, Odysee and more...">
                 <SearchIcon @click="searchEntered" class="w-5 h-5 flex-shrink-0"/>
 
                 <!--Search dropdown-->
