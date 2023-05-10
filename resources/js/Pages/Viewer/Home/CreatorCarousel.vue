@@ -67,11 +67,11 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="relative group overflow-hidden h-75 shadow-md  ">
+    <div class="relative group overflow-hidden h-75 shadow-md  "
+         @mouseenter="handleMouseEnter"
+         @mouseleave="handleMouseLeave">
         <!-- Carousel wrapper -->
         <div ref="carouselWrapper"
-             @mouseenter="handleMouseEnter"
-             @mouseleave="handleMouseLeave"
              class="overflow-y-hidden overflow-x-hidden snap-mandatory snap-x  h-full w-full flex flex-row relative transition-all delay-75 duration-700 ease-in-out  opacity-100 point-events-auto" >
             <!-- Item -->
             <div class="flex-shrink-0 h-full w-full relative snap-center  "

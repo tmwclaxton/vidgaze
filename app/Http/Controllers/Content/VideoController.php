@@ -39,7 +39,7 @@ class VideoController extends Controller
 
         $perPage = $request->perPage ?? 20;
         //get ids from params
-        $videoIds = $request->ids ?? [];
+        $videoIds = $request->videoIds ?? [];
         // Get the selected category
         $selectedCategory = $request->input('category') ?? 'popular';
         $shorts = $request->input('shorts') ?? false;
@@ -127,6 +127,7 @@ class VideoController extends Controller
         // Don't retrieve the same videos
         if ( $videoIds != [] ) {
             $query->whereNotIn('id', $videoIds);
+            //return ($videoIds);
         }
 
 
@@ -135,6 +136,13 @@ class VideoController extends Controller
             $videos = $query->take($perPage)->get()->map(function ($video) {
                 return $video->frontEndDetails();
             });;
+        }
+
+        // error handling
+        if (!isset($videos)) {
+            return response()->json([
+                'error' => 'No videos found'
+            ], 404);
         }
 
 

@@ -26,7 +26,7 @@ const itemType = computed(() => {
 });
 async function setContentModalValues() {
     contentModalStore.item = props.item;
-    contentModalStore.itemType = itemType;
+    contentModalStore.itemType = itemType.value;
     await new Promise(resolve => setTimeout(resolve, 100)); // wait for 100 milliseconds
     contentModalStore.setMenuShow(!contentModalStore.showMenu);
 };

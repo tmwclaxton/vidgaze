@@ -57,8 +57,8 @@ const handleScroll = () => {
 };
 
 // debounced version of fetchVideos that waits for 500ms before calling
-const debouncedFetchVideos = debounce(async () => {
-    await fetchVideos([...trending_videos.value, ...videos.value]);
+const debouncedFetchVideos = debounce(() => {
+    fetchVideos([...trending_videos.value, ...videos.value]);
 }, 500);
 
 const fetchTrendingVideos = async () => {
@@ -107,13 +107,55 @@ const fetchShorts = async () => {
         .then(response => {
             setTimeout(() => {
                 shorts.value = response.data.data;
+                // when shorts are fetched, we need to compute the number of shorts to show based on screen size
+                computedShorts.value = shorts.value.slice(0, shortsPerPage[getScreenSize()]);
             }, 500); // 500ms delay
         })
         .catch(error => {
             console.log(error);
         });
 };
+const shortsPerPage = {
+    'xs': 2,
+    "sm": 2,
+    "md": 2,
+    "ld": 2,
+    "lg": 3,
+    "xl": 4,
+    "2xl": 8,
+};
+const getScreenSize = () => {
+    const screenWidth = window.innerWidth;
+    if (screenWidth < 470) {
+        return "xs";
+    } else if (screenWidth < 640) {
+        return "sm";
+    } else if (screenWidth < 768) {
+        return "md";
+    } else if (screenWidth < 868) {
+        return "ld";
+    } else if (screenWidth < 1024) {
+        return "lg";
+    } else if (screenWidth < 1280) {
+        return "xl";
+    } else {
+        return "2xl";
+    }
+};
+const computedShorts = ref([]);
 
+onMounted(() => {
+    window.addEventListener("resize", handleResize);
+});
+
+onUnmounted(() => {
+    window.removeEventListener("resize", handleResize);
+});
+
+const handleResize = debounce(() => {
+    const screenSize = getScreenSize();
+    computedShorts.value = shorts.value.slice(0, shortsPerPage[screenSize]);
+}, 500);
 
 
 </script>
@@ -159,16 +201,16 @@ const fetchShorts = async () => {
                 </template>
             </div>
 
-            <hr class="hidden md:flex my-8 border-2 border-zinc-100 dark:border-zinc-800" />
+            <hr class="hid den md: flex my-8 border-2 border-zinc-100 dark:border-zinc-800" />
 
 
-            <div class="hidden md:flex flex-row gap-2  my-4 mb-8 ">
+            <div class="hid den md: flex flex-row gap-2  my-4 mb-8 ">
                 <font-awesome-icon :icon="['fas', 'fire']"  class="my-auto h-6"/>
                 <p class="font-bold text-2xl select-none">Rising Shorts</p>
             </div>
 
-            <div class="hidden md:grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-7 mx-10">
-                <template  v-for="(short, index) in shorts" :key="short.id">
+            <div class="hid den md: grid  gap-7 mx-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8"  >
+                <template  v-for="(short, index) in computedShorts" :key="short.id">
                     <ShortsCard :item="short" />
                 </template>
                 <!--skeleton loading-->

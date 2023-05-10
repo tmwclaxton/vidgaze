@@ -122,7 +122,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
 
         async reportContent(id) {
             let url = '';
-            if ( this.itemType === 'video') {
+            if ( this.itemType === 'video' || this.itemType === 'short') {
                 url = route('video.report.add', {id: id}); ///videos/{id}/report
             } else if ( this.itemType === 'stream') {
                 url = route('stream.report.add', {id: id});

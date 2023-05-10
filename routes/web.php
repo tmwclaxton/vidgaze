@@ -54,8 +54,9 @@ Route::get('/home', function () {
 Route::get('/videos',[VideoController::class,'index'])->name('videos.index');
 Route::get('/videos/infinite', [VideoController::class, 'infinite'])->name('videos.infinite');
 Route::get('/shorts', [VideoController::class,'shorts'])->name('videos.shorts');
-
 //view routes
+Route::get('short/{video:slug}', [VideoController::class,'short'])->name("short.show");
+
 Route::prefix('watch/{video:slug}')->name('watch.')->group(function () {
     Route::get('/', [VideoController::class, 'show'])->name('show');
     Route::get('{playlist:slug}', [VideoController::class, 'playlist'])->name('playlist');

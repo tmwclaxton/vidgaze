@@ -45,7 +45,7 @@ const dotsIconShow = computed(() => {
 </script>
 
 <template>
-    <div :id="'box_' + itemType + '_' + item.id" class="relative group overflow-hidden text dark:textDark min-h-64">
+    <div :id="'box_' + itemType + '_' + item.id" class="relative group   text dark:textDark min-h-64">
         <!--hide content hidden button and cover-->
         <div :id="'hide_' + itemType + '_' + item.id" @click="hideItemToggle" class="w-0 h-0 opacity-0 pointer-events-none " ></div>
         <div  v-if="hideItem" class="w-full h-full rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex flex-col align-middle justify-center items-center select-none">
@@ -55,7 +55,7 @@ const dotsIconShow = computed(() => {
             </div>
         </div>
         <div  v-if="!hideItem">
-            <div class="relative aspect-[21/12] overflow-hidden rounded-md">
+            <div class="relative aspect-[21/12] overflow-hidden rounded-md ">
                 <a :href="route('watch.show', {slug: item.slug})">
                     <img class="object-cover w-full h-full bg-zinc-900" v-bind:src="item.thumbnail_url"   alt=""/>
                 </a>
@@ -68,7 +68,7 @@ const dotsIconShow = computed(() => {
                     <p class="my-auto" v-text="item.viewers"/>
                 </div>
 
-                <div  class="flex flex-col absolute top-0 right-0 m-1.5 space-y-1 items-end ">
+                <div  class="flex flex-col absolute top-0 right-0 m-1.5 space-y-1 items-end opacity-0  duration-500 delay-500 group-hover:opacity-100 transition-none group-hover:transition-opacity">
                     <WatchLater v-if="item.duration != null && $page.props.auth.user != null" :item="item" />
                     <Queue v-if="item.duration != null" :item="item" />
                 </div>

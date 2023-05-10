@@ -60,6 +60,9 @@ const toggleShare = () => {
     } else if (contentModalStore.itemType === 'stream') {
         link = route('stream.show', { stream: {slug: contentModalStore.item.slug } });
         title = "Check out this cool stream on VidGaze" + contentModalStore.item.title
+    }else if (contentModalStore.itemType === 'short') {
+        link = route('short.show', { video: {slug: contentModalStore.item.slug } });
+        title = "Check out this cool short on VidGaze" + contentModalStore.item.title
     }
     shareModelStore.getShareLinks(link, title);
 }
