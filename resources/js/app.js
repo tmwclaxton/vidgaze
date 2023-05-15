@@ -8,16 +8,15 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { Link } from '@inertiajs/vue3';
 import VueClickAway from "vue3-click-away";
-
+// import VueYouTubeEmbed from 'vue-youtube-embed';
 /* import the fontawesome core - utility functions*/
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { library } from '@fortawesome/fontawesome-svg-core';
 /* import font awesome icon component */
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import {fas } from '@fortawesome/free-solid-svg-icons'
 import {far } from '@fortawesome/free-regular-svg-icons'
 import {fab } from '@fortawesome/free-brands-svg-icons'
 import { dom } from '@fortawesome/fontawesome-svg-core'
-
 library.add(fas, far, fab);
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';

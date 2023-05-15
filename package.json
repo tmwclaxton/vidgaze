@@ -18,7 +18,8 @@
         "tailwindcss": "^3.2.1",
         "vite": "^4.2.1",
         "vite-svg-loader": "^4.0.0",
-        "vue": "^3.2.41"
+        "vue": "^3.2.41",
+        "vue-twitch-player": "^1.0.8"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.3.0",
@@ -34,6 +35,9 @@
         "@vueuse/core": "^9.13.0",
         "lodash": "^4.17.21",
         "pinia": "^2.0.35",
+        "vue-plugin-load-script": "^2.1.1",
+        "vue-youtube-embed": "^2.2.2",
+        "vue3-carousel": "^0.3.1",
         "vue3-click-away": "^1.2.4",
         "vue3-parallax": "^0.1.4",
         "vuex": "^4.1.0"

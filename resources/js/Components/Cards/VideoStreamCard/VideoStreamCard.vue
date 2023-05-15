@@ -9,8 +9,12 @@ import WatchLater from "@/Components/Cards/VideoStreamCard/Partials/WatchLater.v
 import {useContentModalStore} from "@/Stores/ContentModalStore.js";
 import {computed, ref} from "vue";
 import Queue from "@/Components/Cards/VideoStreamCard/Partials/Queue.vue";
+import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
+import {useShareModalStore} from "@/Stores/ShareModelStore";
 
 const contentModalStore = useContentModalStore();
+const shareModalStore = useShareModalStore();
+const playlistModalStore = usePlaylistModalStore();
 
 const name = "VideoStreamCard";
 const hideItem = ref(false);
@@ -40,7 +44,7 @@ function hideItemToggle() {
     hideItem.value = !hideItem.value;
 }
 const dotsIconShow = computed(() => {
-    return contentModalStore.item !== null && contentModalStore.item.id === props.item.id && contentModalStore.itemType === itemType.value && contentModalStore.showMenu;
+    return contentModalStore.item !== null && contentModalStore.item.id === props.item.id && contentModalStore.itemType === itemType.value && (contentModalStore.showMenu || playlistModalStore.showMenu || shareModalStore.showMenu);
 });
 </script>
 
