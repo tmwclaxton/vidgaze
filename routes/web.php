@@ -71,7 +71,9 @@ Route::get('/livestreams', [StreamController::class,'index'])->name("streams.ind
 Route::get('/streams/top', [StreamController::class,'topStreams'])->name("streams.top");
 Route::get('/stream/{stream:slug}', [StreamController::class,'show'])->name("stream.show");
 
+//category routes
 Route::get('category/{category:slug}', [CategoryController::class,'show'])->name("category.show");
+Route::get('categories}', [CategoryController::class,'index'])->name("categories.index");
 
 
 //podcast routes
@@ -103,11 +105,7 @@ Route::get('/podcasts', function () {
 
 
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+
 
 
 

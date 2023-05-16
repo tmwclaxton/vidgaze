@@ -20,7 +20,7 @@ class Category extends Model
             'slug' => $this->slug,
             'name' => $this->name,
             'description' => $this->description,
-            'tags_json' => $this->tags_json,
+            'tags' => json_decode($this->tags_json),
             'thumbnail_url' => $this->thumbnail_url,
         ];
     }
