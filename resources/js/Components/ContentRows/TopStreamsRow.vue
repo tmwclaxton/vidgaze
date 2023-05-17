@@ -5,6 +5,7 @@ import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.
 import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCard/VideoStreamSkeleton.vue";
 
 import StreamIcon from '~/images/icons/livestreams.svg';
+import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
 const streams = ref([]);
 const name = 'PopularStreams';
 const fetchStreams = async () => {
@@ -41,7 +42,7 @@ onMounted(() => {
         </template>
     </div>
 
-    <hr class="hid den md: flex my-8 border-2 border-zinc-100 dark:border-zinc-800" />
+    <RowDivider />
 </template>
 
 

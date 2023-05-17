@@ -5,6 +5,7 @@ import {onMounted, onUnmounted, ref} from "vue";
 import {debounce} from "lodash";
 import ShortsSkeleton from "@/Components/Cards/ShortsCard/ShortsSkeleton.vue";
 import ShortsCard from "@/Components/Cards/ShortsCard/ShortsCard.vue";
+import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
 
 const name = 'TopShortsRow';
 const shorts = ref([]);
@@ -83,5 +84,6 @@ const handleResize = debounce(() => {
     </div>
 
 
-    <hr class="my-8 border-2 border-zinc-100 dark:border-zinc-800" />
+
+    <RowDivider />
 </template>

@@ -8,7 +8,7 @@ import VideoStreamModal from "@/Components/Modals/ContentModal.vue";
 import PlaylistModal from "@/Components/Modals/PlaylistModal.vue";
 import ShareModel from "@/Components/Modals/ShareModel.vue";
 const navStore = useNavStore();
-
+const name = 'AuthenticatedLayout';
 let showingNavigationDropdown = ref(false);
 
 //accept props

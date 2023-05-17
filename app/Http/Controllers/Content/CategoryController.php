@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryCollection;
+use App\Http\Resources\StreamCollection;
 use App\Models\Category;
+use App\Models\Stream;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -22,6 +24,39 @@ class CategoryController extends Controller
             ->take($perPage)
             ->get());
         return $categories;
+    }
+
+    public function infinite(Request $request)
+    {
+        $perPage = $request->perPage ?? 20;
+        $categoryIds = $request->categoryIds ?? [];
+
+        if (!is_array($categoryIds)) {
+            $categoryIds = explode(',', $categoryIds);
+        }
+
+        //return $categoryIds;
+        $categories = new CategoryCollection(Category::query()->inRandomOrder()
+            ->whereNotIn('id', $categoryIds)
+            ->take($perPage)
+            ->get());
+
+        $result = [];
+
+        foreach ($categories as $category) {
+            $streams = new StreamCollection(Stream::query()
+                ->where('category_id', $category->id)
+                ->orderByDesc('viewers')
+                ->take(6)
+                ->get());
+
+            $result[] = [
+                'category' => $category,
+                'streams' => $streams,
+            ];
+        }
+
+        return $result;
     }
 
 

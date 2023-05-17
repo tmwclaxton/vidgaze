@@ -9,16 +9,15 @@ export default {
 };
 </script>
 <script setup>
-import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.vue";
-import {computed, onMounted, onUnmounted, ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import CreatorCarousel from "@/Pages/Viewer/Home/CreatorCarousel.vue";
-import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCard/VideoStreamSkeleton.vue";
-import ShortsSkeleton from "@/Components/Cards/ShortsCard/ShortsSkeleton.vue";
-import ShortsCard from "@/Components/Cards/ShortsCard/ShortsCard.vue";
 import {debounce} from "lodash";
 
-import TopStreamsRow from "@/Pages/Viewer/Home/TopStreamsRow.vue";
-import TopShortsRow from "@/Pages/Viewer/Home/TopShortsRow.vue";
+import TopStreamsRow from "@/Components/ContentRows/TopStreamsRow.vue";
+import TopShortsRow from "@/Components/ContentRows/TopShortsRow.vue";
+
+import TrendingVideosRow from "@/Components/ContentRows/TrendingVideosRow.vue";
+import InfiniteVideos from "@/Components/ContentRows/InfiniteVideos.vue";
 
 
 const trending_videos = ref([]);
@@ -103,45 +102,15 @@ const fetchVideos = async (videoArray) => {
             </div>
 
         <PaddingLayout class="-mt-4">
-            <div class="flex flex-row gap-2  my-4 mb-8 ">
-                <font-awesome-icon :icon="['fas', 'burst']" class="my-auto h-6"/>
-                <p class="font-bold text-2xl select-none">Trending Videos</p>
-            </div>
 
-            <!--Show a row of popular videos-->
-            <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-                <template v-for="(video, index) in trending_videos" :key="video.id">
-                    <VideoStreamCard :item="video" />
-                </template>
-                <!--skeleton loading-->
-                <template v-if="trending_videos.length === 0" v-for="i in 6">
-                    <VideoStreamSkeleton />
-                </template>
-            </div>
-
-            <hr class="my-8 border-2 border-zinc-100 dark:border-zinc-800" />
+            <TrendingVideosRow :trending_videos="trending_videos"/>
 
             <TopStreamsRow/>
 
-
             <TopShortsRow/>
 
+            <InfiniteVideos :videos="videos" />
 
-            <div class="flex flex-row gap-2  my-4 mb-8 ">
-                <font-awesome-icon :icon="['fas', 'compass']" class="my-auto h-6" />
-                <p class="font-bold text-2xl select-none">Explore</p>
-            </div>
-
-
-            <div class="mb-15 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-                <template v-for="(video, index) in videos" :key="video.id">
-                    <VideoStreamCard :item="video" />
-                </template>
-                <!--skeleton loading-->
-                <template v-if="videos.length === 0" v-for="i in 6">
-                    <VideoStreamSkeleton />
-                </template>
-            </div>
         </PaddingLayout>
 
 

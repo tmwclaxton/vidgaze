@@ -73,8 +73,8 @@ Route::get('/stream/{stream:slug}', [StreamController::class,'show'])->name("str
 
 //category routes
 Route::get('category/{category:slug}', [CategoryController::class,'show'])->name("category.show");
-Route::get('categories}', [CategoryController::class,'index'])->name("categories.index");
-
+Route::get('categories', [CategoryController::class,'index'])->name("categories.index"); //used by carousel on stream page
+Route::get('categories/infinite', [CategoryController::class, 'infinite'])->name('categories.infinite');
 
 //podcast routes
 Route::get('/podcasts', [PodCastController::class,'index'])->name("podcast.index");

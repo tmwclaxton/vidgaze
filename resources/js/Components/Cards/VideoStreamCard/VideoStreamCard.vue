@@ -21,7 +21,16 @@ const hideItem = ref(false);
 //props below
 const props = defineProps({
     item: Object,
-    channel_page: Boolean,
+    category_page: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+    channel_page: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
 });
 
 // Define the setItemId method to call the setItemId method of contentModalStore with the provided id
@@ -118,7 +127,7 @@ const dotsIconShow = computed(() => {
                                         <p class="line-clamp-1 " v-text="(item.time_published)"/>
 
                                     </div>
-                                    <a  v-if="item.category != null" :href="route('category.show',{slug:item.category.slug})" class=" info-tag dark:info-tag-dark inline-flex mb-0.5 ">
+                                    <a  v-if="item.category != null && !category_page" :href="route('category.show',{slug:item.category.slug})" class=" info-tag dark:info-tag-dark inline-flex mb-0.5 ">
                                         <!--<ClockIcon class="w-3 h-3 mr-1 .5 my-auto dark:hidden"/>-->
                                         <!--<ClockFillIcon class="w-3 h-3 mr-1 .5 my-auto hidden dark:flex"/>-->
                                         <font-awesome-icon class="my-auto mr-1" :icon="['fas', 'gamepad']" />
