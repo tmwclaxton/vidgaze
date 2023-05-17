@@ -16,7 +16,7 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 <template>
 
 
-    <div class="relative flex">
+    <div class="relative flex" v-if="$page.props.auth.user.data.creator != null">
         <Dropdown align="right" width="64" distance="1.5"  >
             <template #trigger>
                 <span class="inline-flex rounded-md   ">
@@ -25,7 +25,7 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
                         class="inline-flex items-center h-full border border-transparent  rounded-md bg-transparent hover:text-zinc-300 focus:outline-none transition ease-in-out duration-150"
                     >
                         <img class="h-8 aspect-square rounded-full bg-zinc-800 aspect-square  "
-                             v-bind:src="$page.props.auth.creator.avatar_url">
+                             v-bind:src="$page.props.auth.user.data.creator.avatar_url">
 
                     </button>
                 </span>
@@ -36,9 +36,9 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
                     <div class="flex flex-row space-x-2 block w-full px-4 py-2 pb-4 text-left text-sm  ">
                         <!--Profile picture-->
                         <img class="h-10 aspect-square rounded-full bg-zinc-800 aspect-square  "
-                             v-bind:src="$page.props.auth.creator.avatar_url">
+                             v-bind:src="$page.props.auth.user.data.creator.avatar_url">
                         <div class="flex flex-col">
-                            <span class="text dark:text-white font-bold">{{ $page.props.auth.user.email }}</span>
+                            <span class="text dark:text-white font-bold">{{ $page.props.auth.user.data.email }}</span>
                             <Link :href="route('profile.edit')" class="text-blue-500 font-bold">
                                 Manage your account
                             </Link>
