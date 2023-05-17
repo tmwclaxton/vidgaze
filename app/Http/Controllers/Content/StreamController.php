@@ -7,6 +7,7 @@ use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\SearchResultDTO;
 use App\Helpers\Tokens\TokenHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\StreamCollection;
 use App\Models\Category;
 use App\Models\Stream;
 use Illuminate\Support\Facades\Auth;
@@ -41,11 +42,9 @@ class StreamController extends Controller
 
     public function topStreams()
     {
-        $streams = Stream::orderBy('viewers', 'DESC')->where('visibility', '=','public')
+        $streams = new StreamCollection( Stream::orderBy('viewers', 'DESC')->where('visibility', '=','public')
             ->where('streams.is_live', '=',true)
-            ->take(6)->get()->map(function ($stream) {
-                return $stream->frontEndDetails();
-            });
+            ->take(6)->get() );
         return $streams;
 
     }

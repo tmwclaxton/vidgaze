@@ -11,7 +11,7 @@ const fetchStreams = async () => {
     axios.get(route('streams.top'))
         .then(response => {
             setTimeout(() => {
-                streams.value = response.data;
+                streams.value = response.data.data;
             }, 500); // 500ms delay
         })
         .catch(error => {

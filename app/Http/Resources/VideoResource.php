@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
+
+class VideoResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'slug' => $this->slug,
+            'title' => $this->title,
+            'duration' => convertDuration($this->duration),
+            'views' =>  number_format_short($this->views) . " " . Str::plural('View', $this->views) ,
+            'live_viewer_count' => number_format_short($this->live_viewer_count),
+            'time_uploaded' => Carbon::parse($this->time_uploaded)->toDateTimeString(),
+            'time_published' => Carbon::parse($this->time_published)->diffForHumans(),
+            'thumbnail_url' => $this->thumbnail_url,
+            'likes' => $this->like_count,
+            'dislikes' => $this->dislike_count,
+            'creator' => new CreatorResource($this->creator()->first()),
+        ];
+    }
+}

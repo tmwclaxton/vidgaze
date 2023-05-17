@@ -13,18 +13,6 @@ class Category extends Model
     protected $guarded = [''];
 
 
-    public function frontEndDetails(): array
-    {
-        return [
-            'id' => $this->id,
-            'slug' => $this->slug,
-            'name' => $this->name,
-            'description' => $this->description,
-            'tags' => json_decode($this->tags_json),
-            'thumbnail_url' => $this->thumbnail_url,
-        ];
-    }
-
 
     public function creators() {
         return $this->hasMany(Creator::class);

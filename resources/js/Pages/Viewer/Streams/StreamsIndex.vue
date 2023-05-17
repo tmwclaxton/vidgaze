@@ -10,11 +10,11 @@ const categories = ref();
 const fetchCategories = () =>  {
     axios.get(route('categories.index'),  {
         params: {
-            perPage: 16,
+            perPage: 8,
         } } )
         .then(response => {
             setTimeout(() => {
-                categories.value = response.data;
+                categories.value = response.data.data;
             }, 500); // 500ms delay
         })
         .catch(error => {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Content;
 
 use App\Helpers\Tokens\TokenHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\VideoCollection;
 use App\Models\channelDisinterest;
 use App\Models\Playlist;
 use App\Models\PlaylistVideo;
@@ -133,9 +134,7 @@ class VideoController extends Controller
 
         // Retrieve the videos
         if ($query->exists()) {
-            $videos = $query->take($perPage)->get()->map(function ($video) {
-                return $video->frontEndDetails();
-            });;
+            $videos = new VideoCollection($query->take($perPage)->get());
         }
 
         // error handling

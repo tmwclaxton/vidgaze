@@ -26,24 +26,7 @@ class Video extends Model
         'views' => 0
     ];
 
-    //this is being used in the frontend and because I can't use functions in the frontend I have to use this
-    public function frontEndDetails(): array
-    {
-        return [
-            'id' => $this->id,
-            'slug' => $this->slug,
-            'title' => $this->title,
-            'duration' => convertDuration($this->duration),
-            'views' =>  number_format_short($this->views) . " " . Str::plural('View', $this->views) ,
-            'live_viewer_count' => number_format_short($this->live_viewer_count),
-            'time_uploaded' => Carbon::parse($this->time_uploaded)->toDateTimeString(),
-            'time_published' => Carbon::parse($this->time_published)->diffForHumans(),
-            'thumbnail_url' => $this->thumbnail_url,
-            'likes' => $this->like_count,
-            'dislikes' => $this->dislike_count,
-            'creator' => $this->creator()->first()->frontEndDetails(),
-        ];
-    }
+
 
     protected function views() : Attribute
     {
