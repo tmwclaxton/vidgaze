@@ -13,7 +13,6 @@ import {onMounted, onUnmounted, ref, watch} from "vue";
 import { usePlaylistModalStore } from "@/Stores/PlaylistModalStore";
 import { useShareModalStore } from "@/Stores/ShareModelStore";
 
-const shareModelStore = useShareModalStore();
 const contentModalStore = useContentModalStore();
 const playlistModalStore = usePlaylistModalStore();
 const name = "ContentModal";
@@ -49,22 +48,7 @@ const toggleChannelDisinterest = () => {
 }
 
 const toggleShare = () => {
-    shareModelStore.showMenu = true;
-    contentModalStore.showMenu = false; ;
-    let link = '';
-    let title = '';
-    if (contentModalStore.itemType === 'video') {
-        link = route('watch.show', { video: {slug: contentModalStore.item.slug } });
-        title = "Check out this cool video on VidGaze" + contentModalStore.item.title
-        // console.log(link);
-    } else if (contentModalStore.itemType === 'stream') {
-        link = route('stream.show', { stream: {slug: contentModalStore.item.slug } });
-        title = "Check out this cool stream on VidGaze" + contentModalStore.item.title
-    }else if (contentModalStore.itemType === 'short') {
-        link = route('short.show', { video: {slug: contentModalStore.item.slug } });
-        title = "Check out this cool short on VidGaze" + contentModalStore.item.title
-    }
-    shareModelStore.getShareLinks(link, title);
+    contentModalStore.shareContent();
 }
 
 const togglePlaylistModal = () => {

@@ -21,8 +21,8 @@ return new class extends Migration
 
             $table->string('title')->index();
             $table->text('description')->nullable();
-            $table->integer('karma')->default('0')->index();
-            $table->string('duration')->index();
+            $table->integer('karma')->default(0)->index();
+            $table->integer('duration')->default(0)->unsigned()->index();
             $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
             $table->json('tags', 1200)->nullable();
             $table->timestampTz('time_uploaded')->useCurrent()->nullable();
