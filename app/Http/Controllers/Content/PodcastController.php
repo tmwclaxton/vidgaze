@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Content;
 use App\Http\Controllers\Controller;
 use App\Models\Podcast;
 use App\Models\Video;
+use Inertia\Inertia;
 
 
 class PodcastController extends Controller
@@ -14,7 +15,8 @@ class PodcastController extends Controller
     public function index()
     {
 
-        return view('podcasts.podcasts');
+
+        return Inertia::render('Viewer/Podcasts/PodcastsIndex');
 
     }
 

@@ -53,7 +53,7 @@ const name = 'ExpandableNavigationLinks';
             </ResponsiveNavLink>
         </div>
         <div class="2xl:hid den ">
-            <ResponsiveNavLink :href="route('podcasts')" :active="route().current('podcasts')">
+            <ResponsiveNavLink :href="route('podcasts.index')" :active="route().current('podcasts.index')">
                     <PodcastIcon class="w-5 h-5 flex-shrink-0"/>
                     <span>Podcasts</span>
             </ResponsiveNavLink>

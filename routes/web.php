@@ -4,6 +4,7 @@ use App\Http\Controllers\Content\CategoryController;
 use App\Http\Controllers\Content\ChannelDisinterestController;
 use App\Http\Controllers\Content\CreatorController;
 use App\Http\Controllers\Content\PlaylistVideoController;
+use App\Http\Controllers\Content\ShareController;
 use App\Http\Controllers\Content\VideoDisinterestController;
 use App\Http\Controllers\Search\SearchController;
 use App\Http\Controllers\Content\MusicController;
@@ -50,26 +51,20 @@ Route::get('/home', function () {
 })->name('home');
 
 
-//video routes
-Route::get('/videos',[VideoController::class,'index'])->name('videos.index');
-Route::get('/videos/infinite', [VideoController::class, 'infinite'])->name('videos.infinite');
-Route::get('/shorts', [VideoController::class,'shorts'])->name('videos.shorts');
-//view routes
-Route::get('short/{video:slug}', [VideoController::class,'short'])->name("short.show");
 
-Route::prefix('watch/{video:slug}')->name('watch.')->group(function () {
-    Route::get('/', [VideoController::class, 'show'])->name('show');
-    Route::get('{playlist:slug}', [VideoController::class, 'playlist'])->name('playlist');
-    Route::get('{playlist:slug}/shuffle', [VideoController::class, 'shuffle'])->name('playlist.shuffle');
-});
 
-//channel routes
-Route::get('channel/{creator:slug}', [CreatorController::class,'show'])->name("channel.show");
+require __DIR__ . '/ContentRoutes/videos.php';
+require __DIR__ . '/ContentRoutes/streams.php';
+require __DIR__ . '/ContentRoutes/channels.php';
+require __DIR__ . '/ContentRoutes/studio.php';
+require __DIR__ . '/ContentRoutes/playlists.php';
+require __DIR__.'/auth.php';
 
-//stream routes
-Route::get('/livestreams', [StreamController::class,'index'])->name("streams.index");
-Route::get('/streams/top', [StreamController::class,'topStreams'])->name("streams.top");
-Route::get('/stream/{stream:slug}', [StreamController::class,'show'])->name("stream.show");
+
+
+
+
+
 
 //category routes
 Route::get('category/{category:slug}', [CategoryController::class,'show'])->name("category.show");
@@ -77,7 +72,7 @@ Route::get('categories', [CategoryController::class,'index'])->name("categories.
 Route::get('categories/infinite', [CategoryController::class, 'infinite'])->name('categories.infinite');
 
 //podcast routes
-Route::get('/podcasts', [PodCastController::class,'index'])->name("podcast.index");
+Route::get('/podcasts', [PodCastController::class,'index'])->name("podcasts.index");
 Route::get('/podcast/', [PodCastController::class,'show'])->name("podcast.show");
 Route::get('/podcast/episode/', [PodCastController::class,'episode'])->name("podcast.episode");
 
@@ -87,23 +82,12 @@ Route::get('/music/album', [MusicController::class,'album'])->name('music.album'
 Route::get('/music/category', [MusicController::class,'category'])->name('music.category');
 Route::get('/music/track', [MusicController::class,'track'])->name('music.track');
 
-//user feed routes
-Route::middleware('auth')->group(function () {
-    Route::get('/feed/library', [PlaylistController::class, 'index'])->name("feed.library");
-    Route::post('/feed/playlist/{playlist:slug}', [PlaylistController::class, 'update'])->name("playlist.update");
-    Route::get('/feed/watch_later', [PlaylistController::class, 'later'])->name("feed.watch-later");
-    Route::get('/feed/liked_videos', [PlaylistController::class, 'liked'])->name("feed.liked-videos");
-    Route::get('/feed/history', [PlaylistController::class, 'history'])->name("feed.history");
-    Route::get('/feed/subscriptions', [SubscriptionsController::class, 'index'])->name("feed.subscriptions");
-});
-Route::get('/playlist/{playlist:slug}', [PlaylistController::class, 'show'])->name("playlist");
-
-Route::get('/podcasts', function () {
-    return Inertia::render('Viewer/Podcasts/PodcastsIndex');
-})->name('podcasts');
 
 
 
+//this is the route for creating share links
+Route::get('/shares', [ShareController::class, 'index'])->name('share.index');
+// limit to 5 requests per 15 minutes
 
 
 
@@ -117,13 +101,6 @@ Route::middleware('throttle:60,1')->group(function () {
 });
 
 
-
-
-
-
-
-
-
 //about
 Route::get('/about', function () { return Inertia::render('Viewer/Landing');})->name('about');
 
@@ -133,7 +110,3 @@ Route::get('/privacy_policy', function () { return Inertia::render('Legal/Policy
 
 
 
-
-require __DIR__.'/auth.php';
-require __DIR__.'/modal.php';
-require __DIR__.'/studio.php';
