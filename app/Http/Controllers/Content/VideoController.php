@@ -162,7 +162,7 @@ class VideoController extends Controller
 
 
     // this is for the video modal
-    public function details(Request $request, $videoId)
+    public function modalDetails($videoId)
     {
         $video = Video::findOrFail($videoId);
 
@@ -196,16 +196,31 @@ class VideoController extends Controller
         // check if user has disinterested channel
         $channelDisinterest = ChannelDisinterest::where('creator_id', $creatorId)->where('channel_id', $video->creator->id)->exists();
 
-        // check if user has liked video
-        $videoLike = VideoViewInfos::where('viewer_id', $creatorId)->where('video_id', $videoId)->pluck('liked')->first() ?? null;
 
 
         return response()->json([
             'inWatchLater' => $inWatchLater,
             'videoDisinterest' => $videoDisinterest,
             'channelDisinterest' => $channelDisinterest,
-            'videoLike' => $videoLike,
         ], 200);
+    }
+
+    public function getVideoViewInfo($videoId) {
+        // check if user is authenticated
+        if (!Auth::user()) {
+            return response()->json([
+                'error' => 'You are not authenticated'
+            ], 401);
+        }
+
+        $creatorId = Auth::user()->creator->id;
+        // check if user has liked video
+        $VideoViewInfo = VideoViewInfos::where('viewer_id', $creatorId)->where('video_id', $videoId)->first() ?? null;
+        return [
+            'liked' => $VideoViewInfo['liked'] ?? null,
+            'view_point' => $VideoViewInfo['view_point'] ?? null,
+        ];
+
     }
 
     public function report(Request $request, $id)

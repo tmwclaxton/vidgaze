@@ -35,6 +35,7 @@
         "@vueuse/core": "^9.13.0",
         "lodash": "^4.17.21",
         "pinia": "^2.0.35",
+        "vue-infinite-scroll": "^2.0.2",
         "vue-plugin-load-script": "^2.1.1",
         "vue-youtube-embed": "^2.2.2",
         "vue3-carousel": "^0.3.1",

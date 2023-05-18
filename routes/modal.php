@@ -58,8 +58,9 @@ Route::middleware(['throttle:60,1','auth'])->group(function () {
         ->name('video.dislike.toggle');
 
 
-    // this get the details of a video for the content modal
-    Route::get('/videos/{videoId}/details', [VideoController::class,"details"])->name('videos.details');
+    // this get the details of a video for the content modal or viewing the video or short
+    Route::get('/videos/{videoId}/details', [VideoController::class,"modalDetails"])->name('videos.details');
+    Route::get('/videos/{videoId}/view_info', [VideoController::class,"getVideoViewInfo"])->name('videos.view.info');
 
 
 });

@@ -15,6 +15,7 @@ import ThumbsDownIcon from '~/images/icons/dislike.svg';
 import { computed, onMounted, ref } from "vue";
 import { useToastStore } from "@/Stores/ToastStore";
 import { usePage } from "@inertiajs/vue3";
+import axios from "axios";
 
 const toastStore = useToastStore();
 const name = 'LikeDislikeButtons';
@@ -41,10 +42,10 @@ const toggleLike = () => {
     axios.post(likeRoute)
         .then(response => {
             // Handle the successful response
-            toastStore.add({
-                message: response.data.message,
-                type: 'success'
-            });
+            // toastStore.add({
+            //     message: response.data.message,
+            //     type: 'success'
+            // });
 
             if (response.data.result === "like") {
                 props.video.likes++;
@@ -81,10 +82,10 @@ const toggleDislike = () => {
     axios.post(dislikeRoute)
         .then(response => {
             // Handle the successful response
-            toastStore.add({
-                message: response.data.message,
-                type: 'success'
-            });
+            // toastStore.add({
+            //     message: response.data.message,
+            //     type: 'success'
+            // });
 
             if (response.data.result === "dislike") {
                 props.video.dislikes++;
@@ -107,6 +108,8 @@ const toggleDislike = () => {
         });
 };
 
+
+
 const likeButtonClasses = computed(() => ({
     'text-blue-600': liked.value,
     '': !liked.value
@@ -117,7 +120,22 @@ const dislikeButtonClasses = computed(() => ({
     '': !disliked.value
 }));
 
-onMounted(() => {
-    // Set the liked and disliked states on mount by sending a GET request to the like and dislike routes
+onMounted(async () => {
+    if (usePage().props.auth.user !== null) {
+        // check if user has liked or disliked the video
+        const videoId = props.video.id;
+        try {
+            const response = await axios.get(route('videos.view.info', {videoId: videoId}));
+            const data = response.data;
+            if (data.liked === "like") {
+                liked.value = true;
+            } else if (data.liked === "dislike") {
+                disliked.value = true;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 });
 </script>
