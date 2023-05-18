@@ -65,8 +65,8 @@ useInfiniteScroll(
             <template v-for="{index,data} in list" :key="index">
                 <ShortsPlayer :video="data"/>
             </template>
-            <ShortsPlayerSkeleton  v-for="n in 1"  />
         </div>
     </div>
+    <ShortsPlayerSkeleton  v-for="n in 1"  />
 </div>
 </template>
