@@ -1,12 +1,12 @@
 
 <script setup>
-import ThumbsUpIcon from '~/images/icons/like.svg';
 import ThumbsDownIcon from '~/images/icons/dislike.svg'
 import ShareIcon from '~/images/icons/share.svg'
 import CommentsIcon from '~/images/icons/comments.svg'
 import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import {useContentModalStore} from "@/Stores/ContentModalStore";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
+import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
 const contentModalStore = useContentModalStore();
 const shareModalStore = useShareModalStore();
 
@@ -59,7 +59,7 @@ const share = () => {
                                         <SubscribeButton :channel="video.creator" />
                                     </div>
                                     <p class="font-semibold text-xs text-left line-clamp-2 " v-text="video.description"></p>
-                                    <p class="font-bold text-xs text-left line-clamp-2 text-red-500 mt-1 hover:shake animate-pulse" v-if="video.live_viewer_count !== '0'" v-text="video.live_viewer_count + ' Watching'"></p>
+                                    <p class="font-bold text-xs text-left line-clamp-2 text-red-500 dark:text-red-500 mt-1 hover:shake " v-if="video.live_viewer_count !== '0'" v-text="video.live_viewer_count + ' Watching'"></p>
                                 </div>
                             </div>
                         </div>
@@ -74,16 +74,11 @@ const share = () => {
                 </div>
                 <!--Buttons-->
                 <div class="flex flex-col gap-4 select-none justify-end text dark:textDark ml-6">
-                    <div class="flex flex-col gap-1 cursor-pointer w-14 aspect-square rounded-full">
-                        <ThumbsUpIcon class="h-8 mx-auto" />
-                        <p class="font-bold text-sm text-center"  v-text="video.likes"/>
-                    </div>
-                    <div class="flex flex-col gap-1  cursor-pointer w-14 aspect-square rounded-full ">
-                        <ThumbsDownIcon class="h-8 mx-auto" />
-                        <p class="font-bold text-sm text-center" v-text="video.dislikes"/>
-                    </div>
-                    <div class="flex flex-col gap-1  cursor-pointer w-14 aspect-square rounded-full">
-                        <CommentsIcon class="h-8 mx-auto" />
+
+                    <LikeDislikeButtons :video="video" />
+
+                    <div class="flex flex-col gap-1  cursor-pointer h-14 aspect-square rounded-full">
+                        <CommentsIcon class="h-full mx-auto" />
                         <p class="font-bold text-sm text-center" v-text="video.comment_count"/>
                     </div>
 

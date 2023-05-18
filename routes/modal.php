@@ -51,6 +51,12 @@ Route::middleware(['throttle:60,1','auth'])->group(function () {
     Route::delete('/videos/{videoId}/disinterest', [VideoDisinterestController::class, 'destroy'])
         ->name('video.disinterest.destroy');
 
+    Route::post('/videos/{videoId}/like', [VideoController::class, 'like'])
+        ->name('video.like.toggle');
+
+    Route::post('/videos/{videoId}/dislike', [VideoController::class, 'dislike'])
+        ->name('video.dislike.toggle');
+
 
     // this get the details of a video for the content modal
     Route::get('/videos/{videoId}/details', [VideoController::class,"details"])->name('videos.details');

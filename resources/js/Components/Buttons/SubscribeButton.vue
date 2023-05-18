@@ -76,7 +76,7 @@ onMounted(() => {
 });
 
 const buttonClasses = computed(() => ({
-    'bg-zinc-200 text-zinc-700 hover:bg-zinc-300 dark:bg-zinc-600 dark:text-white  border-transparent ': subscribed.value,
+    'bg-zinc-200 text-zinc-700 hover:bg-zinc-300 dark:bg-zinc-700 dark:text-white  border-transparent ': subscribed.value,
     ' border-red-200 dark:border-transparent dark:bg-red-700 hover:bg-red-100 dark:hover:bg-red-600 text-red-700 dark:text-white ': !subscribed.value
 }));
 </script>

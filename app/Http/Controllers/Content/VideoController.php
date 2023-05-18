@@ -207,4 +207,99 @@ class VideoController extends Controller
         return response()->json(['message' => 'Report added successfully.'],200);
     }
 
+
+    public function like($videoId)
+    {
+        //return $videoId;
+        $video = Video::findOrFail($videoId);
+
+        if (!isset(Auth::user()->creator)) {
+            return response()->json(['message' => 'You are not authenticated.'], 401);
+        }
+
+        [$VideoViewInfos, $likedPlaylist] = $this->fetchVideoViewInfosAndLikedPlaylist($videoId);
+
+        //if they change their rating from dislike to like
+        $likedPlaylist->addVideo($video->id);
+        $message = 'Liked successfully';
+
+        if ($VideoViewInfos->liked == 'dislike') {
+            $video->dislike_count--;
+        }
+
+        if ($VideoViewInfos->liked != 'like') {
+            $VideoViewInfos->liked = 'like';
+            $video->like_count++;
+        } else {
+            // Have they already liked it
+            $VideoViewInfos->liked = null;
+            $video->like_count--;
+            $likedPlaylist->removeVideo($video->id);
+            $message = 'Like removed successfully';
+        }
+
+        $VideoViewInfos->save();
+        $video->save();
+        return response()->json([
+            'message' => $message,
+            'result' => $VideoViewInfos->liked,
+        ], 200);
+    }
+
+    public function dislike($videoId)
+    {
+        $video = Video::findOrFail($videoId);
+
+        if (!isset(Auth::user()->creator)) {
+            return response()->json(['message' => 'You are not authenticated.'], 401);
+        }
+        $message = 'Disliked successfully';
+
+        [$VideoViewInfos, $likedPlaylist] = $this->fetchVideoViewInfosAndLikedPlaylist($videoId);
+
+        //if they change their rating from like to dislike
+        if ($VideoViewInfos->liked == 'like') {
+            $likedPlaylist->removeVideo($video->id);
+            $video->like_count--;
+        }
+
+        if ($VideoViewInfos->liked != 'dislike') {
+            $VideoViewInfos->liked = 'dislike';
+            $video->dislike_count++;
+            $liked = 'dislike';
+        } else {
+            // Have they already disliked it
+            $VideoViewInfos->liked = null;
+            $video->dislike_count--;
+            $liked = null;
+            $message = 'Dislike removed successfully';
+        }
+
+        $VideoViewInfos->save();
+        $video->save();
+        return response()->json([
+            'message' => $message,
+            'result' => $VideoViewInfos->liked,
+        ], 200);
+    }
+
+    private function fetchVideoViewInfosAndLikedPlaylist($id)
+    {
+        $VideoViewInfos = VideoViewInfos::where('video_id', $id)
+            ->where('viewer_id', Auth::user()->creator->id)
+            ->first();
+
+        if (!$VideoViewInfos) {
+            $VideoViewInfos = new VideoViewInfos();
+            $VideoViewInfos->video_id = $id;
+            $VideoViewInfos->viewer_id = Auth::user()->creator->id;
+            $VideoViewInfos->save();
+        }
+
+        $likedPlaylist = Auth::user()->creator->getServerMadePlaylist('Liked Videos');
+
+
+        return [$VideoViewInfos, $likedPlaylist];
+    }
+
 }

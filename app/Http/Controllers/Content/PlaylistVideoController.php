@@ -39,31 +39,13 @@ class PlaylistVideoController extends Controller
         // add videos to playlist
         $successCount = 0;
         foreach ($videoIds as $videoId) {
-            $video = Video::find($videoId);
 
-            // check if video exists
-            if (!$video) {
-                continue;
-            }
 
-            // check if video is already in the playlist
-            $existingPlaylistVideo = PlaylistVideo::where('playlist_id', $playlist->id)
-                ->where('video_id', $video->id)
-                ->first();
+            $playlist->addVideo($videoId);
 
-            if (!$existingPlaylistVideo) {
-                // add video to playlist
-                $playlistVideo = new PlaylistVideo();
-                $playlistVideo->playlist_id = $playlist->id;
-                $playlistVideo->video_id = $video->id;
-                $playlistVideo->save();
+            $successCount++;
 
-                $playlist->video_count++;
-                $playlist->recent_video_image = $video->thumbnail_url;
-                $playlist->save();
 
-                $successCount++;
-            }
         }
 
         if ($successCount == 0) {
@@ -76,6 +58,8 @@ class PlaylistVideoController extends Controller
             'success' => "$successCount videos added to playlist"
         ], 200);
     }
+
+
     public function destroy(Request $request, $playlistId)
     {
         $videoIds = explode(',', $request->video_ids);
@@ -95,27 +79,9 @@ class PlaylistVideoController extends Controller
         // remove each video from the playlist
         $successCount = 0;
         foreach ($videoIds as $videoId) {
-            // get if record exists
-            $playlistVideo = PlaylistVideo::where('playlist_id', $playlistId)
-                ->where('video_id', $videoId)
-                ->first();
-
-            // if not found continue with next video
-            if (!$playlistVideo) {
-                continue;
-            }
 
             // delete record
-            $playlistVideo->delete();
-
-            // update playlist video count and recent video image
-            $playlist->video_count--;
-            if($playlist->videos->first()) {
-                $playlist->recent_video_image = $playlist->videos->first()->thumbnail_url;
-            } else {
-                $playlist->recent_video_image = null;
-            }
-            $playlist->save();
+            $playlist->removeVideo($videoId);
 
             $successCount++;
         }
