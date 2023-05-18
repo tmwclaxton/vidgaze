@@ -37,7 +37,7 @@ const fetchCategoriesWithStreams = () =>  {
         .then(response => {
             setTimeout(() => {
                 categoriesWithStreams.value = categoriesWithStreams.value.concat(response.data);
-            }, 500); // 500ms delay
+            }, 100); // 500ms delay
         })
         .catch(error => {
             console.log(error);

@@ -35,6 +35,10 @@ class VideoController extends Controller
     {
         return Inertia::render('Viewer/Videos/VideosIndex');
     }
+    public function shorts()
+    {
+        return Inertia::render('Viewer/Shorts/ShortsIndex');
+    }
     public function infinite(Request $request)
     {
 

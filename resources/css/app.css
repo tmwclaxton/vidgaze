@@ -46,6 +46,11 @@
     }
 }
 
+.flip-x {
+    transform: scaleX(-1);
+}
+
+
 ::-webkit-scrollbar {
     width: 10px;
 

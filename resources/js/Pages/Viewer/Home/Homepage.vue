@@ -63,7 +63,7 @@ const fetchTrendingVideos = async () => {
         .then(response => {
             setTimeout(() => {
                 trending_videos.value = response.data.data;
-            }, 500); // 500ms delay
+            }, 200); // 500ms delay
         })
         .catch(error => {
             console.log(error);
@@ -80,7 +80,7 @@ const fetchVideos = async (videoArray) => {
         .then(response => {
             setTimeout(() => {
                 videos.value = videos.value.concat(response.data.data);
-            }, 500); // 500ms delay
+            }, 200); // 500ms delay
         })
         .catch(error => {
             console.log(error);

@@ -13,7 +13,7 @@ const fetchStreams = async () => {
         .then(response => {
             setTimeout(() => {
                 streams.value = response.data.data;
-            }, 500); // 500ms delay
+            }, 300); // 500ms delay
         })
         .catch(error => {
             console.log(error);

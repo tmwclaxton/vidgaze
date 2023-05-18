@@ -20,6 +20,7 @@ class VideoResource extends JsonResource
             'id' => $this->id,
             'slug' => $this->slug,
             'title' => $this->title,
+            'description' => $this->description,
             'duration' => convertDuration($this->duration),
             'views' =>  number_format_short($this->views) . " " . Str::plural('View', $this->views) ,
             'live_viewer_count' => number_format_short($this->live_viewer_count),
@@ -29,6 +30,7 @@ class VideoResource extends JsonResource
             'likes' => $this->like_count,
             'dislikes' => $this->dislike_count,
             'creator' => new CreatorResource($this->creator()->first()),
+            'comment_count' => number_format_short($this->comment_count),
         ];
     }
 }

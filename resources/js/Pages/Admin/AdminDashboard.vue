@@ -18,7 +18,7 @@ export default {
             <div class="  px-2 sm:rounded-lg w-full flex flex-col align-middle justify-center justify-items-center">
 
                 <!--Welcome message + name-->
-                <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-200 mb-5 text-center select-none">Welcome back, {{ $page.props.auth.user.creator.name }}!</h1>
+                <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-200 mb-5 text-center select-none">Welcome back, {{ $page.props.auth.user.data.creator.name }}!</h1>
 
                 <!--Horizon and Telescope links-->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mx-auto max-w-md lg:max-w-screen-xl mb-5 select-none">

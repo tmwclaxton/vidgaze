@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 class CreatorResource extends JsonResource
 {
@@ -21,8 +22,8 @@ class CreatorResource extends JsonResource
             'bio' => $this->bio,
             'avatar_url' => $this->avatar_url,
             'banner_url' => $this->banner_url,
-            'karma' => $this->karma,
-            'subscriber_count' => $this->subscriber_count,
+            'karma' => number_format_short($this->karma),
+            'subscriber_count' => number_format_short($this->subscriber_count)  . " " . Str::plural('Subscribers', $this->views) ,
             'is_live' => $this->is_live,
             'contact_email' => $this->contact_email,
         ];
