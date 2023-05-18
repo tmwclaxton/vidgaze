@@ -71,7 +71,9 @@ class VideoController extends Controller
             $mostPopularVideoIds = $videoViews->pluck('video_id');
             // Preserve order
             if ($mostPopularVideoIds->count() > 0) {
-                $query->whereIn('id', $mostPopularVideoIds)->orderByRaw(DB::raw("FIELD(id, ".implode(',', $mostPopularVideoIds->toArray()).")"));
+                //$query->whereIn('id', $mostPopularVideoIds)->orderByRaw(DB::raw("FIELD(id, ".implode(',', $mostPopularVideoIds->toArray()).")"));
+                $query->whereIn('id', $mostPopularVideoIds)->orderByRaw("FIELD(id, ".implode(',', $mostPopularVideoIds->toArray()).")");
+
             }
 
         } elseif ($selectedCategory == 'trending') {
@@ -92,7 +94,9 @@ class VideoController extends Controller
 
             // Preserve order
             if ($mostTrendingVideoIds->count() > 0) {
-                $query->whereIn('id', $mostTrendingVideoIds)->orderByRaw(DB::raw("FIELD(id, " . implode(',', $mostTrendingVideoIds->toArray()) . ")"));
+                //$query->whereIn('id', $mostTrendingVideoIds)->orderByRaw(DB::raw("FIELD(id, " . implode(',', $mostTrendingVideoIds->toArray()) . ")"));
+                $query->whereIn('id', $mostTrendingVideoIds)->orderByRaw("FIELD(id, " . implode(',', $mostTrendingVideoIds->toArray()) . ")");
+
             }
 
         } elseif ($selectedCategory == 'new') {
@@ -192,11 +196,15 @@ class VideoController extends Controller
         // check if user has disinterested channel
         $channelDisinterest = ChannelDisinterest::where('creator_id', $creatorId)->where('channel_id', $video->creator->id)->exists();
 
+        // check if user has liked video
+        $videoLike = VideoViewInfos::where('viewer_id', $creatorId)->where('video_id', $videoId)->pluck('liked')->first() ?? null;
+
 
         return response()->json([
             'inWatchLater' => $inWatchLater,
             'videoDisinterest' => $videoDisinterest,
             'channelDisinterest' => $channelDisinterest,
+            'videoLike' => $videoLike,
         ], 200);
     }
 
