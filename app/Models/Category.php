@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\CreatorModels\Creator;
+use App\Models\StreamModels\Stream;
+use App\Models\VideoModels\Video;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

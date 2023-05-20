@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\Content;
 
 
-use App\Helpers\PlatformAPIs\Twitch;
-use App\Helpers\SearchResultDTO;
 use App\Helpers\Tokens\TokenHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\StreamCollection;
 use App\Models\Category;
-use App\Models\Stream;
+use App\Models\StreamModels\Stream;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Request;

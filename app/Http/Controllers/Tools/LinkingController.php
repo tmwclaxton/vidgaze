@@ -11,7 +11,7 @@ use App\Helpers\PlatformAPIs\Dailymotion;
 use App\Helpers\PlatformAPIs\Google;
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Http\Controllers\Controller;
-use App\Models\CreatorSource;
+use App\Models\CreatorModels\CreatorSource;
 use Google_Service_YouTube;
 use Illuminate\Support\Facades\Auth;
 

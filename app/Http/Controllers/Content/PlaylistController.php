@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
-use App\Models\Playlist;
-use App\Models\PlaylistVideo;
+use App\Models\PlaylistModels\Playlist;
+use App\Models\PlaylistModels\PlaylistVideo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Inertia\Inertia;
 use function Deployer\error;
 
 class PlaylistController extends Controller

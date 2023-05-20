@@ -5,10 +5,10 @@ namespace App\Helpers\PlatformAPIs;
 use App\Enums\Kind;
 use App\Enums\Platforms;
 use App\Helpers\SearchResultDTO;
-use App\Models\Creator;
-use App\Models\CreatorSource;
-use App\Models\Video;
-use App\Models\VideoSource;
+use App\Models\CreatorModels\Creator;
+use App\Models\CreatorModels\CreatorSource;
+use App\Models\VideoModels\Video;
+use App\Models\VideoModels\VideoSource;
 use Carbon\Carbon;
 use Vimeo\Vimeo as VimeoSDK;
 

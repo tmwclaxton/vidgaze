@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
-use App\Models\Video;
-use App\Models\VideoDisinterest;
+use App\Models\VideoModels\Video;
+use App\Models\VideoModels\VideoDisinterest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

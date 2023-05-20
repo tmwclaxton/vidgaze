@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Content;
 
 
 use App\Http\Controllers\Controller;
-use App\Models\Podcast;
-use App\Models\Video;
+use App\Models\PodcastModels\Podcast;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -72,18 +71,16 @@ class PodcastController extends Controller
 
 
     public function show(Podcast $podcast) {
-        return view('podcasts.podcast');
+
     }
     public function episode(Podcast $podcast) {
-        return view('podcasts.episode',['video'=>Video::take(1)->first()]);
+
     }
 
 
     public function edit(Podcast $podcast)
     {
-//        return view('studio.stream', [
-//            'item'=> $stream,
-//        ]);
+
     }
 
 

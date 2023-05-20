@@ -2,11 +2,11 @@
 
 namespace Database\Factories;
 
-use App\Models\Creator;
+use App\Models\CreatorModels\Creator;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Stream>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\StreamModels\Stream>
  */
 class StreamFactory extends Factory
 {

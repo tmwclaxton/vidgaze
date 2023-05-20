@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
-use App\Models\Video;
+use App\Models\VideoModels\Video;
 
 class CommentController extends Controller
 {

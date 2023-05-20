@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Search;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Creator;
-use App\Models\Video;
+use App\Models\CreatorModels\Creator;
+use App\Models\VideoModels\Video;
 use Illuminate\Http\Request;
 
 class SearchBarController extends Controller

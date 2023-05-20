@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Stream;
-use App\Models\StreamSource;
+use App\Models\StreamModels\Stream;
+use App\Models\StreamModels\StreamSource;
 use Illuminate\Database\Seeder;
 
 class StreamSeeder extends Seeder

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
-use App\Models\channelDisinterest;
-use App\Models\Creator;
+use App\Models\CreatorModels\ChannelDisinterest;
+use App\Models\CreatorModels\Creator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
-use App\Models\Video;
-use App\Models\VideoSource;
+use App\Models\VideoModels\Video;
+use App\Models\VideoModels\VideoSource;
 use Illuminate\Database\Seeder;
 
 class VideoSeeder extends Seeder

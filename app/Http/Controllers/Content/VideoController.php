@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers\Content;
 
-use App\Helpers\Tokens\TokenHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\VideoCollection;
-use App\Models\channelDisinterest;
-use App\Models\Playlist;
-use App\Models\PlaylistVideo;
-use App\Models\Video;
-use App\Models\videoDisinterest;
-use App\Models\videoReport;
-use App\Models\VideoViewInfos;
-use App\Models\VideoViews;
+use App\Models\CreatorModels\ChannelDisinterest;
+use App\Models\PlaylistModels\Playlist;
+use App\Models\PlaylistModels\PlaylistVideo;
+use App\Models\VideoModels\Video;
+use App\Models\VideoModels\VideoDisinterest;
+use App\Models\VideoModels\VideoViewInfos;
+use App\Models\VideoModels\VideoViews;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -127,7 +125,7 @@ class VideoController extends Controller
                 ->pluck('channel_id')
                 ->toArray();
             $query->whereNotIn('creator_id', $channelDisinterestIDs);
-            $videoDisinterestIDs = videoDisinterest::where('creator_id', Auth::user()->creator->id)
+            $videoDisinterestIDs = VideoDisinterest::where('creator_id', Auth::user()->creator->id)
                 ->pluck('video_id')
                 ->toArray();
             $query->whereNotIn('id', $videoDisinterestIDs);

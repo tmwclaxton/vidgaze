@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Tools;
 use App\Helpers\Tokens\TokenHelper;
 use App\Http\Controllers\Controller;
 use App\Models\LiveClient;
-use App\Models\Stream;
-use App\Models\Video;
-use App\Models\VideoViewInfos;
-use App\Models\VideoViews;
+use App\Models\StreamModels\Stream;
+use App\Models\VideoModels\Video;
+use App\Models\VideoModels\VideoViewInfos;
+use App\Models\VideoModels\VideoViews;
 use App\Services\MixPanelTrackingService;
 use Illuminate\Http\Request;
 

@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Creator;
-use App\Models\Podcast;
+use App\Models\CreatorModels\Creator;
+use App\Models\PodcastModels\Podcast;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 

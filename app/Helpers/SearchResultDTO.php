@@ -5,15 +5,15 @@ namespace App\Helpers;
 use App\Enums\Kind;
 use App\Enums\Platforms;
 use App\Models\Category;
-use App\Models\Creator;
-use App\Models\CreatorSource;
-use App\Models\Podcast;
-use App\Models\PodcastEpisode;
-use App\Models\Stream;
-use App\Models\StreamSource;
-use App\Models\TwitchLogin;
-use App\Models\Video;
-use App\Models\VideoSource;
+use App\Models\CreatorModels\Creator;
+use App\Models\CreatorModels\CreatorSource;
+use App\Models\CreatorModels\TwitchLogin;
+use App\Models\PodcastModels\Podcast;
+use App\Models\PodcastModels\PodcastEpisode;
+use App\Models\StreamModels\Stream;
+use App\Models\StreamModels\StreamSource;
+use App\Models\VideoModels\Video;
+use App\Models\VideoModels\VideoSource;
 use Carbon\Carbon;
 
 class SearchResultDTO

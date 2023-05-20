@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Tools;
 
 
 use App\Http\Controllers\Controller;
-use App\Models\Creator;
+use App\Models\CreatorModels\Creator;
 use App\Models\Union;
 
 class UnionController extends Controller

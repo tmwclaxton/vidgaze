@@ -2,15 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Category;
-use App\Models\Creator;
-use App\Models\User;
+use App\Models\CreatorModels\Creator;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 
-
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Video>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\VideoModels\Video>
  */
 class VideoFactory extends Factory
 {

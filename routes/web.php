@@ -1,26 +1,11 @@
 <?php
 
 use App\Http\Controllers\Content\CategoryController;
-use App\Http\Controllers\Content\ChannelDisinterestController;
-use App\Http\Controllers\Content\CreatorController;
-use App\Http\Controllers\Content\PlaylistVideoController;
-use App\Http\Controllers\Content\ShareController;
-use App\Http\Controllers\Content\VideoDisinterestController;
-use App\Http\Controllers\Search\SearchController;
 use App\Http\Controllers\Content\MusicController;
-use App\Http\Controllers\Content\PlaylistController;
 use App\Http\Controllers\Content\PodcastController;
-use App\Http\Controllers\Content\ProfileController;
-use App\Http\Controllers\Content\StreamController;
-use App\Http\Controllers\Content\SubscriptionsController;
-use App\Http\Controllers\Content\VideoController;
+use App\Http\Controllers\Content\ShareController;
 use App\Http\Controllers\Search\SearchBarController;
-use App\Http\Controllers\Tools\ImportingController;
-use App\Http\Controllers\Tools\LinkingController;
-use App\Http\Controllers\Tools\UnionController;
-use App\Http\Controllers\Tools\VideoUploadController;
-use App\Http\Controllers\Tools\ViewListenerController;
-use App\Models\Video;
+use App\Http\Controllers\Search\SearchController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 

@@ -2,12 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Creator;
-use App\Models\Podcast;
-use App\Models\PodcastEpisode;
-use App\Models\Video;
+use App\Models\CreatorModels\Creator;
+use App\Models\PodcastModels\Podcast;
+use App\Models\PodcastModels\PodcastEpisode;
 use Carbon\Carbon;
-use Google\Service\SecurityCommandCenter\Pod;
 use Illuminate\Database\Seeder;
 
 class PodcastSeeder extends Seeder

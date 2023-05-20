@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Content;
 
-use App\Helpers\PlatformAPIs\Twitch;
-use App\Helpers\SearchResultDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCreatorRequest;
 use App\Http\Requests\UpdateCreatorRequest;
-use App\Models\Creator;
+use App\Models\CreatorModels\Creator;
+use App\Models\PodcastModels\Podcast;
+use Composer\DependencyResolver\Request;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -19,9 +19,24 @@ class CreatorController extends Controller
 
     public function index()
     {
-        return view('/feed/channels', [
-            'creators' => Auth::user()->creator->subscriptions
-        ]);
+
+    }
+
+    public function infinite(Request $request)
+    {
+        $perPage = $request->perPage ?? 20;
+        //get ids from params
+        $creatorIds = $request->creatorIds ?? [];
+        $podcaster = $request->input('podcaster') ?? false;
+
+        $query = Creator::query();
+        if($podcaster){
+            //get most popular podcasts and then get the creators from those podcasts
+            Podcast::orderBy('views','desc')->take(10)->get()->each(function($podcast) use ($query){
+                $query->orWhere('id','=',$podcast->creator_id);
+            });
+        }
+
     }
 
     /**

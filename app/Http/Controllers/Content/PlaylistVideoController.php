@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
-use App\Models\PlaylistVideo;
-use App\Models\Playlist;
-use App\Models\Video;
+use App\Models\PlaylistModels\Playlist;
 use Auth;
 use Illuminate\Http\Request;
 

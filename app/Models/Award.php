@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\CommentModels\CommentAward;
+use App\Models\StreamModels\StreamAward;
+use App\Models\VideoModels\VideoAward;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,5 +26,5 @@ class Award extends Model
    public function videos() {
       return $this->hasMany(VideoAward::class);
    }
-    
+
 }

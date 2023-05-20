@@ -6,7 +6,7 @@ use App\Helpers\OAuth\LogInWithYouTube;
 use App\Helpers\PlatformAPIs\YouTube;
 use App\Helpers\SearchResultDTO;
 use App\Http\Controllers\Controller;
-use App\Models\Subscription;
+use App\Models\CreatorModels\Subscription;
 
 class ImportingController extends Controller
 {

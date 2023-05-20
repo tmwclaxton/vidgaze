@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Content;
 
 
 use App\Http\Controllers\Controller;
-use App\Models\Creator;
-use App\Models\Stream;
-use App\Models\Subscription;
-use App\Models\Video;
+use App\Models\CreatorModels\Creator;
+use App\Models\CreatorModels\Subscription;
+use App\Models\StreamModels\Stream;
+use App\Models\VideoModels\Video;
 use Illuminate\Support\Facades\Auth;
 
 class SubscriptionsController extends Controller
