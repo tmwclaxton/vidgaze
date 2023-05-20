@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->string('thumbnail_url');
             $table->integer('like_count')->default('0')->unsigned();
             $table->integer('comment_count')->default('0')->unsigned();
-            $table->integer('views')->default('0')->unsigned();
+            $table->integer('view_count')->default('0')->unsigned();
             $table->enum('visibility', ['public', 'unlisted', 'private'])->default('public');
             $table->enum('audience',['kids','mature','all'])->default('all');
             $table->string('language', 3)->nullable()->index(); //ISO 639-3:2007

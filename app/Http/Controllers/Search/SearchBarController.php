@@ -28,7 +28,7 @@ class SearchBarController extends Controller
         }
 
         //Ensure that search parameter is used to only display limited attributes
-        $videos = Video::select(['slug','title'])->where('title','like','%'.$searchQuery.'%')->orderBy('views', 'DESC')->take(8)->get();
+        $videos = Video::select(['slug','title'])->where('title','like','%'.$searchQuery.'%')->orderBy('view_count', 'DESC')->take(8)->get();
         $creators = Creator::select(['name','slug'])->where('name','like','%'.$searchQuery.'%')->orderByDesc('subscriber_count')->take(2)->get();
         $categories = Category::select(['name','slug'])->where('name','like','%'.$searchQuery.'%')->take(2)->get();
         return response()->json([

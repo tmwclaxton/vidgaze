@@ -81,6 +81,8 @@ class VideoSeeder extends Seeder
                 'tags' => json_encode($tags),
                 'visibility' => 'public',
                 'like_count' => rand(0, 50),
+                'dislike_count' => rand(0, 50),
+                'view_count' => rand(0, 1000),
                 'thumbnail_url' => $thumbnail_url,
                 'time_published' => now(),
                 'live_viewer_count' => rand(0, 1),

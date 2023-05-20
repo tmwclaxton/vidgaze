@@ -201,7 +201,7 @@ class ViewListenerController extends Controller
         if ($liveClient->view_counted === false) {
             $liveClient->view_counted = true;
 
-            $this->video->increment('views', 1);
+            $this->video->increment('view_count', 1);
             $this->video->save();
             //this stops a view being count everytime a duration update is sent
             $liveClient->save();

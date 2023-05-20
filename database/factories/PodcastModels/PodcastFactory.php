@@ -14,6 +14,8 @@ class PodcastFactory extends Factory
     public function definition(): array
     {
         return [
+
+            'slug' => rand(0, 999999),
             'rss_url' => $this->faker->url(),
             'category_id' => $this->faker->randomNumber(),
             'title' => $this->faker->word(),

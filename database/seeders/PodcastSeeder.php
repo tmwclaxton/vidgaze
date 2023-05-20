@@ -27,6 +27,7 @@ class PodcastSeeder extends Seeder
 
         $podcast1 = Podcast::firstOrCreate([
             'creator_id' => $creator1->id,
+            'slug' => rand(0, 999999),
             'rss_url' => "https://pintswithaquinas.libsyn.com/rss",
             'thumbnail_url' => "https://ssl-static.libsyn.com/p/assets/f/f/e/f/ffeff39ab8cef524/R1-fWQQV-1.jpg",
             'title' => "Pints With Aquinas",

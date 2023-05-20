@@ -27,7 +27,7 @@ class Video extends Model
         'time_published',
     ];
     protected $attributes = [
-        'views' => 0
+        'view_count' => 0
     ];
 
 

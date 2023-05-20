@@ -9,6 +9,7 @@ return new class extends Migration {
     {
         Schema::create('podcasts', function (Blueprint $table) {
             $table->id();
+            $table->string('slug')->unique()->index();
             $table->foreignId('creator_id')->constrained()->cascadeOnDelete();
             $table->string('rss_url')->unique();
             $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
@@ -17,7 +18,7 @@ return new class extends Migration {
             $table->string('thumbnail_url')->nullable();
             $table->integer('like_count')->default('0')->unsigned();
             $table->integer('view_count')->default('0')->unsigned();
-
+            $table->integer('live_viewer_count')->unsigned()->default('0')->index();
             $table->enum('visibility', ['public', 'unlisted', 'private'])->default('public');
             $table->timestamps();
         });

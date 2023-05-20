@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Content;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PodcastCollection;
 use App\Models\PodcastModels\Podcast;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -52,7 +53,7 @@ class PodcastController extends Controller
         $podcasts = $query->paginate($perPage);
 
         // Return the podcasts
-        return $podcasts;
+        return new PodcastCollection($podcasts);
 
 
     }
