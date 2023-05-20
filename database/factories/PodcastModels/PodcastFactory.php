@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\PodcastModels;
 
 use App\Models\CreatorModels\Creator;
 use App\Models\PodcastModels\Podcast;

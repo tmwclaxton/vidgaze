@@ -38,7 +38,8 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
 
-    public function creator() {
+    public function creator(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
         return $this->hasOne(Creator::class);
     }
     public function payments(): HasMany

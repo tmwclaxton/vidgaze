@@ -21,8 +21,8 @@ use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoAward;
 use App\Models\VideoModels\VideoDisinterest;
 use App\Models\VideoModels\VideoUpload;
-use App\Models\VideoModels\VideoViewInfos;
-use App\Models\VideoModels\VideoViews;
+use App\Models\VideoModels\VideoViewInfo;
+use App\Models\VideoModels\VideoView;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -168,11 +168,11 @@ class Creator extends Model
     }
     public function video_views(): HasMany
     {
-        return $this->hasMany(VideoViews::class, 'viewer_id');
+        return $this->hasMany(VideoView::class, 'viewer_id');
     }
     public function video_view_info(): HasMany
     {
-        return $this->hasMany(VideoViewInfos::class, 'viewer_id');
+        return $this->hasMany(VideoViewInfo::class, 'viewer_id');
     }
 
 

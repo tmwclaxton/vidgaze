@@ -9,8 +9,8 @@ use App\Models\PlaylistModels\Playlist;
 use App\Models\PlaylistModels\PlaylistVideo;
 use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoDisinterest;
-use App\Models\VideoModels\VideoViewInfos;
-use App\Models\VideoModels\VideoViews;
+use App\Models\VideoModels\VideoViewInfo;
+use App\Models\VideoModels\VideoView;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -58,7 +58,7 @@ class VideoController extends Controller
 
         if ($selectedCategory == 'popular') {
 
-            $videoViews = VideoViews::select(DB::raw('video_id, sum(duration) as total_duration, count(*) as total_views, (sum(duration) * (1 + (UNIX_TIMESTAMP(created_at) - UNIX_TIMESTAMP(NOW())) / (3600 * 24 * 7)) + count(*)) as score, created_at'))
+            $videoViews = VideoView::select(DB::raw('video_id, sum(duration) as total_duration, count(*) as total_views, (sum(duration) * (1 + (UNIX_TIMESTAMP(created_at) - UNIX_TIMESTAMP(NOW())) / (3600 * 24 * 7)) + count(*)) as score, created_at'))
                 ->where('created_at', '>=', Carbon::now()->subWeek())
                 ->groupBy('video_id', 'created_at')
                 ->orderBy('score', 'desc')
@@ -213,7 +213,7 @@ class VideoController extends Controller
 
         $creatorId = Auth::user()->creator->id;
         // check if user has liked video
-        $VideoViewInfo = VideoViewInfos::where('viewer_id', $creatorId)->where('video_id', $videoId)->first() ?? null;
+        $VideoViewInfo = VideoViewInfo::where('viewer_id', $creatorId)->where('video_id', $videoId)->first() ?? null;
         return [
             'liked' => $VideoViewInfo['liked'] ?? null,
             'view_point' => $VideoViewInfo['view_point'] ?? null,
@@ -306,12 +306,12 @@ class VideoController extends Controller
 
     private function fetchVideoViewInfosAndLikedPlaylist($id)
     {
-        $VideoViewInfos = VideoViewInfos::where('video_id', $id)
+        $VideoViewInfos = VideoViewInfo::where('video_id', $id)
             ->where('viewer_id', Auth::user()->creator->id)
             ->first();
 
         if (!$VideoViewInfos) {
-            $VideoViewInfos = new VideoViewInfos();
+            $VideoViewInfos = new VideoViewInfo();
             $VideoViewInfos->video_id = $id;
             $VideoViewInfos->viewer_id = Auth::user()->creator->id;
             $VideoViewInfos->save();

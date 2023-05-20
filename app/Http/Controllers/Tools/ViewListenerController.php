@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\LiveClient;
 use App\Models\StreamModels\Stream;
 use App\Models\VideoModels\Video;
-use App\Models\VideoModels\VideoViewInfos;
-use App\Models\VideoModels\VideoViews;
+use App\Models\VideoModels\VideoViewInfo;
+use App\Models\VideoModels\VideoView;
 use App\Services\MixPanelTrackingService;
 use Illuminate\Http\Request;
 
@@ -146,7 +146,7 @@ class ViewListenerController extends Controller
     private function recordViewPoint(string $viewerId, string $videoId, int $viewPoint): void
     {
         //this records where in the video was watched to
-        VideoViewInfos::updateOrCreate(
+        VideoViewInfo::updateOrCreate(
             ['video_id' => $videoId],
             ['viewer_id' => $viewerId]
         )->update(['view_point' => $viewPoint]);
@@ -155,7 +155,7 @@ class ViewListenerController extends Controller
     private function recordView(string $viewerId, string $videoId, string $sessionId, int $viewDuration): void
     {
         // Retrieve the view for the given viewer, video, and session
-        $view = VideoViews::where([
+        $view = VideoView::where([
             'session_id' => $sessionId,
             'video_id' => $videoId,
         ])->orWhere([
@@ -168,14 +168,14 @@ class ViewListenerController extends Controller
             if ($viewDuration <= 120) {
                 if ($viewerId !== self::LOGGED_OUT_VIEWER_ID) {
                     //create video view
-                    $videoView = VideoViews::create([
+                    $videoView = VideoView::create([
                         'viewer_id' => $viewerId,
                         'video_id' => $videoId,
                         'session_id' => $sessionId,
                         'duration' => $viewDuration
                     ]);
                 } else {
-                    $videoView = VideoViews::create([
+                    $videoView = VideoView::create([
                         'video_id' => $videoId,
                         'session_id' => $sessionId,
                         'duration' => $viewDuration

@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\CommentModels;
 
 use App\Models\CreatorModels\Creator;
 use App\Models\VideoModels\Video;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\VideoModels;
 
 use App\Models\CreatorModels\Creator;
 use Illuminate\Database\Eloquent\Factories\Factory;

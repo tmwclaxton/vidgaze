@@ -27,7 +27,7 @@ use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoAward;
 use App\Models\VideoModels\VideoDisinterest;
 use App\Models\VideoModels\VideoSource;
-use App\Models\VideoModels\VideoViewInfos;
+use App\Models\VideoModels\VideoViewInfo;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
@@ -56,6 +56,9 @@ class DatabaseSeeder extends Seeder
         $this->call(StreamSeeder::class);
 
 
+
+
+
         ////////////////// end wipe //////////////////
 
         // use individual seeders to populate database not this
@@ -82,7 +85,7 @@ class DatabaseSeeder extends Seeder
             User::truncate();
             Video::truncate();
             VideoAward::truncate();
-            VideoViewInfos::truncate();
+            VideoViewInfo::truncate();
             Product::truncate();
             Payment::truncate();
             CreatorSource::truncate();

@@ -5,7 +5,7 @@ namespace App\Models\VideoModels;
 use App\Models\CreatorModels\Creator;
 use Illuminate\Database\Eloquent\Model;
 
-class VideoViews extends Model
+class VideoView extends Model
 {    //Alphabetical order
     protected $guarded = ['id'];
 
