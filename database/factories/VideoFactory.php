@@ -27,7 +27,7 @@ class VideoFactory extends Factory
             'title' => $this->faker->sentence(),
             'description' => '<p>'.$this->faker->paragraph(2, true). '</p>',
 //            'body' => '<p>'.$this->faker->paragraph(10, true). '</p>',
-            'slug' => rand(1, 333000),
+            'slug' => rand(1, 33300011),
             'duration' => rand(1, 60),
             'preferred_source' => $items[array_rand($items)],
             'thumbnail_url' => 'https://picsum.photos/id/'. rand(0,33) .'/800/800',

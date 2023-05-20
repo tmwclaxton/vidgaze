@@ -18,17 +18,18 @@ return new class extends Migration {
             $table->string('duration')->index();
             $table->timestampTz('time_published')->nullable();
             $table->json('tags')->nullable();
-            $table->string('thumbnail_url', 400);
-
-            $table->json('most_relevant_comments')->nullable();//json format
-            $table->json('most_recent_comments')->nullable();//json format
+            $table->string('thumbnail_url');
             $table->integer('like_count')->default('0')->unsigned();
-            $table->integer('dislike_count')->default('0')->unsigned();
             $table->integer('comment_count')->default('0')->unsigned();
             $table->integer('views')->default('0')->unsigned();
+            $table->enum('visibility', ['public', 'unlisted', 'private'])->default('public');
             $table->enum('audience',['kids','mature','all'])->default('all');
             $table->string('language', 3)->nullable()->index(); //ISO 639-3:2007
 
+
+            //$table->json('most_relevant_comments')->nullable();//json format
+            //$table->json('most_recent_comments')->nullable();//json format
+            //$table->integer('dislike_count')->default('0')->unsigned();
 
 
             $table->timestamps();

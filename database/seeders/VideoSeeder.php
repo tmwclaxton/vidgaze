@@ -76,7 +76,7 @@ class VideoSeeder extends Seeder
                 'title' => $title,
                 'description' => $description,
                 'karma' => rand(0, 100),
-                'duration' => rand(600, 1800),
+                'duration' => rand(0, 200),
                 'category_id' => $categories->random()->id,
                 'tags' => json_encode($tags),
                 'visibility' => 'public',
@@ -95,7 +95,9 @@ class VideoSeeder extends Seeder
                     'external_id' => $this->getRandomString(11),
                 ]);
             }
+            Video::factory()->count(100)->create();
         }
+
     }
 
     private function getRandomWords($count): array

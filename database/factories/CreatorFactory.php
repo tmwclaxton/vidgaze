@@ -18,9 +18,9 @@ class CreatorFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->word(1),
+            'name' => $this->faker->word(1111),
             'user_id' => User::factory(),
-            'slug' => random_int(0,1000000),
+            'slug' => random_int(0,10000000),
             'avatar_url' => 'https://picsum.photos/id/'. rand(0,33) .'/800/800',
             'banner_url' => 'https://picsum.photos/id/'. rand(0,33) .'/800/800',
             'coins' => rand(0,1000),

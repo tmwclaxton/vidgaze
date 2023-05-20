@@ -12,7 +12,11 @@ return new class extends Migration {
             $table->foreignId('creator_id')->constrained()->cascadeOnDelete();
             $table->string('rss_url')->unique();
             $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
-
+            $table->string('title')->nullable()->index();
+            $table->text('description')->nullable();
+            $table->string('thumbnail_url')->nullable();
+            $table->integer('like_count')->default('0')->unsigned();
+            $table->enum('visibility', ['public', 'unlisted', 'private'])->default('public');
             $table->timestamps();
         });
     }

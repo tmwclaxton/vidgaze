@@ -5,13 +5,17 @@ namespace Database\Seeders;
 use App\Models\Creator;
 use App\Models\Podcast;
 use App\Models\PodcastEpisode;
+use App\Models\Video;
 use Carbon\Carbon;
+use Google\Service\SecurityCommandCenter\Pod;
 use Illuminate\Database\Seeder;
 
 class PodcastSeeder extends Seeder
 {
     public function run()
     {
+
+        Podcast::factory()->count(60)->create();
         $creator1 = Creator::firstOrCreate([
             'slug' => rand(0, 999999),
         ],[
@@ -26,6 +30,9 @@ class PodcastSeeder extends Seeder
         $podcast1 = Podcast::firstOrCreate([
             'creator_id' => $creator1->id,
             'rss_url' => "https://pintswithaquinas.libsyn.com/rss",
+            'thumbnail_url' => "https://ssl-static.libsyn.com/p/assets/f/f/e/f/ffeff39ab8cef524/R1-fWQQV-1.jpg",
+            'title' => "Pints With Aquinas",
+            'description' => "If you could sit down with St. Thomas Aquinas over a pint of beer and ask him any one question, what would it be? Every episode of Pints With Aquinas revolves around a question, a question that St. Thomas addresses in his most famous work, The Summa Theologica. So get your geek on, pull up a bar stool, and grab a cold one. Here we go!",
             //'category_id' => $cat2->id,
         ]);
 

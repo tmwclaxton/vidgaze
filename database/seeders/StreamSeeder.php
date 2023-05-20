@@ -39,5 +39,7 @@ class StreamSeeder extends Seeder
         //    'award_id' => $award2->id,
         //]);
 
+        Stream::factory()->count(100)->create();
+
     }
 }

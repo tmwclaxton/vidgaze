@@ -75,6 +75,7 @@ Route::get('categories/infinite', [CategoryController::class, 'infinite'])->name
 Route::get('/podcasts', [PodCastController::class,'index'])->name("podcasts.index");
 Route::get('/podcast/', [PodCastController::class,'show'])->name("podcast.show");
 Route::get('/podcast/episode/', [PodCastController::class,'episode'])->name("podcast.episode");
+Route::get('/podcasts/infinite', [PodcastController::class, 'infinite'])->name('podcasts.infinite');
 
 //music routes
 Route::get('/music', [MusicController::class,'index'])->name('music.index');

@@ -5,6 +5,9 @@ import PodcastCreatorCard from "@/Components/Cards/PodcastCards/PocastCreatorCar
 import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
 import PodcastCard from "@/Components/Cards/PodcastCards/PocastCard/PodcastCard.vue";
 import PodcastCategoryCard from "@/Components/Cards/PodcastCards/PodcastCategoryCard/PodcastCategoryCard.vue";
+import PodcastSkeleton from "@/Components/Cards/PodcastCards/PocastCard/PodcastSkeleton.vue";
+import PodcastCreatorSkeleton from "@/Components/Cards/PodcastCards/PocastCreatorCard/PodcastCreatorSkeleton.vue";
+import InfinitePodcasts from "@/Components/ContentRows/InfinitePodcasts.vue";
 </script>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -28,51 +31,43 @@ export default {
             <template v-for="i in 6">
                 <PodcastCreatorCard />
             </template>
-        </div>
-
-        <RowDivider />
-
-        <div class="flex flex-row gap-2  my-4 mb-8 ">
-            <font-awesome-icon :icon="['fas', 'fire']" class="w-6 h-6 my-auto" />
-            <!--<font-awesome-icon :icon="['fas', 'otter']"  class="w-6 h-6 my-auto"/>-->
-            <p class="font-bold text-2xl select-none">Popular Podcasts</p>
-        </div>
-
-        <div class=" grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
             <template v-for="i in 6">
-                <PodcastCard />
+                <PodcastCreatorSkeleton />
             </template>
         </div>
 
         <RowDivider />
 
-
-        <div class="flex flex-row gap-2  my-4 mb-8 ">
-
-            <font-awesome-icon :icon="['fas', 'burst']" class="my-auto h-6"/>
-            <p class="font-bold text-2xl select-none">Categories</p>
-        </div>
-
-        <div class=" grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-            <template v-for="i in 6">
-                <PodcastCategoryCard />
-
-            </template>
-        </div>
-
-        <RowDivider />
+        <InfinitePodcasts />
+        <!--<RowDivider />-->
 
 
-        <div class="flex flex-row gap-2  my-4 mb-8 ">
-            <font-awesome-icon :icon="['fas', 'dice']"  class="w-6 h-6 my-auto" />
-            <p class="font-bold text-2xl select-none">Something Different?</p>
-        </div>
+        <!--<div class="flex flex-row gap-2  my-4 mb-8 ">-->
 
-        <div class=" grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-            <template v-for="i in 6">
-                <PodcastCard />
-            </template>
-        </div>
+        <!--    <font-awesome-icon :icon="['fas', 'burst']" class="my-auto h-6"/>-->
+        <!--    <p class="font-bold text-2xl select-none">Categories</p>-->
+        <!--</div>-->
+
+        <!--<div class=" grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">-->
+        <!--    <template v-for="i in 6">-->
+        <!--        <PodcastCategoryCard />-->
+
+        <!--    </template>-->
+        <!--</div>-->
+
+        <!--<RowDivider />-->
+
+
+        <!--<div class="flex flex-row gap-2  my-4 mb-8 ">-->
+        <!--    <font-awesome-icon :icon="['fas', 'dice']"  class="w-6 h-6 my-auto" />-->
+        <!--    <p class="font-bold text-2xl select-none">Something Different?</p>-->
+        <!--</div>-->
+
+        <!--<div class=" grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">-->
+        <!--    <template v-for="i in 6">-->
+        <!--        <PodcastCard />-->
+        <!--    </template>-->
+        <!--</div>-->
 
 
     </PaddingLayout>
