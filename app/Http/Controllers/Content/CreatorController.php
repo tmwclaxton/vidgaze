@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Content;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCreatorRequest;
 use App\Http\Requests\UpdateCreatorRequest;
+use App\Http\Resources\CreatorCollection;
 use App\Models\CreatorModels\Creator;
 use App\Models\PodcastModels\Podcast;
-use Composer\DependencyResolver\Request;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,19 +25,32 @@ class CreatorController extends Controller
 
     public function infinite(Request $request)
     {
-        $perPage = $request->perPage ?? 20;
         //get ids from params
+        $perPage = $request->perPage ?? 20;
+        $podcasters = $request->podcaster ?? false;
         $creatorIds = $request->creatorIds ?? [];
-        $podcaster = $request->input('podcaster') ?? false;
+        if (!is_array($creatorIds) ) {
+            //explode the ids into an array
+            $creatorIds = explode(',', $creatorIds);
+        }
 
         $query = Creator::query();
-        if($podcaster){
+
+        if($podcasters){
             //get most popular podcasts and then get the creators from those podcasts
-            Podcast::orderBy('views','desc')->take(10)->get()->each(function($podcast) use ($query){
+            Podcast::orderBy('view_count','desc')->take(10)->get()->each(function($podcast) use ($query){
                 $query->orWhere('id','=',$podcast->creator_id);
             });
         }
 
+        //don't get creatorIds
+        if(count($creatorIds) > 0){
+            $query->whereNotIn('id',$creatorIds);
+        }
+
+        $creators = $query->orderBy('subscriber_count','desc')->paginate($perPage);
+
+        return new CreatorCollection($creators);
     }
 
     /**

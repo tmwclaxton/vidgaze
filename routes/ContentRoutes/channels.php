@@ -1,5 +1,5 @@
 <?php
-//channel routes
+//channel routes & creator routes
 use App\Http\Controllers\Content\ChannelDisinterestController;
 use App\Http\Controllers\Content\CreatorController;
 use App\Http\Controllers\Content\SubscriptionsController;
@@ -22,3 +22,6 @@ Route::middleware(['throttle:60,1','auth'])->group(function () {
     Route::delete('/channels/{channelId}/unsubscribe', [SubscriptionsController::class, 'destroy'])
         ->name('channel.subscription.destroy');
 });
+
+//creator routes
+Route::get('creator/infinite', [CreatorController::class,'infinite'])->name("creator.infinite");

@@ -1,14 +1,18 @@
 
 <script setup>
 const name = 'PodcastCreatorCard';
-
+const props = defineProps({
+    creator: {
+        type: Object,
+        required: true
+    }
+})
 </script>
 
 <template>
     <div class="cursor-pointer select-none  w-full  ">
         <div class=" relative  group rounded-full overflow-hidden">
-            <img class="w-full aspect-square block    "
-                 src="https://render.fineartamerica.com/images/rendered/default/poster/8/8/break/images/artworkimages/medium/1/jre-joe-rogan-hadi-maxel.jpg" alt=""/>
+            <img class="w-full aspect-square block    " v-bind:src="creator.avatar_url"/>
             <div class="absolute bg-black rounded bg-opacity-0 group-hover:bg-opacity-40 w-full h-full
                                      top-0 flex items-center group-hover:opacity-100 transition justify-evenly duration-300">
 
@@ -21,7 +25,7 @@ const name = 'PodcastCreatorCard';
             </div>
         </div>
         <div class="py-5 w-full">
-            <h3 class="text dark:textDark font-bold text-lg text-center ">Joe Rogan</h3>
+            <h3 class="text dark:textDark font-bold text-lg text-center " v-text="creator.name"></h3>
         </div>
     </div>
 
