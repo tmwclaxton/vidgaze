@@ -18,6 +18,9 @@ return new class extends Migration
             $table->foreignId('comment_id')->constrained()->cascadeOnDelete();
             $table->foreignId('creator_id')->constrained()->cascadeOnDelete();
             $table->enum('liked',['like','dislike'])->nullable(); //use enum
+            $table->boolean('reported')->default(false);
+            $table->boolean('disinterest')->default(false);
+
             $table->timestamps();
         });
     }

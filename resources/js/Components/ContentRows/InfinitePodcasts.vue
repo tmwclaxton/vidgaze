@@ -39,7 +39,7 @@ const fetchPodcasts = async () => {
         .then(response => {
             setTimeout(() => {
                 podcasts.value = podcasts.value.concat(response.data.data);
-            }, 100); // 500ms delay
+            }, 300); // 500ms delay
         })
         .catch(error => {
             console.log(error);

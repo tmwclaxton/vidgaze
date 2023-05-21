@@ -8,38 +8,28 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('video_view_infos', function (Blueprint $table) {
+        Schema::create('podcast_view_infos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('viewer_id')->references('id')->on('creators')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('video_id')->references('id')->on('videos')->constrained()->cascadeOnDelete();
-             //1 = yes , 0 = disliked, null = neither
+            $table->foreignId('podcast_id')->references('id')->on('podcasts')->constrained()->cascadeOnDelete();
+            //1 = yes , 0 = disliked, null = neither
             $table->enum('liked',['like','dislike'])->nullable(); //use enum
-            $table->mediumInteger('view_point')->unsigned()->nullable();
+            // column for saying whether you reported the podcast or not
             $table->boolean('reported')->default(false);
             $table->boolean('disinterest')->default(false);
-
-
-
+            $table->smallInteger('episode')->unsigned()->nullable();
             $table->timestamps();
-        });
-        Schema::table('video_view_infos', function($table)
-        {
-            $table->foreignId('viewer_id')->nullable()->change();
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('video_view_infos');
+        Schema::dropIfExists('podcast_view_infos');
     }
 };

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PodcastCollection;
 use App\Models\PodcastModels\Podcast;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 
@@ -58,6 +59,23 @@ class PodcastController extends Controller
 
     }
 
+    public function getPodcastViewInfo($videoId) {
+        // check if user is authenticated
+        if (!Auth::user()) {
+            return response()->json([
+                'error' => 'You are not authenticated'
+            ], 401);
+        }
+
+        $creatorId = Auth::user()->creator->id;
+        // check if user has liked video
+        $VideoViewInfo = PodcastVi::where('viewer_id', $creatorId)->where('video_id', $videoId)->first() ?? null;
+        return [
+            'liked' => $VideoViewInfo['liked'] ?? null,
+            'view_point' => $VideoViewInfo['view_point'] ?? null,
+        ];
+
+    }
 
     public function create()
     {

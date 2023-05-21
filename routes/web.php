@@ -35,10 +35,8 @@ Route::get('/home', function () {
     return Inertia::render('Viewer/Home/Homepage');
 })->name('home');
 
-
-
-
 require __DIR__ . '/ContentRoutes/videos.php';
+require __DIR__ . '/ContentRoutes/podcasts.php';
 require __DIR__ . '/ContentRoutes/streams.php';
 require __DIR__ . '/ContentRoutes/channels.php';
 require __DIR__ . '/ContentRoutes/studio.php';
@@ -46,27 +44,18 @@ require __DIR__ . '/ContentRoutes/playlists.php';
 require __DIR__.'/auth.php';
 
 
-
-
-
-
-
 //category routes
 Route::get('category/{category:slug}', [CategoryController::class,'show'])->name("category.show");
 Route::get('categories', [CategoryController::class,'index'])->name("categories.index"); //used by carousel on stream page
 Route::get('categories/infinite', [CategoryController::class, 'infinite'])->name('categories.infinite');
 
-//podcast routes
-Route::get('/podcasts', [PodCastController::class,'index'])->name("podcasts.index");
-Route::get('/podcast/', [PodCastController::class,'show'])->name("podcast.show");
-Route::get('/podcast/episode/', [PodCastController::class,'episode'])->name("podcast.episode");
-Route::get('/podcasts/infinite', [PodcastController::class, 'infinite'])->name('podcasts.infinite');
+
 
 //music routes
 Route::get('/music', [MusicController::class,'index'])->name('music.index');
-Route::get('/music/album', [MusicController::class,'album'])->name('music.album');
-Route::get('/music/category', [MusicController::class,'category'])->name('music.category');
-Route::get('/music/track', [MusicController::class,'track'])->name('music.track');
+//Route::get('/music/album', [MusicController::class,'album'])->name('music.album');
+//Route::get('/music/category', [MusicController::class,'category'])->name('music.category');
+//Route::get('/music/track', [MusicController::class,'track'])->name('music.track');
 
 
 

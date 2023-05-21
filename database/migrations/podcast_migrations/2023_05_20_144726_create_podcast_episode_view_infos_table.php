@@ -18,6 +18,9 @@ return new class extends Migration
             //1 = yes , 0 = disliked, null = neither
             $table->enum('liked',['like','dislike'])->nullable(); //use enum
             $table->smallInteger('view_point')->unsigned()->nullable(); // roughly 18 hours it can track
+            $table->boolean('reported')->default(false);
+            $table->boolean('disinterest')->default(false);
+
             $table->timestamps();
         });
         // this is to make viewer_id nullable

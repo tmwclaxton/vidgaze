@@ -1,5 +1,7 @@
 
 <script setup>
+import HeartPodcastButton from "@/Components/Cards/PodcastCards/PocastCard/Partials/HeartPodcastButton.vue";
+
 const name = 'PodcastCard';
 const props = defineProps({
     podcast: {
@@ -21,15 +23,12 @@ const props = defineProps({
         w-full h-full top-0 flex items-center transition justify-evenly duration-300">
 
                 <div class="pointer-events-auto flex flex-row gap-x-2 absolute bottom-3 left-3 ">
-                    <div class="rounded-full bg-white w-10 h-10 flex">
+                    <div class="rounded-full bg-white w-10 h-10 flex opacity-75">
                         <font-awesome-icon :icon="['fas', 'play']"  class="pl-1 w-5 h-4 my-auto mx-auto text-black"/>
                     </div>
                 </div>
-                <div class="pointer-events-auto flex flex-row gap-x-2 absolute bottom-3 left-14 ml-1 opacity-0 group-hover:opacity-100 transition duration-300">
-                    <div class="rounded-full bg-white w-10 h-10 flex">
-                        <font-awesome-icon :icon="['fas', 'heart']" class="  w-5 h-4 my-auto mx-auto text-black"/>
-                    </div>
-                </div>
+                <HeartPodcastButton podcast="podcast" />
+
             </div>
         </div>
         <a href="">
