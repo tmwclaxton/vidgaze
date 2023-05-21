@@ -30,14 +30,17 @@ const emit = defineEmits(["remove"]);
             class="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg pl-0.5
              "
             :class="{
-          'bg-blue-400 text-blue-700 dark:bg-blue-800 dark:text-blue-100': props.type === 'normal',
-          'bg-green-400 text-zinc-900 dark:bg-green-900 dark:text-white': props.type === 'success',
-          'bg-red-400 text-red-900 dark:bg-red-800 dark:text-red-100': props.type === 'error'
+          'bg-blue-400 text-blue-700 dark:bg-blue-800 dark:text-blue-100': props.type == 'normal',
+          'bg-red-300 text-red-700 dark:bg-red-800 dark:text-red-100': props.type == 'undo',
+          'bg-green-400 text-zinc-900 dark:bg-green-900 dark:text-white': props.type == 'success',
+          'bg-red-400 text-red-900 dark:bg-red-800 dark:text-red-100': props.type == 'error'
         }"
 
         >
             <font-awesome-icon v-if="props.type === 'normal'" class="   aspect-square  mx-auto"
                                :icon="['fas', 'message']" />
+            <font-awesome-icon  v-if="props.type === 'undo'" class="aspect-square  mx-auto"
+                                :icon="['fas', 'rotate-left']"/>
             <font-awesome-icon v-if="props.type === 'success'" class="   aspect-square  mx-auto"
                                :icon="['fas', 'check']" />
             <font-awesome-icon v-if="props.type === 'error'" class="    aspect-square  mx-auto"

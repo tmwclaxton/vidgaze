@@ -21,7 +21,7 @@ use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoAward;
 use App\Models\VideoModels\VideoDisinterest;
 use App\Models\VideoModels\VideoUpload;
-use App\Models\VideoModels\VideoViewInfo;
+use App\Models\VideoModels\VideoInteraction;
 use App\Models\VideoModels\VideoView;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -91,18 +91,19 @@ class Creator extends Model
     {
         return $this->hasMany(Comment::class);
     }
-    public function channelDisinterests(): HasMany
+    public function creator_interactions(): HasMany
     {
-        return $this->hasMany(ChannelDisinterest::class, 'creator_id');
+        return $this->hasMany(CreatorInteraction::class, 'viewer_id');
     }
-    public function videoDisinterests(): HasMany
+
+    public function video_interactions(): HasMany
     {
-        return $this->hasMany(VideoDisinterest::class, 'creator_id');
+        return $this->hasMany(VideoInteraction::class, 'viewer_id');
     }
     public function comment_interactions(): HasMany
     {//might be broken //I think this is more broken now soz
-        return $this->hasMany(CommentInteraction::class)
-        ->join('comment_interactions', 'comment_interactions.creator_id', '=', 'creators.id');
+        return $this->hasMany(CommentInteraction::class, 'creator_id');
+        //->join('comment_interactions', 'comment_interactions.creator_id', '=', 'creators.id');
     }
     public function sources(): HasMany
     {
@@ -136,12 +137,9 @@ class Creator extends Model
     }
     public function subscriptions(): BelongsToMany
     {
-        return $this->belongsToMany(Creator::class, 'subscriptions', 'subscriber_id');
+        return $this->belongsToMany(Creator::class, 'creator_interactions', 'viewer_id')->where('subscribed', '=', 1);
     }
-    public function subscribers(): HasManyThrough
-    {
-        return $this->hasManyThrough(Creator::class, Subscription::class, 'creator_id', 'id', 'id', 'subscriber_id');
-    }
+
     public function unions(): HasMany
     {
         return $this->hasMany(Union::class, 'owner_id');
@@ -170,10 +168,7 @@ class Creator extends Model
     {
         return $this->hasMany(VideoView::class, 'viewer_id');
     }
-    public function video_view_info(): HasMany
-    {
-        return $this->hasMany(VideoViewInfo::class, 'viewer_id');
-    }
+
 
 
 

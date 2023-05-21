@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\LiveClient;
 use App\Models\StreamModels\Stream;
 use App\Models\VideoModels\Video;
-use App\Models\VideoModels\VideoViewInfo;
+use App\Models\VideoModels\VideoInteraction;
 use App\Models\VideoModels\VideoView;
 use App\Services\MixPanelTrackingService;
 use Illuminate\Http\Request;
@@ -146,7 +146,7 @@ class ViewListenerController extends Controller
     private function recordViewPoint(string $viewerId, string $videoId, int $viewPoint): void
     {
         //this records where in the video was watched to
-        VideoViewInfo::updateOrCreate(
+        VideoInteraction::updateOrCreate(
             ['video_id' => $videoId],
             ['viewer_id' => $viewerId]
         )->update(['view_point' => $viewPoint]);

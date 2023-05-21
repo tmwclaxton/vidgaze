@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('creator_id')->constrained()->cascadeOnDelete();
             $table->enum('liked',['like','dislike'])->nullable(); //use enum
             $table->boolean('reported')->default(false);
-            $table->boolean('disinterest')->default(false);
+            $table->boolean('disinterested')->default(false);
 
             $table->timestamps();
         });

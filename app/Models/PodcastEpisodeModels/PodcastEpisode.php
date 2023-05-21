@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models\PodcastModels;
+namespace App\Models\PodcastEpisodeModels;
 
+use App\Models\PodcastModels\Podcast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

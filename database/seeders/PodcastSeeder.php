@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\CreatorModels\Creator;
+use App\Models\PodcastEpisodeModels\PodcastEpisode;
 use App\Models\PodcastModels\Podcast;
-use App\Models\PodcastModels\PodcastEpisode;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 

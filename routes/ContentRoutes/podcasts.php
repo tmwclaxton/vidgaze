@@ -17,6 +17,6 @@ Route::middleware(['throttle:30,1','auth'])->group(function () {
         ->name('podcast.like.toggle');
 
     // this get the details of a podcast for the content modal or viewing the podcast or short
-    Route::get('/podcasts/{podcastId}/view_info', [PodcastController::class,"getPodcastViewInfo"])->name('podcasts.view.info');
+    Route::get('/podcasts/{podcastId}/interaction', [PodcastController::class,"getPodcastInteraction"])->name('podcasts.view.interaction');
 
 });

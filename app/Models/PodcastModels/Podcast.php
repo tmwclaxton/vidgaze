@@ -3,6 +3,7 @@
 namespace App\Models\PodcastModels;
 
 use App\Models\CreatorModels\Creator;
+use App\Models\PodcastEpisodeModels\PodcastEpisode;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

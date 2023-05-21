@@ -1,9 +1,9 @@
 <?php
 
 //user feed routes
+use App\Http\Controllers\Content\CreatorInteractionController;
 use App\Http\Controllers\Content\PlaylistController;
 use App\Http\Controllers\Content\PlaylistVideoController;
-use App\Http\Controllers\Content\SubscriptionsController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/feed/library', [PlaylistController::class, 'index'])->name("feed.library");
@@ -11,7 +11,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/feed/watch_later', [PlaylistController::class, 'later'])->name("feed.watch-later");
     Route::get('/feed/liked_videos', [PlaylistController::class, 'liked'])->name("feed.liked-videos");
     Route::get('/feed/history', [PlaylistController::class, 'history'])->name("feed.history");
-    Route::get('/feed/subscriptions', [SubscriptionsController::class, 'index'])->name("feed.subscriptions");
+    Route::get('/feed/subscriptions', [CreatorInteractionController::class, 'index'])->name("feed.subscriptions");
 });
 Route::get('/playlist/{playlist:slug}', [PlaylistController::class, 'show'])->name("playlist");
 

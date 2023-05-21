@@ -40,7 +40,7 @@ require __DIR__ . '/ContentRoutes/podcasts.php';
 require __DIR__ . '/ContentRoutes/streams.php';
 require __DIR__ . '/ContentRoutes/channels.php';
 require __DIR__ . '/ContentRoutes/studio.php';
-require __DIR__ . '/ContentRoutes/playlists.php';
+require __DIR__ . '/ContentRoutes/feed.php';
 require __DIR__.'/auth.php';
 
 

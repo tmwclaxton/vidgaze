@@ -39,8 +39,8 @@ const toggleWatchLater = () => {
     contentModalStore.toggleWatchLater(contentModalStore.item.id, contentModalStore.inWatchLater);
 }
 
-const toggleVideoDisinterest = () => {
-    contentModalStore.toggleVideoDisinterest(contentModalStore.item.id, contentModalStore.videoDisinterest);
+const toggleDisinterest = () => {
+    contentModalStore.toggleDisinterest(contentModalStore.item.id, contentModalStore.itemDisinterest);
 }
 
 const toggleChannelDisinterest = () => {
@@ -90,11 +90,11 @@ const togglePlaylistModal = () => {
             </Option>
             <hr class="border-1 border-zinc-300 dark:border-zinc-800 my-0.5 mt-1">
             <div v-if=" $page.props.auth.user !== null" class="flex flex-col ">
-                <Option v-if="!contentModalStore.videoDisinterest && contentModalStore.itemType === 'video'" @click="toggleVideoDisinterest">
+                <Option v-if="!contentModalStore.itemDisinterest " @click="toggleDisinterest">
                     <BanIcon class="w-5 h-5" />
                     <p>Not interested</p>
                 </Option>
-                <Option v-if="contentModalStore.videoDisinterest && contentModalStore.itemType === 'video'" @click="toggleVideoDisinterest">
+                <Option v-if="contentModalStore.itemDisinterest  " @click="toggleDisinterest">
                     <TickIcon class="w-5 h-5" />
                     <p>You won't see this again!</p>
                 </Option>
@@ -107,9 +107,13 @@ const togglePlaylistModal = () => {
                     <p>Channel hidden</p>
                 </Option>
             </div>
-            <Option @click="contentModalStore.reportContent(contentModalStore.item.id)" >
+            <Option v-if="!contentModalStore.reportedContent" @click="contentModalStore.reportContent(contentModalStore.item.id)" >
                 <ReportIcon class="w-5 h-5" />
                 <p>Report</p>
+            </Option>
+            <Option v-if="contentModalStore.reportedContent" @click="contentModalStore.reportContent(contentModalStore.item.id)">
+                <TickIcon class="w-5 h-5" />
+                <p>Reported</p>
             </Option>
         </OptionHolder>
 

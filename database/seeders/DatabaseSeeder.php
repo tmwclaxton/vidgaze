@@ -27,7 +27,7 @@ use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoAward;
 use App\Models\VideoModels\VideoDisinterest;
 use App\Models\VideoModels\VideoSource;
-use App\Models\VideoModels\VideoViewInfo;
+use App\Models\VideoModels\VideoInteraction;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
@@ -85,7 +85,7 @@ class DatabaseSeeder extends Seeder
             User::truncate();
             Video::truncate();
             VideoAward::truncate();
-            VideoViewInfo::truncate();
+            VideoInteraction::truncate();
             Product::truncate();
             Payment::truncate();
             CreatorSource::truncate();

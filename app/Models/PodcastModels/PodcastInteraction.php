@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Models\VideoModels;
+namespace App\Models\PodcastModels;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class VideoViewInfo extends Model
+class PodcastInteraction extends Model
 {
-    //no mass assignment!
-    protected $guarded = ['id'];
     use HasFactory;
 }

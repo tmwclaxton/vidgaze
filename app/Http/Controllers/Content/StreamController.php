@@ -103,10 +103,5 @@ class StreamController extends Controller
         //
     }
 
-        public function report(Request $request, $id)
-    {
-        $stream = Stream::findOrFail($id);
-        $stream->increment('report_count');
-        return response()->json(['message' => 'Report added successfully.'],200);
-    }
+
 }

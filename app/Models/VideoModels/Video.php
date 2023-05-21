@@ -78,9 +78,9 @@ class Video extends Model
     {
         return $this->hasMany(VideoView::class);
     }
-    public function view_info(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function interactions(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(VideoViewInfo::class);
+        return $this->hasMany(VideoInteraction::class);
     }
 
 }

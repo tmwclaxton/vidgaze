@@ -27,45 +27,31 @@ const subscribe = () => {
     }
 
 
-    if (!subscribed.value) {
-        axios.post('/channels/' + props.channel.id + '/subscribe')
-            .then(response => {
-                // Handle successful subscription
-                toastStore.add({
-                    message: 'Subscribed to ' + props.channel.name,
-                    type: 'success'
-                });
+    axios.post(route('channel.subscription.toggle', {channelId: props.channel.id}))
+        .then(response => {
+            // Handle successful subscription
+            toastStore.add({
+                message: response.data.message,
+                type: response.data.type
+            });
+            // Add channel to subscriptions
+            if (response.data.subscribed) {
                 // Add channel to subscriptions
                 usePage().props.auth.subscriptions.push(props.channel.id);
-            })
-            .catch(error => {
-                // Handle subscription error
-                toastStore.add({
-                    message: 'Failed to subscribe to ' + props.channel.name,
-                    type: 'error'
-                });
-            });
-    } else {
-        axios.delete('/channels/' + props.channel.id + '/unsubscribe')
-            .then(response => {
-                // Handle successful unsubscription
-                toastStore.add({
-                    message: 'Unsubscribed from ' + props.channel.name,
-                    type: 'error'
-                });
+            } else {
                 // Remove channel from subscriptions
                 usePage().props.auth.subscriptions = usePage().props.auth.subscriptions.filter(subscription => subscription !== props.channel.id);
-            })
-            .catch(error => {
-                // Handle unsubscription error
-                toastStore.add({
-                    message: 'Failed to unsubscribe from ' + props.channel.name,
-                    type: 'error'
-                });
+            }
+            subscribed.value = !subscribed.value;
+        })
+        .catch(error => {
+            // Handle subscription error
+            toastStore.add({
+                message: 'Something went wrong, please try again later',
+                type: 'error'
             });
-    }
+        });
 
-    subscribed.value = !subscribed.value;
 };
 
 onMounted(() => {

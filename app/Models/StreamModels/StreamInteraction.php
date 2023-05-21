@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models\PodcastModels;
+namespace App\Models\StreamModels;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PodcastViewInfo extends Model
+class StreamInteraction extends Model
 {
     use HasFactory;
 }

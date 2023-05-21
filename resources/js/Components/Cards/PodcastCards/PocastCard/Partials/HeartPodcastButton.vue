@@ -34,7 +34,7 @@ onMounted(async () => {
         // check if user has liked or disliked the podcast
         const podcastId = props.podcast.id;
         try {
-            const response = await axios.get(route('podcasts.view.info', {podcastId: podcastId}));
+            const response = await axios.get(route('podcasts.view.interaction', {podcastId: podcastId}));
             const data = response.data;
             if (data.liked === "like") {
                 liked.value = true;

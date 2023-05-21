@@ -8,23 +8,26 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('podcast_episode_view_infos', function (Blueprint $table) {
+        Schema::create('video_interactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('viewer_id')->references('id')->on('creators')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('podcast_id')->references('id')->on('podcasts')->constrained()->cascadeOnDelete();
-            //1 = yes , 0 = disliked, null = neither
+            $table->foreignId('video_id')->references('id')->on('videos')->constrained()->cascadeOnDelete();
+             //1 = yes , 0 = disliked, null = neither
             $table->enum('liked',['like','dislike'])->nullable(); //use enum
-            $table->smallInteger('view_point')->unsigned()->nullable(); // roughly 18 hours it can track
+            $table->mediumInteger('view_point')->unsigned()->nullable();
             $table->boolean('reported')->default(false);
-            $table->boolean('disinterest')->default(false);
+            $table->boolean('disinterested')->default(false);
+
+
 
             $table->timestamps();
         });
-        // this is to make viewer_id nullable
-        Schema::table('podcast_episode_view_infos', function($table)
+        Schema::table('video_interactions', function($table)
         {
             $table->foreignId('viewer_id')->nullable()->change();
         });
@@ -32,9 +35,11 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('podcast_episode_view_infos');
+        Schema::dropIfExists('video_podcasts');
     }
 };

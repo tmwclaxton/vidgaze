@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('podcast_view_infos', function (Blueprint $table) {
+        Schema::create('podcast_interactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('viewer_id')->references('id')->on('creators')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('podcast_id')->references('id')->on('podcasts')->constrained()->cascadeOnDelete();
@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('liked',['like','dislike'])->nullable(); //use enum
             // column for saying whether you reported the podcast or not
             $table->boolean('reported')->default(false);
-            $table->boolean('disinterest')->default(false);
+            $table->boolean('disinterested')->default(false);
             $table->smallInteger('episode')->unsigned()->nullable();
             $table->timestamps();
         });
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('podcast_view_infos');
+        Schema::dropIfExists('podcast_interactions');
     }
 };

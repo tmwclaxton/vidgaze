@@ -125,7 +125,7 @@ onMounted(async () => {
         // check if user has liked or disliked the video
         const videoId = props.video.id;
         try {
-            const response = await axios.get(route('videos.view.info', {videoId: videoId}));
+            const response = await axios.get(route('video.view.interaction', {videoId: videoId}));
             const data = response.data;
             if (data.liked === "like") {
                 liked.value = true;
