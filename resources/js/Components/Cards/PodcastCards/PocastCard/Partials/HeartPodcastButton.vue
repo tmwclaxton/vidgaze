@@ -50,7 +50,7 @@ const toggleLike = () => {
             // Handle the successful response
             toastStore.add({
                 message: response.data.message,
-                type: 'success'
+                type: response.data.type
             });
 
             if (response.data.result === "like") {

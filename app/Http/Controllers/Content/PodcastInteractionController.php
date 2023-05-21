@@ -47,7 +47,7 @@ class PodcastInteractionController extends Controller
 
 
         //if they change their rating from dislike to like
-        $message = 'Liked successfully';
+        $message = 'Following ' . $podcast->title . ' podcast';
 
 
         if ($interaction->liked != 'like') {
@@ -59,7 +59,7 @@ class PodcastInteractionController extends Controller
             $interaction->liked = null;
             $type = 'undo';
             $podcast->like_count--;
-            $message = 'Like removed successfully';
+            $message = 'Follow removed successfully';
         }
 
         $interaction->save();

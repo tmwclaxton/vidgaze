@@ -33,10 +33,10 @@ const getPodcastInfo = async () => {
 </script>
 
 <template>
-    <div @mouseenter="getPodcastInfo" class="cursor-pointer select-none rounded   w-full  ">
+    <div @mouseenter="getPodcastInfo" class="cursor-pointer select-none rounded   w-full h-full ">
         <div class=" relative  group">
             <a href="">
-                <img class="w-full  block rounded "
+                <img class="w-full aspect-square block rounded "
                      v-bind:src="podcast.thumbnail_url"/>
             </a>
             <div class="absolute bg-black rounded pointer-events-none
