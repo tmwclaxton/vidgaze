@@ -11,6 +11,24 @@ use Illuminate\Support\Facades\Auth;
 
 class StreamInteractionController extends Controller
 {
+
+    public function getStreamInteraction($streamId) {
+        // check if user is authenticated
+        if (!Auth::user()) {
+            return response()->json([
+                'error' => 'You are not authenticated'
+            ], 401);
+        }
+
+        $creatorId = Auth::user()->creator->id;
+        // check if user has liked video
+        $VideoViewInfo = StreamInteraction::where('viewer_id', $creatorId)->where('stream_id', $streamId)->first() ?? null;
+        return [
+            'reported' => $VideoViewInfo['reported'] ?? null,
+            'disinterested' => $VideoViewInfo['disinterested'] ?? null,
+        ];
+    }
+
     public function toggleReport(Request $request, $streamId)
     {
 

@@ -1,6 +1,9 @@
 
 <script setup>
 import HeartPodcastButton from "@/Components/Cards/PodcastCards/PocastCard/Partials/HeartPodcastButton.vue";
+import {usePage} from "@inertiajs/vue3";
+import axios from "axios";
+import {ref} from "vue";
 
 const name = 'PodcastCard';
 const props = defineProps({
@@ -9,10 +12,28 @@ const props = defineProps({
         required: true
     }
 });
+
+let checked = ref(false);
+let liked = ref(false);
+const getPodcastInfo = async () => {
+    if (usePage().props.auth.user !== null && !checked.value) {
+        // check if user has liked or disliked the podcast
+        try {
+            const response = await axios.get(route('podcast.interaction', {podcastId: props.podcast.id}));
+            const data = response.data;
+            checked.value = true;
+            if (data.liked === "like") {
+                liked.value = true;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
 </script>
 
 <template>
-    <div class="cursor-pointer select-none rounded   w-full  ">
+    <div @mouseenter="getPodcastInfo" class="cursor-pointer select-none rounded   w-full  ">
         <div class=" relative  group">
             <a href="">
                 <img class="w-full  block rounded "
@@ -27,7 +48,7 @@ const props = defineProps({
                         <font-awesome-icon :icon="['fas', 'play']"  class="pl-1 w-5 h-4 my-auto mx-auto text-black"/>
                     </div>
                 </div>
-                <HeartPodcastButton podcast="podcast" />
+                <HeartPodcastButton :podcast="podcast" :liked="liked" />
 
             </div>
         </div>

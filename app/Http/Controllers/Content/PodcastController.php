@@ -16,10 +16,7 @@ class PodcastController extends Controller
 
     public function index()
     {
-
-
         return Inertia::render('Viewer/Podcasts/PodcastsIndex');
-
     }
 
     public function infinite(Request $request) {
@@ -59,23 +56,7 @@ class PodcastController extends Controller
 
     }
 
-    public function getPodcastViewInfo($videoId) {
-        // check if user is authenticated
-        if (!Auth::user()) {
-            return response()->json([
-                'error' => 'You are not authenticated'
-            ], 401);
-        }
 
-        $creatorId = Auth::user()->creator->id;
-        // check if user has liked video
-        $VideoViewInfo = PodcastVi::where('viewer_id', $creatorId)->where('video_id', $videoId)->first() ?? null;
-        return [
-            'liked' => $VideoViewInfo['liked'] ?? null,
-            'view_point' => $VideoViewInfo['view_point'] ?? null,
-        ];
-
-    }
 
     public function create()
     {

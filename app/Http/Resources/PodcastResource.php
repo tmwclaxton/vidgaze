@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\PodcastModels\PodcastInteraction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -28,8 +29,6 @@ class PodcastResource extends JsonResource
             'thumbnail_url' => $this->thumbnail_url,
             'likes' => $this->like_count,
             'dislikes' => $this->dislike_count,
-
-
             'creator' => new CreatorResource($this->creator()->first()),
         ];
     }

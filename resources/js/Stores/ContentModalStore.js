@@ -104,7 +104,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                 }
             }
         },
-        async toggleDisinterest(item_id, toggle) {
+        async toggleItemDisinterest(item_id, toggle) {
             let url = ';'
             if (this.itemType === 'video' || this.itemType === 'short') {
                 url = route('video.disinterest.toggle', {videoId: item_id});

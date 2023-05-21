@@ -40,7 +40,7 @@ const toggleWatchLater = () => {
 }
 
 const toggleDisinterest = () => {
-    contentModalStore.toggleDisinterest(contentModalStore.item.id, contentModalStore.itemDisinterest);
+    contentModalStore.toggleItemDisinterest(contentModalStore.item.id, contentModalStore.itemDisinterest);
 }
 
 const toggleChannelDisinterest = () => {

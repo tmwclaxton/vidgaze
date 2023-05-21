@@ -3,6 +3,7 @@
 
 //podcast routes
 use App\Http\Controllers\Content\PodcastController;
+use App\Http\Controllers\Content\PodcastInteractionController;
 
 Route::get('/podcasts', [PodCastController::class,'index'])->name("podcasts.index");
 Route::get('/podcast/', [PodCastController::class,'show'])->name("podcast.show");
@@ -13,10 +14,10 @@ Route::get('/podcasts/infinite', [PodcastController::class, 'infinite'])->name('
 Route::middleware(['throttle:30,1','auth'])->group(function () {
 
     // This allows users to add and remove a like or dislike from a podcast.
-    Route::post('/podcasts/{podcastId}/like', [PodcastController::class, 'like'])
+    Route::post('/podcasts/{podcastId}/like', [PodcastInteractionController::class, 'toggleLike'])
         ->name('podcast.like.toggle');
 
     // this get the details of a podcast for the content modal or viewing the podcast or short
-    Route::get('/podcasts/{podcastId}/interaction', [PodcastController::class,"getPodcastInteraction"])->name('podcasts.view.interaction');
+    Route::get('/podcasts/{podcastId}/interaction', [PodcastInteractionController::class,"getInteraction"])->name('podcast.interaction');
 
 });

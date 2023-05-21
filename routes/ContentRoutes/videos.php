@@ -38,7 +38,8 @@ Route::middleware(['throttle:60,1','auth'])->group(function () {
 
     // this get the details of a video for the content modal or viewing the video or short
     Route::get('/video/{videoId}/details', [VideoInteractionController::class,"modalDetails"])->name('video.details');
-    Route::get('/video/{videoId}/interaction', [VideoInteractionController::class,"getVideoInteraction"])->name('video.view.interaction');
+    // used for like and dislike button
+    Route::get('/video/{videoId}/interaction', [VideoInteractionController::class,"getVideoInteraction"])->name('video.interaction');
 
 
 });
