@@ -1,5 +1,5 @@
 <script setup>
-import PaddingLayout from '@/Layouts/PaddingLayout.vue';
+import PaddingLayout from '@/Layouts/Partials/ConsistentPadding.vue';
 </script>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';

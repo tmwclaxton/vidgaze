@@ -77,7 +77,7 @@ Route::middleware('throttle:60,1')->group(function () {
 
 
 //about
-Route::get('/about', function () { return Inertia::render('Viewer/Landing');})->name('about');
+Route::get('/about', function () { return Inertia::render('Viewer/Landing/Landing'); })->name('about');
 
 //policy and terms
 Route::get('/terms_of_service', function () { return Inertia::render('Legal/Terms'); })->name('terms');

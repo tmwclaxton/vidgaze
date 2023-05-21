@@ -1,7 +1,7 @@
 
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import PaddingLayout from "@/Layouts/PaddingLayout.vue";
+import PaddingLayout from "@/Layouts/Partials/ConsistentPadding.vue";
 export default {
     components: {PaddingLayout},
     layout: AuthenticatedLayout,

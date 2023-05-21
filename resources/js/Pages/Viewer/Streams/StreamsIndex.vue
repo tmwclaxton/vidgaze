@@ -1,7 +1,7 @@
 
 <script setup>
 import { Head } from '@inertiajs/vue3';
-import PaddingLayout from "@/Layouts/PaddingLayout.vue";
+import PaddingLayout from "@/Layouts/Partials/ConsistentPadding.vue";
 import {onMounted, onUnmounted, ref} from "vue";
 import TopStreamsRow from "@/Components/ContentRows/TopStreamsRow.vue";
 import CategoriesRow from "@/Components/ContentRows/CategoriesRow.vue";
