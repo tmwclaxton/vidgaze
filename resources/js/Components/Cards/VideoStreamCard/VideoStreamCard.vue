@@ -99,7 +99,7 @@ const dotsIconShow = computed(() => {
 
                         <a :href="route('watch.show', {slug: item.slug})" v-text="item.title" class="pr-2"></a>
 
-
+<p v-text="item.preferred_source" class="text-xs font-normal text-gray-500 dark:text-gray-400"></p>
                     </span>
 
                         <div class=" flex flex-row pt-1">

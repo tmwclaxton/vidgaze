@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-
+import { usePlayerStore } from './PlayerModalStore.js'
 export const useQueueStore = defineStore('QueueStore', {
     state: () => {
         return {
@@ -20,8 +20,15 @@ export const useQueueStore = defineStore('QueueStore', {
                     object: item.object,
                     type: item.type,
                 });
+                if (this.items.length === 1) {
+                    this.changeIndex(0);
+                }
                 return true;
             }
+
+            // if no items in queue, set player modal store to this item
+
+
         },
         remove(id) {
           // items is in the form of [[id, type], [2, "video"], ...]
@@ -34,7 +41,13 @@ export const useQueueStore = defineStore('QueueStore', {
             return false;
         },
         changeIndex(index) {
+            console.log("changing index to " + index);
+            let playerModalStore = usePlayerStore();
             this.index = index;
+            // set player modal store to this item
+            playerModalStore.object = this.items[this.index]['object'];
+            playerModalStore.type = this.items[this.index]['type'];
+            playerModalStore.buildPlayer();
         }
     }
 })
