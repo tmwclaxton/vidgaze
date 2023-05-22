@@ -7,6 +7,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import VueClickAway from "vue3-click-away";
 // import VueYouTubeEmbed from 'vue-youtube-embed';
 /* import the fontawesome core - utility functions*/
@@ -32,6 +33,7 @@ createInertiaApp({
             .use(VueClickAway)
             .component('font-awesome-icon', FontAwesomeIcon)
             .component('Link', Link)
+            .component('Head', Head)
             .mount(el);
     },
     progress: {

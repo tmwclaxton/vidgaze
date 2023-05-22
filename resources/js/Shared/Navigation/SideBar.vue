@@ -128,7 +128,7 @@ const name = 'SideBar';
                             <span class="w-full">About</span>
                         </ResponsiveNavBottomLink>
                     <!--add support page-->
-                        <ResponsiveNavBottomLink :href="route('about')">
+                        <ResponsiveNavBottomLink :href="route('support')" :active="route().current('support')">
                                 <!--<font-awesome-icon :icon="['fass', 'phone']" class="w-4 h-4 flex-shrink-0"-->
                                 <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
                                 <span class="w-full">Support</span>

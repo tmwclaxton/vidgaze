@@ -4,6 +4,7 @@ use App\Http\Controllers\Content\CategoryController;
 use App\Http\Controllers\Content\MusicController;
 use App\Http\Controllers\Content\PodcastController;
 use App\Http\Controllers\Content\ShareController;
+use App\Http\Controllers\Content\SupportController;
 use App\Http\Controllers\Search\SearchBarController;
 use App\Http\Controllers\Search\SearchController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,21 @@ use Inertia\Inertia;
 |
 */
 
+require __DIR__ . '/ContentRoutes/videos.php';
+require __DIR__ . '/ContentRoutes/podcasts.php';
+require __DIR__ . '/ContentRoutes/streams.php';
+require __DIR__ . '/ContentRoutes/channels.php';
+require __DIR__ . '/ContentRoutes/studio.php';
+require __DIR__ . '/ContentRoutes/feed.php';
+require __DIR__ . '/ContentRoutes/categories.php';
+require __DIR__ . '/ContentRoutes/search.php';
+require __DIR__ . '/ContentRoutes/music.php';
+require __DIR__.'/auth.php';
+
+//this is the route for creating share links
+Route::get('/shares', [ShareController::class, 'index'])->name('share.index');
+// limit to 5 requests per 15 minutes
+
 // landing route
 Route::get('/', function () {
     if (auth()->user() === null) {
@@ -31,57 +47,19 @@ Route::get('/', function () {
 
 
 //home route
-Route::get('/home', function () {
-    return Inertia::render('Viewer/Home/Homepage');
-})->name('home');
-
-require __DIR__ . '/ContentRoutes/videos.php';
-require __DIR__ . '/ContentRoutes/podcasts.php';
-require __DIR__ . '/ContentRoutes/streams.php';
-require __DIR__ . '/ContentRoutes/channels.php';
-require __DIR__ . '/ContentRoutes/studio.php';
-require __DIR__ . '/ContentRoutes/feed.php';
-require __DIR__.'/auth.php';
-
-
-//category routes
-Route::get('category/{category:slug}', [CategoryController::class,'show'])->name("category.show");
-Route::get('categories', [CategoryController::class,'index'])->name("categories.index"); //used by carousel on stream page
-Route::get('categories/infinite', [CategoryController::class, 'infinite'])->name('categories.infinite');
-
-
-
-//music routes
-Route::get('/music', [MusicController::class,'index'])->name('music.index');
-//Route::get('/music/album', [MusicController::class,'album'])->name('music.album');
-//Route::get('/music/category', [MusicController::class,'category'])->name('music.category');
-//Route::get('/music/track', [MusicController::class,'track'])->name('music.track');
-
-
-
-
-//this is the route for creating share links
-Route::get('/shares', [ShareController::class, 'index'])->name('share.index');
-// limit to 5 requests per 15 minutes
-
-
-
-
-
-//search routes
-Route::get('/search/', [SearchController::class, 'get']);
-Route::middleware('throttle:60,1')->group(function () {
-    //search bar
-    Route::get('/search_suggestions', [SearchBarController::class, 'get'])->name('search_suggestions');
-});
-
-
-//about
-Route::get('/about', function () { return Inertia::render('Viewer/Landing/Landing'); })->name('about');
-
+Route::get('/home', [SupportController::class,'home'])->name('home');
+//landing route
+Route::get('/about', [SupportController::class, 'about'])->name('about');
 //policy and terms
-Route::get('/terms_of_service', function () { return Inertia::render('Legal/Terms'); })->name('terms');
-Route::get('/privacy_policy', function () { return Inertia::render('Legal/Policy'); })->name('privacy');
+Route::get('/terms_of_service', [SupportController::class, 'terms'])->name('terms');
+Route::get('/privacy_policy', [SupportController::class,'privacy'])->name('privacy');
+Route::get('/support', [SupportController::class,'support'])->name('support');
+// support email route
+Route::post('/support', [SupportController::class,'sendSupportEmail'])->name('support.email.send');
+
+
+
+
 
 
 

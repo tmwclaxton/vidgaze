@@ -34,10 +34,10 @@
                     <h2 class="mb-6 text-sm font-semibold text-zinc-900 uppercase dark:text-white">Legal</h2>
                     <ul class="text-zinc-600 dark:text-zinc-200">
                         <li class="mb-4">
-                            <a href="/privacy-policy" class="hover:underline">Privacy Policy</a>
+                            <a v-bind:href="route('privacy')" class="hover:underline">Privacy Policy</a>
                         </li>
                         <li>
-                            <a href="/terms-of-service" class="hover:underline">Terms of Service</a>
+                            <a v-bind:href="route('terms')" class="hover:underline">Terms of Service</a>
                         </li>
                     </ul>
                 </div>

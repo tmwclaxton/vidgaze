@@ -1,11 +1,3 @@
-<template>
-
-    <Head title="Policy" />
-
-    <ConsistentPadding>
-        <Policy class="prose mx-auto "/>
-    </ConsistentPadding>
-</template>
 
 
 <script setup>
@@ -25,6 +17,12 @@ export default {
 };
 </script>
 
-<style scoped>
+<template>
 
-</style>
+    <Head title="Policy" />
+
+    <ConsistentPadding>
+        <Policy class="prose prose-sky mx-auto "/>
+    </ConsistentPadding>
+</template>
+
