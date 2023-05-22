@@ -9,16 +9,15 @@ export const useQueueStore = defineStore('QueueStore', {
     },
     actions: {
         add(item) {
-            // items is in the form of [[id, type], [2, "video"], ...]
+            // items is in the form of [[object, type], [[id:2,title:"asdf" etc.. ], "video"], ...]
             const isItemInArray = this.items.some(
-                (existingItem) => existingItem.id === item.id
+                (existingItem) => existingItem.object.id === item.object.id
             );
             if (isItemInArray) {
                 return false;
             } else {
                 this.items.push({
-                    id: item.id,
-                    key: Symbol(),
+                    object: item.object,
                     type: item.type,
                 });
                 return true;
@@ -27,7 +26,7 @@ export const useQueueStore = defineStore('QueueStore', {
         remove(id) {
           // items is in the form of [[id, type], [2, "video"], ...]
             for (let i = 0; i < this.items.length; i++) {
-                if (this.items[i]['id'] === id) {
+                if (this.items[i]['object'].id === id) {
                     this.items.splice(i, 1);
                     return true;
                 }

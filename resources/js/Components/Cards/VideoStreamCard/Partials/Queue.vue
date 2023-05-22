@@ -38,7 +38,7 @@ const addToQueue = () => {
 
 
     } else {
-        if (queueStore.add({id: props.item.id,type: "video",}) ) {
+        if (queueStore.add({object: props.item,type: "video",}) ) {
             inQueue.value = true;
             toastStore.add({
                 message: 'Added to Queue',
