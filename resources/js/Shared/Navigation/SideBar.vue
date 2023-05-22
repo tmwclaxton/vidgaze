@@ -134,13 +134,13 @@ const name = 'SideBar';
                                 <span class="w-full">Support</span>
                         </ResponsiveNavBottomLink>
                     <!--add policy page-->
-                        <ResponsiveNavBottomLink :href="route('about')">
+                        <ResponsiveNavBottomLink :href="route('privacy')" :active="route().current('privacy')">
                                 <!--<font-awesome-icon :icon="['fass', 'scroll']" class="w-4 h-4 flex-shrink-0"-->
                                 <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
                             <span class="w-full">Privacy</span>
                         </ResponsiveNavBottomLink>
                     <!--add terms page-->
-                        <ResponsiveNavBottomLink :href="route('about')">
+                        <ResponsiveNavBottomLink :href="route('terms')" :active="route().current('terms')">
                                 <!--<font-awesome-icon :icon="['fass', 'asterisk']" class="w-4 h-4 flex-shrink-0"-->
                                 <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
                                 <span class="w-full">Terms</span>

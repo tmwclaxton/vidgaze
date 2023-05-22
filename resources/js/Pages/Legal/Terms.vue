@@ -1,22 +1,27 @@
-
-
 <template>
-<!--    <div v-html="myMarkdown"></div>-->
+
+    <Head title="Terms" />
+
+    <ConsistentPadding>
+        <Terms class="prose mx-auto "/>
+    </ConsistentPadding>
 </template>
 
-<script>
 
-// import myMarkdown from '~/markdown/terms.md'
-//
-// export default {
-//     data() {
-//         return {
-//             myMarkdown
-//         }
-//     }
-// }
+<script setup>
+import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
+
+const name = "Terms";
 </script>
 
-<!--import { html } from '~/markdown/terms.md';-->
-
+<script>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Terms from "~/markdown/terms.md";
+export default {
+    layout: AuthenticatedLayout,
+    components: {
+        Terms
+    }
+};
+</script>
 

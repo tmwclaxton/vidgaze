@@ -1,7 +1,8 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 
-import vue from '@vitejs/plugin-vue';
+import Vue from '@vitejs/plugin-vue'
+import Markdown from 'vite-plugin-vue-markdown'
 import * as path from "path";
 import svgLoader from 'vite-svg-loader';
 export default defineConfig({
@@ -11,15 +12,17 @@ export default defineConfig({
             input: 'resources/js/app.js',
             refresh: true,
         }),
-        vue({
+        Vue({
+            include: [/\.vue$/, /\.md$/],
             template: {
                 transformAssetUrls: {
                     base: null,
                     includeAbsolute: false,
                 },
-            },
+            }
         }),
         svgLoader(),
+        Markdown(),
     ],
     resolve: {
         alias: {

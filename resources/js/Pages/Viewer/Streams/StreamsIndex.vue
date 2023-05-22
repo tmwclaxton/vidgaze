@@ -10,7 +10,7 @@ import {debounce} from "lodash";
 import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
 import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.vue";
 import InfiniteCategoriesWithStreams from "@/Components/ContentRows/InfiniteCategoriesWithStreams.vue";
-
+const name = "StreamsIndex";
 const categories = ref([]);
 const fetchCategories = () =>  {
     axios.get(route('categories.index'),  {

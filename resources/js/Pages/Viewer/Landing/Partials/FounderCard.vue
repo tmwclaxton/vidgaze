@@ -1,5 +1,5 @@
 <template>
-    <div class="  w-max overflow-hidden text-center bg-zinc-200 rounded-xl  dark:bg-vidgaze-blue-nav hover:-translate-y-2 ease-in-out duration-300 transition  cursor-pointer  ">
+    <div class="  w-max overflow-hidden text-center border dark:border-none rounded-xl  dark:bg-vidgaze-blue-nav hover:-translate-y-2 ease-in-out duration-300 transition  cursor-pointer  ">
         <img class=" w-full max-h-64 aspect-square object-contain" v-bind:src="img" />
         <div class="p-4">
             <div class="text-md">

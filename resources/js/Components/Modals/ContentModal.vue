@@ -88,8 +88,8 @@ const togglePlaylistModal = () => {
                 <ShareIcon class="w-5 h-5" />
                 <p>Share</p>
             </Option>
-            <hr class="border-1 border-zinc-300 dark:border-zinc-800 my-0.5 mt-1">
             <div v-if=" $page.props.auth.user !== null" class="flex flex-col ">
+                 <hr class="border-1 border-zinc-300 dark:border-zinc-800 my-0.5 mt-1">
                 <Option v-if="!contentModalStore.itemDisinterest " @click="toggleDisinterest">
                     <BanIcon class="w-5 h-5" />
                     <p>Not interested</p>
@@ -106,15 +106,15 @@ const togglePlaylistModal = () => {
                     <TickIcon class="w-5 h-5" />
                     <p>Channel hidden</p>
                 </Option>
+                <Option v-if="!contentModalStore.reportedContent" @click="contentModalStore.reportContent(contentModalStore.item.id)" >
+                    <ReportIcon class="w-5 h-5" />
+                    <p>Report</p>
+                </Option>
+                <Option v-if="contentModalStore.reportedContent" @click="contentModalStore.reportContent(contentModalStore.item.id)">
+                    <TickIcon class="w-5 h-5" />
+                    <p>Reported</p>
+                </Option>
             </div>
-            <Option v-if="!contentModalStore.reportedContent" @click="contentModalStore.reportContent(contentModalStore.item.id)" >
-                <ReportIcon class="w-5 h-5" />
-                <p>Report</p>
-            </Option>
-            <Option v-if="contentModalStore.reportedContent" @click="contentModalStore.reportContent(contentModalStore.item.id)">
-                <TickIcon class="w-5 h-5" />
-                <p>Reported</p>
-            </Option>
         </OptionHolder>
 
     </div>
