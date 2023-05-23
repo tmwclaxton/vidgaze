@@ -6,8 +6,7 @@ import ToastList from "@/Components/Toast/ToastList.vue";
 import {useNavStore} from "@/Stores/NavStore";
 import VideoStreamModal from "@/Components/Modals/ContentModal.vue";
 import PlaylistModal from "@/Components/Modals/PlaylistModal.vue";
-import AudioPlayerModal from "@/Components/Modals/MiniPlayers/AudioPlayerModal.vue";
-import VideoPlayerModal from "@/Components/Modals/MiniPlayers/VideoPlayerModal.vue";
+import VideoStreamMiniPlayer from "@/Components/Modals/MiniPlayers/VideoStreamMiniPlayer.vue";
 import ShareModel from "@/Components/Modals/ShareModel.vue";
 const navStore = useNavStore();
 const name = 'AuthenticatedLayout';
@@ -49,8 +48,7 @@ watch(() => props.showingStudioLinks, (newVal) => {
                     <slot  />
                     <PlaylistModal/>
                     <ShareModel/>
-                    <AudioPlayerModal/>
-                    <VideoPlayerModal/>
+                    <VideoStreamMiniPlayer/>
                 </div>
                 <!--<CookieConsent/>-->
                 <VideoStreamModal/>

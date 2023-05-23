@@ -20,9 +20,8 @@ export const useQueueStore = defineStore('QueueStore', {
                     object: item.object,
                     type: item.type,
                 });
-                if (this.items.length === 1) {
-                    this.changeIndex(0);
-                }
+                // if (this.items.length === 1) {
+                this.changeIndex(this.index);
                 return true;
             }
 
@@ -41,13 +40,17 @@ export const useQueueStore = defineStore('QueueStore', {
             return false;
         },
         changeIndex(index) {
-            console.log("changing index to " + index);
+
             let playerModalStore = usePlayerStore();
             this.index = index;
+            playerModalStore.show = true;
             // set player modal store to this item
-            playerModalStore.object = this.items[this.index]['object'];
-            playerModalStore.type = this.items[this.index]['type'];
-            playerModalStore.buildPlayer();
+            if (this.items.length > 0) {
+                playerModalStore.destroyPlayers();
+                playerModalStore.object = this.items[this.index]['object'];
+                playerModalStore.type = this.items[this.index]['type'];
+                playerModalStore.buildPlayer();
+            }
         }
     }
 })
