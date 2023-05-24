@@ -20,8 +20,9 @@ export const useQueueStore = defineStore('QueueStore', {
                     object: item.object,
                     type: item.type,
                 });
-                // if (this.items.length === 1) {
-                this.changeIndex(this.index);
+                if (this.items.length === 1) {
+                    this.changeIndex(this.index);
+                }
                 return true;
             }
 

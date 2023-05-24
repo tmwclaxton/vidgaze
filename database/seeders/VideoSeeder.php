@@ -61,7 +61,6 @@ class VideoSeeder extends Seeder
 
         $categories = Category::all();
         $sources = ['YouTube', 'Vimeo', 'Dailymotion'];
-
         for ($i = 0; $i < 100; $i++) {
             $title = ucwords(implode(' ', $this->getRandomWords(4)));
             $description = ucfirst(implode(' ', $this->getRandomWords(20)));
@@ -72,7 +71,7 @@ class VideoSeeder extends Seeder
             $video = Video::create([
                 'slug' => rand(0, 999999),
                 'creator_id' => 1,
-                'preferred_source' => rand(0, 1) ? 'YouTube' : 'Vimeo',
+                'preferred_source' => $sources[array_rand($sources)],
                 'title' => $title,
                 'description' => $description,
                 'karma' => rand(0, 100),
