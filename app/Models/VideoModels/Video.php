@@ -55,7 +55,9 @@ class Video extends Model
         return $this->hasMany(VideoSource::class, 'video_id');
     }
     public function getPreferredSourceID() {
-        return $this->sources->where('source_name', $this->preferred_source)->first()['external_id'];
+        $videoSource = $this->sources->where('source_name', $this->preferred_source)->first();
+        if(!$videoSource) return null;
+        return $videoSource['external_id'];
     }
 
     public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo

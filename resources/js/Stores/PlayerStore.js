@@ -1,42 +1,87 @@
 import { defineStore } from 'pinia'
+import {useQueueStore} from "@/Stores/QueueStore";
 
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
             object: null,
             type: null,
+            autoplay: false,
+            start_time: 0,
             players: [], //in the form of [[object => {id: 1, ...}, player => {}], ...] this is so we can have multiple players on the page like for shorts and be able to control them individually
-            show: false,
-            autoplay: true,
-            start_time: 47,
+            showMiniPlayer: false,
         }
     },
+    getters: {
+        showMiniPlayer: (state) => {
+            // Compute the value of showMiniPlayer based on your logic
+            // For example, you can check if players array is not empty
+            let queueStore = useQueueStore();
+            return queueStore.items !== undefined && queueStore.items.length > 0;
+        },
+    },
+
     actions: {
 
         play(player_id) {
             const player = this.players.find(({ object }) => object.id === player_id);
-
             // if player is not found, return
             if (!player) {
                 return;
             }
 
             // check object preferred source
-            if (this.object.preferred_source === "YouTube") {
+            if (["Vimeo", "Dailymotion", "Twitch"].includes(this.object.preferred_source)) {
+                player.player.play();
+            } else if (this.object.preferred_source === "YouTube") {
                 player.player.playVideo();
+            }
+
+        },
+
+        pause(player_id) {
+            const player = this.players.find(({ object }) => object.id === player_id);
+            // if player is not found, return
+            if (!player) {
+                return;
+            }
+
+            // check object preferred source
+            if (["Vimeo", "Dailymotion", "Twitch"].includes(this.object.preferred_source)) {
+                player.player.pause();
+            } else if (this.object.preferred_source === "YouTube") {
+                player.player.pauseVideo();
             }
         },
 
+        endVideo() {
+          // if shorts scroll to next short
+          // if not shorts, check if queue has items and play next item
+            // if not shorts and no queue items, stop player and close player modal
+        },
 
-        buildPlayer() {
-            this.show = true;
+        startViewRecord() {
+
+        },
+
+        pauseViewRecord() {
+
+        },
 
 
 
-            // embeds often rebuild the div they are in which is a pain so we will just remove the div and rebuild it
+
+        buildPlayer(playerDivHolder = null) {
 
             //create player_div element inside player_div_holder
-            let playerDivHolder = document.getElementById('player_div_holder');
+            if (!playerDivHolder) {
+                playerDivHolder = document.getElementById('player_div_holder');
+            }
+
+            this.show = true;
+            // embeds often rebuild the div they are in which is a pain so we will just remove the div and rebuild it
+
+
             // // create player_div element inside player_div_holder
             let playerDiv = playerDivHolder.appendChild(document.createElement('div'));
             playerDiv.id = 'player_div';
@@ -47,8 +92,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // // create player
             if (this.object.preferred_source === "YouTube") {
                 this.buildYouTubePlayer(playerDiv);
-            }
-            else if (this.object.preferred_source === "Vimeo") {
+            } else if (this.object.preferred_source === "Vimeo") {
                 this.buildVimeoPlayer(playerDiv);
             } else if (this.object.preferred_source === "Dailymotion") {
                 this.buildDailymotionPlayer(playerDiv);
@@ -76,8 +120,19 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     'start': this.start_time,
                 },
                 events: {
-                    // onReady: onPlayerReady,
-                    // onStateChange: onPlayerStateChange,
+                    onReady: this.startViewRecord(),
+                    // when YouTube video ends run the endVideo function
+                    onStateChange: (event) => {
+                        if (event.data === 0) {
+                            this.endVideo();
+                        }
+                        if (event.data === 1) {
+                            this.startViewRecord();
+                        }
+                        if (event.data === 2) {
+                            this.pauseViewRecord();
+                        }
+                    }
                 }
             });
 
@@ -147,8 +202,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     controls: true,
                 });
 
-               console.log(player);
-
                 this.pushPlayer(player);
         },
 
@@ -163,34 +216,18 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         destroyPlayers() {
-            // this.players.forEach(({ player }) => {
-            //     if (player.destroy) {
-            //         player.destroy();
-            //     } else if (player.unload) {
-            //         player.unload();
-            //     } else if (player.remove) {
-            //         player.remove();
-            //     }
-            // });
-
-            // remove all player_div elements
             document.querySelectorAll('#player_div').forEach(n => n.remove());
-
-            // this.players.forEach(({ player }) => {
-            //     if (player !== null && player.hasOwnProperty('el')) {
-            //         player.el.remove();
-            //     }
-            // });
-            //
-            // // if playerDivHolder exists, delete it
-            // let playerDivHolder = document.getElementById('player_div_holder');
-            // //delete divs
-            // if (playerDivHolder) {
-            //     // delete all children of playerDivHolder
-            //     // playerDivHolder.querySelectorAll('*').forEach(n => n.remove());
-            //
-            // }
             this.players = [];
+        },
+
+        destroyPlayer(player_id) {
+            const player = this.players.find(({ object }) => object.id === player_id);
+            // if player is not found, return
+            if (!player) {
+                return;
+            }
+            // player.player.destroy(); // this won't work for twitch
+            this.players = this.players.filter(({ object }) => object.id !== player_id);
         },
 
         resetVariables() {
@@ -199,8 +236,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
             this.start_time = 0;
             this.object = null;
         }
-
-
 
     }
 })

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\CreatorModels\Creator;
 use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoSource;
 use Illuminate\Database\Seeder;
@@ -58,7 +59,7 @@ class VideoSeeder extends Seeder
             'source_name' => 'YouTube',
             'external_id' => 'D26U'
         ]);
-
+        $creators = Creator::factory(50)->create();
         $categories = Category::all();
         $sources = ['YouTube', 'Vimeo', 'Dailymotion'];
         for ($i = 0; $i < 100; $i++) {
@@ -70,7 +71,7 @@ class VideoSeeder extends Seeder
 
             $video = Video::create([
                 'slug' => rand(0, 999999),
-                'creator_id' => 1,
+                'creator_id' => $creators->random()->id,
                 'preferred_source' => $sources[array_rand($sources)],
                 'title' => $title,
                 'description' => $description,
@@ -97,7 +98,7 @@ class VideoSeeder extends Seeder
                 ]);
             }
         }
-        //Video::factory()->count(100)->create();
+        Video::factory()->count(100)->create();
 
     }
 

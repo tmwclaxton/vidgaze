@@ -135,9 +135,9 @@ export default {
         </div>
 
         <!-- present the founders -->
-        <div class="relative w-screen min-h-screen flex  bg-white dark:bg-vidgaze-blue ">
+        <div id="support" class="relative w-screen min-h-screen flex  bg-white dark:bg-vidgaze-blue ">
 
-            <div class="  m-auto  py-8">
+            <div class="grid grid-cols-2 m-auto py-8 ">
                 <div class="max-w-4xl w-full  mx-auto px-4">
                     <h2 class="text-4xl font-bold mb-8 mx-auto text-center ">The Team</h2>
                     <div class="flex flex-wrap flex-row gap-8 items-center justify-center p-14 ">
@@ -151,6 +151,21 @@ export default {
                                      github="https://github.com/joshuasy10"
                                      linkedin="https://www.linkedin.com/in/joshua-young-8a97911a2/"
                                      instagram="https://www.instagram.com/joshuasy1o/" />
+                    </div>
+                </div>
+                <div id="support">
+                    <h2 class="text-4xl font-bold mb-8 mx-auto text-center ">Support Information</h2>
+                    <div class="flex flex-wrap flex-row gap-8 items-center justify-center p-14 w-full">
+                        <div class="flex flex-col gap-y-6 mt-2 w-full">
+                            <div class="flex flex-row gap-x-4 mx-auto">
+                                <font-awesome-icon :icon="['fas', 'envelope']"  class="h-8"/>
+                                <p class="text-xl font-bold text-center "><a href="mailto:support@vidgaze.tv">support@vidgaze.tv</a></p>
+                            </div>
+                            <div class="flex flex-row gap-x-4 mx-auto ">
+                                <font-awesome-icon :icon="['fas', 'phone']"  class="h-8"/>
+                                <p class="text-xl font-bold text-center ">Phone: <a href="tel:+447478 635 635">+44 7837 370669</a></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -195,10 +210,10 @@ export default {
                         </div>
                     </section>
                 </div>
-
             </div>
-
         </div>
+
+
         <div class="relative w-screen  bg-white dark:bg-vidgaze-blue    ">
          <Footer/>
         </div>

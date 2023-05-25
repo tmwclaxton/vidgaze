@@ -1,11 +1,10 @@
 <script setup>
 import {onMounted, ref} from "vue";
 
-import {usePlayerStore} from "@/Stores/PlayerModalStore";
+import {usePlayerStore} from "@/Stores/PlayerStore";
 import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {useQueueStore} from "@/Stores/QueueStore";
-import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
 import CornerInfo from "@/Components/Cards/VideoStreamCard/Partials/CornerInfo.vue";
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -96,8 +95,8 @@ onMounted(() => {
 </script>
 
 <template>
-    <div ref="draggableDiv"   class="z-50 fixed shadow shadow-md bottom-5 right-5   flex-col
-     bg-white dark:bg-vidgaze-blue-dropdown rounded-xl overflow-hidden group w-96" v-bind:class="(queueStore.items !== undefined && queueStore.items.length > 0) ? 'flex' : 'hidden' ">
+    <div ref="draggableDiv"   class="z-50 fixed shadow shadow-md bottom-5 right-5
+     bg-white dark:bg-vidgaze-blue-dropdown rounded-xl overflow-hidden group w-96" v-bind:class="playerStore.showMiniPlayer ? 'flex flex-col' : 'hidden' ">
 
         <div v-if="queueStore.items[queueStore.index] !== undefined" class="overflow-hidden h-0 group-hover: h-full  group-hover: p-2 duration-300 ease-in-out transition delay-75 flex flex-row gap-x-2 ">
             <div class="flex-shrink-0 cursor-pointer h-12 my-auto aspect-square rounded-full bg-zinc-200 dark:bg-zinc-800 relative">

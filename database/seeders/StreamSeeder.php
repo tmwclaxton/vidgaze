@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\CreatorModels\Creator;
 use App\Models\StreamModels\Stream;
 use App\Models\StreamModels\StreamSource;
 use Illuminate\Database\Seeder;
@@ -31,6 +32,7 @@ class StreamSeeder extends Seeder
             'external_id' => 'jfKfPfyJRdk'
         ]);
 
+        $creators = Creator::factory(50)->create();
         $categories = Category::all();
         $sources = ['YouTube', 'Twitch'];
         for ($i = 0; $i < 100; $i++) {
@@ -42,7 +44,7 @@ class StreamSeeder extends Seeder
 
             $stream = Stream::create([
                 'slug' => rand(0, 999999),
-                'creator_id' => 1,
+                'creator_id' => $creators->random()->id,
                 'preferred_source' => $sources[array_rand($sources)],
                 'title' => $title,
                 'description' => $description ,

@@ -30,8 +30,11 @@ class Stream extends Model
     public function sources() {
         return $this->hasMany(StreamSource::class, 'stream_id');
     }
+
     public function getPreferredSourceID() {
-        return $this->sources->where('source_name', $this->preferred_source)->first()['external_id'];
+        $streamSource = $this->sources->where('source_name', $this->preferred_source)->first();
+        if(!$streamSource) return null;
+        return $streamSource['external_id'];
     }
     public function awards() {
         return $this->hasMany(StreamAward::class);

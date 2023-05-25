@@ -53,9 +53,9 @@ Route::get('/about', [SupportController::class, 'about'])->name('about');
 //policy and terms
 Route::get('/terms_of_service', [SupportController::class, 'terms'])->name('terms');
 Route::get('/privacy_policy', [SupportController::class,'privacy'])->name('privacy');
-Route::get('/support', [SupportController::class,'support'])->name('support');
+//Route::get('/support', [SupportController::class,'support'])->name('support');
 // support email route
-Route::post('/support', [SupportController::class,'sendSupportEmail'])->name('support.email.send');
+//Route::post('/support', [SupportController::class,'sendSupportEmail'])->name('support.email.send');
 
 
 
