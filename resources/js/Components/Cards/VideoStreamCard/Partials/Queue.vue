@@ -25,30 +25,30 @@ const addToQueue = () => {
     if (inQueue.value) {
         if(queueStore.remove(props.item.id)) {
             inQueue.value = false;
-            toastStore.add({
-                message: 'Removed from Queue',
-                type: "error",
-            });
+            // toastStore.add({
+            //     message: 'Removed from Queue',
+            //     type: "error",
+            // });
         } else {
-            toastStore.add({
-                message: 'Error removing from Queue',
-                type: "error",
-            });
+            // toastStore.add({
+            //     message: 'Error removing from Queue',
+            //     type: "error",
+            // });
         }
 
 
     } else {
         if (queueStore.add({object: props.item,type: "video",}) ) {
             inQueue.value = true;
-            toastStore.add({
-                message: 'Added to Queue',
-                type: "success",
-            });
+            // toastStore.add({
+            //     message: 'Added to Queue',
+            //     type: "success",
+            // });
         } else {
-            toastStore.add({
-                message: 'Error adding to Queue',
-                type: "error",
-            });
+            // toastStore.add({
+            //     message: 'Error adding to Queue',
+            //     type: "error",
+            // });
         }
 
     }

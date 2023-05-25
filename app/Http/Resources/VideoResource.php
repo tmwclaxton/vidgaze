@@ -32,6 +32,7 @@ class VideoResource extends JsonResource
             'creator' => new CreatorResource($this->creator()->first()),
             'comment_count' => number_format_short($this->comment_count),
             'preferred_source' => $this->preferred_source,
+            'external_id' => $this->getPreferredSourceID(),
         ];
     }
 }

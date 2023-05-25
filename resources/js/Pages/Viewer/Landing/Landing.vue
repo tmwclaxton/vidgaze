@@ -1,6 +1,4 @@
 <script setup>
-import ScrollParallax from 'vue3-parallax/src/components/ScrollParallax.vue';
-import SearchIcon from '~/images/icons/search.svg';
 import {onMounted, onUnmounted, ref} from "vue";
 import FounderCard from "@/Pages/Viewer/Landing/Partials/FounderCard.vue";
 import Footer from "@/Components/Footer.vue";

@@ -1,11 +1,5 @@
 <script setup>
-import EyeIcon from '#icons/eye.svg';
-import ClockIcon from '#icons/clock_nofill.svg';
-import ClockFillIcon from '#icons/clock.svg';
-import FireIcon from '#icons/shorts.svg';
 import DotsIcon from '#icons/3dots.svg';
-import Duration from "@/Components/Cards/VideoStreamCard/Partials/Duration.vue";
-import WatchLater from "@/Components/Cards/VideoStreamCard/Partials/WatchLater.vue";
 // Import the contentModalStore module
 import {useContentModalStore} from "@/Stores/ContentModalStore.js";
 import {computed, onMounted, onUnmounted, ref} from "vue";

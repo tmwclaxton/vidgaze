@@ -54,18 +54,10 @@ class Video extends Model
     {
         return $this->hasMany(VideoSource::class, 'video_id');
     }
-    public function getPrimarySourceID() {
+    public function getPreferredSourceID() {
         return $this->sources->where('source_name', $this->preferred_source)->first()['external_id'];
     }
-    public function dislikes(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(VideoDislike::class);
-        //->join('video_dislikes', 'video_dislikes.creator_id', '=', 'creators.id');
-    }
-    public function likes(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(VideoLike::class);
-    }
+
     public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Creator::class);

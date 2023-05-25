@@ -29,6 +29,7 @@ class StreamResource extends JsonResource
             'live_viewer_count' => number_format_short($this->live_viewer_count),
             'thumbnail_url' => $this->thumbnail_url,
             'creator' => new CreatorResource( $this->creator()->first() ),
+            'external_id' => $this->getPreferredSourceID(),
         ];
     }
 }

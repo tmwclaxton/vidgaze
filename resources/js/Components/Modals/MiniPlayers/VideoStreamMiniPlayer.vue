@@ -6,6 +6,7 @@ import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {useQueueStore} from "@/Stores/QueueStore";
 import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
+import CornerInfo from "@/Components/Cards/VideoStreamCard/Partials/CornerInfo.vue";
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
 const expandQueue = ref(false);
@@ -95,11 +96,11 @@ onMounted(() => {
 </script>
 
 <template>
-    <div ref="draggableDiv"   class="z-40 fixed shadow shadow-md bottom-5 right-5   flex-col
+    <div ref="draggableDiv"   class="z-50 fixed shadow shadow-md bottom-5 right-5   flex-col
      bg-white dark:bg-vidgaze-blue-dropdown rounded-xl overflow-hidden group w-96" v-bind:class="(queueStore.items !== undefined && queueStore.items.length > 0) ? 'flex' : 'hidden' ">
 
         <div v-if="queueStore.items[queueStore.index] !== undefined" class="overflow-hidden h-0 group-hover: h-full  group-hover: p-2 duration-300 ease-in-out transition delay-75 flex flex-row gap-x-2 ">
-            <div class="flex-shrink-0 cursor-pointer h-12 my-auto aspect-square rounded-full bg-zinc-200 dark:bg-zinc-800">
+            <div class="flex-shrink-0 cursor-pointer h-12 my-auto aspect-square rounded-full bg-zinc-200 dark:bg-zinc-800 relative">
                 <img class="w-full h-full rounded-full" v-bind:src="queueStore.items[queueStore.index].object.creator.avatar_url">
             </div>
             <div class=" flex-grow  rounded-full px-2 -mt-0.5 ">
@@ -136,9 +137,9 @@ onMounted(() => {
             </div>
         </div>
 
-        <div class="flex flex-col pb-1" v-if="expandQueue">
-            <div class="my-0.5 border border-zinc-200 dark:border-zinc-800"/>
-            <div v-for="(item, index) in queueStore.items" @click="queueStore.changeIndex(index)" class="flex flex-row gap-x-2 p-1 cursor-pointer">
+        <div class="my-0.5 border border-zinc-200 dark:border-zinc-800" v-if="expandQueue"/>
+        <div class="flex flex-col pb-1 max-h-32 overflow-y-auto" v-if="expandQueue">
+            <div v-for="(item, index) in queueStore.items" @click="queueStore.changeIndex(index)" class="flex flex-row gap-x-2 p-1 cursor-pointer ">
                 <div class=" mx-0.5 ml-2 my-auto flex h-3 aspect-square">
                     <font-awesome-icon
                         v-if="queueStore.index === index"
@@ -146,10 +147,19 @@ onMounted(() => {
                         class=" h-full  my-auto"
                     />
                 </div>
-                <img class="h-12 aspect-[21/12] rounded-lg" :src="item.object.thumbnail_url">
+                <div class="relative h-12 aspect-21/12">
+                    <img class="absolute w-full h-full rounded-lg" :src="item.object.thumbnail_url">
+                    <CornerInfo v-if="item.object.duration != null" :item="item.object" class="absolute bottom-0 right-0 m-1">
+                        <p class="my-auto text-xs" v-text="item.object.duration"/>
+                    </CornerInfo>
+
+                    <CornerInfo v-if="item.object.viewers != null" :item="item.object" class="absolute bottom-0 right-0 m-1 ">
+                        <p class="my-auto text-xs" v-text="'Live'"/>
+                    </CornerInfo>
+                </div>
                 <div class="flex-grow my-auto">
                     <p class="text-sm font-semibold text-left" v-text="item.object.title"></p>
-                    <p class="text-xs text-left" v-text="item.object.creator.name"></p>
+                    <p class="text-xs text-left" v-text="item.object.creator.name "></p>
                 </div>
             </div>
         </div>

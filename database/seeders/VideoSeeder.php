@@ -11,53 +11,53 @@ class VideoSeeder extends Seeder
 {
     public function run(): void
     {
-        //$vid1 = Video::create([
-        //    'slug' => rand(0, 999999),
-        //    'creator_id' => 1,
-        //    'preferred_source' => 'YouTube',
-        //    'title' => 'Communism and Noah\'s Flood',
-        //    'description' => 'Could we really have predicted the horrifying outcome of communism from a story we tell to children?',
-        //    'karma' => '32',
-        //    'duration' => '2700',
-        //    'category_id' => 1,
-        //    'tags' => json_encode(['Communism', 'Noah\'s Flood']),
-        //    'visibility' => 'public',
-        //    'like_count' => 5,
-        //    'thumbnail_url' => 'https://picsum.photos/id/33/800/800',
-        //    'time_published' => now(),
-        //]);
-        //VideoSource::create([
-        //    'video_id' => $vid1->id,
-        //    'source_name' => 'YouTube',
-        //    'external_id' => 'D26kGNNqjhU'
-        //]);
-        //VideoSource::create([
-        //    'video_id' => $vid1->id,
-        //    'source_name' => 'Vimeo',
-        //    'external_id' => 'D26kGN456NqjhU'
-        //]);
+        $vid1 = Video::create([
+            'slug' => rand(0, 99911999),
+            'creator_id' => 1,
+            'preferred_source' => 'YouTube',
+            'title' => 'Communism and Noah\'s Flood',
+            'description' => 'Could we really have predicted the horrifying outcome of communism from a story we tell to children?',
+            'karma' => '32',
+            'duration' => '2700',
+            'category_id' => 1,
+            'tags' => json_encode(['Communism', 'Noah\'s Flood']),
+            'visibility' => 'public',
+            'like_count' => 5,
+            'thumbnail_url' => 'https://picsum.photos/id/33/800/800',
+            'time_published' => now(),
+        ]);
+        VideoSource::create([
+            'video_id' => $vid1->id,
+            'source_name' => 'YouTube',
+            'external_id' => 'D26kGNNqjhU'
+        ]);
+        VideoSource::create([
+            'video_id' => $vid1->id,
+            'source_name' => 'Vimeo',
+            'external_id' => 'D26kGN456NqjhU'
+        ]);
         //
         ////2nd video
-        //$vid2 = Video::create([
-        //    'slug' => rand(0, 999999),
-        //    'creator_id' => 1,
-        //    'preferred_source' => 'YouTube',
-        //    'title' => 'The Truth About the Moon Landing',
-        //    'description' => 'The truth about the moon landing is that it was faked.',
-        //    'karma' => '32',
-        //    'duration' => '2700',
-        //    'category_id' => 1,
-        //    'tags' => json_encode(['Moon Landing', 'Conspiracy']),
-        //    'visibility' => 'public',
-        //    'like_count' => 5,
-        //    'thumbnail_url' => 'https://picsum.photos/id/33/800/800',
-        //    'time_published' => now(),
-        //]);
-        //VideoSource::create([
-        //    'video_id' => $vid2->id,
-        //    'source_name' => 'YouTube',
-        //    'external_id' => 'D26U'
-        //]);
+        $vid2 = Video::create([
+            'slug' => rand(0, 99911999),
+            'creator_id' => 1,
+            'preferred_source' => 'YouTube',
+            'title' => 'The Truth About the Moon Landing',
+            'description' => 'The truth about the moon landing is that it was faked.',
+            'karma' => '32',
+            'duration' => '2700',
+            'category_id' => 1,
+            'tags' => json_encode(['Moon Landing', 'Conspiracy']),
+            'visibility' => 'public',
+            'like_count' => 5,
+            'thumbnail_url' => 'https://picsum.photos/id/33/800/800',
+            'time_published' => now(),
+        ]);
+        VideoSource::create([
+            'video_id' => $vid2->id,
+            'source_name' => 'YouTube',
+            'external_id' => 'D26U'
+        ]);
 
         $categories = Category::all();
         $sources = ['YouTube', 'Vimeo', 'Dailymotion'];
@@ -87,7 +87,7 @@ class VideoSeeder extends Seeder
                 'live_viewer_count' => rand(0, 1),
             ]);
 
-            $source_count = rand(1, 3);
+            $source_count = 3;
 
             for ($j = 0; $j < $source_count; $j++) {
                 VideoSource::create([
@@ -97,7 +97,7 @@ class VideoSeeder extends Seeder
                 ]);
             }
         }
-        Video::factory()->count(100)->create();
+        //Video::factory()->count(100)->create();
 
     }
 

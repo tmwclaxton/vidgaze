@@ -52,6 +52,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 this.buildVimeoPlayer(playerDiv);
             } else if (this.object.preferred_source === "Dailymotion") {
                 this.buildDailymotionPlayer(playerDiv);
+            } else if (this.object.preferred_source === "Twitch") {
+                this.buildTwitchPlayer(playerDiv);
             }
 
 
@@ -103,7 +105,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         buildDailymotionPlayer(playerDiv) {
-            // const videoId = this.object.id;
+            // const videoId = this.object.external_id;
             const videoId = 'x8l6g4x';
             if (!document.getElementById(videoId)) {
                 const tag = document.createElement('script');
@@ -134,6 +136,22 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         },
 
+        buildTwitchPlayer(playerDiv) {
+               const player = new Twitch.Player(playerDiv, {
+                    // video: this.object.id,
+                    channel: 'monstercat',
+                    parent: ["localhost","127.0.0.1","vidgaze.tv","www.vidgaze.tv","www.staging.vidgaze.tv","staging.vidgaze.tv"],
+                    width: '100%',
+                    height: '100%',
+                    autoplay: this.autoplay ? 1 : 0,
+                    controls: true,
+                });
+
+               console.log(player);
+
+                this.pushPlayer(player);
+        },
+
         pushPlayer(player) {
             //create player and add to players array
             this.players.push(
@@ -145,17 +163,33 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         destroyPlayers() {
-            this.players.forEach(({ player }) => {
-                player.destroy();
-            });
+            // this.players.forEach(({ player }) => {
+            //     if (player.destroy) {
+            //         player.destroy();
+            //     } else if (player.unload) {
+            //         player.unload();
+            //     } else if (player.remove) {
+            //         player.remove();
+            //     }
+            // });
 
-            // if playerDivHolder exists, delete it
-            let playerDivHolder = document.getElementById('player_div_holder');
-            //delete divs
-            if (playerDivHolder) {
-                // delete all children of playerDivHolder
-                playerDivHolder.querySelectorAll('*').forEach(n => n.remove());
-            }
+            // remove all player_div elements
+            document.querySelectorAll('#player_div').forEach(n => n.remove());
+
+            // this.players.forEach(({ player }) => {
+            //     if (player !== null && player.hasOwnProperty('el')) {
+            //         player.el.remove();
+            //     }
+            // });
+            //
+            // // if playerDivHolder exists, delete it
+            // let playerDivHolder = document.getElementById('player_div_holder');
+            // //delete divs
+            // if (playerDivHolder) {
+            //     // delete all children of playerDivHolder
+            //     // playerDivHolder.querySelectorAll('*').forEach(n => n.remove());
+            //
+            // }
             this.players = [];
         },
 

@@ -3,7 +3,6 @@ import ClockIcon from '#icons/clock_nofill.svg';
 import ClockFillIcon from '#icons/clock.svg';
 import FireIcon from '#icons/shorts.svg';
 import DotsIcon from '#icons/3dots.svg';
-import Duration from "@/Components/Cards/VideoStreamCard/Partials/Duration.vue";
 import WatchLater from "@/Components/Cards/VideoStreamCard/Partials/WatchLater.vue";
 // Import the contentModalStore module
 import {useContentModalStore} from "@/Stores/ContentModalStore.js";
@@ -11,6 +10,8 @@ import {computed, ref} from "vue";
 import Queue from "@/Components/Cards/VideoStreamCard/Partials/Queue.vue";
 import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
+import Viewers from "@/Components/Cards/VideoStreamCard/Partials/CornerInfo.vue";
+import CornerInfo from "@/Components/Cards/VideoStreamCard/Partials/CornerInfo.vue";
 
 const contentModalStore = useContentModalStore();
 const shareModalStore = useShareModalStore();
@@ -73,17 +74,19 @@ const dotsIconShow = computed(() => {
                     <img class="object-cover w-full h-full bg-zinc-900" v-bind:src="item.thumbnail_url"   alt=""/>
                 </a>
 
-                <Duration v-if="item.duration != null" :item="item" class="absolute bottom-0 right-0 m-1.5"/>
+                <!--<Duration />-->
 
-                <div v-if="item.viewers != null" class="absolute bottom-0 right-0 m-1.5 py-auto px-2 flex flex-col align-middle text-white font-semibold text-sm bg-black opacity-75
-                    rounded dark:text-zinc-200">
+                <CornerInfo v-if="item.duration != null" :item="item" class="absolute bottom-0 right-0 m-1.5">
+                    <p class="my-auto" v-text="item.duration"/>
+                </CornerInfo>
 
+                <CornerInfo v-if="item.viewers != null" :item="item" class="absolute bottom-0 right-0 m-1.5">
                     <p class="my-auto" v-text="item.viewers"/>
-                </div>
+                </CornerInfo>
 
                 <div  class="flex flex-col absolute top-0 right-0 m-1.5 space-y-1 items-end opacity-0  duration-500 delay-500 group-hover:opacity-100 transition-none group-hover:transition-opacity">
                     <WatchLater v-if="item.duration != null && $page.props.auth.user != null" :item="item" />
-                    <Queue v-if="item.duration != null" :item="item" />
+                    <Queue   :item="item" />
                 </div>
 
 
@@ -99,7 +102,8 @@ const dotsIconShow = computed(() => {
 
                         <a :href="route('watch.show', {slug: item.slug})" v-text="item.title" class="pr-2"></a>
 
-<p v-text="item.preferred_source" class="text-xs font-normal text-gray-500 dark:text-gray-400"></p>
+                        <p v-text="item.preferred_source" class="text-xs font-normal text-gray-500 dark:text-gray-400"/>
+
                     </span>
 
                         <div class=" flex flex-row pt-1">
