@@ -58,13 +58,15 @@ export const usePlayerStore = defineStore('PlayerStore', {
           // if shorts scroll to next short
           // if not shorts, check if queue has items and play next item
             // if not shorts and no queue items, stop player and close player modal
+            console.log('end video');
         },
 
         startViewRecord() {
-
+            console.log('start view record');
         },
 
         pauseViewRecord() {
+            console.log('pause view record');
 
         },
 
@@ -154,7 +156,19 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 player.ready().then(function () {
                     player.setCurrentTime(this.start_time);
                 }.bind(this));
-            })
+            });
+
+            player.on('play', () => {
+                this.startViewRecord();
+            });
+
+            player.on('pause', () => {
+                this.pauseViewRecord();
+            });
+
+            player.on('ended', () => {
+                this.endVideo();
+            });
 
             this.pushPlayer(player);
         },
@@ -180,9 +194,17 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     .then((player) => {
                         this.pushPlayer(player);
 
-                        // player.on(dailymotion.events.VIDEO_START, () => {
-                        //     player.seek(startTime);
-                        // });
+                        player.on(dailymotion.events.VIDEO_PLAY, () => {
+                            this.startViewRecord();
+                        });
+
+                        player.on(dailymotion.events.VIDEO_PAUSE, () => {
+                            this.pauseViewRecord();
+                        });
+
+                        player.on(dailymotion.events.VIDEO_END, () => {
+                            this.endVideo();
+                        });
 
 
                     });
@@ -203,6 +225,21 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 });
 
                 this.pushPlayer(player);
+                // on play start view record
+                player.addEventListener(Twitch.Player.PLAY, () => {
+                    this.startViewRecord();
+                });
+
+                // on pause stop view record
+                player.addEventListener(Twitch.Player.PAUSE, () => {
+                    this.pauseViewRecord();
+                });
+
+                // on video end stop view record
+                player.addEventListener(Twitch.Player.ENDED, () => {
+                    this.endVideo();
+                });
+
         },
 
         pushPlayer(player) {
