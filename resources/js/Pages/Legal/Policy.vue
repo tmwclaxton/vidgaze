@@ -22,7 +22,7 @@ export default {
     <Head title="Policy" />
 
     <ConsistentPadding>
-        <Policy class="prose prose-sky mx-auto "/>
+        <Policy class="prose prose-sky dark:prose-invert mx-auto "/>
     </ConsistentPadding>
 </template>
 

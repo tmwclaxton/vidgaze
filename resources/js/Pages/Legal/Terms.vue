@@ -3,7 +3,7 @@
     <Head title="Terms" />
 
     <ConsistentPadding>
-        <Terms class="prose prose-sky mx-auto "/>
+        <Terms class="prose prose-sky dark:prose-invert mx-auto "/>
     </ConsistentPadding>
 </template>
 
