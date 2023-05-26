@@ -8,7 +8,7 @@ export default {
 };
 </script>
 <template>
-    <Head title="Popular Streams" />
+    <Head title="VidGaze Music" />
 
 
                 <div class=" mx-auto   h-[calc(100vh-4rem)] py-auto justify-center flex flex-col">

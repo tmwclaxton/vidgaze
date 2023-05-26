@@ -56,8 +56,10 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         endVideo() {
           // if shorts scroll to next short
-          // if not shorts, check if queue has items and play next item
-            // if not shorts and no queue items, stop player and close player modal
+          // if not short check if queue has items and play next item
+          // if not shorts and miniplayer with no queue items, stop player and close player modal
+          // if not shorts and no miniplayer, stop player and show end screen with suggestions
+
             console.log('end video');
         },
 

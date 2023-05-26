@@ -20,16 +20,6 @@ let initialX = 0;
 let initialY = 0;
 
 
-const loadScript = (src, id) => {
-    if (!document.getElementById(id)) {
-        const tag = document.createElement('script');
-        tag.src = src;
-        tag.id = id;
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    }
-};
-
 onMounted(() => {
 
     draggableDiv.value.style.right = '15px';
@@ -90,6 +80,16 @@ onMounted(() => {
 
     // Dailymotion works by loading the script specifically for each individual video
 });
+
+const loadScript = (src, id) => {
+    if (!document.getElementById(id)) {
+        const tag = document.createElement('script');
+        tag.src = src;
+        tag.id = id;
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    }
+};
 
 
 </script>
