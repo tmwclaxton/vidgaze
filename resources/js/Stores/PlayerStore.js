@@ -8,7 +8,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             type: null,
             autoplay: false,
             start_time: 0,
-            players: [], //in the form of [[object => {id: 1, ...}, player => {}], ...] this is so we can have multiple players on the page like for shorts and be able to control them individually
+            players: [], //in the form of [[type => "video", object => {id: 1, ...}, player => player_object], ...] this is so we can have multiple players on the page like for shorts and be able to control them individually
             showMiniPlayer: false,
         }
     },
@@ -22,9 +22,18 @@ export const usePlayerStore = defineStore('PlayerStore', {
     },
 
     actions: {
+        findPlayer(player_id, player_type) {
+            // find player in players array
+            for (let i = 0; i < this.players.length; i++) {
+                if (this.players[i]['object'].id === player_id && this.players[i]['type'] === player_type) {
+                    return this.players[i];
+                }
+            }
+            return false;
+        },
 
-        play(player_id) {
-            const player = this.players.find(({ object }) => object.id === player_id);
+        play(player_id, player_type) {
+            const player = this.findPlayer(player_id, player_type);
             // if player is not found, return
             if (!player) {
                 return;
@@ -39,8 +48,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         },
 
-        pause(player_id) {
-            const player = this.players.find(({ object }) => object.id === player_id);
+        pause(player_id, player_type) {
+            const player = this.findPlayer(player_id, player_type);
             // if player is not found, return
             if (!player) {
                 return;
@@ -59,6 +68,18 @@ export const usePlayerStore = defineStore('PlayerStore', {
           // if not short check if queue has items and play next item
           // if not shorts and miniplayer with no queue items, stop player and close player modal
           // if not shorts and no miniplayer, stop player and show end screen with suggestions
+
+            if (this.showMiniPlayer) {
+                // check if queue has an item after this one
+                let queueStore = useQueueStore();
+                if (queueStore.items.length > queueStore.index + 1) {
+                    queueStore.changeIndex(queueStore.index + 1);
+                } else {
+                    this.destroyPlayers();
+                    this.showMiniPlayer = false;
+                }
+
+            }
 
             console.log('end video');
         },
@@ -211,7 +232,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
                     });
                 this.pushPlayer(player);
-            } , 500);
+            } , 1000);
 
         },
 
@@ -248,6 +269,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             //create player and add to players array
             this.players.push(
                 {
+                    type: this.type,
                     object: this.object,
                     player: player
                 }
@@ -259,8 +281,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
             this.players = [];
         },
 
-        destroyPlayer(player_id) {
-            const player = this.players.find(({ object }) => object.id === player_id);
+        destroyPlayer(player_id, player_type) {
+            const player = this.findPlayer(player_id, player_type);
             // if player is not found, return
             if (!player) {
                 return;
@@ -274,6 +296,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             this.autoplay = false;
             this.start_time = 0;
             this.object = null;
+            this.type = null;
         }
 
     }

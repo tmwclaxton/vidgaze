@@ -11,7 +11,7 @@ export const useQueueStore = defineStore('QueueStore', {
         add(item) {
             // items is in the form of [[object, type], [[id:2,title:"asdf" etc.. ], "video"], ...]
             const isItemInArray = this.items.some(
-                (existingItem) => existingItem.object.id === item.object.id
+                (existingItem) => existingItem.object.id === item.object.id && existingItem.type === item.type
             );
             if (isItemInArray) {
                 return false;

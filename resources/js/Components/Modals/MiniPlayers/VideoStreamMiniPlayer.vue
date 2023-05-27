@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 
 import {usePlayerStore} from "@/Stores/PlayerStore";
 import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
@@ -22,8 +22,9 @@ let initialY = 0;
 
 onMounted(() => {
 
-    draggableDiv.value.style.right = '15px';
-    draggableDiv.value.style.bottom = '15px';
+ // using top and left position the initial position of the draggable div 15px fro mthe bottom right corner
+    draggableDiv.value.style.left = (window.innerWidth - 384 - 15) + 'px';
+    draggableDiv.value.style.top = (window.innerHeight - 348 - 15) + 'px';
 
     draggableDiv.value.addEventListener('mousedown', (event) => {
         event.preventDefault();
@@ -39,17 +40,17 @@ onMounted(() => {
             const deltaX = event.clientX - initialX;
             const deltaY = event.clientY - initialY;
 
-            const newRight = parseInt(draggableDiv.value.style.right) - deltaX;
-            const newBottom = parseInt(draggableDiv.value.style.bottom) - deltaY;
+            const newLeft = parseInt(draggableDiv.value.style.left) + deltaX;
+            const newTop = parseInt(draggableDiv.value.style.top) + deltaY;
 
-            const maxX = window.innerWidth - draggableDiv.value.offsetWidth;
-            const maxY = window.innerHeight - draggableDiv.value.offsetHeight;
+            const maxX = window.innerWidth - draggableDiv.value.offsetWidth - 15;
+            const maxY = window.innerHeight - draggableDiv.value.offsetHeight - 15;
+            const clampedLeft = Math.max(15, Math.min(newLeft, maxX));
+            const clampedTop = Math.max(15, Math.min(newTop, maxY));
 
-            const clampedRight = Math.max(0, Math.min(newRight, maxX));
-            const clampedBottom = Math.max(0, Math.min(newBottom, maxY));
 
-            draggableDiv.value.style.right = clampedRight + 'px';
-            draggableDiv.value.style.bottom = clampedBottom + 'px';
+            draggableDiv.value.style.left = clampedLeft + 'px';
+            draggableDiv.value.style.top = clampedTop + 'px';
 
             initialX = event.clientX;
             initialY = event.clientY;
@@ -61,14 +62,8 @@ onMounted(() => {
     });
 
     window.addEventListener('resize', () => {
-        const maxX = window.innerWidth - draggableDiv.value.offsetWidth;
-        const maxY = window.innerHeight - draggableDiv.value.offsetHeight;
+        checkIfInViewport();
 
-        const clampedRight = Math.max(0, Math.min(parseInt(draggableDiv.value.style.right), maxX));
-        const clampedBottom = Math.max(0, Math.min(parseInt(draggableDiv.value.style.bottom), maxY));
-
-        draggableDiv.value.style.right = clampedRight + 'px';
-        draggableDiv.value.style.bottom = clampedBottom + 'px';
     });
 
 
@@ -81,6 +76,30 @@ onMounted(() => {
     // Dailymotion works by loading the script specifically for each individual video
 });
 
+const checkIfInViewport = () => {
+
+    setTimeout(() => {
+        console.log('checkIfInViewport');
+        const rect = draggableDiv.value.getBoundingClientRect();
+        const isInViewport =
+            rect.top >= 15 &&
+            rect.left >= 15 &&
+            rect.bottom <= window.innerHeight - 15 &&
+            rect.right <= window.innerWidth - 15;
+
+        if (!isInViewport) {
+            const maxX = window.innerWidth - draggableDiv.value.offsetWidth - 15;
+            const maxY = window.innerHeight - draggableDiv.value.offsetHeight - 15;
+
+            const clampedLeft = Math.max(15, Math.min(rect.left, maxX));
+            const clampedTop = Math.max(15, Math.min(rect.top, maxY));
+
+            draggableDiv.value.style.left = clampedLeft + 'px';
+            draggableDiv.value.style.top = clampedTop + 'px';
+        }
+    }, 100);
+};
+
 const loadScript = (src, id) => {
     if (!document.getElementById(id)) {
         const tag = document.createElement('script');
@@ -91,11 +110,25 @@ const loadScript = (src, id) => {
     }
 };
 
+const toggleExpandQueue = () => {
+    expandQueue.value = !expandQueue.value;
+    // wait for the animation to finish
+    checkIfInViewport();
+};
+
+// watch for changes in the length of the queue
+watch(() => queueStore.items.length, () => {
+    if (queueStore.items.length > 1) {
+        // wait for the animation to finish
+        checkIfInViewport();
+    }
+});
+
 
 </script>
 
 <template>
-    <div ref="draggableDiv"   class="z-50 fixed shadow shadow-md bottom-5 right-5
+    <div ref="draggableDiv"   class="z-50 fixed shadow shadow-md
      bg-white dark:bg-vidgaze-blue-dropdown rounded-xl overflow-hidden group w-96" v-bind:class="playerStore.showMiniPlayer ? 'flex flex-col' : 'hidden' ">
 
         <div v-if="queueStore.items[queueStore.index] !== undefined" class="overflow-hidden h-0 group-hover: h-full  group-hover: p-2 duration-300 ease-in-out transition delay-75 flex flex-row gap-x-2 ">
@@ -111,7 +144,7 @@ const loadScript = (src, id) => {
                 </div>
             </div>
             <!--exit button-->
-            <font-awesome-icon class="cursor-pointer my-auto px-5 h-5 aspect-square " :icon="['fas', 'times']" @click="playerStore.show = false" />
+            <font-awesome-icon class="cursor-pointer my-auto px-5 h-5 aspect-square " :icon="['fas', 'times']" @click="" />
         </div>
 
         <div class="flex justify-between   select-none">
@@ -129,7 +162,7 @@ const loadScript = (src, id) => {
                     <p class="text-xs font-normal text-left" >Queue · <span v-text="queueStore.index+1 + ' / ' + queueStore.items.length"></span></p>
                 </div>
                 <!--expand queue button-->
-                <div @click="expandQueue = !expandQueue" class="my-auto mr-2">
+                <div @click="toggleExpandQueue" class="my-auto mr-2">
                     <font-awesome-icon v-if="expandQueue" :icon="['fass', 'chevron-up']"/>
                     <font-awesome-icon v-if="!expandQueue" :icon="['fass', 'chevron-down']"/>
                 </div>
@@ -137,7 +170,7 @@ const loadScript = (src, id) => {
         </div>
 
         <div class="my-0.5 border border-zinc-200 dark:border-zinc-800" v-if="expandQueue"/>
-        <div class="flex flex-col pb-1 max-h-32 overflow-y-auto" v-if="expandQueue">
+        <div class="flex flex-col pb-1 max-h-48 overflow-y-auto" v-if="expandQueue">
             <div v-for="(item, index) in queueStore.items" @click="queueStore.changeIndex(index)" class="flex flex-row gap-x-2 p-1 cursor-pointer ">
                 <div class=" mx-0.5 ml-2 my-auto flex h-3 aspect-square">
                     <font-awesome-icon
