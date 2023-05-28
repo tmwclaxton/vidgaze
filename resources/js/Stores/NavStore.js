@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import {ref} from "vue";
 import {usePage} from "@inertiajs/vue3";
+import {runInContext as routes} from "lodash";
 export const useNavStore = defineStore('NavStore', {
     state: () => {
         return {

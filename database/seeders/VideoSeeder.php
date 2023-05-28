@@ -12,6 +12,71 @@ class VideoSeeder extends Seeder
 {
     public function run(): void
     {
+        //array of 100 youtube video ids
+        $youtube_ids = array_unique([
+            '9bZkp7q19f0', 'kffacxfA7G4', 'OPf0YbXqDm0', 'RgKAFK5djSk', '7PCkvCPvDXk',
+            '6Dh-RL__uN4', '0JG6R4cRwAI', 'hMnk7lh9M3o', 'Xl8t8P8D7EU', 'QGJuMBdaqIw',
+            '3tmd-ClpJxA', 'dQw4w9WgXcQ', 'n6wRGNIPjhI', 'o4oyDpCnPE0', 'u9Bfj8C6vAw',
+            '0Aa_zHEEa1U', 'YlUKcNNmywk', 'tPEE9ZwTmy0', '8UVNT4wvIGY', 'Bm8rz-llMhE',
+            'vTIIMJ9tUc8', 'F57P9C4SAW4', 'JGwWNGJdvx8', '9vMh9f41pqE', 'BB0DU4DoPP4',
+            'LW3n2wzeCSc', 'YQHsXMglC9A', '92cwKCU8Z5c', 'gXbjM-5eU9g', 'NG1qooBzE_o',
+            'MV_3Dpw-BRY', 'e-ORhEE9VVg', '1kIsylLeHHU', 'Xl8t8P8D7EU', 'hHUbLv4ThOo',
+            'o-v9MIK_YTk', 'B7yAI4F7MTQ', 'QJO3ROT-A4E', '9bZkp7q19f0', 'kXYiU_JCYtU',
+            'TKmGU5yGcDE', 'DjQd4EzW8EI', 'DK_0jXPuIr0', 'vBbuebI7lT0', 'Nt8a4sDOFlc',
+            'O-zpOMYRi0w', 'L-4l98cJNTI', '1vlQ2L-NQK8', 'JGwWNGJdvx8', 'MIaEx1sBxdE',
+            'e-ORhEE9VVg', 'FtutLA63Cp8', 'Fm5iP0S1z9w', '6Dh-RL__uN4', 'sEwM6ERq0gc',
+            'ru0K8uYEZWw', 'XP9pnSX6fsw', 'XTfjZ4h9J78', '9bZkp7q19f0', 'dQw4w9WgXcQ',
+            'fRh_vgS2dFE', 'Fr8HKRTavMw', '3mbBbFH9fAg', '2Vv-BfVoq4g', 'UaZD8J_yq9o',
+            'bKDdT_nyP54', 'N9wXM3b4_4Q', 'kXYiU_JCYtU'
+        ]);
+
+        $vimeo_ids =  array_unique([
+            '264716931', '262744826', '266736509', '255683337', '269225540',
+            '261856030', '263595174', '268847257', '269936489', '265532149',
+            '262835758', '267042774', '263108586', '261919577', '264716931',
+            '262744826', '266736509', '255683337', '269225540', '261856030',
+            '263595174', '268847257', '269936489', '265532149', '262835758',
+            '267042774', '263108586', '261919577', '264716931', '262744826',
+            '266736509', '255683337', '269225540', '261856030', '263595174',
+            '268847257', '269936489', '265532149', '262835758', '267042774',
+            '263108586', '261919577', '264716931', '262744826', '266736509',
+            '255683337', '269225540', '261856030', '263595174', '268847257',
+            '269936489', '265532149', '262835758', '267042774', '263108586',
+            '261919577', '264716931', '262744826', '266736509', '255683337',
+            '269225540', '261856030', '263595174', '268847257', '269936489',
+            '265532149', '262835758', '267042774', '263108586', '261919577',
+            '264716931', '262744826', '266736509', '255683337', '269225540',
+            '261856030', '263595174', '268847257', '269936489', '265532149',
+            '262835758', '267042774', '263108586', '261919577', '264716931',
+            '262744826', '266736509', '255683337', '269225540', '261856030',
+            '263595174', '268847257', '269936489', '265532149', '262835758',
+            '267042774', '263108586', '261919577'
+        ]);
+
+        $dailymotion_ids =  array_unique([
+            'x26ezr', 'x27sm89', 'x23z7ut', 'x22g6g', 'x25y3co',
+            'x21vvef', 'x23d6jo', 'x27x8fu', 'x29yvbu', 'x27eeeg',
+            'x23bjo1', 'x27b3fi', 'x24ue15', 'x23db2p', 'x26ezr',
+            'x27sm89', 'x23z7ut', 'x22g6g', 'x25y3co', 'x21vvef',
+            'x23d6jo', 'x27x8fu', 'x29yvbu', 'x27eeeg', 'x23bjo1',
+            'x27b3fi', 'x24ue15', 'x23db2p', 'x26ezr', 'x27sm89',
+            'x23z7ut', 'x22g6g', 'x25y3co', 'x21vvef', 'x23d6jo',
+            'x27x8fu', 'x29yvbu', 'x27eeeg', 'x23bjo1', 'x27b3fi',
+            'x24ue15', 'x23db2p', 'x26ezr', 'x27sm89', 'x23z7ut',
+            'x22g6g', 'x25y3co', 'x21vvef', 'x23d6jo', 'x27x8fu',
+            'x29yvbu', 'x27eeeg', 'x23bjo1', 'x27b3fi', 'x24ue15',
+            'x23db2p', 'x26ezr', 'x27sm89', 'x23z7ut', 'x22g6g',
+            'x25y3co', 'x21vvef', 'x23d6jo', 'x27x8fu', 'x29yvbu',
+            'x27eeeg', 'x23bjo1', 'x27b3fi', 'x24ue15', 'x23db2p',
+            'x26ezr', 'x27sm89', 'x23z7ut', 'x22g6g', 'x25y3co',
+            'x21vvef', 'x23d6jo', 'x27x8fu', 'x29yvbu', 'x27eeeg',
+            'x23bjo1', 'x27b3fi', 'x24ue15', 'x23db2p', 'x26ezr',
+            'x27sm89', 'x23z7ut', 'x22g6g', 'x25y3co', 'x21vvef',
+            'x23d6jo', 'x27x8fu', 'x29yvbu', 'x27eeeg', 'x23bjo1',
+            'x27b3fi', 'x24ue15', 'x23db2p'
+        ]);
+
+
         $vid1 = Video::create([
             'slug' => rand(0, 99911999),
             'creator_id' => 1,
@@ -62,7 +127,7 @@ class VideoSeeder extends Seeder
         $creators = Creator::factory(50)->create();
         $categories = Category::all();
         $sources = ['YouTube', 'Vimeo', 'Dailymotion'];
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 13; $i++) {
             $title = ucwords(implode(' ', $this->getRandomWords(4)));
             $description = ucfirst(implode(' ', $this->getRandomWords(20)));
             $tags = $this->getRandomWords(5);
@@ -89,12 +154,24 @@ class VideoSeeder extends Seeder
             ]);
 
             $source_count = 3;
+            $platforms = ['YouTube', 'Vimeo', 'Dailymotion'];
 
-            for ($j = 0; $j < $source_count; $j++) {
+            for ($j = 0; $j < $source_count; $j++ ) {
+                $platform = $platforms[$j];
+                $external_id = '';
+
+                if ($platform === 'YouTube') {
+                    $external_id = $youtube_ids[$i];
+                } elseif ($platform === 'Vimeo') {
+                    $external_id = $vimeo_ids[$i];
+                } elseif ($platform === 'Dailymotion') {
+                    $external_id = $dailymotion_ids[$i];
+                }
+
                 VideoSource::create([
                     'video_id' => $video->id,
-                    'source_name' => $sources[$j],
-                    'external_id' => $this->getRandomString(11),
+                    'source_name' => $platform,
+                    'external_id' => $external_id,
                 ]);
             }
         }
@@ -116,16 +193,16 @@ class VideoSeeder extends Seeder
         return array_slice($words, 0, $count);
     }
 
-    private function getRandomString($length): string
-    {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $characters_length = strlen($characters);
-        $random_string = '';
-        for ($i = 0; $i < $length; $i++) {
-            $random_string .= $characters[rand(0, $characters_length - 1)];
-        }
-        return $random_string;
-    }
+    //private function getRandomString($length): string
+    //{
+    //    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    //    $characters_length = strlen($characters);
+    //    $random_string = '';
+    //    for ($i = 0; $i < $length; $i++) {
+    //        $random_string .= $characters[rand(0, $characters_length - 1)];
+    //    }
+    //    return $random_string;
+    //}
 
 
 }

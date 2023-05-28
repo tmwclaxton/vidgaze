@@ -23,7 +23,7 @@ const QueueOpen = ref(false);
 const addToQueue = () => {
 
     if (inQueue.value) {
-        if(queueStore.remove(props.item.id)) {
+        if(queueStore.remove(props.item.id, props.itemType)) {
             inQueue.value = false;
         }
     } else {

@@ -7,6 +7,7 @@ use App\Http\Controllers\Content\ShareController;
 use App\Http\Controllers\Content\SupportController;
 use App\Http\Controllers\Search\SearchBarController;
 use App\Http\Controllers\Search\SearchController;
+use App\Http\Controllers\Tools\ViewListenerController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -34,7 +35,11 @@ require __DIR__.'/auth.php';
 
 //this is the route for creating share links
 Route::get('/shares', [ShareController::class, 'index'])->name('share.index');
-// limit to 5 requests per 15 minutes
+
+// view listener route
+Route::post('/view-listener', [ViewListenerController::class,'message'])->name('view.listener');
+
+
 
 // landing route
 Route::get('/', function () {

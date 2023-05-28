@@ -148,7 +148,7 @@ watch(() => queueStore.items.length, () => {
         </div>
 
         <div class="flex justify-between   select-none">
-                <div class="player w-full aspect-21/12">
+                <div class="player w-full aspect-21/12 overflow-hidden">
                     <!--this is where the embed gets build inside-->
                     <div id="player_div_holder" class="w-full h-full bg-black"></div>
                 </div>

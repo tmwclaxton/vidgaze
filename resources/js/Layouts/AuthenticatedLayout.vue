@@ -1,5 +1,5 @@
 <script setup>
-import {ref, watch} from 'vue';
+import {computed, ref, watch} from 'vue';
 
 import Nav from '@/Shared/Navigation/Nav.vue';
 import ToastList from "@/Components/Toast/ToastList.vue";
@@ -24,6 +24,19 @@ const props = defineProps({
 watch(() => props.showingStudioLinks, (newVal) => {
     navStore.setStudioLinks(newVal);
 });
+
+//about page computed
+// const aboutPage = computed(() => {
+//     return route().current('about');
+// });
+//
+// const authPages = computed(() => {
+//     // return
+//     return true;
+// });
+
+// I'm sorry I couldn't figure it out, nothing worked
+
 </script>
 
 <template>
@@ -36,12 +49,13 @@ watch(() => props.showingStudioLinks, (newVal) => {
 
         <div class=" flex flex-col   ">
 
-            <Nav/>
+            <Nav v-if="!(route().current('login') || route().current('register') || route().current('password.request') || route().current('password.reset') || route().current('password.email') || route().current('password.store'))"/>
 
             <!-- Page Content -->
             <main class="flex flex-row flex-grow    " >
 
-                <div v-if="!route().current('about')" class="pointer-events-none opacity-0 flex-shrink-0 transition  ease-in-out"  :class="{'sm:w-64  ': navStore.getNavigationDropdown(), 'sm:w-24': !navStore.getNavigationDropdown()}">
+                <div v-if="!route().current('about') && !(route().current('login') || route().current('register') || route().current('password.request') || route().current('password.reset') || route().current('password.email') || route().current('password.store'))"
+                     class="pointer-events-none opacity-0 flex-shrink-0 transition  ease-in-out"  :class="{'sm:w-64  ': navStore.getNavigationDropdown(), 'sm:w-24': !navStore.getNavigationDropdown()}">
 
                 </div>
                 <div class="relative flex-shrink transition duration-700 ease-in-out w-full"  :class="{'   ': navStore.getNavigationDropdown()}">

@@ -18,7 +18,13 @@ const submit = () => {
     form.post(route('password.email'));
 };
 </script>
+<script>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+export default {
+    layout: AuthenticatedLayout,
 
+};
+</script>
 <template>
     <GuestLayout>
         <Head title="Forgot Password" />

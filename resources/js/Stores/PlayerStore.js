@@ -4,16 +4,20 @@ import {useQueueStore} from "@/Stores/QueueStore";
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
+            debug: true,
             object: null,
             type: null,
             autoplay: false,
             start_time: 0,
             players: [], //in the form of [[type => "video", object => {id: 1, ...}, player => player_object], ...] this is so we can have multiple players on the page like for shorts and be able to control them individually
             showMiniPlayer: false,
+            isViewRecording: false,
+            viewRecordTimer: null,
+            viewRecordDuration: 0,
         }
     },
     getters: {
-        showMiniPlayer: (state) => {
+        showMiniPlayer() {
             // Compute the value of showMiniPlayer based on your logic
             // For example, you can check if players array is not empty
             let queueStore = useQueueStore();
@@ -22,6 +26,12 @@ export const usePlayerStore = defineStore('PlayerStore', {
     },
 
     actions: {
+        debugMessage(message) {
+            if (this.debug) {
+                console.log(message);
+            }
+        },
+
         findPlayer(player_id, player_type) {
             // find player in players array
             for (let i = 0; i < this.players.length; i++) {
@@ -37,6 +47,13 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // if player is not found, return
             if (!player) {
                 return;
+            }
+
+            // pause all other players
+            for (let i = 0; i < this.players.length; i++) {
+                if (this.players[i]['object'].id !== player_id || this.players[i]['type'] !== player_type) {
+                    this.pause(this.players[i]['object'].id, this.players[i]['type']);
+                }
             }
 
             // check object preferred source
@@ -64,10 +81,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         endVideo() {
-          // if shorts scroll to next short
-          // if not short check if queue has items and play next item
-          // if not shorts and miniplayer with no queue items, stop player and close player modal
-          // if not shorts and no miniplayer, stop player and show end screen with suggestions
+            // if shorts scroll to next short
+            // if not short check if queue has items and play next item
+            // if not shorts and miniplayer with no queue items, stop player and close player modal
+            // if not shorts and no miniplayer, stop player and show end screen with suggestions
+            this.stopViewRecord();
 
             if (this.showMiniPlayer) {
                 // check if queue has an item after this one
@@ -81,18 +99,37 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             }
 
-            console.log('end video');
+            this.debugMessage('end video');
         },
 
         startViewRecord() {
-            console.log('start view record');
+            // this.debugMessage('start view record');
+            if (!this.isViewRecording) {
+                this.isViewRecording = true;
+                this.viewRecordTimer = setInterval(() => {
+                    this.viewRecordDuration += 5;
+                    this.debugMessage('View Record Duration: ' + this.viewRecordDuration);
+                }, 5000);
+            }
         },
 
         pauseViewRecord() {
-            console.log('pause view record');
+            this.debugMessage('pause view record');
+            if (this.isViewRecording) {
+                this.isViewRecording = false;
+                clearInterval(this.viewRecordTimer);
+            }
 
         },
 
+        stopViewRecord() {
+            this.debugMessage('stop view record');
+            if (this.isViewRecording) {
+                this.isViewRecording = false;
+                clearInterval(this.viewRecordTimer);
+            }
+            this.viewRecordDuration = 0;
+        },
 
 
 
@@ -134,8 +171,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         buildYouTubePlayer(playerDiv) {
             const player = new window.YT.Player(playerDiv, {
-                // videoId: this.object.id,
-                videoId: 'dQw4w9WgXcQ',
+                videoId: this.object.external_id,
+                // videoId: 'dQw4w9WgXcQ',
                 playerVars: {
                     'autoplay': this.autoplay ? 1 : 0,
                     'controls': 1,
@@ -167,8 +204,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
         buildVimeoPlayer(playerDiv) {
 
             const player = new Vimeo.Player(playerDiv, {
-                // id: this.object.id,
-                id: '822998068',
+                id: this.object.external_id,
+                // id: '822998068',
                 autoplay: this.autoplay ? 1 : 0,
                 responsive: true,
                 autopause: true,
@@ -178,6 +215,10 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 // wait for player to load then set start time
                 player.ready().then(function () {
                     player.setCurrentTime(this.start_time);
+                    // this.debugMessage(document.getElementById(playerDiv.id).firstElementChild);
+                    document.getElementById(playerDiv.id).firstElementChild.classList.add("h-full", "w-full","p-0", "relative");
+                    document.getElementById(playerDiv.id).firstElementChild.removeAttribute('style');
+
                 }.bind(this));
             });
 
@@ -197,8 +238,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         buildDailymotionPlayer(playerDiv) {
-            // const videoId = this.object.external_id;
-            const videoId = 'x8l6g4x';
+            const videoId = this.object.external_id;
+            // const videoId = 'x8l6g4x';
             if (!document.getElementById(videoId)) {
                 const tag = document.createElement('script');
                 tag.src = "https://geo.dailymotion.com/libs/player/" + videoId + ".js";
@@ -278,6 +319,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         destroyPlayers() {
             document.querySelectorAll('#player_div').forEach(n => n.remove());
+            this.stopViewRecord();
             this.players = [];
         },
 
@@ -288,7 +330,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 return;
             }
             // player.player.destroy(); // this won't work for twitch
-            this.players = this.players.filter(({ object }) => object.id !== player_id);
+            this.players = this.players.filter(({ object, type }) => object.id !== player_id && type !== player_type);
         },
 
         resetVariables() {

@@ -3,11 +3,18 @@ import { usePlayerStore } from './PlayerStore.js'
 export const useQueueStore = defineStore('QueueStore', {
     state: () => {
         return {
+            debug: true,
             items: [] ,
             index: 0,
         }
     },
     actions: {
+        debugMessage(message) {
+            if (this.debug) {
+                console.log(message);
+            }
+        },
+
         add(item) {
             // items is in the form of [[object, type], [[id:2,title:"asdf" etc.. ], "video"], ...]
             const isItemInArray = this.items.some(
@@ -29,14 +36,35 @@ export const useQueueStore = defineStore('QueueStore', {
 
 
         },
-        remove(id) {
-          // items is in the form of [[id, type], [2, "video"], ...]
+        remove(id, type) {
+          // items is in the form of [[object, type], [{id:2, ...}, "video"], ...]
             for (let i = 0; i < this.items.length; i++) {
-                if (this.items[i]['object'].id === id) {
+                if (this.items[i]['object'].id === id && this.items[i]['type'] === type) {
+                    let changeIndexBool = false
+                    // if I delete the current item, I need to change the video
+                    if (id === this.items[this.index]['object'].id) {
+                        changeIndexBool = true;
+                    }
+
+                    // if I delete an item that is greater than the current index, I need to decrement the index by 2
+                    if (i < this.index + 1 && this.index > 0) {
+                        this.debugMessage("decrementing index");
+                        this.index -= 1;
+                    }
+
+                 if (changeIndexBool) {
+                        this.debugMessage("changing index");
+                        this.changeIndex(this.index);
+                    }
+
+                    this.debugMessage("removing item");
                     this.items.splice(i, 1);
+
+
                     return true;
                 }
             }
+
             return false;
         },
         changeIndex(index) {

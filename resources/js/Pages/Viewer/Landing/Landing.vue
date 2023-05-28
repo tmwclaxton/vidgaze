@@ -126,7 +126,7 @@ export default {
 
             <div class=" max-w-2xl w-full m-auto  p-4">
                     <h2 class="text-4xl font-bold mb-8 mx-auto text-center text-white ">Message from the Founders</h2>
-                    <iframe class="w-full  my-auto ml-auto aspect-video"
+                    <iframe class="w-full  my-auto ml-auto aspect-video rounded-2xl shadow-2xl shadow-zinc-900"
                         src="https://www.youtube.com/embed/CIob-HllZOw" title="YouTube video player" frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowfullscreen></iframe>

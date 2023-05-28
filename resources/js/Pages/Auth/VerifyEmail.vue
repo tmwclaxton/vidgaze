@@ -16,7 +16,13 @@ const submit = () => {
 
 const verificationLinkSent = computed(() => props.status === 'verification-link-sent');
 </script>
+<script>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+export default {
+    layout: AuthenticatedLayout,
 
+};
+</script>
 <template>
     <GuestLayout>
         <Head title="Email Verification" />
