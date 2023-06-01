@@ -6,6 +6,7 @@ import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {useQueueStore} from "@/Stores/QueueStore";
 import CornerInfo from "@/Components/Cards/VideoStreamCard/Partials/CornerInfo.vue";
+import QueueItem from "@/Components/Modals/MiniPlayers/Partials/QueueItem.vue";
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
 const expandQueue = ref(false);
@@ -124,12 +125,19 @@ watch(() => queueStore.items.length, () => {
     }
 });
 
+const closeMiniPlayer = () => {
+    // get current item from queue
+    const currentItem = queueStore.currentItem;
+    // destroy the player by object id and type
+    playerStore.destroyPlayer(currentItem.object.id, currentItem.type);
+
+};
 
 </script>
 
 <template>
     <div ref="draggableDiv"   class="z-50 fixed shadow shadow-md
-     bg-white dark:bg-vidgaze-blue-dropdown rounded-xl overflow-hidden group w-96" v-bind:class="playerStore.showMiniPlayer ? 'flex flex-col' : 'hidden' ">
+     bg-white dark:bg-vidgaze-blue-dropdown rounded-xl overflow-hidden  w-96" v-bind:class="playerStore.showMiniPlayer ? 'flex flex-col' : 'hidden' ">
 
         <div v-if="queueStore.items[queueStore.index] !== undefined" class="overflow-hidden h-0 group-hover: h-full  group-hover: p-2 duration-300 ease-in-out transition delay-75 flex flex-row gap-x-2 ">
             <div class="flex-shrink-0 cursor-pointer h-12 my-auto aspect-square rounded-full bg-zinc-200 dark:bg-zinc-800 relative">
@@ -144,7 +152,7 @@ watch(() => queueStore.items.length, () => {
                 </div>
             </div>
             <!--exit button-->
-            <font-awesome-icon class="cursor-pointer my-auto px-5 h-5 aspect-square " :icon="['fas', 'times']" @click="" />
+            <font-awesome-icon class="cursor-pointer my-auto px-5 h-5 aspect-square " :icon="['fas', 'times']" @click="closeMiniPlayer" />
         </div>
 
         <div class="flex justify-between   select-none">
@@ -159,7 +167,7 @@ watch(() => queueStore.items.length, () => {
                 <!--video title-->
                 <div class="flex flex-col">
                     <p class="text-sm font-semibold text-left" v-text="queueStore.items[queueStore.index].object.title"></p>
-                    <p class="text-xs font-normal text-left" >Queue · <span v-text="queueStore.index+1 + ' / ' + queueStore.items.length"></span></p>
+                    <p class="text-xs font-normal text-left" >Queue · <span v-text="(queueStore.index) + 1 + ' / ' + queueStore.items.length"></span></p>
                 </div>
                 <!--expand queue button-->
                 <div @click="toggleExpandQueue" class="my-auto mr-2">
@@ -171,28 +179,8 @@ watch(() => queueStore.items.length, () => {
 
         <div class="my-0.5 border border-zinc-200 dark:border-zinc-800" v-if="expandQueue"/>
         <div class="flex flex-col pb-1 max-h-48 overflow-y-auto" v-if="expandQueue">
-            <div v-for="(item, index) in queueStore.items" @click="queueStore.changeIndex(index)" class="flex flex-row gap-x-2 p-1 cursor-pointer ">
-                <div class=" mx-0.5 ml-2 my-auto flex h-3 aspect-square">
-                    <font-awesome-icon
-                        v-if="queueStore.index === index"
-                        :icon="['fas', 'play']"
-                        class=" h-full  my-auto"
-                    />
-                </div>
-                <div class="relative h-12 aspect-21/12">
-                    <img class="absolute w-full h-full rounded-lg" :src="item.object.thumbnail_url">
-                    <CornerInfo v-if="item.object.duration != null" :item="item.object" class="absolute bottom-0 right-0 m-1">
-                        <p class="my-auto text-xs" v-text="item.object.duration"/>
-                    </CornerInfo>
-
-                    <CornerInfo v-if="item.object.viewers != null" :item="item.object" class="absolute bottom-0 right-0 m-1 ">
-                        <p class="my-auto text-xs" v-text="'Live'"/>
-                    </CornerInfo>
-                </div>
-                <div class="flex-grow my-auto">
-                    <p class="text-sm font-semibold text-left" v-text="item.object.title"></p>
-                    <p class="text-xs text-left" v-text="item.object.creator.name "></p>
-                </div>
+            <div v-for="(item, index) in queueStore.items"  >
+                <QueueItem :item="item" :index="index" :key="index"/>
             </div>
         </div>
 

@@ -3,7 +3,7 @@
 
 import PlaylistIcon from '#icons/playlists.svg';
 import TickIcon from '#icons/tick.svg';
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {useToastStore} from "@/Stores/ToastStore.js";
 import {useQueueStore} from "@/Stores/QueueStore.js";
 import {usePage} from "@inertiajs/vue3";
@@ -18,7 +18,12 @@ const props = defineProps({
     itemType: String,
 });
 const name = 'QueueList';
-const inQueue = ref(false);
+
+
+//computed inQueue
+const inQueue = computed(() => {
+    return queueStore.inQueue(props.item.id, props.itemType);
+});
 const QueueOpen = ref(false);
 const addToQueue = () => {
 

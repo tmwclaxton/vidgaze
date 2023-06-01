@@ -21,6 +21,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // Compute the value of showMiniPlayer based on your logic
             // For example, you can check if players array is not empty
             let queueStore = useQueueStore();
+            // also depends on what page you are on ...
             return queueStore.items !== undefined && queueStore.items.length > 0;
         },
     },
@@ -90,12 +91,17 @@ export const usePlayerStore = defineStore('PlayerStore', {
             if (this.showMiniPlayer) {
                 // check if queue has an item after this one
                 let queueStore = useQueueStore();
-                if (queueStore.items.length > queueStore.index + 1) {
-                    queueStore.changeIndex(queueStore.index + 1);
-                } else {
-                    this.destroyPlayers();
-                    this.showMiniPlayer = false;
-                }
+
+                // wait 1 - as if we are deleting the item from the queue it will take a second to update
+                // setTimeout(() => {
+                    if (queueStore.items.length > queueStore.index + 1) {
+                        queueStore.changeIndex(queueStore.index + 1);
+                        this.debugMessage('mini player next item');
+                    } else {
+                        this.destroyPlayers();
+                        this.showMiniPlayer = false;
+                    }
+                // }, 1000);
 
             }
 
@@ -330,7 +336,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 return;
             }
             // player.player.destroy(); // this won't work for twitch
-            this.players = this.players.filter(({ object, type }) => object.id !== player_id && type !== player_type);
+            this.players = this.players.filter((item) => item.player !== player.player);
         },
 
         resetVariables() {
