@@ -8,6 +8,8 @@ import VideoStreamModal from "@/Components/Modals/ContentModal.vue";
 import PlaylistModal from "@/Components/Modals/PlaylistModal.vue";
 import VideoStreamMiniPlayer from "@/Components/Modals/MiniPlayers/VideoStreamMiniPlayer.vue";
 import ShareModel from "@/Components/Modals/ShareModel.vue";
+import ConfirmModal from "@/Components/Modals/ConfirmModal.vue";
+
 const navStore = useNavStore();
 const name = 'AuthenticatedLayout';
 let showingNavigationDropdown = ref(false);
@@ -60,12 +62,17 @@ watch(() => props.showingStudioLinks, (newVal) => {
                 </div>
                 <div class="relative flex-shrink transition duration-700 ease-in-out w-full"  :class="{'   ': navStore.getNavigationDropdown()}">
                     <slot  />
+                    <!--Modals we want centered with side bar-->
                     <PlaylistModal/>
                     <ShareModel/>
-                    <VideoStreamMiniPlayer/>
+                    <ConfirmModal />
                 </div>
-                <!--<CookieConsent/>-->
+
+                <!--Modals that don't matter how they are -->
+                <VideoStreamMiniPlayer/>
                 <VideoStreamModal/>
+
+                <!--<CookieConsent/>-->
 
             </main>
 

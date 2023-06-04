@@ -51,6 +51,13 @@ export const useQueueStore = defineStore('QueueStore', {
 
 
         },
+        removeAll() {
+            this.items = [];
+            this.index = 0;
+
+            let playerModalStore = usePlayerStore();
+            playerModalStore.destroyPlayers();
+        },
         remove(id, type) {
           // items is in the form of [[object, type], [{id:2, ...}, "video"], ...]
             for (let i = 0; i < this.items.length; i++) {

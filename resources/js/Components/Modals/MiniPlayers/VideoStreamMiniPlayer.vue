@@ -7,6 +7,8 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {useQueueStore} from "@/Stores/QueueStore";
 import CornerInfo from "@/Components/Cards/VideoStreamCard/Partials/CornerInfo.vue";
 import QueueItem from "@/Components/Modals/MiniPlayers/Partials/QueueItem.vue";
+import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
+const confirmStore = useConfirmModalStore();
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
 const expandQueue = ref(false);
@@ -126,11 +128,15 @@ watch(() => queueStore.items.length, () => {
 });
 
 const closeMiniPlayer = () => {
-    // get current item from queue
-    const currentItem = queueStore.currentItem;
-    // destroy the player by object id and type
-    playerStore.destroyPlayer(currentItem.object.id, currentItem.type);
-
+    // confirm that the user wants to close the mini player as it will destroy the queue
+    confirmStore.buttonOneText = 'Cancel';
+    confirmStore.buttonTwoText = 'Delete';
+    confirmStore.title = 'Are you sure you want to delete this?';
+    confirmStore.show = true;
+    confirmStore.continue = () => {
+        playerStore.destroyPlayers();
+        queueStore.removeAll();
+    };
 };
 
 </script>
@@ -138,7 +144,7 @@ const closeMiniPlayer = () => {
 <template>
     <div ref="draggableDiv"   class="z-50 fixed shadow shadow-md
      bg-white dark:bg-vidgaze-blue-dropdown rounded-xl overflow-hidden  w-96" v-bind:class="playerStore.showMiniPlayer ? 'flex flex-col' : 'hidden' ">
-
+        <!--top part with creator & subscribe button-->
         <div v-if="queueStore.items[queueStore.index] !== undefined" class="overflow-hidden h-0 group-hover: h-full  group-hover: p-2 duration-300 ease-in-out transition delay-75 flex flex-row gap-x-2 ">
             <div class="flex-shrink-0 cursor-pointer h-12 my-auto aspect-square rounded-full bg-zinc-200 dark:bg-zinc-800 relative">
                 <img class="w-full h-full rounded-full" v-bind:src="queueStore.items[queueStore.index].object.creator.avatar_url">
@@ -155,6 +161,7 @@ const closeMiniPlayer = () => {
             <font-awesome-icon class="cursor-pointer my-auto px-5 h-5 aspect-square " :icon="['fas', 'times']" @click="closeMiniPlayer" />
         </div>
 
+        <!--player-->
         <div class="flex justify-between   select-none">
                 <div class="player w-full aspect-21/12 overflow-hidden">
                     <!--this is where the embed gets build inside-->
