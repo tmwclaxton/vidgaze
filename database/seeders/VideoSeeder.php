@@ -14,7 +14,7 @@ class VideoSeeder extends Seeder
     {
         //array of 100 youtube video ids
         $youtube_ids = array_unique([
-            '9bZkp7q19f0', 'kffacxfA7G4', 'OPf0YbXqDm0', 'RgKAFK5djSk', '7PCkvCPvDXk',
+             'kffacxfA7G4', 'OPf0YbXqDm0', 'RgKAFK5djSk', '7PCkvCPvDXk',
             '6Dh-RL__uN4', '0JG6R4cRwAI', 'hMnk7lh9M3o', 'Xl8t8P8D7EU', 'QGJuMBdaqIw',
             '3tmd-ClpJxA', 'dQw4w9WgXcQ', 'n6wRGNIPjhI', 'o4oyDpCnPE0', 'u9Bfj8C6vAw',
             '0Aa_zHEEa1U', 'YlUKcNNmywk', 'tPEE9ZwTmy0', '8UVNT4wvIGY', 'Bm8rz-llMhE',
@@ -25,7 +25,7 @@ class VideoSeeder extends Seeder
             'TKmGU5yGcDE', 'DjQd4EzW8EI', 'DK_0jXPuIr0', 'vBbuebI7lT0', 'Nt8a4sDOFlc',
             'O-zpOMYRi0w', 'L-4l98cJNTI', '1vlQ2L-NQK8', 'JGwWNGJdvx8', 'MIaEx1sBxdE',
             'e-ORhEE9VVg', 'FtutLA63Cp8', 'Fm5iP0S1z9w', '6Dh-RL__uN4', 'sEwM6ERq0gc',
-            'ru0K8uYEZWw', 'XP9pnSX6fsw', 'XTfjZ4h9J78', '9bZkp7q19f0', 'dQw4w9WgXcQ',
+            'ru0K8uYEZWw', 'XP9pnSX6fsw', 'XTfjZ4h9J78', 'dQw4w9WgXcQ',
             'fRh_vgS2dFE', 'Fr8HKRTavMw', '3mbBbFH9fAg', '2Vv-BfVoq4g', 'UaZD8J_yq9o',
             'bKDdT_nyP54', 'N9wXM3b4_4Q', 'kXYiU_JCYtU'
         ]);
@@ -175,7 +175,7 @@ class VideoSeeder extends Seeder
                 ]);
             }
         }
-        Video::factory()->count(100)->create();
+        //Video::factory()->count(100)->create();
 
     }
 

@@ -70,21 +70,26 @@ const fetchTrendingVideos = async () => {
         });
 };
 const fetchVideos = async (videoArray) => {
-    const videoIds = videoArray.map(video => video.id).join(',');
-    axios.get(route('videos.infinite'),  {
-        params: {
-            category: 'popular',
-            perPage: 40,
-            videoIds
-        } } )
-        .then(response => {
-            setTimeout(() => {
-                videos.value = videos.value.concat(response.data.data);
-            }, 200); // 500ms delay
-        })
-        .catch(error => {
-            console.log(error);
+    try {
+        const videoIds = videoArray.map(video => video.id).join(',');
+        const response = await axios.get(route('videos.infinite'), {
+            params: {
+                category: 'popular',
+                perPage: 40,
+                videoIds
+            }
         });
+
+        setTimeout(() => {
+            if (!response.data.error) {
+                videos.value = videos.value.concat(response.data.data);
+            } else {
+                console.log(response.data.error);
+            }
+        }, 200); // 200ms delay
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 

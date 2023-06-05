@@ -146,9 +146,9 @@ class VideoController extends Controller
 
         // error handling
         if (!isset($videos)) {
-            return response()->json([
+            return response([
                 'error' => 'No videos found'
-            ], 404);
+            ]);
         }
 
 

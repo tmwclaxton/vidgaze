@@ -62,14 +62,84 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         startViewRecord(external_id) {
-            // this.debugMessage('start view record');
+            this.debugMessage('start view record');
             if (!this.isViewRecording) {
                 this.isViewRecording = true;
-                this.viewRecordTimer = setInterval(() => {
-                    this.viewRecordDuration += 5;
-                    this.debugMessage('View Record Duration: ' + this.viewRecordDuration);
+
+                //test
+                let player = this.findPlayer(external_id);
+                // player.player.getPaused().then((paused) => { !this.debugMessage(paused) }) ; // doesn't work at this stage
+
+                this.viewRecordTimer = setInterval(async () => {
+                    try {
+                        const isPlaying = await this.isPlayerPlaying(external_id);
+                        if (isPlaying) {
+                            this.viewRecordDuration += 5;
+                            this.debugMessage('View Record Duration: ' + this.viewRecordDuration);
+                        } else {
+                            this.debugMessage('Error: Player is not playing');
+                        }
+                    } catch (error) {
+                        this.debugMessage('Error: ' + error);
+                    }
                 }, 5000);
             }
+        },
+
+
+        // has to be async as we need to wait for the dailymotion player to be ready
+        async isPlayerPlaying(external_id) {
+            this.debugMessage(external_id + ' is player playing');
+            let player = this.findPlayer(external_id);
+
+            if (!player) {
+                this.debugMessage('Player not found');
+                throw new Error('Player not found');
+            }
+
+            let playing = false;
+
+            if (player.object.preferred_source === 'YouTube') {
+
+                this.debugMessage(player.player)
+                try {
+                    const state = await player.player.getPlayerState();
+                    this.debugMessage('Youtube player state: ' + state);
+                    playing = state === 1;
+                } catch (error) {
+                    throw new Error(error);
+                }
+
+            } else if (player.object.preferred_source === 'Vimeo') {
+
+                try {
+                    // access the target inside the event
+                    this.debugMessage(player.player)
+                    player.player.getPaused().then((value) => {
+                        console.log(value);
+                        playing = !value;
+                    });
+                    // const paused = await player.player.getPaused();
+                    // this.debugMessage('Vimeo player state: ' + paused);
+                    // playing = !paused;
+                } catch (error) {
+                    throw new Error(error);
+                }
+
+            } else if (player.object.preferred_source === 'Dailymotion') {
+                try {
+                    const state = await player.player.getState();
+                    const playerIsPlaying = state.playerIsPlaying;
+                    this.debugMessage('Dailymotion player state: ' + playerIsPlaying);
+                    playing = playerIsPlaying;
+                } catch (error) {
+                    throw new Error(error);
+                }
+            } else if (player.object.preferred_source === 'Twitch') {
+                playing = !player.player.isPaused();
+            }
+
+            return playing;
         },
 
         pauseViewRecord(external_id) {
@@ -90,16 +160,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
             this.viewRecordDuration = 0;
         },
 
-
-
-
         destroyPlayers() {
             document.querySelectorAll('#player_div').forEach(n => n.remove());
             this.stopViewRecord();
             this.players = [];
         },
-
-
 
         resetVariables() {
             // //reset variables
@@ -139,10 +204,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             }
 
 
-            // sometimes reset variables runs before the player is ready so we will wait 5 seconds
-            setTimeout(() => {
-                this.resetVariables();
-            }, 5000);
+
         },
 
         buildYouTubePlayer(playerDiv) {
@@ -181,9 +243,13 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         buildVimeoPlayer(playerDiv) {
             let external_id = this.object.external_id;
-            const player = new Vimeo.Player(playerDiv, {
+
+            external_id = '822998068';
+            this.object.external_id = external_id;
+
+
+            const player = new Vimeo.Player(playerDiv.id, {
                 id: this.object.external_id,
-                // id: '822998068',
                 autoplay: this.autoplay ? 1 : 0,
                 responsive: true,
                 autopause: true,
@@ -192,11 +258,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
             player.on('loaded', () => {
                 // wait for player to load then set start time
                 player.ready().then(function () {
-                    player.setCurrentTime(this.start_time);
-                    // this.debugMessage(document.getElementById(playerDiv.id).firstElementChild);
-                    document.getElementById(playerDiv.id).firstElementChild.classList.add("h-full", "w-full","p-0", "relative");
-                    document.getElementById(playerDiv.id).firstElementChild.removeAttribute('style');
+                        player.setCurrentTime(this.start_time);
 
+                        // this.debugMessage(document.getElementById(playerDiv.id).firstElementChild);
+                        document.getElementById(playerDiv.id).firstElementChild.classList.add("h-full", "w-full","p-0", "relative");
+                        document.getElementById(playerDiv.id).firstElementChild.removeAttribute('style');
                 }.bind(this));
             });
 
@@ -210,48 +276,57 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             player.on('ended', () => {
                 this.endVideo(external_id);
+
             });
 
-            this.pushPlayer(player);
+            player.ready().then(function () {
+                this.debugMessage('Vimeo player ready');
+                // ensure player is ready before pushing to players array
+                this.pushPlayer(player);
+
+            }.bind(this));
+
+
         },
 
         buildDailymotionPlayer(playerDiv) {
             const external_id = this.object.external_id;
-            // const videoId = 'x8l6g4x';
-            if (!document.getElementById(videoId)) {
+            // const external_id = 'x8l6g4x';
+            // this.object.external_id = external_id;
+            if (!document.getElementById(external_id)) {
                 const tag = document.createElement('script');
                 tag.src = "https://geo.dailymotion.com/libs/player/" + external_id + ".js";
                 tag.id = external_id;
                 const firstScriptTag = document.getElementsByTagName('script')[0];
                 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
             }
-
+            let player;
             //wait for script to load
             setTimeout(() => {
-                const player =
-                    dailymotion.createPlayer(playerDiv.id, {
-                        video: external_id,
-                        start: this.start_time,
-                    })
-                        .then((player) => {
-                            this.pushPlayer(player);
+                dailymotion.createPlayer(playerDiv.id, {
+                    video: external_id,
+                    start: this.start_time,
+                }).then((resolvedPlayer) => {
+                    player = resolvedPlayer;
 
-                            player.on(dailymotion.events.VIDEO_PLAY, () => {
-                                this.startViewRecord(external_id);
-                            });
+                    // console.log(player);
 
-                            player.on(dailymotion.events.VIDEO_PAUSE, () => {
-                                this.pauseViewRecord(external_id);
-                            });
+                    player.on(dailymotion.events.VIDEO_PLAY, () => {
+                        this.startViewRecord(external_id);
+                    });
 
-                            player.on(dailymotion.events.VIDEO_END, () => {
-                                this.endVideo(external_id);
-                            });
+                    player.on(dailymotion.events.VIDEO_PAUSE, () => {
+                        this.pauseViewRecord(external_id);
+                    });
 
+                    player.on(dailymotion.events.VIDEO_END, () => {
+                        this.endVideo(external_id);
+                    });
 
-                        });
-                this.pushPlayer(player);
-            } , 1000);
+                    this.pushPlayer(player);
+                });
+            }, 1000);
+
 
         },
 
@@ -286,13 +361,27 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         pushPlayer(player) {
+
+            // player.getPaused().then((paused) => { !this.debugMessage(paused) }) ; works here for vimeo
+            this.debugMessage('pushing player' + this.object.external_id)
+            console.log(player);
+            // check if player is already in players array
+            if (this.findPlayer(this.object.external_id)) {
+                return;
+            }
+
             //create player and add to players array
             this.players.push(
                 {
-                    object: this.object,
-                    player: player
+                    'object': this.object,
+                    'player': player
                 }
             );
+
+            // sometimes reset variables runs before the player is ready so we will wait 5 seconds
+            setTimeout(() => {
+            this.resetVariables();
+            }, 5000);
         },
 
         findPlayer(external_id) {

@@ -8,6 +8,7 @@ import {useQueueStore} from "@/Stores/QueueStore";
 import CornerInfo from "@/Components/Cards/VideoStreamCard/Partials/CornerInfo.vue";
 import QueueItem from "@/Components/Modals/MiniPlayers/Partials/QueueItem.vue";
 import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
+import {useToastStore} from "@/Stores/ToastStore";
 const confirmStore = useConfirmModalStore();
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -131,7 +132,7 @@ const closeMiniPlayer = () => {
     // confirm that the user wants to close the mini player as it will destroy the queue
     confirmStore.buttonOneText = 'Cancel';
     confirmStore.buttonTwoText = 'Delete';
-    confirmStore.title = 'Are you sure you want to delete this?';
+    confirmStore.title = 'Are you sure, this will delete the queue?';
     confirmStore.show = true;
     confirmStore.continue = () => {
         playerStore.destroyPlayers();
