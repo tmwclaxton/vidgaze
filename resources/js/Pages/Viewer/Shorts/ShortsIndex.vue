@@ -1,6 +1,8 @@
 
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+
+
 export default {
     layout: AuthenticatedLayout
 };
@@ -13,9 +15,10 @@ import ShortsPlayerSkeleton from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlaye
 import { onMounted, ref, watch } from "vue";
 import { useInfiniteScroll, useVirtualList, useIntersectionObserver } from '@vueuse/core';
 
+import {usePlayerStore} from "@/Stores/PlayerStore";
+const playerStore = usePlayerStore();
 
 const name = 'Shorts'
-
 const shorts = ref([]);
 
 const { list, containerProps, wrapperProps } = useVirtualList(shorts, {
@@ -90,7 +93,37 @@ watch(fullyVisibleIndex, (index) => {
     console.log(visibleIndices);
 
     // loop through visibile indices and check if player has been loaded
-    // if not, load it
+    // if not, load it using playerStore
+
+    for (let i = 0; i < visibleIndices.length; i++) {
+        const visibleIndex = visibleIndices[i];
+        if (shorts.value[visibleIndex].player === undefined) {
+            // load player
+            let player = playerStore.findPlayer(shorts.value[visibleIndex].external_id);
+            if (!player) {
+                console.log('building player');
+                playerStore.autoplay = false;
+                playerStore.object = shorts.value[visibleIndex];
+
+                playerStore.buildPlayer(shorts.value[visibleIndex].external_id); // external_id is the ref to the div
+            } else {
+                console.log('player already exists');
+            }
+        }
+
+        // setTimeout(() => {
+        //     // if current index play video
+        //     if (visibleIndex === i) {
+        //         console.log('playing video');
+        //         playerStore.play(shorts.value[visibleIndex].external_id);
+        //     } else {
+        //         console.log('pausing video');
+        //         // playerStore.pause(shorts.value[visibleIndex].external_id);
+        //     }
+        // }, 500 );
+
+
+    }
 
 
 });
@@ -98,15 +131,14 @@ watch(fullyVisibleIndex, (index) => {
 
 <template>
     <Head title="VidGaze Shorts" />
-<div v-bind="containerProps" class="max-h-[calc(100vh-4rem)] duration-75  overflow-y-scroll snap snap-y snap-mandatory ease-in-out">
-    <div v-bind="wrapperProps">
-        <div id="shortsScrollArea" class=" w-full ">
-            <template v-if="list.length > 0" v-for="{index, data} in list" :key="index">
-                <ShortsPlayer :video="data" v-if="data !== undefined" @UpdateFullyVisibleIndex="UpdateFullyVisibleIndex(index)"/>
-            </template>
-
+    <div v-bind="containerProps" class="max-h-[calc(100vh-4rem)] duration-75  overflow-y-scroll snap snap-y snap-mandatory ease-in-out">
+        <div v-bind="wrapperProps">
+            <div id="shortsScrollArea" class=" w-full ">
+                <template v-if="list.length > 0" v-for="{index, data} in list" :key="index">
+                    <ShortsPlayer :video="data" v-if="data !== undefined" @UpdateFullyVisibleIndex="UpdateFullyVisibleIndex(index)"/>
+                </template>
+            </div>
         </div>
+        <ShortsPlayerSkeleton  v-for="n in 1"  />
     </div>
-    <ShortsPlayerSkeleton  v-for="n in 1"  />
-</div>
 </template>

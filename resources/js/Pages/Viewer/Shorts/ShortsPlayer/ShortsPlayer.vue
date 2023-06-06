@@ -65,7 +65,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <section v-bind:id="video.external_id"
+    <section
         class="w-full h-[calc(100vh-4rem)] overflow-hidden  snap-start flex flex-col text dark:textDark" >
 
         <div class="relative flex pt-8 py-10  h-full flex flex-col">
@@ -95,6 +95,7 @@ onMounted(() => {
 
                         <!--Player-->
                         <div class="bg-zinc-200 dark:bg-zinc-800 w-full   flex-grow rounded-2xl without-ring flex relative overflow-hidden">
+                            <div v-bind:id="video.external_id" class="w-full h-full"/>
 
 
                         </div>
