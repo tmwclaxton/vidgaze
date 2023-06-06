@@ -10,7 +10,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
             start_time: 0,
             players: [], //in the form of [[type => "video", object => {id: 1, ...}, player => player_object], ...] this is so we can have multiple players on the page like for shorts and be able to control them individually
             current_player_index: 0,
-            showMiniPlayer: false,
             isViewRecording: false,
             viewRecordTimer: null,
             viewRecordDuration: 0,
@@ -183,8 +182,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             this.show = true;
             // embeds often rebuild the div they are in which is a pain so we will just remove the div and rebuild it
-
-
             // // create player_div element inside player_div_holder
             let playerDiv = playerDivHolder.appendChild(document.createElement('div'));
             playerDiv.id = 'player_div';
