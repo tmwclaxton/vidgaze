@@ -2,6 +2,11 @@
 
 namespace App\Enums;
 
+use App\Helpers\PlatformAPIs\Dailymotion;
+use App\Helpers\PlatformAPIs\iIsPlatform;
+use App\Helpers\PlatformAPIs\Twitch;
+use App\Helpers\PlatformAPIs\Vimeo;
+use App\Helpers\PlatformAPIs\YouTube;
 use InvalidArgumentException;
 
 enum Platform: string
@@ -85,23 +90,41 @@ enum Platform: string
     public function jsonSerialize(): string {
         return serialize($this);
     }
-    public static function getSupportedPlatform($asObject = false): array
+
+
+
+    public static function getSupportedPlatforms(bool $asEnum = false, bool $asPrefix = false): \Illuminate\Support\Collection
     {
-        if($asObject){
-            return [
-                Platform::YouTube,
-                Platform::Dailymotion,
-                Platform::Vimeo,
-                Platform::Twitch,
-                Platform::Podcasts
-            ];
+        $supported = collect([
+            Platform::YouTube,
+            Platform::Dailymotion,
+            Platform::Vimeo,
+            Platform::Twitch,
+            Platform::Podcasts
+        ]);
+        if($asEnum){
+            return $supported;
         }
-        return [
-            "youtube",
-            "dailymotion",
-            "vimeo",
-            "twitch",
-            "podcasts"
-        ];
+        if($asPrefix){
+            return $supported->map(fn($platform) => $platform->getPrefix());
+        }
+        return $supported->map(fn($platform) => $platform->value);
+    }
+
+    function getPlatformClass(): iIsPlatform
+    {
+        return match ($this){
+//            Platform::VidGaze => 'vg',
+            Platform::YouTube => new YouTube,
+            Platform::Dailymotion => new Dailymotion,
+            Platform::Vimeo => new Vimeo,
+            Platform::Twitch => new Twitch,
+//            Platform::Rumble => 'rm',
+//            Platform::Odysee => 'od',
+//            Platform::Podcasts => 'pc',
+//            Platform::SoundCloud => 'sc',
+//            Platform::Spotify => 'sp',
+//            Platform::Instagram => 'ig',
+        };
     }
 }

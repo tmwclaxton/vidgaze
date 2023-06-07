@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Enums\Platform;
 use App\Helpers\PlatformAPIs\iSearchable;
+use App\Helpers\Search;
 use App\Helpers\SearchQueryDTO;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -22,7 +23,7 @@ class searchPlatform implements ShouldQueue
      */
     public function __construct(
         public SearchQueryDTO $searchQuery,
-        public iSearchable $platformAPI
+        public Platform $platformAPI
     ){}
 
     /**
@@ -30,12 +31,13 @@ class searchPlatform implements ShouldQueue
      */
     public function handle(): void
     {
-        $results = $this->platformAPI::search($this->searchQuery);
+        $results = $this->platformAPI->getPlatformClass()::search($this->searchQuery);
         Redis::client()->set(
-            "search:". $this->platformAPI::getPlatform()->getPrefix().":".
-            $this->searchQuery->query
-            ,
+            Search::getRedisSearchKey($this->platformAPI->getPlatformClass()::getPlatform(), $this->searchQuery),
             json_encode($results)
         );
+        Redis::client()->expire(
+            Search::getRedisSearchKey($this->platformAPI->getPlatformClass()::getPlatform(), $this->searchQuery),
+            Search::getRedisExpire());
     }
 }
