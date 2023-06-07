@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Enums\Platform;
 use App\Helpers\Search;
 use App\Helpers\SearchQueryDTO;
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Redis;
 
 class searchPlatform implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.

@@ -100,7 +100,7 @@ enum Platform: string
             Platform::Dailymotion,
             Platform::Vimeo,
             Platform::Twitch,
-            Platform::Podcasts
+//            Platform::Podcasts
         ]);
         if($asEnum){
             return $supported;

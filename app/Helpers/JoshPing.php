@@ -13,7 +13,7 @@ class JoshPing
 
     public static function ping(): int
     {
-        $query = new SearchQueryDTO('chess', 5);
+        $query = new SearchQueryDTO('jordan peterson', 5);
 
         $results = Search::search($query);
 
