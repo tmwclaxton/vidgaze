@@ -13,7 +13,7 @@ use Carbon\Carbon;
 use Dailymotion as DailymotionSDK;
 use Illuminate\Support\Arr;
 
-class Dailymotion
+class Dailymotion implements iSearchable, iIsPlatform
 {
     public DailymotionSDK $client;
 
@@ -52,6 +52,11 @@ class Dailymotion
         );
 
         $this->client = $dailymotion_client;
+    }
+
+    public static function getPlatform(): Platform
+    {
+        return Platform::Dailymotion;
     }
 
     // max ids is 100

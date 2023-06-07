@@ -12,13 +12,18 @@ use Illuminate\Support\Arr;
 use Vimeo\Vimeo as VimeoSDK;
 
 
-class Vimeo
+class Vimeo implements iSearchable, iIsPlatform
 {
 
     public VimeoSDK $client;
     public function __construct()
     {
         $this->client = new VimeoSDK(config('platforms.vimeo.client_id'), config('platforms.vimeo.client_secret'));
+    }
+
+    public static function getPlatform(): Platform
+    {
+        return Platform::Vimeo;
     }
 
     public function getCreator(string $id)

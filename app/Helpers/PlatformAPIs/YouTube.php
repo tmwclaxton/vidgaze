@@ -14,7 +14,7 @@ use Google_Service_YouTube;
 use Laravel\Octane\Facades\Octane;
 use function Symfony\Component\String\s;
 
-class YouTube
+class YouTube implements iSearchable, iIsPlatform
 {
 
     public Google_Service_YouTube $client;
@@ -29,6 +29,10 @@ class YouTube
         $this->client = new Google_Service_YouTube($google->client);
     }
 
+    public static function getPlatform(): Platform
+    {
+        return Platform::YouTube;
+    }
 
     //YouTube can only take 50 ids at a time
     public static function getCreators(array $ids): array

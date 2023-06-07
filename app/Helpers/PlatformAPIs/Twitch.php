@@ -12,7 +12,7 @@ use Illuminate\Support\Arr;
 use TwitchApi\HelixGuzzleClient;
 use TwitchApi\TwitchApi;
 
-class Twitch
+class Twitch implements iSearchable, iIsPlatform
 {
 
     public TwitchApi $client;
@@ -20,6 +20,11 @@ class Twitch
     {
         $helixGuzzleClient = new HelixGuzzleClient(config('platforms.twitch.client_id'));
         $this->client = new TwitchApi($helixGuzzleClient, config('platforms.twitch.client_id'), config('platforms.twitch.client_secret'));
+    }
+
+    public static function getPlatform(): Platform
+    {
+        return Platform::Twitch;
     }
 
     public function getAppBearerToken(){
