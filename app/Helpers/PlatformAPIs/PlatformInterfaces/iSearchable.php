@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers\PlatformAPIs;
+namespace App\Helpers\PlatformAPIs\PlatformInterfaces;
 
 use App\Helpers\SearchQueryDTO;
 

@@ -6,13 +6,14 @@ use App\Enums\Kind;
 use App\Enums\Platform;
 use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
 use App\Helpers\Tools;
 use Carbon\Carbon;
 use Google_Service_YouTube;
 use Laravel\Octane\Facades\Octane;
-use function Symfony\Component\String\s;
 
 class YouTube implements iSearchable, iIsPlatform
 {

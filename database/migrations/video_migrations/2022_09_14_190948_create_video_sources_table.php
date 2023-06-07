@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\Platforms;
+use App\Enums\Platform;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,12 +18,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('video_id')->constrained()->cascadeOnDelete();
             $table->enum('source_name',[
-                    Platforms::YouTube->name,
-                    Platforms::Dailymotion->name,
-                    Platforms::Vimeo->name,
-                    Platforms::Rumble->name,
-                    Platforms::Odysee->name,
-                    Platforms::Twitch->name]
+                    Platform::YouTube->name,
+                    Platform::Dailymotion->name,
+                    Platform::Vimeo->name,
+                    Platform::Rumble->name,
+                    Platform::Odysee->name,
+                    Platform::Twitch->name]
             );
             $table->string('external_id');
             $table->timestamps();

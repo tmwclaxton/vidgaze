@@ -3,11 +3,9 @@
 namespace App\Jobs;
 
 use App\Enums\Platform;
-use App\Helpers\PlatformAPIs\iSearchable;
 use App\Helpers\Search;
 use App\Helpers\SearchQueryDTO;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;

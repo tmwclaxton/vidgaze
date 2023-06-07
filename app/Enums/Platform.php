@@ -3,7 +3,7 @@
 namespace App\Enums;
 
 use App\Helpers\PlatformAPIs\Dailymotion;
-use App\Helpers\PlatformAPIs\iIsPlatform;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\PlatformAPIs\Vimeo;
 use App\Helpers\PlatformAPIs\YouTube;
