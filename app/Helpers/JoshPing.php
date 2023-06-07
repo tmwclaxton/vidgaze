@@ -15,15 +15,20 @@ class JoshPing
     {
         $query = new SearchQueryDTO('chess', 5);
 
+        $results = Search::search($query);
+
         $start = microtime(true);
-        $octane = Octane::concurrently([
-//           /* fn() =>*/ YouTube::search($query),
-           fn() => Dailymotion::search($query),
-           fn() => Vimeo::search($query),
-           fn() => Twitch::search($query)
-        ], 10000);
-        $time = microtime(true) - $start;
-        ddd($time, $octane);
+        ddd($results, microtime(true) - $start);
+//
+//        $octane = Octane::concurrently([
+////           /* fn() =>*/ YouTube::search($query),
+//           fn() => Dailymotion::search($query),
+//           fn() => Vimeo::search($query),
+//           fn() => Twitch::search($query)
+//        ], 10000);
+//        $time = microtime(true) - $start;
+//        ddd($time, $octane);
+
 
 
         return dd('pong');
