@@ -76,9 +76,12 @@ export const usePlayerStore = defineStore('PlayerStore', {
                             this.debugMessage('View Record Duration: ' + this.viewRecordDuration);
                         } else {
                             this.debugMessage('Error: Player is not playing');
+                            clearInterval(this.viewRecordTimer);
+
                         }
                     } catch (error) {
                         this.debugMessage('Error: ' + error);
+                        clearInterval(this.viewRecordTimer);
                     }
                 }, 5000);
             }
@@ -291,22 +294,24 @@ export const usePlayerStore = defineStore('PlayerStore', {
             const external_id = this.object.external_id;
             // const external_id = 'x8l6g4x';
             // this.object.external_id = external_id;
-            if (!document.getElementById(external_id)) {
-                const tag = document.createElement('script');
-                tag.src = "https://geo.dailymotion.com/libs/player/" + external_id + ".js";
-                tag.id = external_id;
-                const firstScriptTag = document.getElementsByTagName('script')[0];
-                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-            }
+
+            const tag = document.createElement('script' );
+            tag.src = "https://geo.dailymotion.com/libs/player/" + external_id + ".js";
+            tag.id = 'tag' + external_id;
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
             let player;
             //wait for script to load
             setTimeout(() => {
                 dailymotion.createPlayer(playerDiv.id, {
                     video: external_id,
                     start: this.start_time,
+                    autoplay: this.autoplay,
                 }).then((resolvedPlayer) => {
                     player = resolvedPlayer;
-
+                    document.getElementById(playerDiv.id).classList.add("h-full", "w-full","p-0", "relative");
+                    document.getElementById(playerDiv.id).removeAttribute('style');
                     // console.log(player);
 
                     player.on(dailymotion.events.VIDEO_PLAY, () => {
@@ -361,8 +366,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
         pushPlayer(player) {
 
             // player.getPaused().then((paused) => { !this.debugMessage(paused) }) ; works here for vimeo
-            this.debugMessage('pushing player' + this.object.external_id)
-            console.log(player);
+            // this.debugMessage('pushing player' + this.object.external_id)
+            // console.log(player);
             // check if player is already in players array
             if (this.findPlayer(this.object.external_id)) {
                 return;
@@ -386,7 +391,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // find player in players array
             for (let i = 0; i < this.players.length; i++) {
                 if (this.players[i]['object'].external_id === external_id) {
-                    this.debugMessage('found player' + external_id);
+                    // this.debugMessage('found player' + external_id);
                     return this.players[i];
                 }
             }
