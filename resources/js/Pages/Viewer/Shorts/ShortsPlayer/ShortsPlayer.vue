@@ -7,6 +7,7 @@ import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import {useContentModalStore} from "@/Stores/ContentModalStore";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
 import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
+import {onMounted, onUnmounted, ref} from "vue";
 const contentModalStore = useContentModalStore();
 const shareModalStore = useShareModalStore();
 
@@ -17,7 +18,7 @@ const comment = false;
 const props = defineProps({
     video: {
         type: Object,
-        default: null,
+        required: true,
     },
 });
 
@@ -34,10 +35,38 @@ const share = () => {
     }
 
 };
+
+const emits = defineEmits(['UpdateFullyVisibleIndex' ]);
+onMounted(() => {
+    const options = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 1.0,
+    };
+
+    const handleIntersection = (entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                // Emit an event upwards when the player becomes fully visible
+                // You can replace 'eventName' with your desired event name
+                // this.$emit('eventName', this.video.external_id);
+                emits('UpdateFullyVisibleIndex',props.video.index);
+
+            }
+        });
+    };
+
+    const observer = new IntersectionObserver(handleIntersection, options);
+    observer.observe(document.getElementById(props.video.external_id));
+// // https://github.com/ManukMinasyan/vue3-observe-visibility
+});
+
+
 </script>
 
 <template>
-    <section class="w-full h-[calc(100vh-4rem)] overflow-hidden  snap-start flex flex-col text dark:textDark" >
+    <section
+        class="w-full h-[calc(100vh-4rem)] overflow-hidden  snap-start flex flex-col text dark:textDark" >
 
         <div class="relative flex pt-8 py-10  h-full flex flex-col">
 
@@ -66,6 +95,7 @@ const share = () => {
 
                         <!--Player-->
                         <div class="bg-zinc-200 dark:bg-zinc-800 w-full   flex-grow rounded-2xl without-ring flex relative overflow-hidden">
+                            <div v-bind:id="video.external_id" class="w-full h-full"/>
 
 
                         </div>
