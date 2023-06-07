@@ -2,10 +2,11 @@
 
 namespace App\Helpers\PlatformAPIs;
 
+use App\Helpers\Tools;
 use Google\Client;
 use Google_Service_YouTube;
 
-class Google extends aPlatformAPI
+class Google
 {
     public $client;
 
@@ -18,7 +19,7 @@ class Google extends aPlatformAPI
 
         isset($scopes) ?  $client->addScope($scopes) : $client->addScope(GOOGLE_SERVICE_YOUTUBE::YOUTUBE_FORCE_SSL);
 
-        isset($redirect_url_path) ? $client->setRedirectUri(convertRedirectPathToUrl($redirect_url_path)) :  $client->setRedirectUri(convertRedirectPathToUrl(config('platforms.google.redirect_url.link')));
+        isset($redirect_url_path) ? $client->setRedirectUri(Tools::convertRedirectPathToUrl($redirect_url_path)) :  $client->setRedirectUri(Tools::convertRedirectPathToUrl(config('platforms.google.redirect_url.link')));
 
         // offline access will give you both an access and refresh token so that
         // your app can refresh the access token without user interaction.

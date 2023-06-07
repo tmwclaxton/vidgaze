@@ -3,17 +3,20 @@
 namespace App\Helpers\PlatformAPIs;
 
 use App\Enums\Kind;
-use App\Enums\Platforms;
-use App\Helpers\SearchResultDTO;
-use App\Models\CreatorModels\Creator;
-use App\Models\CreatorModels\CreatorSource;
-use App\Models\VideoModels\Video;
-use App\Models\VideoModels\VideoSource;
+use App\Enums\Platform;
+use App\Helpers\ContentDTO;
+use App\Helpers\CreatorDTO;
+use App\Helpers\ResultDTO;
+use App\Helpers\SearchQueryDTO;
+use App\Helpers\Tools;
 use Carbon\Carbon;
 use Google_Service_YouTube;
+use Laravel\Octane\Facades\Octane;
+use function Symfony\Component\String\s;
 
-class YouTube extends aPlatformAPI implements iPlatfromSearch
+class YouTube
 {
+
     public Google_Service_YouTube $client;
 
     public function __construct($code = null, array $scopes = null, string $redirect_url_path = null)
@@ -26,284 +29,126 @@ class YouTube extends aPlatformAPI implements iPlatfromSearch
         $this->client = new Google_Service_YouTube($google->client);
     }
 
-    //returns 15 videos per page?
-    public static function getRelatedVideos(string $relatedToVideoId,  int $maxResults = 50, $pageToken = null): array
-    {
-        return self::search(null, $maxResults, $pageToken, null, $relatedToVideoId, 'video');
-    }
-
-
-    // see docs here https://developers.google.com/youtube/v3/docs/search/list
-    public static function search($searchQuery, int $maxResults = 20, $pageToken = null,  $filters = null, string $relatedToVideoId = null, string $type = null){
-
-        try {
-            $client = new YouTube();
-            $type = $relatedToVideoId ? 'video' : null;
-            $searchQuery = $relatedToVideoId ? null : $searchQuery;
-
-            $response = $client->client->search->listSearch(['snippet'], [
-                'q' => $searchQuery,
-                'pageToken' => $pageToken,
-                'maxResults' => ($maxResults <= 50) ? $maxResults : 50,
-                'relatedToVideoId' => $relatedToVideoId,
-                'type' => $type,
-            ]);
-
-            $items = $response->getItems();
-
-            $pageTokenInfo = [
-                "nextPageToken" => $response->getNextPageToken(),
-                "prevPageToken" => $response->getPrevPageToken(),
-            ];
-
-            $separate_items = [
-                'creator_ids' => [],
-                'video_and_stream_ids' => [],
-                'playlist_ids' => [],
-            ];
-            foreach ($items as $item) {
-                match ($item['id']['kind']) {
-                    'youtube#video' => $separate_items['video_and_stream_ids'][] = $item['id']['videoId'],
-                    'youtube#channel' => $separate_items['creator_ids'][] = ($item['snippet']['channelId']) ?: $item['id']['channelId'],
-                    'youtube#playlist' => $separate_items['playlist_ids'][] = $item['id']['playlistId'],
-                };
-            }
-
-            $results = array_merge(
-                self::getVideoOrStream($separate_items['video_and_stream_ids']),
-                self::getChannel($separate_items['creator_ids'], true)
-            );
-
-            return [
-                "pageTokenInfo" => $pageTokenInfo,
-                "results" => $results
-            ];
-        }
-        catch (\Exception $e){
-            return [
-                "pageTokenInfo" => null,
-                "results" => [$e->getMessage()]
-            ];
-        }
-    }
 
     //YouTube can only take 50 ids at a time
-    public static function getChannel(null | string | array $id , $returnDTO = false)
+    public static function getCreators(array $ids): array
     {
-        $channels = [];
-
-        if($id){
-            $api = new YouTube();
-            if(is_array($id) && sizeof($id) > 50) {
-                for ($i = 0; $i < sizeof($id) ; $i+=50) {
-                    $channels = array_merge($channels, $api->client->channels->listChannels(['snippet','brandingSettings'], [
-                        'id' => array_slice($id, $i, 50)
-                    ])->getItems());
-                }
-            }
-            else {
-                $channels = $api->client->channels->listChannels(['snippet', 'brandingSettings'], [
-                    'id' => $id
-                ])->getItems();
-            }
-
-            if($returnDTO){
-                $channels = array_map(function ($channel){
-                    $DTO = new SearchResultDTO();
-                    $DTO->kind = Kind::Creator;
-                    $DTO->platform = Platforms::YouTube;
-                    $DTO->channel_name = $channel->snippet->title;
-                    $DTO->channel_id = $channel->id;
-                    $DTO->avatar_url = $channel->snippet->thumbnails->default->url;
-                    $DTO->banner_url = $channel->brandingSettings->image? $channel->brandingSettings->image->bannerExternalUrl.'=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj' : null;
-                    $DTO->bio = $channel->description;
-                    $DTO->region = $channel->country;
-                    $DTO->language = $channel->defaultLanguage;
-                    return $DTO;
-                },$channels);
-            }
+        $yt = new self();
+        if (!$ids) return [];
+        // validate ids
+        if (count($ids) > 50) {
+            throw new \Exception('Too many ids, max 100');
         }
-        return $channels;
+
+        $creators = $yt->client->channels->listChannels(['snippet', 'brandingSettings'], [
+            'id' => $ids
+        ])->getItems();
+
+
+        return array_map(function ($creator){
+            $creatorDTO = new CreatorDTO(Platform::YouTube, $creator->id);
+            $creatorDTO->name = $creator->snippet->title;
+            $creatorDTO->avatar_url = $creator->snippet->thumbnails->default->url;
+            $creatorDTO->banner_url = $creator->brandingSettings->image? $creator->brandingSettings->image->bannerExternalUrl.'=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj' : null;
+            $creatorDTO->description = $creator->snippet->description;
+            $creatorDTO->region = $creator->snippet->country ?? null;
+            $creatorDTO->language = $creator->snippet->defaultLanguage ?? null;
+            return $creatorDTO;
+        },$creators);
     }
 
-    public static function getVideoOrStream(null | string | array $id)
-    {
-        $videos = [];
-        if($id){
-            $api = new YouTube();
-            $videos = $api->client->videos->listVideos(['snippet','contentDetails'], [
-                'id' => $id
-            ]);
 
-            $videos = array_map(function ($video){
-                $DTO = new SearchResultDTO();
-                $DTO->kind = ($video->snippet->liveBroadcastContent == 'live') ? Kind::Stream : Kind::Video;
-                $DTO->platform = Platforms::YouTube;
-                $DTO->channel_id = $video->snippet->channelId;
-                $DTO->video_name = $video->snippet->title;
-                $DTO->stream_name = $video->snippet->title;
-                $DTO->description = $video->snippet->description;
-                $DTO->duration = convertYouTubeDurationToSeconds($video->contentDetails->duration);
-                $DTO->tags = $video->snippet->tags ?? [];
-                $DTO->publish_time = $video->snippet->publishedAt;
-                $DTO->thumbnail_url = $video->snippet->thumbnails->medium->url;
-                $DTO->video_id = $video->id;
-                $DTO->stream_id = $video->id;
-                $DTO->category_id = $video->snippet->categoryId;
 
-                ////$DTO->region = $video->country;
-                //$DTO->language = $video->defaultLanguage;
-                return $DTO;
-            },$videos->getItems());
-        }
-        return $videos;
-    }
-
-    public static function makeCreatorModel(string $id): \Illuminate\Database\Eloquent\Model|Creator
-    {
-        $response = self::getChannel($id)[0];
-        $brandingSettings = $response->getBrandingSettings();
-        $snippet = $response->getSnippet();
-        $bannerUrl = $brandingSettings['image'] ? $brandingSettings['image']['bannerExternalUrl'].'=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj' : null;
-
-        $creator = Creator::firstOrNew([
-            'slug' => 'yt_'.$id,
-            ],[
-            'name' => $snippet['title'],
-            'avatar_url' => $snippet['thumbnails']['medium']['url'],
-            'banner_url' => $bannerUrl,
-            'bio' => json_encode($snippet['description']),
-            'region' => $snippet['country'],
-//            'language' => $snippet['defaultLanguage'],
+    public static function search(SearchQueryDTO $searchQueryDTO){
+        $yt = new self();
+        $response = $yt->client->search->listSearch(['snippet'], [
+            'q' => $searchQueryDTO->query,
+//            'pageToken' => $pageToken,
+            'maxResults' => ($searchQueryDTO->max_results <= 50) ? $searchQueryDTO->max_results : 50,
+//            'relatedToVideoId' => $relatedToVideoId,
+//            'type' => $type,
         ]);
 
-        $source = CreatorSource::firstOrNew([
-            'source_name' => Platforms::YouTube->name,
-            'external_channel_id' => $id,
-        ],[
-            'creator_id' => $creator->id,
-        ]);
-
-        if($source->creator_id == $creator->id){
-            $creator->save();
-            $source->creator_id = $creator->id;
-            $source->save();
-        }
-        return $creator;
-    }
-
-    //makes video model by the yt video id
-    public static function makeVideoModel(string $id): \Illuminate\Database\Eloquent\Model|Video
-    {
-        $result = self::getVideoOrStream($id)[0];
-
-        $creator = Creator::findOrCreate($result->channel_id, Platforms::YouTube);
-        $video = Video::firstOrNew([
-            'creator_id' => $creator->id,
-            'preferred_source' => Platforms::YouTube->name,
-            'title' => $result->video_name,
-            'description' => $result->description,
-            'duration' => $result->duration,
-            //'category_id' => $snippet['categoryId'],
-            'tags' => json_encode($result->tags),
-            'time_published' => Carbon::make($result->publish_time),
-            'thumbnail_url' => $result->thumbnail_url,
-            //'language' => $snippet['defaultLanguage'],
-        ],[
-            'slug' => generateRandomString(),
-        ]);
-
-        $source = VideoSource::firstOrNew([
-            'source_name' => Platforms::YouTube->name,
-            'external_id' => $id,
-        ],[
-            'video_id' => $video->id,
-        ]);
-
-        if($source->video_id == $video->id){
-            $video->save();
-            $source->video_id = $video->id;
-            $source->save();
-        }
-        return $video;
-    }
-
-    public static function updateAllChannelContent(string $id)
-    {
-        SearchResultDTO::convertResultDTOToModels(self::getAllChannelVideos($id));
-    }
-
-    public static function updateChannelVideosBeforeDate($id, null | Carbon $date = null, $maxResults = 50): array
-    {
-        $response = self::getChannelVideosBeforeDate($id, $date, $maxResults);
-        SearchResultDTO::convertResultDTOToModels($response['results']);
-        return [
-            'lastPublishedAt' => $response['lastPublishedAt'],
-            'hasNext' => $response['hasNext'],
-        ];
-    }
-
-    public static function getChannelVideosBeforeDate(string $id, Carbon | null $date, $maxResults = 50, bool $includeStreams = true, bool $onlyStreams = false): array
-    {
-        $api = new YouTube();
-
-        $queryParams = [
-            'channelId' => $id,
-            'maxResults' => $maxResults,
-            'pageToken' => null,
-            'order' => 'date',
-            'publishedBefore' => $date?->toISOString(),
-            'type' => 'video',
-            'eventType' => !$includeStreams? $event = 'completed' : ($onlyStreams? $event = 'live' : null),
-        ];
-
-        $response = $api->client->search->listSearch(['snippet'], $queryParams);
         $items = $response->getItems();
-        $results = self::getVideoOrStream(array_map(fn($item)=>$item->id->videoId, $items),true);
-
-        return [
-            'lastPublishedAt' => Carbon::make(end($items)->getSnippet()->publishedAt),
-            'hasNext' => boolval($response->nextPageToken),
-            'results' => $results,
+//        dd($items);
+        $separate_items = [
+            'creator_ids' => [], //if result is a creator
+            'video_and_stream_ids' => [],
+            'playlist_ids' => [],
+            'all_creator_ids' => [],
         ];
-    }
-
-    public static function getAllChannelVideos(string $id) : array //SearchResultDTO
-    {
-        $hasNext = true;
-        $lastPublishedAt = null;
-        $results = [];
-        while($hasNext)
-        {
-            $content = self::getChannelVideosBeforeDate($id,$lastPublishedAt);
-            $results = array_unique(array_merge($results, $content['results']),SORT_REGULAR);
-            $lastPublishedAt = $content['lastPublishedAt'];
-            $hasNext = $content['hasNext'];
+        foreach ($items as $item) {
+            match ($item['id']['kind']) {
+                'youtube#video' => $separate_items['video_and_stream_ids'][] = $item['id']['videoId'],
+                'youtube#channel' => $separate_items['creator_ids'][] = ($item['snippet']['channelId']) ?: $item['id']['channelId'],
+                'youtube#playlist' => $separate_items['playlist_ids'][] = $item['id']['playlistId'],
+            };
+            $separate_items['all_creator_ids'][] = ($item['snippet']['channelId']) ?: $item['id']['channelId'];
         }
-        return $results;
+
+        $data =  Octane::concurrently([
+            fn() => self::getCreators($separate_items['all_creator_ids']),
+            fn() => self::getVideoOrStream($separate_items['video_and_stream_ids'], false)
+        ],5000);
+
+        // foreach video and stream, add corresponding creator to DTO
+        foreach ($data[1] as $item) {
+            $item->creator = $data[0][array_search($item->content->creator_id, array_column($data[0], 'id'))];
+        }
+
+        $creatorDTOs = array_filter($data[0], function ($creator) use ($separate_items) {
+            return in_array($creator->id, $separate_items['creator_ids']);
+        });
+
+        $results = [];
+        foreach ($creatorDTOs as $creator) {
+            $resultDTO = new ResultDTO(Platform::YouTube, Kind::Creator);
+            $resultDTO->creator = $creator;
+            $results[] = $resultDTO;
+        }
+        // only return creators in the creator_ids array (and other results)
+        return array_merge($results, $data[1]);
     }
 
-    public static function getCategories(bool $assignable = true, string | array $id = null, $regionCode = 'us') : array //SearchResultDTO
+
+    public static function getVideoOrStream(array $ids, bool $returnJustContentDTO = true): array
     {
-        $yt = new \App\Helpers\PlatformAPIs\YouTube();
-        $queryParams = [
-            'regionCode' => $regionCode
-        ];
-        $response = $yt->client->videoCategories->listVideoCategories('snippet',$queryParams)->getItems();
+        $yt = new self();
+        if (!$ids) return [];
+        $videos = [];
+        $videos = $yt->client->videos->listVideos(['snippet','contentDetails'], [
+            'id' => $ids
+        ]);
 
-        //if the user wants to return specifically assignable or unassignable categories, then filter
-        $response = isset($assignable)? array_filter($response,fn($item)=>$item->snippet->assignable): $response;
-        $results = array_map(function ($value){
+        return array_map(function ($video) use ($returnJustContentDTO) {
+            $kind = ($video->snippet->liveBroadcastContent == 'live') ? Kind::Stream : Kind::Video;
+            $resultDTO = new ResultDTO(Platform::YouTube, $kind);
+            $contentDTO = new ContentDTO(
+                Platform::YouTube,
+                $kind,
+                $video->id
+            );
 
-            $DTO = new SearchResultDTO();
-            $DTO->category_id = $value->id;
-            $DTO->kind = Kind::Category;
-            $DTO->platform = Platforms::YouTube;
-            $DTO->category_name = $value->snippet->title;
-            $DTO->assignable = $value->snippet->assignable;
-            $DTO->category_slug = convertNameToSlug($value->snippet->title);
-            return $DTO;
-            }, $response);
-        return $results;
+            $contentDTO->creator_id = $video->snippet->channelId;
+            $contentDTO->name = $video->snippet->title;
+            $contentDTO->description = $video->snippet->description;
+            $contentDTO->duration = Tools::convertYouTubeDurationToSeconds($video->contentDetails->duration);
+            $contentDTO->tags = $video->snippet->tags ?? [];
+            $contentDTO->publish_time = Carbon::parse($video->snippet->publishedAt);
+            $contentDTO->thumbnail_url = $video->snippet->thumbnails->medium->url;
+            $categoryDTO = new ContentDTO(Platform::YouTube, Kind::Category, $video->snippet->categoryId);
+            $contentDTO->category = $categoryDTO;
+
+            ////$contentDTO->region = $video->country;
+            //$contentDTO->language = $video->defaultLanguage;
+
+            $resultDTO->content = $contentDTO;
+
+            if ($returnJustContentDTO) return $contentDTO;
+
+            $resultDTO->kind = $kind;
+            $resultDTO->creator = new CreatorDTO(Platform::YouTube, $video->snippet->channelId);
+            return $resultDTO;
+        },$videos->getItems());
     }
 }
