@@ -13,7 +13,8 @@ class JoshPing
 
     public static function ping(): int
     {
-        $query = new SearchQueryDTO('jordan peterson', 5);
+        $query = new SearchQueryDTO('warick davis', 5);
+        dd(Vimeo::search($query));
 
         $results = Search::search($query);
 

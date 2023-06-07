@@ -51,7 +51,6 @@ class Vimeo implements iSearchable, iIsPlatform
 
     public static function search(SearchQueryDTO $searchQueryDTO)
     {
-        try {
             $response = (new Vimeo)->client->request('/videos', [
                 'query' => $searchQueryDTO->query,
                 'per_page' => ($searchQueryDTO->max_results <= 100) ? $searchQueryDTO->max_results : 100,
@@ -75,7 +74,12 @@ class Vimeo implements iSearchable, iIsPlatform
                 $contentDTO->name = $value['name'];
                 $contentDTO->duration = $value['duration'];
                 $contentDTO->thumbnail_url = $value['pictures']['base_link'];
-                $contentDTO->tags = array_map(fn($item)=>$item['name'],$value['tags']);
+                // remove null values from $value['tags']
+
+                $value['tags'] = array_filter($value['tags'], function ($item) {
+                    return $item['name']?? false;
+                });
+                $contentDTO->tags = array_map(fn($item)=>$item['name'], $value['tags']);
                 $contentDTO->description = $value['description'];
                 $contentDTO->creator_id = str_replace("/users/", "", $value['user']['uri']);
 
@@ -103,16 +107,6 @@ class Vimeo implements iSearchable, iIsPlatform
 
             });
 
-//            return [
-//                "pageTokenInfo" => self::getPageTokenInfo($response, $pageToken),
-//                "results" => self::convertResponseToDTOs($items)
-//            ];
-        }
-        catch (\Exception $e){
-            return [
-                "pageTokenInfo" => null,
-                "results" => []
-            ];
-        }
+
     }
 }
