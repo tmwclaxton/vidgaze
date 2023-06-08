@@ -13,24 +13,33 @@ class JoshPing
 
     public static function ping(): int
     {
-        $query = new SearchQueryDTO('jonathan pageau', 5);
-//        dd(Vimeo::search($query));
-
-        $results = Search::search($query);
+        $query = new SearchQueryDTO('jordan peterson', 5);
 
         $start = microtime(true);
-        ddd($results, microtime(true) - $start);
+//        $results = Twitch::search($query);
+//        $results = Search::search($query, 5);
 //
-//        $octane = Octane::concurrently([
-////           /* fn() =>*/ YouTube::search($query),
-//           fn() => Dailymotion::search($query),
-//           fn() => Vimeo::search($query),
-//           fn() => Twitch::search($query)
-//        ], 10000);
-//        $time = microtime(true) - $start;
-//        ddd($time, $octane);
+//        ddd($results, microtime(true) - $start);
+
+        $octane = Octane::concurrently([
+//           /* fn() =>*/ YouTube::search($query),
+           fn() => Dailymotion::search($query),
+           fn() => Vimeo::search($query),
+           fn() => Twitch::search($query)
+        ], 10000);
+        $octane[] = YouTube::search($query);
+        $time = microtime(true) - $start;
+        ddd($time, $octane);
 
 
+        $start = microtime(true);
+        $results=[];
+        $results[] = YouTube::search($query);
+        $results[] = Dailymotion::search($query);
+        $results[] = Vimeo::search($query);
+        $results[] = Twitch::search($query);
+        $time = microtime(true) - $start;
+        ddd($time, $results);
 
         return dd('pong');
     }

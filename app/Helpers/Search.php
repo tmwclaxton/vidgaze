@@ -16,7 +16,7 @@ class Search
         return "search:" . $platform->getPrefix() . ":" . $query->query;
     }
 
-    public static function search(SearchQueryDTO $searchQuery, int $max_wait = 5): array
+    public static function search(SearchQueryDTO $searchQuery, int $max_wait = 5)
     {
         $max_wait = $max_wait >=0 ? $max_wait : 5;
 
@@ -45,16 +45,21 @@ class Search
         }
 
         // dispatch batch
-        $batch = Bus::batch($search_jobs)->onQueue('search')->onConnection('redis')
+        $batch = Bus::batch($search_jobs)
             ->finally(function (Batch $batch) use ($platforms_to_search, $searchQuery) {
-                return self::getRedisCacheResults($searchQuery, $platforms_to_search);
-            })->dispatch();
+                self::getRedisCacheResults($searchQuery, $platforms_to_search);
+            })->onQueue('search')->onConnection('redis')->dispatch();
 
         // wait to finish or wait max seconds
-        sleep($max_wait);
+        $time = 0;
+        while (!Bus::findBatch($batch->id)->finished() && $time < $max_wait) {
+            sleep(1);
+            $time++;
+        }
 
         // return results in Redis cache
-        return self::getRedisCacheResults($searchQuery, $platforms_to_search);
+        $cache_results[] = self::getRedisCacheResults($searchQuery, $platforms_to_search);
+        return $cache_results;
     }
 
     public static function getRedisExpire(): int
