@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Enums\Platform;
 use App\Helpers\PlatformAPIs\Dailymotion;
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\PlatformAPIs\Vimeo;
@@ -13,14 +14,14 @@ class JoshPing
 
     public static function ping(): int
     {
-        $query = new SearchQueryDTO('jordan peterson', 5);
+        $query = new SearchQueryDTO('joe rogan', 25);
 
         $start = microtime(true);
-//        $results = Twitch::search($query);
-//        $results = Search::search($query, 5);
+//        $results = Vimeo::search($query);
+//        $results = Search::search($query, 10);
 //
 //        ddd($results, microtime(true) - $start);
-
+////
         $octane = Octane::concurrently([
 //           /* fn() =>*/ YouTube::search($query),
            fn() => Dailymotion::search($query),
@@ -32,12 +33,21 @@ class JoshPing
         ddd($time, $octane);
 
 
+
         $start = microtime(true);
-        $results=[];
-        $results[] = YouTube::search($query);
-        $results[] = Dailymotion::search($query);
-        $results[] = Vimeo::search($query);
-        $results[] = Twitch::search($query);
+//        $results=[];
+//        foreach (Platform::getSupportedPlatforms(true)->toArray() as $platform) {
+//            $results[] = $platform->getPlatformClass()::search($query);
+//        }
+
+        $start_2 = microtime(true);
+        $results['yt'] = [YouTube::search($query), microtime(true) - $start_2];
+        $start_2 = microtime(true);
+        $results['dm'] = [Dailymotion::search($query), microtime(true) - $start_2];
+        $start_2 = microtime(true);
+        $results['vm'] = [Vimeo::search($query), microtime(true) - $start_2];
+        $start_2 = microtime(true);
+        $results['tw'] = [Twitch::search($query), microtime(true) - $start_2];
         $time = microtime(true) - $start;
         ddd($time, $results);
 
