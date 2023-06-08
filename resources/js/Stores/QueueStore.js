@@ -68,13 +68,13 @@ export const useQueueStore = defineStore('QueueStore', {
                 if (this.items[i]['object'].id === id && this.items[i]['type'] === type) {
                     let changeIndexBool = false
                     // if I delete the current item, I need to change the video
-                    if (id === this.items[this.index]['object'].id && type === this.items[this.index]['type']) {
+                    if (id === this.items[this.index]['object'].id && type === this.items[this.index]['type'] && this.items.length > 1) {
                         changeIndexBool = true;
                     }
 
-                    // if I delete an item that is greater or equal to the current index, I need to decrement the index
+                    // if I delete an item less than or equal to the current index, I need to decrement the index
                     //
-                    if (i >= this.index && this.index > 0) {
+                    if (i <= this.index && this.index > 0) {
                         this.debugMessage("decrementing index from " + this.index + " to " + (this.index - 1) + "decrement index");
                         this.index = this.index - 1;
                     }

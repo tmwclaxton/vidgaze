@@ -95,9 +95,8 @@ onMounted(() => {
 
                         <!--Player-->
                         <div class="bg-zinc-200 dark:bg-zinc-800 w-full   flex-grow rounded-2xl without-ring flex relative overflow-hidden">
-                            <div v-bind:id="video.external_id" class="w-full h-full"/>
-
-
+                            <div :id="video.external_id" class="w-full h-full">
+                            </div>
                         </div>
                     </div>
 

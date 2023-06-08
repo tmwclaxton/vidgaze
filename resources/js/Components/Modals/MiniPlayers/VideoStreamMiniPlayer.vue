@@ -143,7 +143,7 @@ const closeMiniPlayer = () => {
 </script>
 
 <template>
-    <div ref="draggableDiv"   class="z-50 fixed shadow shadow-md
+    <div ref="draggableDiv"   class="z-40 fixed shadow shadow-md
      bg-white dark:bg-vidgaze-blue-dropdown rounded-xl overflow-hidden  w-96" v-bind:class="playerStore.showMiniPlayer ? 'flex flex-col' : 'hidden' ">
         <!--top part with creator & subscribe button-->
         <div v-if="queueStore.items[queueStore.index] !== undefined" class="overflow-hidden h-0 group-hover: h-full  group-hover: p-2 duration-300 ease-in-out transition delay-75 flex flex-row gap-x-2 ">
