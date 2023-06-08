@@ -33,10 +33,8 @@ class searchPlatform implements ShouldQueue
         $results = $this->platformAPI->getPlatformClass()::search($this->searchQuery);
         Redis::client()->set(
             Search::getRedisSearchKey($this->platformAPI->getPlatformClass()::getPlatform(), $this->searchQuery),
-            json_encode($results)
+            json_encode($results),
+            Search::getRedisExpire()
         );
-        Redis::client()->expire(
-            Search::getRedisSearchKey($this->platformAPI->getPlatformClass()::getPlatform(), $this->searchQuery),
-            Search::getRedisExpire());
     }
 }
