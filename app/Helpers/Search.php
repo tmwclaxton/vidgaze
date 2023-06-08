@@ -47,28 +47,14 @@ class Search
         // dispatch batch
         $batch = Bus::batch($search_jobs)->onQueue('search')->onConnection('redis')
             ->finally(function (Batch $batch) use ($platforms_to_search, $searchQuery) {
-                $results = [];
-                foreach ($platforms_to_search as $platform) {
-                    $result = Redis::client()->get(self::getRedisSearchKey($platform, $searchQuery));
-                    if ($result) {
-                        $results[$platform->value] = json_decode($result);
-                    }
-                }
-                return $results;
+                return self::getRedisCacheResults($searchQuery, $platforms_to_search);
             })->dispatch();
 
         // wait to finish or wait max seconds
         sleep($max_wait);
 
         // return results in Redis cache
-        $results = [];
-        foreach ($platforms_to_search as $platform) {
-            $result = Redis::client()->get(self::getRedisSearchKey($platform, $searchQuery));
-            if ($result) {
-                $results[$platform->value] = json_decode($result);
-            }
-        }
-        return $results;
+        return self::getRedisCacheResults($searchQuery, $platforms_to_search);
     }
 
     public static function getRedisExpire(): int
