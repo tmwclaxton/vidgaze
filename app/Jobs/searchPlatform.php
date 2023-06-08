@@ -22,7 +22,7 @@ class searchPlatform implements ShouldQueue
      */
     public function __construct(
         public SearchQueryDTO $searchQuery,
-        public Platform $platformAPI
+        public Platform $platform
     ){}
 
     /**
@@ -30,9 +30,9 @@ class searchPlatform implements ShouldQueue
      */
     public function handle(): void
     {
-        $results = $this->platformAPI->getPlatformClass()::search($this->searchQuery);
+        $results = $this->platform->getPlatformClass()::search($this->searchQuery);
         Redis::client()->set(
-            Search::getRedisSearchKey($this->platformAPI->getPlatformClass()::getPlatform(), $this->searchQuery),
+            Search::getRedisSearchKey($this->platform->getPlatformClass()::getPlatform(), $this->searchQuery),
             json_encode($results),
             Search::getRedisExpire()
         );
