@@ -19,4 +19,22 @@ class ResultDTO
         $this->platform = $platform;
         $this->kind = $kind;
     }
+
+
+    public function save(){
+        $creator = null;
+        if(isset($this->creator)){
+            $creator = $this->creator->save();
+            if($this->kind == Kind::Creator){
+                return $creator;
+            }
+        }
+        if(isset($this->content)){
+            return $this->content->save($creator);
+        }
+    }
+
+
+
+
 }

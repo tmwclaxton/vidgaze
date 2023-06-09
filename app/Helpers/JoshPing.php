@@ -14,23 +14,22 @@ class JoshPing
 
     public static function ping(): int
     {
-        $query = new SearchQueryDTO('joe rogan', 25);
+        $query = new SearchQueryDTO('jordan peterson', 25);
 
         $start = microtime(true);
-//        $results = Vimeo::search($query);
-//        $results = Search::search($query, 10);
-//
-//        ddd($results, microtime(true) - $start);
+        $results = Search::search($query, 5);
+
+        ddd($results, microtime(true) - $start);
 ////
-        $octane = Octane::concurrently([
-//           /* fn() =>*/ YouTube::search($query),
-           fn() => Dailymotion::search($query),
-           fn() => Vimeo::search($query),
-           fn() => Twitch::search($query)
-        ], 10000);
-        $octane[] = YouTube::search($query);
-        $time = microtime(true) - $start;
-        ddd($time, $octane);
+//        $octane = Octane::concurrently([
+////           /* fn() =>*/ YouTube::search($query),
+//           fn() => Dailymotion::search($query),
+//           fn() => Vimeo::search($query),
+//           fn() => Twitch::search($query)
+//        ], 10000);
+//        $octane[] = YouTube::search($query);
+//        $time = microtime(true) - $start;
+//        ddd($time, $octane);
 
 
 

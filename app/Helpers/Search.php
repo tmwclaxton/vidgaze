@@ -53,8 +53,8 @@ class Search
         // wait to finish or wait max seconds
         $time = 0;
         while (!Bus::findBatch($batch->id)->finished() && $time < $max_wait) {
-            sleep(1);
-            $time++;
+            usleep(500000);
+            $time+=0.5;
         }
 
         // return results in Redis cache
