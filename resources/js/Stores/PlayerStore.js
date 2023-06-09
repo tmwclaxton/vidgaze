@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import {useQueueStore} from "@/Stores/QueueStore";
+import {toRaw} from "vue";
 
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
@@ -99,7 +100,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 this.debugMessage(player.player)
                 try {
                     const state = await player.player.getPlayerState();
-                    this.debugMessage('Youtube player state: ' + state);
+                    // this.debugMessage('Youtube player state: ' + state);
                     playing = state === 1;
                 } catch (error) {
                     throw new Error(error);
@@ -108,15 +109,14 @@ export const usePlayerStore = defineStore('PlayerStore', {
             } else if (player.object.preferred_source === 'Vimeo') {
 
                 try {
-                    // access the target inside the event
-                    this.debugMessage(player.player)
-                    player.player.getPaused().then((value) => {
-                        console.log(value);
-                        playing = !value;
-                    });
-                    // const paused = await player.player.getPaused();
+                    let paused;
+                    // paused = toRaw(player.player).getPaused().then((value) => {
+                    //     playing = !value;
+                    // });
+                    // this.debugMessage('Vimeo player state: ' + playing);
+                    paused = await toRaw(player.player).getPaused();
                     // this.debugMessage('Vimeo player state: ' + paused);
-                    // playing = !paused;
+                    playing = !paused;
                 } catch (error) {
                     throw new Error(error);
                 }
@@ -125,7 +125,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 try {
                     const state = await player.player.getState();
                     const playerIsPlaying = state.playerIsPlaying;
-                    this.debugMessage('Dailymotion player state: ' + playerIsPlaying);
+                    // this.debugMessage('Dailymotion player state: ' + playerIsPlaying);
                     playing = playerIsPlaying;
                 } catch (error) {
                     throw new Error(error);
@@ -156,7 +156,15 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         destroyPlayers() {
-            document.querySelectorAll('#player_div').forEach(n => n.remove());
+            // document.querySelectorAll('#player_div').forEach(n => n.remove());
+
+            // iterate through players and get object external_id and destroy div using that as id
+            this.players.forEach(player => {
+                let playerDiv = document.getElementById(player.object.external_id);
+                playerDiv.remove();
+            });
+
+
             this.stopViewRecord();
             this.players = [];
         },
@@ -182,7 +190,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // embeds often rebuild the div they are in which is a pain so we will just remove the div and rebuild it
             // // create player_div element inside player_div_holder
             let playerDiv = playerDivHolderID.appendChild(document.createElement('div'));
-            playerDiv.id = 'player_div';
+            playerDiv.id = this.object.external_id;
             // // add h-full and w-full classes to player_div
             playerDiv.classList.add('h-full');
             playerDiv.classList.add('w-full');
@@ -280,7 +288,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             });
 
             player.ready().then(function () {
-                this.debugMessage('BUILDVIMEO: Vimeo player ready');
+                // this.debugMessage('BUILDVIMEO: Vimeo player ready');
                 // ensure player is ready before pushing to players array
                 this.pushPlayer(player);
 
@@ -290,9 +298,9 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         buildDailymotionPlayer(playerDiv) {
-            const external_id = this.object.external_id;
-            // const external_id = 'x8l6g4x';
-            // this.object.external_id = external_id;
+            // const external_id = this.object.external_id;
+            const external_id = 'x8l6g4x';
+            this.object.external_id = external_id;
 
             const tag = document.createElement('script' );
             tag.src = "https://geo.dailymotion.com/libs/player/" + external_id + ".js";
@@ -366,6 +374,10 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // check if player is already in players array
             if (this.findPlayer(this.object.external_id)) {
                 this.debugMessage('player already in array')
+                return;
+            }
+            if (this.object === null) {
+                this.debugMessage('object is null')
                 return;
             }
 

@@ -10,9 +10,9 @@ const classes = computed(() => {
     let classString = '';
     // if on the current page
     if (props.active) {
-        classString = 'border-transparent text-white bg-vidgaze-blue dark:bg-zinc-900 dark:hover:bg-zinc-800  focus:s hake   ';
+        classString = 'border-transparent text-white bg-zinc-900 dark:bg-zinc-900 dark:hover:bg-zinc-800  focus:s hake   ';
     } else {
-        classString = 'border-transparent text-zinc-200  hover:text-white  hover:bg-zinc-700   dark:hover:bg-zinc-800     hover:border-zi nc-600 ';
+        classString = 'border-transparent text-zinc-200  hover:text-white  hover:bg-zinc-800   dark:hover:bg-zinc-800     hover:border-zi nc-600 ';
     }
     // if side bar is expanded
     if (navStore.getNavigationDropdown()) {
