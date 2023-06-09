@@ -37,6 +37,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // if not short check if queue has items and play next item
             // if not shorts and miniplayer with no queue items, stop player and close player modal
             // if not shorts and no miniplayer, stop player and show end screen with suggestions
+
             this.stopViewRecord();
 
             if (this.showMiniPlayer) {
@@ -44,43 +45,36 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 let queueStore = useQueueStore();
 
                 // wait 1 - as if we are deleting the item from the queue it will take a second to update
-                // setTimeout(() => {
-                    if (queueStore.items.length > queueStore.index + 1) {
-                        queueStore.changeIndex(queueStore.index + 1);
-                        this.debugMessage('mini player next item');
-                    } else {
-                        this.destroyPlayers();
-                        this.showMiniPlayer = false;
-                    }
-                // }, 1000);
-
+                if (queueStore.items.length > queueStore.index + 1) {
+                    queueStore.changeIndex(queueStore.index + 1);
+                    // this.debugMessage('STOPVIEWRECORD mini player next item');
+                } else {
+                    this.destroyPlayers();
+                    this.showMiniPlayer = false;
+                }
             }
-
-            this.debugMessage('end video');
+            this.debugMessage('end video' + external_id);
         },
 
         startViewRecord(external_id) {
-            this.debugMessage('start view record');
+            // this.debugMessage('start view record');
             if (!this.isViewRecording) {
                 this.isViewRecording = true;
-
-                //test
                 let player = this.findPlayer(external_id);
                 // player.player.getPaused().then((paused) => { !this.debugMessage(paused) }) ; // doesn't work at this stage
-
                 this.viewRecordTimer = setInterval(async () => {
                     try {
                         const isPlaying = await this.isPlayerPlaying(external_id);
                         if (isPlaying) {
                             this.viewRecordDuration += 5;
-                            this.debugMessage('View Record Duration: ' + this.viewRecordDuration);
+                            this.debugMessage('STARTVIEWRECORD: View Record Duration: ' + this.viewRecordDuration);
                         } else {
-                            this.debugMessage('Error: Player is not playing');
+                            this.debugMessage('STARTVIEWRECORD: Error: Player is not playing');
                             clearInterval(this.viewRecordTimer);
 
                         }
                     } catch (error) {
-                        this.debugMessage('Error: ' + error);
+                        this.debugMessage('STARTVIEWRECORD: Error: ' + error);
                         clearInterval(this.viewRecordTimer);
                     }
                 }, 5000);
@@ -144,7 +138,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         pauseViewRecord(external_id) {
-            this.debugMessage('pause view record');
+            this.debugMessage('pause view record' + external_id);
             if (this.isViewRecording) {
                 this.isViewRecording = false;
                 clearInterval(this.viewRecordTimer);
@@ -153,7 +147,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         stopViewRecord(external_id) {
-            this.debugMessage('stop view record');
+            this.debugMessage('stop view record' + external_id);
             if (this.isViewRecording) {
                 this.isViewRecording = false;
                 clearInterval(this.viewRecordTimer);
@@ -223,16 +217,22 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     'start': this.start_time,
                 },
                 events: {
-                    onReady: this.startViewRecord(external_id),
                     // when YouTube video ends run the endVideo function
                     onStateChange: (event) => {
-                        if (event.data === 0) {
+                        if (event.data === 0) { // this state means the video has ended
+                            this.debugMessage('BUILDYOUTUBE: YouTube video ended')
                             this.endVideo(external_id);
                         }
-                        if (event.data === 1) {
+                        if (event.data === 1) { // this state means the video is playing
+                            this.debugMessage('BUILDYOUTUBE: YouTube video playing')
                             this.startViewRecord(external_id);
                         }
-                        if (event.data === 2) {
+                        if (event.data === 2) { // this state means the video is paused
+                            this.debugMessage('BUILDYOUTUBE: YouTube video paused')
+                            this.pauseViewRecord(external_id);
+                        }
+                        if (event.data === 3) { // this state means the video is buffering
+                            this.debugMessage('BUILDYOUTUBE: YouTube video buffering')
                             this.pauseViewRecord(external_id);
                         }
                     }
@@ -245,8 +245,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
         buildVimeoPlayer(playerDiv) {
             let external_id = this.object.external_id;
 
-            external_id = '822998068';
-            this.object.external_id = external_id;
+            // external_id = '822998068';
+            // this.object.external_id = external_id;
 
 
             const player = new Vimeo.Player(playerDiv.id, {
@@ -260,7 +260,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 // wait for player to load then set start time
                 player.ready().then(function () {
                         player.setCurrentTime(this.start_time);
-
                         // this.debugMessage(document.getElementById(playerDiv.id).firstElementChild);
                         document.getElementById(playerDiv.id).firstElementChild.classList.add("h-full", "w-full","p-0", "relative");
                         document.getElementById(playerDiv.id).firstElementChild.removeAttribute('style');
@@ -281,7 +280,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             });
 
             player.ready().then(function () {
-                this.debugMessage('Vimeo player ready');
+                this.debugMessage('BUILDVIMEO: Vimeo player ready');
                 // ensure player is ready before pushing to players array
                 this.pushPlayer(player);
 
@@ -364,12 +363,9 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         pushPlayer(player) {
-
-            // player.getPaused().then((paused) => { !this.debugMessage(paused) }) ; works here for vimeo
-            // this.debugMessage('pushing player' + this.object.external_id)
-            // console.log(player);
             // check if player is already in players array
             if (this.findPlayer(this.object.external_id)) {
+                this.debugMessage('player already in array')
                 return;
             }
 
@@ -383,7 +379,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             // sometimes reset variables runs before the player is ready so we will wait 5 seconds
             setTimeout(() => {
-            this.resetVariables();
+                this.resetVariables();
             }, 5000);
         },
 
@@ -391,10 +387,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // find player in players array
             for (let i = 0; i < this.players.length; i++) {
                 if (this.players[i]['object'].external_id === external_id) {
-                    // this.debugMessage('found player' + external_id);
+                    this.debugMessage('FINDPLAYER: found player' + external_id);
                     return this.players[i];
                 }
             }
+            this.debugMessage('FINDPLAYER: player not found' + external_id);
             return false;
         },
 

@@ -9,6 +9,7 @@ import CornerInfo from "@/Components/Cards/VideoStreamCard/Partials/CornerInfo.v
 import QueueItem from "@/Components/Modals/MiniPlayers/Partials/QueueItem.vue";
 import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
 import {useToastStore} from "@/Stores/ToastStore";
+import {debounce} from "lodash";
 const confirmStore = useConfirmModalStore();
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -80,11 +81,13 @@ onMounted(() => {
     // Dailymotion works by loading the script specifically for each individual video
 });
 
-const checkIfInViewport = () => {
+const checkIfInViewport = debounce(() => {
+
 
     setTimeout(() => {
         console.log('checkIfInViewport');
         const rect = draggableDiv.value.getBoundingClientRect();
+        if (!draggableDiv.value) return;
         const isInViewport =
             rect.top >= 15 &&
             rect.left >= 15 &&
@@ -102,7 +105,7 @@ const checkIfInViewport = () => {
             draggableDiv.value.style.top = clampedTop + 'px';
         }
     }, 100);
-};
+}, 300);
 
 const loadScript = (src, id) => {
     if (!document.getElementById(id)) {
