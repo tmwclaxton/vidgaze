@@ -67,12 +67,12 @@ onMounted(() => {
 <template>
     <section
         class="w-full h-[calc(100vh-4rem)] overflow-hidden  snap-start flex flex-col text dark:textDark" >
-
         <div class="relative flex pt-8 py-10  h-full flex flex-col">
 
             <div class=" mx-auto h-full  flex flex-row align-middle justify-center">
 
                 <div class=" aspect-[9/16] h-full flex-grow flex flex-col">
+                <p v-text="video.external_id + ' * ' + video.preferred_source"></p>
 
                     <div class="w-full h-full rounded-xl without-ring flex flex-col relative overflow-hidden">
 

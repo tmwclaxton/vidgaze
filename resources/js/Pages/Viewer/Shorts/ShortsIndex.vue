@@ -66,7 +66,7 @@ useInfiniteScroll(
 )
 
 
-
+// this
 const fullyVisibleIndex = ref(0);
 
 const UpdateFullyVisibleIndex = (index) => {
@@ -76,6 +76,12 @@ const UpdateFullyVisibleIndex = (index) => {
 
 watch(fullyVisibleIndex, (index) => {
     console.log(index)
+    buildPlayers(index);
+    // playerStore.play(shorts.value[index].external_id)
+});
+
+
+const buildPlayers = (index) => {
     // make a list of the indices of the shorts that should be visible
     // 3 short players should be visible at a time
     // we should have an index of the current short player
@@ -90,9 +96,12 @@ watch(fullyVisibleIndex, (index) => {
     } else {
         visibleIndices = [index - 1, index, index + 1];
     }
+    //reverse the array
+    visibleIndices = visibleIndices.reverse();
+    
     console.log(visibleIndices);
 
-    // loop through visibile indices and check if player has been loaded
+    // loop through the 3 players that should be built and check if player has been loaded
     // if not, load it using playerStore
 
     for (let i = 0; i < visibleIndices.length; i++) {
@@ -101,44 +110,32 @@ watch(fullyVisibleIndex, (index) => {
             // load player
             let player = playerStore.findPlayer(shorts.value[visibleIndex].external_id);
             if (!player) {
-                console.log('building player');
+                // console.log('building player ' + shorts.value[visibleIndex].external_id);
                 playerStore.autoplay = false;
                 playerStore.object = shorts.value[visibleIndex];
-
                 playerStore.buildPlayer(shorts.value[visibleIndex].external_id); // external_id is the ref to the div
             } else {
-                console.log('player already exists');
+                // console.log('player already exists ' + shorts.value[visibleIndex].external_id);
             }
         }
-
-        // setTimeout(() => {
-        //     // if current index play video
-        //     if (visibleIndex === i) {
-        //         console.log('playing video');
-        //         playerStore.play(shorts.value[visibleIndex].external_id);
-        //     } else {
-        //         console.log('pausing video');
-        //         // playerStore.pause(shorts.value[visibleIndex].external_id);
-        //     }
-        // }, 500 );
-
-
     }
-
-
-});
+};
 </script>
 
 <template>
     <Head title="VidGaze Shorts" />
+    <p v-for="short in shorts" :key="short.id">{{ short.external_id }}, </p>
+
     <div v-bind="containerProps" class="max-h-[calc(100vh-4rem)] duration-75  overflow-y-scroll snap snap-y snap-mandatory ease-in-out">
         <div v-bind="wrapperProps">
             <div id="shortsScrollArea" class=" w-full ">
                 <template v-if="list.length > 0" v-for="{index, data} in list" :key="index">
                     <ShortsPlayer :video="data" v-if="data !== undefined" @UpdateFullyVisibleIndex="UpdateFullyVisibleIndex(index)"/>
                 </template>
+                <template v-if="list.length === 0" v-for="n in 1">
+                    <ShortsPlayerSkeleton />
+                </template>
             </div>
         </div>
-        <ShortsPlayerSkeleton  v-for="n in 1"  />
     </div>
 </template>
