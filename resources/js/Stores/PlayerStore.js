@@ -1,6 +1,7 @@
-import { defineStore } from 'pinia'
+import {defineStore} from 'pinia'
 import {useQueueStore} from "@/Stores/QueueStore";
 import {toRaw} from "vue";
+import {usePage} from "@inertiajs/vue3";
 
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
@@ -21,7 +22,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // For example, you can check if players array is not empty
             let queueStore = useQueueStore();
             // also depends on what page you are on ...
-            return queueStore.items !== undefined && queueStore.items.length > 0;
+            return queueStore.items !== undefined && queueStore.items.length > 0 && usePage().url !== '/shorts';
         },
     },
 
@@ -34,11 +35,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
 
         endVideo(external_id) {
-            // if shorts scroll to next short
-            // if not short check if queue has items and play next item
-            // if not shorts and miniplayer with no queue items, stop player and close player modal
-            // if not shorts and no miniplayer, stop player and show end screen with suggestions
-
             this.stopViewRecord();
 
             if (this.showMiniPlayer) {
@@ -58,19 +54,19 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         startViewRecord(external_id) {
-            // this.debugMessage('start view record');
+            this.debugMessage('start view record');
             if (!this.isViewRecording) {
                 this.isViewRecording = true;
                 let player = this.findPlayer(external_id);
-                // player.player.getPaused().then((paused) => { !this.debugMessage(paused) }) ; // doesn't work at this stage
+
                 this.viewRecordTimer = setInterval(async () => {
                     try {
-                        const isPlaying = await this.isPlayerPlaying(external_id);
+                        const isPlaying = await this.isPlayerPlaying(player);
                         if (isPlaying) {
                             this.viewRecordDuration += 5;
                             this.debugMessage('STARTVIEWRECORD: View Record Duration: ' + this.viewRecordDuration);
                         } else {
-                            this.debugMessage('STARTVIEWRECORD: Error: Player is not playing');
+                            // this.debugMessage('STARTVIEWRECORD: Error: Player is not playing');
                             clearInterval(this.viewRecordTimer);
 
                         }
@@ -84,9 +80,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
 
         // has to be async as we need to wait for the dailymotion player to be ready
-        async isPlayerPlaying(external_id) {
-            this.debugMessage(external_id + ' is player playing');
-            let player = this.findPlayer(external_id);
+        async isPlayerPlaying(player) {
+            this.debugMessage('is player playing');
 
             if (!player) {
                 this.debugMessage('Player not found');
@@ -97,7 +92,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             if (player.object.preferred_source === 'YouTube') {
 
-                this.debugMessage(player.player)
+                // this.debugMessage(player.player)
                 try {
                     const state = await player.player.getPlayerState();
                     // this.debugMessage('Youtube player state: ' + state);
@@ -124,14 +119,15 @@ export const usePlayerStore = defineStore('PlayerStore', {
             } else if (player.object.preferred_source === 'Dailymotion') {
                 try {
                     const state = await player.player.getState();
-                    const playerIsPlaying = state.playerIsPlaying;
+                    playing = state.playerIsPlaying;
                     // this.debugMessage('Dailymotion player state: ' + playerIsPlaying);
-                    playing = playerIsPlaying;
                 } catch (error) {
                     throw new Error(error);
                 }
             } else if (player.object.preferred_source === 'Twitch') {
-                playing = !player.player.isPaused();
+                let paused = await toRaw(player.player).isPaused();
+                playing = !paused;
+                this.debugMessage('Twitch player state: ' + playing);
             }
 
             return playing;
@@ -167,6 +163,18 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             this.stopViewRecord();
             this.players = [];
+        },
+
+        destroyPlayer(external_id) {
+            // iterate through players and get object external_id and destroy div using that as id
+            this.players.forEach(player => {
+                if (player.object.external_id === external_id) {
+                    let playerDiv = document.getElementById(player.object.external_id);
+                    playerDiv.remove();
+                    // remove player from players array
+                    this.players = this.players.filter(player => player.object.external_id !== external_id);
+                }
+            });
         },
 
         resetVariables() {
