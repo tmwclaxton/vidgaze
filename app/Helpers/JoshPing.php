@@ -21,7 +21,7 @@ class JoshPing
 
 
         $start = microtime(true);
-        $results = Search::search($query, true);
+        $results = Search::search($query);
 
         ddd($results, microtime(true) - $start);
 ////

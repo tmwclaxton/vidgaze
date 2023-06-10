@@ -70,7 +70,6 @@ class Search
         return $results;
     }
 
-
     public static function getRedisExpire(): int
     {
         // 1 day
