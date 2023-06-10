@@ -14,15 +14,15 @@ use Laravel\Octane\Facades\Octane;
 class JoshPing
 {
 
-    public static function ping(): int
+    public static function ping()
     {
 //        dd(array_map(fn($audience) => $audience->value, Audience::getAll()));
-        $query = new SearchQueryDTO('jordan peterson', 5);
+        $query = new SearchQueryDTO('nasa live', 10);
 
+//        ddd(YouTube::search($query));
 
         $start = microtime(true);
-        $results = Search::search($query);
-
+        $results = Search::search($query, );
         ddd($results, microtime(true) - $start);
 ////
 //        $octane = Octane::concurrently([

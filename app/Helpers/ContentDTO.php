@@ -7,6 +7,7 @@ use App\Enums\Kind;
 use App\Enums\Platform;
 use App\Models\PodcastModels\Podcast;
 use App\Models\StreamModels\Stream;
+use App\Models\StreamModels\StreamSource;
 use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoSource;
 use Carbon\Carbon;
@@ -47,6 +48,7 @@ class ContentDTO
     public string $audio_file_type;
     public int $result_index;
     public string $id;
+    public bool $is_live;
 
 
     public function __construct(Platform $platform, Kind $kind, string $id)
@@ -60,7 +62,7 @@ class ContentDTO
     {
         return match ($this->kind) {
             Kind::Video => $this->saveVideo($creator_id),
-//            Kind::Stream => $this->saveStream($creator_id),
+            Kind::Stream => $this->saveStream($creator_id),
 //            Kind::Podcast => $this->savePodcast($creator_id),
             default => throw new \Exception("Invalid Kind"),
         };
@@ -98,11 +100,35 @@ class ContentDTO
         return $var instanceof Video? $var : $var->video()->first();
     }
 
-//    public function saveStream($creator_id) : Stream
-
-//    {
-//
-//    }
+    public function saveStream($creator_id) : Stream
+    {
+        $var = StreamSource::where('source_name', '=', $this->platform->value)
+            ->where('external_id', '=', $this->id)
+            ->firstOr(function () use ($creator_id) {
+                $stream = Stream::create([
+                    'slug' => $this->platform->getPrefix().'_'.$this->id,
+                    'title' => $this->name,
+                    'description' => $this->description ?? null,
+                    'thumbnail_url' => $this->thumbnail_url ?? null,
+                    'started_at' => $this->publish_time ?? null,
+                    'region' => $this->region ?? null,
+                    'language' => $this->language ?? null,
+                    'tags' => json_encode($this->tags ?? null) ,
+                    'creator_id' => $creator_id,
+                    'preferred_source' => $this->platform->value,
+                    'audience' => $this->audience->value ?? Audience::ALL,
+                    'is_live' => $this->is_live??null,
+//                'category_id' => $this->category->save()->id,
+                ]);
+                StreamSource::create([
+                    'source_name' => $this->platform->value,
+                    'external_id' => $this->id,
+                    'stream_id' => $stream->id
+                ]);
+                return $stream;
+            });
+        return $var instanceof Stream? $var : $var->stream()->first();
+    }
 //    public function savePodcast($creator_id): Podcast
 //    {
 //
@@ -134,6 +160,7 @@ class ContentDTO
         if(isset($content->subcategory_name)) $content_dto->subcategory_name = $content->subcategory_name;
         if(isset($content->audio_file_type)) $content_dto->audio_file_type = $content->audio_file_type;
         if(isset($content->result_index)) $content_dto->result_index = $content->result_index;
+
         return $content_dto;
     }
 

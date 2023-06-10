@@ -118,5 +118,4 @@ const fetchVideos = async (videoArray) => {
 
         </PaddingLayout>
 
-
 </template>

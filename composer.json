@@ -6,11 +6,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "barryvdh/laravel-ide-helper": "^2.13",
         "dailymotion/sdk": "^1.7",
         "google/apiclient": "^2.13",
         "guzzlehttp/guzzle": "^7.2",
-        "jorenvanhocht/laravel-share": "^4.2",
         "inertiajs/inertia-laravel": "^0.6.8",
+        "jorenvanhocht/laravel-share": "^4.2",
         "laravel/framework": "^10.0",
         "laravel/horizon": "^5.15",
         "laravel/octane": "^1.5",
@@ -23,6 +24,7 @@
         "vimeo/laravel": "^5.7"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.8",
         "fakerphp/faker": "^1.9.1",
         "laravel/breeze": "^1.19",
         "laravel/pint": "^1.0",

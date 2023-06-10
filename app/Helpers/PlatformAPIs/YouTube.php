@@ -127,12 +127,14 @@ class YouTube implements iSearchable, iIsPlatform
 
         return array_map(function ($video) use ($returnJustContentDTO) {
             $kind = ($video->snippet->liveBroadcastContent == 'live') ? Kind::Stream : Kind::Video;
+
             $resultDTO = new ResultDTO(Platform::YouTube, $kind);
             $contentDTO = new ContentDTO(
                 Platform::YouTube,
                 $kind,
                 $video->id
             );
+
 
             $contentDTO->creator_id = $video->snippet->channelId;
             $contentDTO->name = $video->snippet->title;
@@ -143,9 +145,11 @@ class YouTube implements iSearchable, iIsPlatform
             $contentDTO->thumbnail_url = $video->snippet->thumbnails->medium->url;
             $categoryDTO = new ContentDTO(Platform::YouTube, Kind::Category, $video->snippet->categoryId);
             $contentDTO->category = $categoryDTO;
+            $contentDTO->language = $video->snippet->defaultLanguage;
 
-            ////$contentDTO->region = $video->country;
-            //$contentDTO->language = $video->defaultLanguage;
+            if($kind == Kind::Stream){
+                $contentDTO->is_live = true;
+            }
 
             $resultDTO->content = $contentDTO;
 

@@ -41,7 +41,7 @@ return new class extends Migration
             $table->integer('view_count')->default('0')->unsigned();
             $table->integer('live_viewer_count')->unsigned()->default('0')->index();
             $table->string('thumbnail_url');
-            $table->string('language', 3)->nullable()->index(); //ISO 639-3:2007
+            $table->string('language', 5)->nullable()->index(); //ISO 639-3:2007
             $table->string('region', 3)->nullable()->index();
             $table->enum('audience', array_map(fn($audience) => $audience->value, Audience::getAll()))->default('all');
 

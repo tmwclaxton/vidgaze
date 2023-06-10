@@ -6,6 +6,7 @@ use App\Enums\Kind;
 use App\Enums\Platform;
 use App\Jobs\searchPlatform;
 use App\Models\CreatorModels\Creator;
+use App\Models\StreamModels\Stream;
 use App\Models\VideoModels\Video;
 use Carbon\Carbon;
 
@@ -24,7 +25,7 @@ class ResultDTO
     }
 
 
-    public function save(): Creator|Video
+    public function save(): Creator|Video|Stream
     {
         $creator = $this->creator->save();
         return ($this->kind == Kind::Creator) ? $creator : $this->content->save($creator->id);
