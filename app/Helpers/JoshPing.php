@@ -17,7 +17,7 @@ class JoshPing
     public static function ping(): int
     {
 //        dd(array_map(fn($audience) => $audience->value, Audience::getAll()));
-        $query = new SearchQueryDTO('jordan peterson', 1);
+        $query = new SearchQueryDTO('jordan peterson', 5);
 
 
         $start = microtime(true);

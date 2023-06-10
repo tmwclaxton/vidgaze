@@ -43,9 +43,9 @@ class Search
 
             // dispatch batch
             $batch = Bus::batch($search_jobs)
-                ->finally(function (Batch $batch) use ($platforms_to_search, $searchQuery) {
+               /* ->finally(function (Batch $batch) use ($platforms_to_search, $searchQuery) {
                     self::getRedisCacheResults($searchQuery, $platforms_to_search);
-                })->onQueue('search')->onConnection('redis')->dispatch();
+                })*/->onQueue('search')->onConnection('redis')->dispatch();
 
             // wait to finish or wait max seconds
             $time = 0;
@@ -55,7 +55,7 @@ class Search
             }
 
             // return results in Redis cache
-            $cache_results[] = self::getRedisCacheResults($searchQuery, $platforms_to_search);
+            $cache_results = array_merge($cache_results, self::getRedisCacheResults($searchQuery, $platforms_to_search));
         }
 
         $results = [];
