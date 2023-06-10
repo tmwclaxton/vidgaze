@@ -2,7 +2,7 @@
 
 namespace App\Models\CreatorModels;
 
-use App\Enums\Platforms;
+use App\Enums\Platform;
 use App\Helpers\PlatformAPIs\Dailymotion;
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\PlatformAPIs\Vimeo;
@@ -45,9 +45,9 @@ class Creator extends Model
     {
         foreach ($this->sources()->get() as $source){
             match($source->source_name){
-                Platforms::YouTube->name => YouTube::updateAllChannelContent($source->external_channel_id),
-                Platforms::Dailymotion->name => Dailymotion::updateAllChannelContent($source->external_channel_id),
-                Platforms::Vimeo->name => Vimeo::updateAllChannelContent($source->external_channel_id),
+                Platform::YouTube->name => YouTube::updateAllChannelContent($source->external_channel_id),
+                Platform::Dailymotion->name => Dailymotion::updateAllChannelContent($source->external_channel_id),
+                Platform::Vimeo->name => Vimeo::updateAllChannelContent($source->external_channel_id),
                 default => dd('not in match statement')
             };
         }
@@ -57,25 +57,25 @@ class Creator extends Model
     {
         foreach ($this->sources()->get() as $source){
             match($source->source_name){
-                Platforms::YouTube->name => YouTube::updateAllChannelContent($source->external_channel_id),
-                Platforms::Dailymotion->name => Dailymotion::updateAllChannelContent($source->external_channel_id),
+                Platform::YouTube->name => YouTube::updateAllChannelContent($source->external_channel_id),
+                Platform::Dailymotion->name => Dailymotion::updateAllChannelContent($source->external_channel_id),
                 default => dd('not in match statement')
             };
         }
     }
 
 
-    public static function findOrCreate(string $externalChannelID, Platforms $source) : Creator
+    public static function findOrCreate(string $externalChannelID, Platform $source) : Creator
     {
         $creator_source = CreatorSource::where('external_channel_id', '=', $externalChannelID)
             ->where('source_name', '=', $source->name)->first();
         if(!$creator_source)
         {
             return match($source){
-                Platforms::YouTube => YouTube::makeCreatorModel($externalChannelID),
-                Platforms::Dailymotion => Dailymotion::makeCreatorModel($externalChannelID),
-                Platforms::Vimeo => Vimeo::makeCreatorModel($externalChannelID),
-                Platforms::Twitch => Twitch::makeCreatorModel($externalChannelID),
+                Platform::YouTube => YouTube::makeCreatorModel($externalChannelID),
+                Platform::Dailymotion => Dailymotion::makeCreatorModel($externalChannelID),
+                Platform::Vimeo => Vimeo::makeCreatorModel($externalChannelID),
+                Platform::Twitch => Twitch::makeCreatorModel($externalChannelID),
             };
         }
         return $creator_source->creator()->first();

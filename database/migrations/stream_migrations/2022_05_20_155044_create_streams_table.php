@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\Audience;
+use App\Enums\PrivacyStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->string('slug')->unique()->index();
             $table->foreignId('creator_id')->constrained()->cascadeOnDelete();
-            $table->enum('preferred_source',['YouTube','Twitch']);
+            $table->enum('preferred_source',['youtube','twitch']);
             $table->string('title')->index();
             $table->text('description',500)->nullable();
             $table->integer('viewers')->unsigned()->default(0)->index();
@@ -26,8 +28,8 @@ return new class extends Migration
             $table->integer('karma')->default('0')->index();
             $table->timestamp('started_at')->useCurrent();
             $table->boolean('is_live')->default(false)->nullable();
-            $table->enum('audience',['kids','mature','all'])->default('all');
-            $table->enum('visibility', ['public', 'unlisted', 'private'])->default('public');
+            $table->enum('audience', array_map(fn($audience) => $audience->value, Audience::getAll()))->default('all');
+            $table->enum('visibility', array_map(fn($audience) => $audience->value, PrivacyStatus::getAll()))->default('public');
             $table->integer('report_count')->default('0')->unsigned();
 
             $table->string('language', 3)->nullable()->index(); //ISO 639-3:2007

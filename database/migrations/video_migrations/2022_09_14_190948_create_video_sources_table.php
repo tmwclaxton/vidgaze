@@ -18,12 +18,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('video_id')->constrained()->cascadeOnDelete();
             $table->enum('source_name',[
-                    Platform::YouTube->name,
-                    Platform::Dailymotion->name,
-                    Platform::Vimeo->name,
-                    Platform::Rumble->name,
-                    Platform::Odysee->name,
-                    Platform::Twitch->name]
+                    Platform::YouTube->value,
+                    Platform::Dailymotion->value,
+                    Platform::Vimeo->value,
+                    Platform::Rumble->value,
+                    Platform::Odysee->value,
+                    Platform::Twitch->value]
             );
             $table->string('external_id');
             $table->timestamps();

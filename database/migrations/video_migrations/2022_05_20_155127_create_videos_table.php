@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\Audience;
+use App\Enums\Platform;
+use App\Enums\PrivacyStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,17 +20,17 @@ return new class extends Migration
             $table->id();
             $table->string('slug')->unique()->index();
             $table->foreignId('creator_id')->constrained()->cascadeOnDelete();
-            $table->enum('preferred_source',['YouTube','Dailymotion','Vimeo','Rumble','Odysee']); //use enum
+            $table->enum('preferred_source', Platform::getSupportedPlatforms()->toArray()); //use enum
 
             $table->string('title')->index();
             $table->text('description')->nullable();
             $table->integer('karma')->default(0)->index();
             $table->integer('duration')->default(0)->unsigned()->index();
             $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
-            $table->json('tags', 1200)->nullable();
+            $table->json('tags')->nullable();
             $table->timestampTz('time_uploaded')->useCurrent()->nullable();
             $table->timestampTz('time_published')->nullable();
-            $table->enum('visibility', ['public', 'unlisted', 'private'])->default('public');
+            $table->enum('visibility', array_map(fn($audience) => $audience->value, PrivacyStatus::getAll()))->default('public');
 
             $table->json('most_relevant_comments')->nullable();//json format
             $table->json('most_recent_comments')->nullable();//json format
@@ -39,7 +42,8 @@ return new class extends Migration
             $table->integer('live_viewer_count')->unsigned()->default('0')->index();
             $table->string('thumbnail_url');
             $table->string('language', 3)->nullable()->index(); //ISO 639-3:2007
-            $table->enum('audience',['kids','mature','all'])->default('all');
+            $table->string('region', 3)->nullable()->index();
+            $table->enum('audience', array_map(fn($audience) => $audience->value, Audience::getAll()))->default('all');
 
 
             $table->timestamps();

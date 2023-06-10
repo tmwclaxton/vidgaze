@@ -25,32 +25,20 @@ enum Platform: string
 
     public static function fromValue(string $value) : Platform
     {
-        switch($value) {
-            case 'vidgaze':
-                return self::VidGaze;
-            case 'youtube':
-                return self::YouTube;
-            case 'dailymotion':
-                return self::Dailymotion;
-            case 'vimeo':
-                return self::Vimeo;
-            case 'twitch':
-                return self::Twitch;
-            case 'rumble':
-                return self::Rumble;
-            case 'odysee':
-                return self::Odysee;
-            case 'podcasts':
-                return self::Podcasts;
-            case 'soundcloud':
-                return self::SoundCloud;
-            case 'spotify':
-                return self::Spotify;
-            case 'instagram':
-                return self::Instagram;
-            default:
-                throw new InvalidArgumentException('Invalid value for Platform');
-        }
+        return match ($value) {
+            'vidgaze' => self::VidGaze,
+            'youtube' => self::YouTube,
+            'dailymotion' => self::Dailymotion,
+            'vimeo' => self::Vimeo,
+            'twitch' => self::Twitch,
+            'rumble' => self::Rumble,
+            'odysee' => self::Odysee,
+            'podcasts' => self::Podcasts,
+            'soundcloud' => self::SoundCloud,
+            'spotify' => self::Spotify,
+            'instagram' => self::Instagram,
+            default => throw new InvalidArgumentException('Invalid value for Platform'),
+        };
     }
 
     function getPrefix(): string

@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::create('stream_sources', function (Blueprint $table) {
             $table->id();
             $table->foreignId('stream_id')->constrained()->cascadeOnDelete();
-            $table->enum('source_name',[Platform::YouTube->name, Platform::Twitch->name,]); //use enum
+            $table->enum('source_name',[Platform::YouTube->value, Platform::Twitch->value,]); //use enum
             $table->string('external_id');
             $table->timestamps();
             $table->unique(['source_name', 'external_id']);

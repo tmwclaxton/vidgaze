@@ -2,11 +2,13 @@
 
 namespace App\Helpers;
 
+use App\Enums\Audience;
 use App\Enums\Platform;
 use App\Helpers\PlatformAPIs\Dailymotion;
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\PlatformAPIs\Vimeo;
 use App\Helpers\PlatformAPIs\YouTube;
+use App\Models\CreatorModels\CreatorSource;
 use Laravel\Octane\Facades\Octane;
 
 class JoshPing
@@ -14,10 +16,12 @@ class JoshPing
 
     public static function ping(): int
     {
-        $query = new SearchQueryDTO('jordan peterson', 25);
+//        dd(array_map(fn($audience) => $audience->value, Audience::getAll()));
+        $query = new SearchQueryDTO('jordan peterson', 1);
+
 
         $start = microtime(true);
-        $results = Search::search($query, 5);
+        $results = Search::search($query, true);
 
         ddd($results, microtime(true) - $start);
 ////
