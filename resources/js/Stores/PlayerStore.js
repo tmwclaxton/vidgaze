@@ -90,7 +90,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             let playing = false;
 
-            if (player.object.preferred_source === 'YouTube') {
+            if (player.object.preferred_source === 'youtube') {
 
                 // this.debugMessage(player.player)
                 try {
@@ -199,6 +199,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
             }
 
             this.show = true;
+
+            this.debugMessage('build player ' + this.object.preferred_source);
             // embeds often rebuild the div they are in which is a pain so we will just remove the div and rebuild it
             // // create player_div element inside player_div_holder
             let playerDiv = playerDivHolderID.appendChild(document.createElement('div'));
@@ -208,13 +210,13 @@ export const usePlayerStore = defineStore('PlayerStore', {
             playerDiv.classList.add('w-full');
 
             // // create player
-            if (this.object.preferred_source === "YouTube") {
+            if (this.object.preferred_source === "youtube") {
                 this.buildYouTubePlayer(playerDiv);
-            } else if (this.object.preferred_source === "Vimeo") {
+            } else if (this.object.preferred_source === "vimeo") {
                 this.buildVimeoPlayer(playerDiv);
-            } else if (this.object.preferred_source === "Dailymotion") {
+            } else if (this.object.preferred_source === "dailymotion") {
                 this.buildDailymotionPlayer(playerDiv);
-            } else if (this.object.preferred_source === "Twitch") {
+            } else if (this.object.preferred_source === "twitch") {
                 this.buildTwitchPlayer(playerDiv);
             }
 
@@ -445,9 +447,9 @@ export const usePlayerStore = defineStore('PlayerStore', {
             }
 
             // check object preferred source
-            if (["Vimeo", "Dailymotion", "Twitch"].includes(this.object.preferred_source)) {
+            if (["vimeo", "dailymotion", "twitch"].includes(this.object.preferred_source)) {
                 player.player.play();
-            } else if (this.object.preferred_source === "YouTube") {
+            } else if (this.object.preferred_source === "youtube") {
                 player.player.playVideo();
             }
 
@@ -461,11 +463,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
             }
 
             // check object preferred source
-            if (["Vimeo", "Twitch"].includes(this.object.preferred_source)) {
+            if (["vimeo", "twitch"].includes(this.object.preferred_source)) {
                 await toRaw(player.player).pause();
-            } else if (this.object.preferred_source === "Dailymotion") {
+            } else if (this.object.preferred_source === "dailymotion") {
                 await player.player.pause();
-            } else if (this.object.preferred_source === "YouTube") {
+            } else if (this.object.preferred_source === "youtube") {
                 player.player.pauseVideo();
             }
         },
