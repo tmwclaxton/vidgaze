@@ -61,6 +61,7 @@ export const useQueueStore = defineStore('QueueStore', {
         },
 
         remove(id, type) {
+            let playerStore = usePlayerStore();
           // items is in the form of [[object, type], [{id:2, ...}, "video"], ...]
             for (let i = 0; i < this.items.length; i++) {
 
@@ -71,6 +72,10 @@ export const useQueueStore = defineStore('QueueStore', {
                     if (id === this.items[this.index]['object'].id && type === this.items[this.index]['type'] && this.items.length > 1) {
                         changeIndexBool = true;
                     }
+
+
+                    playerStore.destroyPlayer(this.items[i]['object'].external_id );
+
 
                     // if I delete an item less than or equal to the current index, I need to decrement the index
                     //
@@ -86,6 +91,7 @@ export const useQueueStore = defineStore('QueueStore', {
 
                     this.debugMessage("removing item");
                     this.items.splice(i, 1);
+
 
 
                     return true;

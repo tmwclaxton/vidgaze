@@ -12,14 +12,17 @@ export default {
 import { Head } from '@inertiajs/vue3';
 import ShortsPlayer from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayer.vue";
 import ShortsPlayerSkeleton from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayerSkeleton.vue";
-import { onMounted, ref, watch } from "vue";
+import {onMounted, ref, toRaw, watch} from "vue";
 import { useInfiniteScroll, useVirtualList, useIntersectionObserver } from '@vueuse/core';
 
 import {usePlayerStore} from "@/Stores/PlayerStore";
+import {debounce} from "lodash";
 const playerStore = usePlayerStore();
 
 const name = 'Shorts'
 const shorts = ref([]);
+// this is the index of the short that is fully visible
+const fullyVisibleIndex = ref(0);
 
 const { list, containerProps, wrapperProps } = useVirtualList(shorts, {
     itemHeight: window.innerHeight - 64,
@@ -29,31 +32,30 @@ const { list, containerProps, wrapperProps } = useVirtualList(shorts, {
 
 const category = ref('popular');
 const fetchShorts = async () => {
-    // const shortsIds = shorts.value.map(short => short.id).join(','); // what if there are no shorts?
-    const shortsIds = shorts.value.length > 0 ? shorts.value.map(short => short.id).join(',') : [];
+    let shortsIds = [];
+    if (shorts.value.length > 0) {
+        // const shortsIds = shorts.value.map(short => short.id).join(','); // what if there are no shorts?
+        shortsIds = shorts.value.map(short => short.id).join(',');
+    } else {
+        shortsIds = [];
+    }
     axios.get(route('videos.infinite'),  {
         params: {
             category: category.value,
             shorts: true,
-            perPage: 8,
+            perPage: 3,
             videoIds: shortsIds
         }
     }).then(response => {
-            setTimeout(() => {
-                if (response.data.data === undefined || response.data.data.length === 0) {
-                    return;
-                }
-                shorts.value = shorts.value.concat(response.data.data);
-            }, 500); // 500ms delay
+            if (response.data.data === undefined || response.data.data.length === 0) {
+                return;
+            }
+            shorts.value = shorts.value.concat(response.data.data);
         })
         .catch(error => {
             console.log(error);
         });
 };
-
-onMounted(async () => {
-    await fetchShorts();
-});
 
 useInfiniteScroll(
     containerProps.ref,
@@ -66,8 +68,6 @@ useInfiniteScroll(
 )
 
 
-// this
-const fullyVisibleIndex = ref(0);
 
 const UpdateFullyVisibleIndex = (index) => {
     // console.log(index)
@@ -75,13 +75,13 @@ const UpdateFullyVisibleIndex = (index) => {
 };
 
 watch(fullyVisibleIndex, (index) => {
-    console.log(index)
+    // console.log(index)
     buildPlayers(index);
     // playerStore.play(shorts.value[index].external_id)
 });
 
 
-const buildPlayers = (index) => {
+function buildPlayers(index) {
     // make a list of the indices of the shorts that should be visible
     // 3 short players should be visible at a time
     // we should have an index of the current short player
@@ -97,8 +97,7 @@ const buildPlayers = (index) => {
         visibleIndices = [index - 1, index, index + 1];
     }
     //reverse the array
-    visibleIndices = visibleIndices.reverse();
-    
+
     console.log(visibleIndices);
 
     // loop through the 3 players that should be built and check if player has been loaded
@@ -106,25 +105,65 @@ const buildPlayers = (index) => {
 
     for (let i = 0; i < visibleIndices.length; i++) {
         const visibleIndex = visibleIndices[i];
-        if (shorts.value[visibleIndex].player === undefined) {
-            // load player
-            let player = playerStore.findPlayer(shorts.value[visibleIndex].external_id);
-            if (!player) {
-                // console.log('building player ' + shorts.value[visibleIndex].external_id);
-                playerStore.autoplay = false;
-                playerStore.object = shorts.value[visibleIndex];
-                playerStore.buildPlayer(shorts.value[visibleIndex].external_id); // external_id is the ref to the div
-            } else {
-                // console.log('player already exists ' + shorts.value[visibleIndex].external_id);
-            }
+        // console.log(toRaw(shorts.value));
+        // load player if shorts is not undefined
+        if (shorts.value[visibleIndex] === undefined) {
+            console.log('shorts is undefined');
+            return;
+        }
+        let player = playerStore.findPlayer(shorts.value[visibleIndex].external_id);
+        if (!player) {
+            console.log('building player ' + shorts.value[visibleIndex].external_id);
+            playerStore.autoplay = false;
+            playerStore.object = shorts.value[visibleIndex];
+            playerStore.buildPlayer(shorts.value[visibleIndex].external_id); // external_id is the ref to the div
+        } else {
+            console.log('player already exists ' + shorts.value[visibleIndex].external_id);
+
         }
     }
+
+    //
+    // //destroy all players aside from the 3 that should be visible
+    // for (let i = 0; i < shorts.value.length; i++) {
+    //     if (!visibleIndices.includes(i)) {
+    //         console.log('destroying player ' + shorts.value[i].external_id);
+    //         playerStore.destroyPlayer(shorts.value[i].external_id);
+    //     }
+    // }
+    //
+    // // pause all players aside from the one that is fully visible
+    // for (let i = 0; i < shorts.value.length; i++) {
+    //     if (i !== fullyVisibleIndex.value) {
+    //         console.log('pausing player ' + shorts.value[i].external_id);
+    //         playerStore.pause(shorts.value[i].external_id);
+    //     }
+    // }
+
 };
+
+
+onMounted(async () => {
+    await fetchShorts().then(() => {
+        // watch shorts for changes
+        watch(shorts, (shorts) => debounce(() => {
+            // console.log(shorts);
+            // build the first 3 players as soon as shorts is not empty, wait until shorts is not empty
+            if (shorts.length > 0) {
+                buildPlayers(0);
+            }
+        } , 100)());
+
+    });
+
+
+
+});
+
 </script>
 
 <template>
     <Head title="VidGaze Shorts" />
-    <p v-for="short in shorts" :key="short.id">{{ short.external_id }}, </p>
 
     <div v-bind="containerProps" class="max-h-[calc(100vh-4rem)] duration-75  overflow-y-scroll snap snap-y snap-mandatory ease-in-out">
         <div v-bind="wrapperProps">
@@ -132,7 +171,7 @@ const buildPlayers = (index) => {
                 <template v-if="list.length > 0" v-for="{index, data} in list" :key="index">
                     <ShortsPlayer :video="data" v-if="data !== undefined" @UpdateFullyVisibleIndex="UpdateFullyVisibleIndex(index)"/>
                 </template>
-                <template v-if="list.length === 0" v-for="n in 1">
+                <template v-else>
                     <ShortsPlayerSkeleton />
                 </template>
             </div>
