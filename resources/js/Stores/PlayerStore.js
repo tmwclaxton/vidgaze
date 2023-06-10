@@ -66,7 +66,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                             this.viewRecordDuration += 5;
                             this.debugMessage('STARTVIEWRECORD: View Record Duration: ' + this.viewRecordDuration);
                         } else {
-                            // this.debugMessage('STARTVIEWRECORD: Error: Player is not playing');
+                            this.debugMessage('STARTVIEWRECORD: Error: Player is not playing');
                             clearInterval(this.viewRecordTimer);
 
                         }
@@ -103,7 +103,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             }
 
-            else if (player.object.preferred_source === 'Vimeo') {
+            else if (player.object.preferred_source === 'vimeo') {
 
                 try {
                     let paused;
@@ -120,7 +120,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             }
 
-            else if (player.object.preferred_source === 'Dailymotion') {
+            else if (player.object.preferred_source === 'dailymotion') {
                 try {
                     const state = await player.player.getState();
                     playing = state.playerIsPlaying;
@@ -161,7 +161,10 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // iterate through players and get object external_id and destroy div using that as id
             this.players.forEach(player => {
                 let playerDiv = document.getElementById(player.object.external_id);
-                playerDiv.remove();
+                if (playerDiv !== null) {
+                    // this.debugMessage('Destroying player: ' + player.object.external_id);
+                    playerDiv.remove();
+                }
             });
 
 
@@ -201,10 +204,12 @@ export const usePlayerStore = defineStore('PlayerStore', {
             this.show = true;
 
             this.debugMessage('build player ' + this.object.preferred_source);
+
             // embeds often rebuild the div they are in which is a pain so we will just remove the div and rebuild it
             // // create player_div element inside player_div_holder
             let playerDiv = playerDivHolderID.appendChild(document.createElement('div'));
             playerDiv.id = this.object.external_id;
+
             // // add h-full and w-full classes to player_div
             playerDiv.classList.add('h-full');
             playerDiv.classList.add('w-full');
@@ -267,10 +272,9 @@ export const usePlayerStore = defineStore('PlayerStore', {
         buildVimeoPlayer(playerDiv) {
             let external_id = this.object.external_id;
 
-            external_id = '822998068';
-            this.object.external_id = external_id;
+            // external_id = '822998068';
+            // this.object.external_id = external_id;
 
-            playerDiv.id = "vimeo_player_div" + external_id;
 
 
             const player = new Vimeo.Player(playerDiv.id, {
@@ -315,35 +319,39 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         buildDailymotionPlayer(playerDiv) {
             const external_id = this.object.external_id;
-            // const external_id = 'x8l6g4x';
-            // this.object.external_id = external_id;
 
-            const tag = document.createElement('script' );
+            const tag = document.createElement('script');
             tag.src = "https://geo.dailymotion.com/libs/player/" + external_id + ".js";
             tag.id = 'tag' + external_id;
+
+            // Create a promise that resolves when the Dailymotion script is loaded
+            const scriptLoaded = new Promise((resolve) => {
+                tag.addEventListener('load', resolve);
+            });
+
             const firstScriptTag = document.getElementsByTagName('script')[0];
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
             let player;
-            //wait for script to load
-            setTimeout(() => {
+
+            // Wait for the script to load before creating the player
+            scriptLoaded.then(() => {
                 dailymotion.createPlayer(playerDiv.id, {
                     video: external_id,
                     start: this.start_time,
                     autoplay: false,
                 }).then((resolvedPlayer) => {
                     player = resolvedPlayer;
-                    document.getElementById(playerDiv.id).classList.add("h-full", "w-full","p-0", "relative");
+                    document.getElementById(playerDiv.id).classList.add("h-full", "w-full", "p-0", "relative");
                     document.getElementById(playerDiv.id).removeAttribute('style');
-                    // console.log(player);
 
                     player.on(dailymotion.events.VIDEO_START, () => {
                         if (!this.autoplay) {
                             setTimeout(() => {
-                            player.pause();
+                                player.pause();
                             }, 600);
                         }
-                    } );
+                    });
 
                     player.on(dailymotion.events.VIDEO_PLAY, () => {
                         this.startViewRecord(external_id);
@@ -357,12 +365,9 @@ export const usePlayerStore = defineStore('PlayerStore', {
                         this.endVideo(external_id);
                     });
 
-
                     this.pushPlayer(player);
                 });
-            }, 300);
-
-
+            });
         },
 
         buildTwitchPlayer(playerDiv) {
