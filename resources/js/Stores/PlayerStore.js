@@ -299,8 +299,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             player.on('play', () => {
                 this.startViewRecord(external_id);
-
-
             });
 
             player.on('pause', () => {

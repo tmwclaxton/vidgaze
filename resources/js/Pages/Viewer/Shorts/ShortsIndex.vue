@@ -132,22 +132,29 @@ function buildPlayers(index) {
 
 
 
-    //
-    // //destroy all players aside from the 3 that should be visible
-    // for (let i = 0; i < shorts.value.length; i++) {
-    //     if (!visibleIndices.includes(i)) {
-    //         console.log('destroying player ' + shorts.value[i].external_id);
-    //         playerStore.destroyPlayer(shorts.value[i].external_id);
-    //     }
-    // }
-    //
-    // // pause all players aside from the one that is fully visible
-    // for (let i = 0; i < shorts.value.length; i++) {
-    //     if (i !== fullyVisibleIndex.value) {
-    //         console.log('pausing player ' + shorts.value[i].external_id);
-    //         playerStore.pause(shorts.value[i].external_id);
-    //     }
-    // }
+
+    for (let i = 0; i < shorts.value.length; i++) {
+        if (!visibleIndices.includes(i)) {
+
+            //destroy all players aside from the 3 that should be visible
+            let player = playerStore.findPlayer(shorts.value[i].external_id)
+
+            if (!player) {
+                console.log('player does not exist ' + shorts.value[i].external_id);
+                return;
+            }
+
+            console.log('destroying player ' + shorts.value[i].external_id);
+            playerStore.destroyItem(player);
+
+            // pause all players aside from the one that is fully visible
+            if (i === fullyVisibleIndex.value) {
+                console.log('playing player ' + shorts.value[i].external_id);
+                playerStore.play(shorts.value[i].external_id);
+            }
+
+        }
+    }
 
 };
 
