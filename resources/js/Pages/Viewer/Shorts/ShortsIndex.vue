@@ -75,9 +75,12 @@ const UpdateFullyVisibleIndex = (index) => {
 };
 
 watch(fullyVisibleIndex, (index) => {
-    // console.log(index)
-    buildPlayers(index);
-    // playerStore.play(shorts.value[index].external_id)
+    setTimeout(() => {
+
+        // console.log(index)
+        buildPlayers(index);
+        // playerStore.play(shorts.value[index].external_id)
+    }, 100);
 });
 
 
@@ -126,6 +129,8 @@ function buildPlayers(index) {
 
         }
     }
+
+
 
     //
     // //destroy all players aside from the 3 that should be visible

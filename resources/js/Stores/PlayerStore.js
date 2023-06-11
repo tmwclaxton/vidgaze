@@ -221,8 +221,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 this.buildYouTubePlayer(playerDiv, object, startTime, autoplay);
             } else if (object.preferred_source === "vimeo") {
                 this.buildVimeoPlayer(playerDiv, object, startTime, autoplay);
-                // within player_div find div with id of player and remove the style attribute this is so the vimeo player grows to fill the div
-                playerDiv.querySelector('#player').removeAttribute('style');
             } else if (object.preferred_source === "dailymotion") {
                 this.buildDailymotionPlayer(playerDiv, object, startTime, autoplay);
             } else if (object.preferred_source === "twitch") {
@@ -275,6 +273,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         buildVimeoPlayer(playerDiv, object, startTime = 0, autoplay = false) {
             let external_id = object.external_id;
+            let htmlcollection;
 
             const player = new Vimeo.Player(playerDiv.id, {
                 id: object.external_id,
@@ -288,12 +287,20 @@ export const usePlayerStore = defineStore('PlayerStore', {
                         player.setCurrentTime(startTime);
                         // this.debugMessage(document.getElementById(playerDiv.id).firstElementChild);
                         document.getElementById(playerDiv.id).firstElementChild.classList.add("h-full", "w-full","p-0", "relative");
-                        document.getElementById(playerDiv.id).firstElementChild.removeAttribute('style');
+                        document.getElementById(playerDiv.id).firstElementChild.removeAttribute("style");
+
+                    // reset all vimeo players to default size
+                    htmlcollection = document.getElementsByClassName("player");
+                    for (let i = 0; i < htmlcollection.length; i++) {
+                        htmlcollection[i].removeAttribute("style");
+                    }
                 }.bind(this));
             });
 
             player.on('play', () => {
                 this.startViewRecord(external_id);
+
+
             });
 
             player.on('pause', () => {
@@ -308,7 +315,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
             player.ready().then(function () {
                 // this.debugMessage('BUILDVIMEO: Vimeo player ready');
                 // ensure player is ready before pushing to players array
-
                 this.pushPlayer(player, object);
 
             }.bind(this));
