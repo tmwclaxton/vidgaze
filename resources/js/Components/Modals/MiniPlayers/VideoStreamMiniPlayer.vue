@@ -136,7 +136,7 @@ watch(() => queueStore.items.length, () => {
 
 //watch for changes in the index of the queue if so then scroll to the new index
 watch(() => queueStore.index, (x, y) => {
-    if (expandQueue.value && queueStore.items.length > 1) {
+    if (expandQueue.value && queueStore.items.length > 1 && playerStore.showMiniPlayer) {
         // get index of the current item then get element by id and scroll to it in the queueStoreHolder
         const externalId = 'queueItem_'+  queueStore.items[queueStore.index].object.external_id;
         const element = document.getElementById(externalId);

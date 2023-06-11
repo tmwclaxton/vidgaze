@@ -114,9 +114,13 @@ function buildPlayers(index) {
         let player = playerStore.findPlayer(shorts.value[visibleIndex].external_id);
         if (!player) {
             // console.log('building player ' + shorts.value[visibleIndex].external_id);
-            playerStore.autoplay = false;
-            playerStore.object = shorts.value[visibleIndex];
-            playerStore.buildPlayer('player_div_holder_' + shorts.value[visibleIndex].external_id); // external_id is the ref to the div
+
+
+            let id = 'player_div_holder_' + shorts.value[visibleIndex].external_id; // external_id is the ref to the div
+            let object = shorts.value[visibleIndex];
+            let autoplay = false;
+            let start = 0;
+            playerStore.buildPlayer(id, object, start, autoplay);
         } else {
             // console.log('player already exists ' + shorts.value[visibleIndex].external_id);
 
