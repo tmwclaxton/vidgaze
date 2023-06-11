@@ -284,10 +284,18 @@ export const usePlayerStore = defineStore('PlayerStore', {
             player.on('loaded', () => {
                 // wait for player to load then set start time
                 player.ready().then(function () {
-                        player.setCurrentTime(startTime);
+
+                    // set up
+                    if (autoplay) {
+                        player.play();
+                    }
+                    player.setCurrentTime(startTime);
+
+                    //styling
+
                         // this.debugMessage(document.getElementById(playerDiv.id).firstElementChild);
-                        document.getElementById(playerDiv.id).firstElementChild.classList.add("h-full", "w-full","p-0", "relative");
-                        document.getElementById(playerDiv.id).firstElementChild.removeAttribute("style");
+                    document.getElementById(playerDiv.id).firstElementChild.classList.add("h-full", "w-full","p-0", "relative");
+                    document.getElementById(playerDiv.id).firstElementChild.removeAttribute("style");
 
                     // reset all vimeo players to default size
                     htmlcollection = document.getElementsByClassName("player");

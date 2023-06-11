@@ -75,22 +75,14 @@ const UpdateFullyVisibleIndex = (index) => {
 };
 
 watch(fullyVisibleIndex, (index) => {
-    setTimeout(() => {
 
-        // console.log(index)
-        buildPlayers(index);
-        // playerStore.play(shorts.value[index].external_id)
-    }, 100);
+
+    console.log(index)
+    buildPlayers(index);
+
 });
 
-
-function buildPlayers(index) {
-    // make a list of the indices of the shorts that should be visible
-    // 3 short players should be visible at a time
-    // we should have an index of the current short player
-    // we figure what players should be visible based on the index
-    // if the index is 0, we show the first 3 players, if the index is 1, we show the zeroth, first and second players
-
+function createVisibleIndices(index) {
     let visibleIndices = [];
     if (index === 0) {
         visibleIndices = [index, index + 1, index + 2];
@@ -99,17 +91,29 @@ function buildPlayers(index) {
     } else {
         visibleIndices = [index - 1, index, index + 1];
     }
-    //reverse the array
-
+    // console.log(index)
     console.log(visibleIndices);
+    return visibleIndices;
+}
+
+function buildPlayers(index) {
+    // make a list of the indices of the shorts that should be visible
+    // 3 short players should be visible at a time
+    // we should have an index of the current short player
+    // we figure what players should be visible based on the index
+    // if the index is 0, we show the first 3 players, if the index is 1, we show the zeroth, first and second players
+
+
+    let visibleIndices = createVisibleIndices(index);
+
 
     // loop through the 3 players that should be built and check if player has been loaded
     // if not, load it using playerStore
 
+    let builtPlayers = [];
     for (let i = 0; i < visibleIndices.length; i++) {
         const visibleIndex = visibleIndices[i];
-        // console.log(toRaw(shorts.value));
-        // load player if shorts is not undefined
+        // load player if shorts is undefined
         if (shorts.value[visibleIndex] === undefined) {
             console.log('shorts is undefined');
             return;
@@ -118,6 +122,7 @@ function buildPlayers(index) {
         if (!player) {
             // console.log('building player ' + shorts.value[visibleIndex].external_id);
 
+            builtPlayers.push(shorts.value[visibleIndex].external_id);
 
             let id = 'player_div_holder_' + shorts.value[visibleIndex].external_id; // external_id is the ref to the div
             let object = shorts.value[visibleIndex];
@@ -130,32 +135,39 @@ function buildPlayers(index) {
         }
     }
 
+    console.log(builtPlayers);
 
 
-
+    //loop through the shorts and check if the player is visible
     for (let i = 0; i < shorts.value.length; i++) {
-        if (!visibleIndices.includes(i)) {
+        if (visibleIndices.includes(i)) {
+            // if the player is visible, play it | we don't need to pause the other players because PlayerStore does that for us
+            if (i === fullyVisibleIndex.value) {
+                console.log('playing player ' + shorts.value[i].external_id);
+                playerStore.play(shorts.value[i].external_id);
+            }
+        } else {
+            // if not  the 3 players , destroy the rest
 
             //destroy all players aside from the 3 that should be visible
             let player = playerStore.findPlayer(shorts.value[i].external_id)
 
             if (player) {
-
                 console.log('destroying player ' + shorts.value[i].external_id);
                 playerStore.destroyItem(player);
-
-                // pause all players aside from the one that is fully visible
-                if (i === fullyVisibleIndex.value) {
-                    console.log('playing player ' + shorts.value[i].external_id);
-                    playerStore.play(shorts.value[i].external_id);
-                }
-
             } else {
-                console.log('player does not exist ' + shorts.value[i].external_id);
+                // console.log('player does not exist ' + shorts.value[i].external_id);
             }
 
+
         }
+
+
     }
+
+
+
+
 
 };
 
@@ -186,7 +198,7 @@ onMounted(async () => {
         <div v-bind="wrapperProps">
             <div id="shortsScrollArea" class=" w-full ">
                 <template v-if="list.length > 0" v-for="{index, data} in list" :key="index">
-                    <ShortsPlayer :video="data" v-if="data !== undefined" @UpdateFullyVisibleIndex="UpdateFullyVisibleIndex(index)"/>
+                    <ShortsPlayer :video="data" :index="index" v-if="data !== undefined" @UpdateFullyVisibleIndex="UpdateFullyVisibleIndex(index)"/>
                 </template>
                 <template v-else>
                     <ShortsPlayerSkeleton />

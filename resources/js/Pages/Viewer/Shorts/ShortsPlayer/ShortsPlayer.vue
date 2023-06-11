@@ -20,6 +20,11 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    index: {
+        type: Number,
+        required: true,
+
+    },
 });
 
 const share = () => {
@@ -44,13 +49,18 @@ onMounted(() => {
         threshold: 1.0,
     };
 
+    if (props.index === 0) {
+        console.log('first video');
+        setTimeout(() => {
+            emits('UpdateFullyVisibleIndex',props.index);
+        }, 2000);
+    }
+
     const handleIntersection = (entries) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
                 // Emit an event upwards when the player becomes fully visible
-                // You can replace 'eventName' with your desired event name
-                // this.$emit('eventName', this.video.external_id);
-                emits('UpdateFullyVisibleIndex',props.video.index);
+                emits('UpdateFullyVisibleIndex',props.index);
 
             }
         });
@@ -93,7 +103,7 @@ onMounted(() => {
                         </div>
 
                         <!--Player-->
-                        <div :id="'player_div_holder_' + video.external_id" class="bg-zinc-200 dark:bg-zinc-800 w-full   flex-grow rounded-2xl without-ring flex relative overflow-hidden">
+                        <div :id="'player_div_holder_' + video.external_id" class=" bg-black w-full   flex-grow rounded-2xl without-ring flex relative overflow-hidden">
                             <!--<div :id="video.external_id" class="w-full h-full">-->
                             <!--</div>-->
                         </div>
