@@ -184,7 +184,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
 
 
-        buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false) {
+        async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false) {
 
             //create player_div element inside player_div_holder
             if (playerDivHolderID === null) {
@@ -426,11 +426,14 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
 
         async play(external_id) {
+            this.debugMessage('PLAY: ' + external_id);
             const player = this.findPlayer(external_id);
             // if player is not found, return
             if (!player) {
+                this.debugMessage('PLAY: player not found');
                 return;
             }
+            // console.log(player);
 
             // pause all other players
             for (let i = 0; i < this.players.length; i++) {
@@ -438,14 +441,17 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     await this.pause(this.players[i]['object'].external_id);
                 }
             }
+            console.log(player.object.preferred_source);
 
             // check object preferred source
             if (["vimeo", "twitch"].includes(player.object.preferred_source)) {
                 await toRaw(player.player).play();
             } else if (player.object.preferred_source === "dailymotion") {
+                console.log(player.player);
                 await player.player.play();
             } else if (player.object.preferred_source === "youtube") {
-                player.player.playVideo();
+                // console.log(player.player);
+                await player.player.playVideo();
             }
 
         },
@@ -463,7 +469,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
             } else if (player.object.preferred_source === "dailymotion") {
                 await player.player.pause();
             } else if (player.object.preferred_source === "youtube") {
-                player.player.pauseVideo();
+                console.log(player.player);
+                await player.player.pauseVideo();
             }
         },
     }

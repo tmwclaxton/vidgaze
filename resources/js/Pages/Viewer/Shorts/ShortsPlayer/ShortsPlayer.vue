@@ -50,8 +50,8 @@ onMounted(() => {
     };
 
     if (props.index === 0) {
-        console.log('first video');
         setTimeout(() => {
+            // console.log('first video');
             emits('UpdateFullyVisibleIndex',props.index);
         }, 2000);
     }

@@ -77,7 +77,7 @@ const UpdateFullyVisibleIndex = (index) => {
 watch(fullyVisibleIndex, (index) => {
 
 
-    console.log(index)
+    console.log(['current short: ', index])
     buildPlayers(index);
 
 });
@@ -91,12 +91,12 @@ function createVisibleIndices(index) {
     } else {
         visibleIndices = [index - 1, index, index + 1];
     }
-    // console.log(index)
-    console.log(visibleIndices);
+    // get external ids of shorts that should be visible
+    console.log(['These shorts should be loaded',  visibleIndices.map(index => shorts.value[index].external_id)]);
     return visibleIndices;
 }
 
-function buildPlayers(index) {
+function buildPlayers(index = 0) {
     // make a list of the indices of the shorts that should be visible
     // 3 short players should be visible at a time
     // we should have an index of the current short player
@@ -128,24 +128,31 @@ function buildPlayers(index) {
             let object = shorts.value[visibleIndex];
             let autoplay = false;
             let start = 0;
-            playerStore.buildPlayer(id, object, start, autoplay);
+            playerStore.buildPlayer(id, object, start, autoplay).then(() => {
+                // console.log('testing');
+                // if the player is visible, play it | we don't need to pause the other players because PlayerStore does that for us
+                playFullyVisiblePlayer(i);
+
+            });
+
+
         } else {
-            // console.log('player already exists ' + shorts.value[visibleIndex].external_id);
+
+            // player exists, check if it is visible
+            // if it is visible, play it
+            playFullyVisiblePlayer(i);
 
         }
     }
 
-    console.log(builtPlayers);
+    console.log(['Built these players',builtPlayers]);
 
 
+    let removePlayers = [];
     //loop through the shorts and check if the player is visible
     for (let i = 0; i < shorts.value.length; i++) {
         if (visibleIndices.includes(i)) {
-            // if the player is visible, play it | we don't need to pause the other players because PlayerStore does that for us
-            if (i === fullyVisibleIndex.value) {
-                console.log('playing player ' + shorts.value[i].external_id);
-                playerStore.play(shorts.value[i].external_id);
-            }
+
         } else {
             // if not  the 3 players , destroy the rest
 
@@ -153,7 +160,7 @@ function buildPlayers(index) {
             let player = playerStore.findPlayer(shorts.value[i].external_id)
 
             if (player) {
-                console.log('destroying player ' + shorts.value[i].external_id);
+               removePlayers.push(shorts.value[i].external_id);
                 playerStore.destroyItem(player);
             } else {
                 // console.log('player does not exist ' + shorts.value[i].external_id);
@@ -161,20 +168,38 @@ function buildPlayers(index) {
 
 
         }
-
-
     }
 
-
+    console.log(['Removed these players',removePlayers]);
 
 
 
 };
 
+function playFullyVisiblePlayer(i) {
+    if (i === fullyVisibleIndex.value) {
+        // console.log('playing player ' + shorts.value[fullyVisibleIndex.value].external_id);
+
+        // check every 1 second fi player has been built in the playerStore once it has been built, play it and stop checking
+
+        if (playerStore.findPlayer(shorts.value[fullyVisibleIndex.value].external_id)) {
+            playerStore.play(shorts.value[fullyVisibleIndex.value].external_id);
+        } else {
+            setTimeout(() => {
+                playFullyVisiblePlayer(i);
+            }, 1000);
+        }
+
+
+    }
+}
 
 onMounted(async () => {
+    shorts.value = [];
+    playerStore.destroyPlayers();
+
     await fetchShorts().then(() => {
-        // watch shorts for changes
+        // watch shorts for changes // debounce the function so it only runs once every 100s
         watch(shorts, (shorts) => debounce(() => {
             // console.log(shorts);
             // build the first 3 players as soon as shorts is not empty, wait until shorts is not empty
@@ -190,11 +215,11 @@ onMounted(async () => {
 });
 
 </script>
-
-<template>
+<!--rerender everytime page reloads-->
+<template >
     <Head title="VidGaze Shorts" />
 
-    <div v-bind="containerProps" class="max-h-[calc(100vh-4rem)] duration-75  overflow-y-scroll snap snap-y snap-mandatory ease-in-out">
+    <div v-bind="containerProps" class="max-h-[calc(100vh-4rem)] duration-75  overflow-y-scroll snap snap-y snap-mandatory ease-in-out" v>
         <div v-bind="wrapperProps">
             <div id="shortsScrollArea" class=" w-full ">
                 <template v-if="list.length > 0" v-for="{index, data} in list" :key="index">
