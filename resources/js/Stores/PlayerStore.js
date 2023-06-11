@@ -328,14 +328,16 @@ export const usePlayerStore = defineStore('PlayerStore', {
             dailymotion.createPlayer(playerDiv.id, {
                 video: external_id,
                 start: startTime,
-                autoplay: autoplay
             }).then((resolvedPlayer) => {
                 player = resolvedPlayer;
                 document.getElementById(playerDiv.id).classList.add("h-full", "w-full", "p-0", "relative");
                 document.getElementById(playerDiv.id).removeAttribute('style');
 
-                player.on(dailymotion.events.VIDEO_START, () => {
-
+                player.on(dailymotion.events.PLAYER_VIDEOCHANGE, () => {
+                    // this.debugMessage('BUILDDailymotion: Dailymotion player ready')
+                    if (autoplay) {
+                        player.play();
+                    }
                 });
 
                 player.on(dailymotion.events.VIDEO_PLAY, () => {

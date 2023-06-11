@@ -114,10 +114,7 @@ export const useQueueStore = defineStore('QueueStore', {
             // set player modal store to this item
             if (this.items.length > 0) {
                 playerModalStore.destroyPlayers();
-                playerModalStore.autoplay = true;
-                playerModalStore.object = this.items[this.index]['object'];
-                playerModalStore.type = this.items[this.index]['type'];
-                playerModalStore.buildPlayer();
+                playerModalStore.buildPlayer(null, this.items[this.index]['object'], 0, true);
             }
         }
     }
