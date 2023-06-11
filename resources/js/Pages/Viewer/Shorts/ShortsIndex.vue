@@ -43,7 +43,7 @@ const fetchShorts = async () => {
         params: {
             category: category.value,
             shorts: true,
-            perPage: 6,
+            perPage: 8,
             videoIds: shortsIds
         }
     }).then(response => {
@@ -63,40 +63,38 @@ useInfiniteScroll(
         await fetchShorts();
     },
     {
-        distance: 2 * (window.innerHeight - 64), // load more when scrolled to within 2 shorts from the bottom
+        distance: 3 * (window.innerHeight - 64), // load more when scrolled to within 2 shorts from the bottom
     }
 )
 
 
 
 const UpdateFullyVisibleIndex = (index) => {
-    // console.log(index)
     fullyVisibleIndex.value = index;
 };
 
 watch(fullyVisibleIndex, (index) => {
-
-
     console.log(['current short: ', index])
-    buildPlayers(index);
+    buildPlayers();
 
 });
 
-function createVisibleIndices(index) {
+function createVisibleIndices() {
+    let index = fullyVisibleIndex.value;
     let visibleIndices = [];
-    if (index === 0) {
-        visibleIndices = [index, index + 1, index + 2];
+    if (index < 2) {
+        visibleIndices = [index, index + 1, index + 2, index + 3, index + 4];
     } else if (index === shorts.value.length - 1) {
-        visibleIndices = [index - 2, index - 1, index];
+        visibleIndices = [index - 3, index - 2, index - 1, index , index + 1];
     } else {
-        visibleIndices = [index - 1, index, index + 1];
+        visibleIndices = [index - 2, index - 1, index, index + 1 , index + 2];
     }
     // get external ids of shorts that should be visible
     console.log(['These shorts should be loaded',  visibleIndices.map(index => shorts.value[index].external_id)]);
     return visibleIndices;
 }
 
-function buildPlayers(index = 0) {
+function buildPlayers() {
     // make a list of the indices of the shorts that should be visible
     // 3 short players should be visible at a time
     // we should have an index of the current short player
@@ -104,7 +102,7 @@ function buildPlayers(index = 0) {
     // if the index is 0, we show the first 3 players, if the index is 1, we show the zeroth, first and second players
 
 
-    let visibleIndices = createVisibleIndices(index);
+    let visibleIndices = createVisibleIndices();
 
 
     // loop through the 3 players that should be built and check if player has been loaded
@@ -196,6 +194,7 @@ function playFullyVisiblePlayer(i) {
 
 onMounted(async () => {
     shorts.value = [];
+    fullyVisibleIndex.value = 0;
     playerStore.destroyPlayers();
 
     await fetchShorts().then(() => {

@@ -21,6 +21,10 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // also depends on what page you are on ...
             return queueStore.items !== undefined && queueStore.items.length > 0 && usePage().url !== '/shorts';
         },
+        shortsPage() {
+            // use ziggy to check if we are on the shorts page
+            return route().current('videos.shorts');
+        }
     },
 
     actions: {
@@ -46,7 +50,17 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     const player = this.findPlayer(external_id);
                     this.destroyItem(player);
                 }
+            } else if (this.shortsPage) {
+                // destroy player
+                const player = this.findPlayer(external_id);
+                this.destroyItem(player).then(r => {
+                   // scroll to next video
+
+                });
             }
+
+
+
             this.debugMessage('end video' + external_id);
         },
 
@@ -163,6 +177,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         async destroyItem(item) {
+            // check if player exists
+            if (!item) {
+                return;
+            }
+
             if (item.object.preferred_source === 'youtube') {
                 item.player.destroy();
             } else if (item.object.preferred_source === 'vimeo') {
@@ -194,7 +213,9 @@ export const usePlayerStore = defineStore('PlayerStore', {
             }
 
             if(playerDivHolderID === null){
-                console.log('a playerDivHolder could be not found for this player with id: ' + playerDivHolderID);
+                console.log('CATASTROPHIC ERROR!!!! a playerDivHolder could be not found for this player with id: ' + playerDivHolderID);
+                console.log(playerDivHolderID)
+                console.log(object)
                 return;
             }
 
@@ -338,6 +359,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 start: startTime,
             }).then((resolvedPlayer) => {
                 player = resolvedPlayer;
+
+                // don't remove these 2 lines, they are need otherwise the player disappears into the ether
                 document.getElementById(playerDiv.id).classList.add("h-full", "w-full", "p-0", "relative");
                 document.getElementById(playerDiv.id).removeAttribute('style');
 
@@ -399,6 +422,10 @@ export const usePlayerStore = defineStore('PlayerStore', {
             if (this.findPlayer(object.external_id)) {
                 // this.debugMessage('player already in array')
                 return;
+            }
+
+            if (!object) {
+                this.debugMessage('MASSIVE BUG HERE !!!!!!!!! PUSHPLAYER: object not found')
             }
 
             //create player and add to players array and then reset variables
@@ -469,8 +496,10 @@ export const usePlayerStore = defineStore('PlayerStore', {
             } else if (player.object.preferred_source === "dailymotion") {
                 await player.player.pause();
             } else if (player.object.preferred_source === "youtube") {
-                console.log(player.player);
-                await player.player.pauseVideo();
+                if (await this.isPlayerPlaying(player.object.external_id)) {
+                    console.log(player.player);
+                    await player.player.pauseVideo();
+                }
             }
         },
     }
