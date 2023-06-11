@@ -73,8 +73,9 @@ export const useQueueStore = defineStore('QueueStore', {
                         changeIndexBool = true;
                     }
 
-
-                    playerStore.destroyPlayer(this.items[i]['object'].external_id );
+                    //find the player in the player store and destroy it
+                    let player = playerStore.findPlayer(this.items[i]['object'].external_id);
+                    playerStore.destroyItem(player);
 
 
                     // if I delete an item less than or equal to the current index, I need to decrement the index

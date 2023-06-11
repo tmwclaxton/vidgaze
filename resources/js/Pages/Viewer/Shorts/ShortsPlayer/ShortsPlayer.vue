@@ -57,8 +57,7 @@ onMounted(() => {
     };
 
     const observer = new IntersectionObserver(handleIntersection, options);
-    observer.observe(document.getElementById(props.video.external_id));
-// // https://github.com/ManukMinasyan/vue3-observe-visibility
+    observer.observe(document.getElementById('player_div_holder_' + props.video.external_id));
 });
 
 
@@ -94,9 +93,9 @@ onMounted(() => {
                         </div>
 
                         <!--Player-->
-                        <div class="bg-zinc-200 dark:bg-zinc-800 w-full   flex-grow rounded-2xl without-ring flex relative overflow-hidden">
-                            <div :id="video.external_id" class="w-full h-full">
-                            </div>
+                        <div :id="'player_div_holder_' + video.external_id" class="bg-zinc-200 dark:bg-zinc-800 w-full   flex-grow rounded-2xl without-ring flex relative overflow-hidden">
+                            <!--<div :id="video.external_id" class="w-full h-full">-->
+                            <!--</div>-->
                         </div>
                     </div>
 

@@ -73,6 +73,8 @@ onMounted(() => {
 
 
 
+
+    loadScript('https://geo.dailymotion.com/libs/player/xfjc3.js', 'dailymotion-api')
     loadScript('https://www.youtube.com/iframe_api', 'youtube-api');
     loadScript('https://player.vimeo.com/api/player.js', 'vimeo-api');
     loadScript('https://player.twitch.tv/js/embed/v1.js', 'twitch-api');
@@ -123,11 +125,31 @@ const toggleExpandQueue = () => {
     checkIfInViewport();
 };
 
+
 // watch for changes in the length of the queue
 watch(() => queueStore.items.length, () => {
     if (queueStore.items.length > 1) {
         // wait for the animation to finish
         checkIfInViewport();
+    }
+});
+
+//watch for changes in the index of the queue if so then scroll to the new index
+watch(() => queueStore.index, (x, y) => {
+    if (expandQueue.value && queueStore.items.length > 1) {
+        // get index of the current item then get element by id and scroll to it in the queueStoreHolder
+        const externalId = 'queueItem_'+  queueStore.items[queueStore.index].object.external_id;
+        const element = document.getElementById(externalId);
+        // console.log(element);
+
+        const miniPlayerItemsHolder = document.getElementById('miniPlayerItemsHolder');
+        // console.log(miniPlayerItemsHolder);
+
+        // scroll to the element so that it is in the middle of the queueStoreHolder
+        miniPlayerItemsHolder.scrollTo({
+            top: element.offsetTop - (miniPlayerItemsHolder.offsetHeight / 2),
+            behavior: 'smooth'
+        });
     }
 });
 
@@ -189,8 +211,8 @@ const closeMiniPlayer = () => {
         </div>
 
         <div class="my-0.5 border border-zinc-200 dark:border-zinc-800" v-if="expandQueue"/>
-        <div class="flex flex-col pb-1 max-h-48 overflow-y-auto" v-if="expandQueue">
-            <div v-for="(item, index) in queueStore.items"  >
+        <div  id="miniPlayerItemsHolder" class="relative flex flex-col pb-1 max-h-48 overflow-y-auto" v-if="expandQueue">
+            <div  v-for="(item, index) in queueStore.items"  >
                 <QueueItem :item="item" :index="index" :key="index"/>
             </div>
         </div>

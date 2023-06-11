@@ -43,7 +43,7 @@ const fetchShorts = async () => {
         params: {
             category: category.value,
             shorts: true,
-            perPage: 3,
+            perPage: 6,
             videoIds: shortsIds
         }
     }).then(response => {
@@ -113,12 +113,12 @@ function buildPlayers(index) {
         }
         let player = playerStore.findPlayer(shorts.value[visibleIndex].external_id);
         if (!player) {
-            console.log('building player ' + shorts.value[visibleIndex].external_id);
+            // console.log('building player ' + shorts.value[visibleIndex].external_id);
             playerStore.autoplay = false;
             playerStore.object = shorts.value[visibleIndex];
-            playerStore.buildPlayer(shorts.value[visibleIndex].external_id); // external_id is the ref to the div
+            playerStore.buildPlayer('player_div_holder_' + shorts.value[visibleIndex].external_id); // external_id is the ref to the div
         } else {
-            console.log('player already exists ' + shorts.value[visibleIndex].external_id);
+            // console.log('player already exists ' + shorts.value[visibleIndex].external_id);
 
         }
     }

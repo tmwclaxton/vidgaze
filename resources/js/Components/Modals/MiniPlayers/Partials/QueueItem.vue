@@ -1,5 +1,5 @@
 <template>
-    <div class="relative group flex flex-row justify-between gap-x-2  cursor-pointer ">
+    <div :id="'queueItem_' + props.item.object.external_id" class="relative group flex flex-row justify-between gap-x-2  cursor-pointer ">
         <div class="relative group flex flex-row gap-x-2 p-1  cursor-pointer " @click="queueStore.changeIndex(index)">
             <div class=" mx-0.5 ml-2 my-auto flex h-3 aspect-square" >
                 <font-awesome-icon
@@ -19,11 +19,11 @@
                 </CornerInfo>
             </div>
             <div class="flex-grow my-auto">
-                <p class="text-sm font-semibold text-left" v-text="props.item.object.title"></p>
-                <p class="text-xs text-left" v-text="props.item.object.creator.name "></p>
+                <p class="text-sm font-semibold text-left line-clamp-2" v-text="props.item.object.title"></p>
+                <p class="text-xs text-left line-clamp-1" v-text="props.item.object.creator.name "></p>
             </div>
         </div>
-        <div class="px-5 flex flex-row">
+        <div class="px-5 flex flex-row flex-shrink-0">
             <font-awesome-icon @click="queueStore.remove(props.item.object.id, props.item.type)" :icon="['fas', 'trash-can']"  class="cursor-pointer my-auto w-full aspect-square aspect-square text-red-500 hidden group-hover:flex" />
         </div>
     </div>
