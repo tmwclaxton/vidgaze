@@ -52,11 +52,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 }
             } else if (this.shortsPage) {
                 // destroy player
-                const player = this.findPlayer(external_id);
-                this.destroyItem(player).then(r => {
-                   // scroll to next video
-
-                });
+                // const player = this.findPlayer(external_id);
+                // this.destroyItem(player).then(r => {
+                //    scroll to next video
+                //
+                // });
             }
 
 
@@ -468,13 +468,12 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     await this.pause(this.players[i]['object'].external_id);
                 }
             }
-            console.log(player.object.preferred_source);
+            console.log([player.object.preferred_source, player]);
 
             // check object preferred source
             if (["vimeo", "twitch"].includes(player.object.preferred_source)) {
                 await toRaw(player.player).play();
             } else if (player.object.preferred_source === "dailymotion") {
-                console.log(player.player);
                 await player.player.play();
             } else if (player.object.preferred_source === "youtube") {
                 // console.log(player.player);
@@ -486,9 +485,10 @@ export const usePlayerStore = defineStore('PlayerStore', {
         async pause(external_id) {
             const player = this.findPlayer(external_id);
             // if player is not found, return
-            if (!player) {
+            if (!player && await this.isPlayerPlaying(player)) {
                 return;
             }
+            console.log([player.object.preferred_source, player]);
 
             // check object preferred source
             if (["vimeo", "twitch"].includes(player.object.preferred_source)) {
@@ -496,10 +496,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             } else if (player.object.preferred_source === "dailymotion") {
                 await player.player.pause();
             } else if (player.object.preferred_source === "youtube") {
-                if (await this.isPlayerPlaying(player.object.external_id)) {
-                    console.log(player.player);
-                    await player.player.pauseVideo();
-                }
+                await player.player.pauseVideo();
             }
         },
     }

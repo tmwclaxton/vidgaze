@@ -40,7 +40,7 @@ const share = () => {
     }
 
 };
-
+let observer = ref(null);
 const emits = defineEmits(['UpdateFullyVisibleIndex' ]);
 onMounted(() => {
     const options = {
@@ -49,12 +49,12 @@ onMounted(() => {
         threshold: 1.0,
     };
 
-    if (props.index === 0) {
-        setTimeout(() => {
-            // console.log('first video');
-            emits('UpdateFullyVisibleIndex',props.index);
-        }, 2000);
-    }
+    // if (props.index === 0) {
+    //     setTimeout(() => {
+    //         // console.log('first video');
+    //         emits('UpdateFullyVisibleIndex',props.index);
+    //     }, 2000);
+    // }
 
     const handleIntersection = (entries) => {
         entries.forEach((entry) => {
@@ -66,8 +66,12 @@ onMounted(() => {
         });
     };
 
-    const observer = new IntersectionObserver(handleIntersection, options);
+    observer = new IntersectionObserver(handleIntersection, options);
     observer.observe(document.getElementById('player_div_holder_' + props.video.external_id));
+});
+
+onUnmounted(() => {
+    observer.disconnect();
 });
 
 

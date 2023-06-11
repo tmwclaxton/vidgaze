@@ -1,8 +1,6 @@
 
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-
-
 export default {
     layout: AuthenticatedLayout
 };
@@ -50,6 +48,7 @@ const fetchShorts = async () => {
             if (response.data.data === undefined || response.data.data.length === 0) {
                 return;
             }
+            console.log("FETCHING SHORTS");
             shorts.value = shorts.value.concat(response.data.data);
         })
         .catch(error => {
@@ -80,14 +79,18 @@ watch(fullyVisibleIndex, (index) => {
 });
 
 function createVisibleIndices() {
+
     let index = fullyVisibleIndex.value;
     let visibleIndices = [];
-    if (index < 2) {
+    if (index < 1) {
+        // if at start
         visibleIndices = [index, index + 1, index + 2, index + 3, index + 4];
-    } else if (index === shorts.value.length - 1) {
-        visibleIndices = [index - 3, index - 2, index - 1, index , index + 1];
+    } else if (index >= shorts.value.length - 1) {
+        // if at end
+        visibleIndices = [index - 2, index - 1, index , index + 1];
     } else {
-        visibleIndices = [index - 2, index - 1, index, index + 1 , index + 2];
+        // if in middle
+        visibleIndices =  [index - 1, index, index + 1, index + 2];
     }
     // get external ids of shorts that should be visible
     console.log(['These shorts should be loaded',  visibleIndices.map(index => shorts.value[index].external_id)]);
@@ -95,6 +98,7 @@ function createVisibleIndices() {
 }
 
 function buildPlayers() {
+    console.log('BUILDING PLAYERS -----------------------');
     // make a list of the indices of the shorts that should be visible
     // 3 short players should be visible at a time
     // we should have an index of the current short player
@@ -108,63 +112,52 @@ function buildPlayers() {
     // loop through the 3 players that should be built and check if player has been loaded
     // if not, load it using playerStore
 
-    let builtPlayers = [];
+    let builtPlayers = []; // for testing
+
     for (let i = 0; i < visibleIndices.length; i++) {
-        const visibleIndex = visibleIndices[i];
+        let visibleIndex = visibleIndices[i];
         // load player if shorts is undefined
         if (shorts.value[visibleIndex] === undefined) {
             console.log('shorts is undefined');
             return;
         }
         let player = playerStore.findPlayer(shorts.value[visibleIndex].external_id);
-        if (!player) {
-            // console.log('building player ' + shorts.value[visibleIndex].external_id);
 
-            builtPlayers.push(shorts.value[visibleIndex].external_id);
+        // if visible player doens't exists, build it and play it | if it exists, play it
+        if (!player) {
+            builtPlayers.push(shorts.value[visibleIndex].external_id); // for testing
 
             let id = 'player_div_holder_' + shorts.value[visibleIndex].external_id; // external_id is the ref to the div
             let object = shorts.value[visibleIndex];
-            let autoplay = false;
-            let start = 0;
-            playerStore.buildPlayer(id, object, start, autoplay).then(() => {
-                // console.log('testing');
+
+            playerStore.buildPlayer(id, object, 0, false).then(() => {
                 // if the player is visible, play it | we don't need to pause the other players because PlayerStore does that for us
-                playFullyVisiblePlayer(i);
-
+                playFullyVisiblePlayer(visibleIndex);
             });
-
-
         } else {
-
-            // player exists, check if it is visible
             // if it is visible, play it
-            playFullyVisiblePlayer(i);
-
+            playFullyVisiblePlayer(visibleIndex);
         }
+
     }
 
     console.log(['Built these players',builtPlayers]);
 
 
-    let removePlayers = [];
+    let removePlayers = []; // for testing
+
     //loop through the shorts and check if the player is visible
     for (let i = 0; i < shorts.value.length; i++) {
-        if (visibleIndices.includes(i)) {
-
-        } else {
-            // if not  the 3 players , destroy the rest
-
-            //destroy all players aside from the 3 that should be visible
+        if (!visibleIndices.includes(i)) {
+            // if not the visible players, destroy it
             let player = playerStore.findPlayer(shorts.value[i].external_id)
 
             if (player) {
-               removePlayers.push(shorts.value[i].external_id);
+               removePlayers.push(shorts.value[i].external_id); // for testing
                 playerStore.destroyItem(player);
             } else {
                 // console.log('player does not exist ' + shorts.value[i].external_id);
             }
-
-
         }
     }
 
@@ -175,7 +168,10 @@ function buildPlayers() {
 };
 
 function playFullyVisiblePlayer(i) {
+    //
+    console.log(i + ' comapared to ' + fullyVisibleIndex.value)
     if (i === fullyVisibleIndex.value) {
+        console.log('PLAYING VISIBLE PLAYER ' + shorts.value[fullyVisibleIndex.value].external_id);
         // console.log('playing player ' + shorts.value[fullyVisibleIndex.value].external_id);
 
         // check every 1 second fi player has been built in the playerStore once it has been built, play it and stop checking
@@ -183,12 +179,11 @@ function playFullyVisiblePlayer(i) {
         if (playerStore.findPlayer(shorts.value[fullyVisibleIndex.value].external_id)) {
             playerStore.play(shorts.value[fullyVisibleIndex.value].external_id);
         } else {
+            console.log('player not built yet');
             setTimeout(() => {
                 playFullyVisiblePlayer(i);
-            }, 1000);
+            }, 2000);
         }
-
-
     }
 }
 
@@ -208,9 +203,6 @@ onMounted(async () => {
         } , 100)());
 
     });
-
-
-
 });
 
 </script>
