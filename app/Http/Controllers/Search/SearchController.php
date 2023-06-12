@@ -52,6 +52,7 @@ class SearchController extends Controller
         //return the creators, videos, streams, playlists, podcasts
         return [
             'creators' => $creators,
+            // shuffle videos
             'videos' => $videos,
             'streams' => $streams,
             'playlists' => $playlists,

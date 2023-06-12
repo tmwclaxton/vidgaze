@@ -1,7 +1,7 @@
 <script setup>
 import SearchIcon from '~/images/icons/search.svg';
 import CloseNavSVG from '~/images/icons/exit.svg';
-import { Link } from '@inertiajs/vue3';
+import {Link, router} from '@inertiajs/vue3';
 import { defineProps, defineEmits, ref, watch, computed } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import SearchSuggestion from '@/Shared/Navigation/Partials/SearchSuggestion.vue';
@@ -40,7 +40,8 @@ watch(searchInput, value => {
 function searchEntered() {
     // console.log(searchInput.value);
     if (searchInput.value.length > 0 && navStore.getExpandedSearchResults()) {
-        Inertia.get('/search', { q: searchInput.value });
+        // Inertia.get('/search', { q: searchInput.value }); // can't use this because it does a full page reload
+        router.visit('/search?q=' + searchInput.value);
     }
 }
 

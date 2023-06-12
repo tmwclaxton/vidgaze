@@ -11,6 +11,8 @@ export default {
 import axios from "axios";
 import { ref } from 'vue';
 import CreatorSearchCard from "@/Pages/Viewer/Search/Partials/CreatorSearchCard.vue";
+import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.vue";
+import {shuffle} from "lodash";
 
 const props = defineProps({
     searchQuery: String,
@@ -36,7 +38,7 @@ function search(searchQuery,page = 1) {
             // handle success
             console.log(response);
             creators.value = response.data.creators.data;
-            videos.value = response.data.videos.data;
+            videos.value = shuffle(response.data.videos.data);
             playlists.value = response.data.playlists.data;
             podcasts.value = response.data.podcasts.data;
             streams.value = response.data.streams.data;
@@ -139,8 +141,9 @@ function search(searchQuery,page = 1) {
 
                         </div>
                         <p class="text dark:textDark text-base font-bold my-3">Videos</p>
-                        <div class="px-0 relative w-full  ">
+                        <div class="px-0 relative w-full grid grid-cols-5 gap-4 ">
                             <!--<x-search-video-card :video="$video"/>-->
+                            <VideoStreamCard v-for="video in videos" :item="video"/>
 
                         </div>
                     </section>
