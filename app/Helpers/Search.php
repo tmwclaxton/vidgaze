@@ -7,6 +7,7 @@ use App\Jobs\searchPlatform;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Redis;
+use function PHPUnit\Framework\isInstanceOf;
 
 class Search
 {
@@ -65,9 +66,23 @@ class Search
         $results = ResultDTO::convertArray($results);
 
         if($saveAndReturnModels) {
-            return ResultDTO::saveAll($results);
+            $sorted_results = [];
+            foreach (ResultDTO::saveAll($results) as $result) {
+                match (get_class($result)) {
+                    'App\Models\CreatorModels\Creator' => $sorted_results['creators'][] = $result,
+                    'App\Models\VideoModels\Video' => $sorted_results['videos'][] = $result,
+                    'App\Models\StreamModels\Stream' => $sorted_results['streams'][] = $result,
+                };
+            }
+            return $sorted_results;
         }
-        return $results;
+
+        $sorted_results = [];
+        foreach ($results as $result) {
+            $sorted_results[$result->kind->value][] = $result;
+        }
+
+        return $sorted_results;
     }
 
     public static function getRedisExpire(): int

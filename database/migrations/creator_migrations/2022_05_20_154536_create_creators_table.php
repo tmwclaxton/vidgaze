@@ -28,7 +28,7 @@ return new class extends Migration
 //            $table->json('subscriptions')->nullable(); //in json format
             $table->string('language', 5)->nullable()->index(); //ISO 639-3:2007
             $table->foreignId('category_id')->nullable()->constrained();
-            $table->string('contact_email')->nullable(); //ISO 639-3:2007
+            $table->string('contact_email')->nullable();
             $table->boolean('is_live')->default(false)->index()->nullable();
             $table->timestamp('last_api_update')->nullable();
             $table->timestamps();

@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Enums\Audience;
 use App\Enums\Platform;
 use App\Helpers\PlatformAPIs\Dailymotion;
+use App\Helpers\PlatformAPIs\Podcasts;
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\PlatformAPIs\Vimeo;
 use App\Helpers\PlatformAPIs\YouTube;
@@ -17,7 +18,8 @@ class JoshPing
     public static function ping()
     {
 //        dd(array_map(fn($audience) => $audience->value, Audience::getAll()));
-        $query = new SearchQueryDTO('nasa live', 10);
+        $query = new SearchQueryDTO('pints', 5);
+//        ddd(Podcasts::search($query));
 
 //        ddd(YouTube::search($query));
 
