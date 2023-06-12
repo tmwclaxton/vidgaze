@@ -24,6 +24,8 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
                         type="button"
                         class="inline-flex items-center h-full border border-transparent  rounded-md bg-transparent hover:text-zinc-300 focus:outline-none transition ease-in-out duration-150"
                     >
+                        <img class="w-full   "
+                             v-bind:src="$page.props.auth.user.data.creator.banner_url">
                         <img class="h-8 aspect-square rounded-full bg-zinc-800 aspect-square  "
                              v-bind:src="$page.props.auth.user.data.creator.avatar_url">
 

@@ -73,8 +73,9 @@ export const useQueueStore = defineStore('QueueStore', {
                         changeIndexBool = true;
                     }
 
-
-                    playerStore.destroyPlayer(this.items[i]['object'].external_id );
+                    //find the player in the player store and destroy it
+                    let player = playerStore.findPlayer(this.items[i]['object'].external_id);
+                    playerStore.destroyItem(player);
 
 
                     // if I delete an item less than or equal to the current index, I need to decrement the index
@@ -113,10 +114,7 @@ export const useQueueStore = defineStore('QueueStore', {
             // set player modal store to this item
             if (this.items.length > 0) {
                 playerModalStore.destroyPlayers();
-                playerModalStore.autoplay = true;
-                playerModalStore.object = this.items[this.index]['object'];
-                playerModalStore.type = this.items[this.index]['type'];
-                playerModalStore.buildPlayer();
+                playerModalStore.buildPlayer(null, this.items[this.index]['object'], 0, true);
             }
         }
     }

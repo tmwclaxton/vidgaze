@@ -20,6 +20,11 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    index: {
+        type: Number,
+        required: true,
+
+    },
 });
 
 const share = () => {
@@ -35,7 +40,7 @@ const share = () => {
     }
 
 };
-
+let observer = ref(null);
 const emits = defineEmits(['UpdateFullyVisibleIndex' ]);
 onMounted(() => {
     const options = {
@@ -44,21 +49,29 @@ onMounted(() => {
         threshold: 1.0,
     };
 
+    // if (props.index === 0) {
+    //     setTimeout(() => {
+    //         // console.log('first video');
+    //         emits('UpdateFullyVisibleIndex',props.index);
+    //     }, 2000);
+    // }
+
     const handleIntersection = (entries) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
                 // Emit an event upwards when the player becomes fully visible
-                // You can replace 'eventName' with your desired event name
-                // this.$emit('eventName', this.video.external_id);
-                emits('UpdateFullyVisibleIndex',props.video.index);
+                emits('UpdateFullyVisibleIndex',props.index);
 
             }
         });
     };
 
-    const observer = new IntersectionObserver(handleIntersection, options);
-    observer.observe(document.getElementById(props.video.external_id));
-// // https://github.com/ManukMinasyan/vue3-observe-visibility
+    observer = new IntersectionObserver(handleIntersection, options);
+    observer.observe(document.getElementById('player_div_holder_' + props.video.external_id));
+});
+
+onUnmounted(() => {
+    observer.disconnect();
 });
 
 
@@ -94,9 +107,9 @@ onMounted(() => {
                         </div>
 
                         <!--Player-->
-                        <div class="bg-zinc-200 dark:bg-zinc-800 w-full   flex-grow rounded-2xl without-ring flex relative overflow-hidden">
-                            <div :id="video.external_id" class="w-full h-full">
-                            </div>
+                        <div :id="'player_div_holder_' + video.external_id" class=" bg-black w-full   flex-grow rounded-2xl without-ring flex relative overflow-hidden">
+                            <!--<div :id="video.external_id" class="w-full h-full">-->
+                            <!--</div>-->
                         </div>
                     </div>
 

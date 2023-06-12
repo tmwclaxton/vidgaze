@@ -62,10 +62,10 @@ const name = 'TopNavBar';
                     <!-- Navigation Links -->
                     <!--<TopNavigationLinks />-->
 
-                    <Searchbar v-if="!navStore.getStudioLinks()"  />
+                    <Searchbar v-if="!navStore.showingStudioLinks"  />
 
                     <!--Buy Vidcoins button-->
-                    <div v-if="!navStore.getStudioLinks()" class="hidden 2xl:flex sm:items-center mr-2 flex-shrink-0 group">
+                    <div v-if="!navStore.showingStudioLinks" class="hidden 2xl:flex sm:items-center mr-2 flex-shrink-0 group">
                         <Link :href="route('login')"  >
                             <button class="flex flex-row items-center justify-center
                             text-sm capitalize bg-zinc-900 hover:bg-zinc-800 text-white p-2 px-5 rounded-md font-bold flex flex-row space-x-3">
@@ -100,7 +100,7 @@ const name = 'TopNavBar';
                      :class="{'hidden sm:flex': navStore.getExpandedSearchBar(),  '': !navStore.getExpandedSearchBar() }"
                 >
                     <!--Upload Dropdown-->
-                    <UploadDropdown v-if="!navStore.getStudioLinks()" />
+                    <UploadDropdown v-if="!navStore.showingStudioLinks" />
 
                     <!--Notifications Dropdown-->
                     <NotificationsDropdown/>

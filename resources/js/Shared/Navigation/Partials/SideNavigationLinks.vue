@@ -17,10 +17,13 @@ import PodcastIcon from '~/images/icons/podcast.svg';
 import SubscriptionsIcon from '~/images/icons/subscriptions.svg';
 import LibraryIcon from '~/images/icons/library.svg';
 import {useNavStore} from "@/Stores/NavStore";
+import {watch} from "vue";
 const navStore = useNavStore();
 
 //name of the component
 const name = 'ExpandableNavigationLinks';
+
+
 
 </script>
 
@@ -30,8 +33,8 @@ const name = 'ExpandableNavigationLinks';
 
 
 
-    <div  v-if="!navStore.getStudioLinks()" class="  space-y-1 ">
-        <!--<p v-text="showingNavigationDropdown" class="text-white"></p>-->
+    <div  v-if="!navStore.showingStudioLinks" class="  space-y-1 ">
+        <!--<p v-text="isStudioRoute" class="text-white"></p>-->
         <div class="ld:hid den">
             <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                     <!--<VideoIcon class="w-5 h-5 flex-shrink-0"/>-->
@@ -86,7 +89,7 @@ const name = 'ExpandableNavigationLinks';
 
 
     <!--studio links-->
-    <div  v-if="navStore.getStudioLinks()" class="  space-y-1 ">
+    <div  v-if="navStore.showingStudioLinks" class="  space-y-1 ">
         <!--dashboard-->
         <div v-if="$page.props.auth.user != null" class="md:hid den">
             <ResponsiveNavLink :href="route('home')" :active="route().current('home')">

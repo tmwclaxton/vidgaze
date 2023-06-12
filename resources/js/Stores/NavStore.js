@@ -5,7 +5,7 @@ import {runInContext as routes} from "lodash";
 export const useNavStore = defineStore('NavStore', {
     state: () => {
         return {
-            showingStudioLinks: false,
+            // showingStudioLinks: false,
             showingBottomNavLinks: true,
             showingNavigationDropdown: false,
             expandedSearchBar: false, //this is for mobile search bar when you click the search icon it hides the hamburger and stuff
@@ -13,13 +13,12 @@ export const useNavStore = defineStore('NavStore', {
 
         }
     },
+    getters: {
+        showingStudioLinks() {
+            return usePage().props.isStudioRoute
+        }
+    },
     actions: {
-        setStudioLinks(value) {
-            this.showingStudioLinks = value;
-        },
-        getStudioLinks() {
-            return this.showingStudioLinks;
-        },
         getExpandedSearchBar() {
             return this.expandedSearchBar;
         },

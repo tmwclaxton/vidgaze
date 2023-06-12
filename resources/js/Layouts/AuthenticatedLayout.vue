@@ -9,23 +9,15 @@ import PlaylistModal from "@/Components/Modals/PlaylistModal.vue";
 import VideoStreamMiniPlayer from "@/Components/Modals/MiniPlayers/VideoStreamMiniPlayer.vue";
 import ShareModel from "@/Components/Modals/ShareModel.vue";
 import ConfirmModal from "@/Components/Modals/ConfirmModal.vue";
+import {usePage} from "@inertiajs/vue3";
 
 const navStore = useNavStore();
 const name = 'AuthenticatedLayout';
 let showingNavigationDropdown = ref(false);
 
-//accept props
-const props = defineProps({
-    showingStudioLinks: {
-        type: Boolean,
-        required: false,
-        default: false
-    },
-});
 
-watch(() => props.showingStudioLinks, (newVal) => {
-    navStore.setStudioLinks(newVal);
-});
+
+// navStore.showingStudioLinks = ref(props.isStudioRoute);
 
 //about page computed
 // const aboutPage = computed(() => {
@@ -46,6 +38,7 @@ watch(() => props.showingStudioLinks, (newVal) => {
 
 
     <div>
+
         <!-- this is where the toast message popup is added -->
         <ToastList :flash="$page.props.flash"/>
 
@@ -61,6 +54,7 @@ watch(() => props.showingStudioLinks, (newVal) => {
 
                 </div>
                 <div class="relative flex-shrink transition duration-700 ease-in-out w-full"  :class="{'   ': navStore.getNavigationDropdown()}">
+
                     <slot  />
                     <!--Modals we want centered with side bar-->
                     <PlaylistModal/>
