@@ -12,7 +12,7 @@
                     <a href="/channel/{{creator.slug}}" style="line-height: 15px;"
                        class="text dark:textDark  subheading   ">{{creator.name}}</a>
                     <!--get a str plural package for subscriber count-->
-                    <span class="text dark:textDark text-xs mt-1" v-text="creator.subscriber_count + ' Subscriber'">
+                    <span class="text dark:textDark text-xs mt-1" v-text="creator.subscriber_count">
                     </span>
 
                 </div>

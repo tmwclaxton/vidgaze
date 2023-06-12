@@ -23,9 +23,10 @@ class CreatorResource extends JsonResource
             'avatar_url' => $this->avatar_url,
             'banner_url' => $this->banner_url,
             'karma' => number_format_short($this->karma),
-            'subscriber_count' => number_format_short($this->subscriber_count)  . " " . Str::plural('Subscribers', $this->views) ,
+            'subscriber_count' => number_format_short($this->subscriber_count)  . " " . Str::plural('Subscribers', $this->subscriber_count) ,
             'is_live' => $this->is_live,
             'contact_email' => $this->contact_email,
+            'sources' => $this->sources(),
         ];
     }
 }

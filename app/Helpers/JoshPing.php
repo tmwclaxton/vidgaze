@@ -18,7 +18,7 @@ class JoshPing
     public static function ping()
     {
 //        dd(array_map(fn($audience) => $audience->value, Audience::getAll()));
-        $query = new SearchQueryDTO('pints', 5);
+        $query = new SearchQueryDTO('pwediepie', 5);
 //        ddd(Podcasts::search($query));
 
 //        ddd(YouTube::search($query));
@@ -26,7 +26,7 @@ class JoshPing
         $start = microtime(true);
         $results = Search::search($query, );
         ddd($results, microtime(true) - $start);
-////
+
 //        $octane = Octane::concurrently([
 ////           /* fn() =>*/ YouTube::search($query),
 //           fn() => Dailymotion::search($query),
