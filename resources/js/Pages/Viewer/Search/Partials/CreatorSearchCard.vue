@@ -13,7 +13,7 @@
 
             <div class="flex flex-col pl-5 align-items-start text-left">
 
-                <div class="flex flex-row align-middle justify-center mb-1 gap-x-2">
+                <div class="flex flex-row align-middle justify-center mb-1 gap-x-5">
                     <p  class="font-bold text-2xl break-all line-clamp-1  text-left" v-text="creator.name"/>
                     <SubscribeButton :channel="creator" class="  inline-flex text-xl my-auto " />
 

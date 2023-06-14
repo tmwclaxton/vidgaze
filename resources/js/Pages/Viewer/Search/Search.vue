@@ -24,6 +24,14 @@ const props = defineProps({
 const filters = ref(false);
 const searchQuery = ref(props.searchQuery);
 
+// show 2 creators by default and expand to show all
+//set default state, could be based on some attributes
+const expandCreators = ref(false);
+//we only need this for creators.
+const visibleCreators = ref(null);
+
+
+
 search(searchQuery,1);
 
 const creators = ref(null);
@@ -46,6 +54,9 @@ function search(searchQuery,page = 1) {
             playlists.value = response.data.playlists.data;
             podcasts.value = response.data.podcasts.data;
             streams.value = response.data.streams.data;
+            visibleCreators.value = creators.value.slice(0,2);
+
+
 
         })
         .catch(function (error) {
@@ -55,9 +66,13 @@ function search(searchQuery,page = 1) {
         .then(function () {
             // always executed
 
+
         });
 
 }
+
+
+
 
 
 
@@ -141,7 +156,7 @@ function search(searchQuery,page = 1) {
                         <!--<RowDivider/>-->
 
                         <div class="grid grid-rows-6 gap-4 ">
-                            <CreatorSearchCard v-for="creator in creators" :creator="creator"  />
+                            <CreatorSearchCard v-for="creator in creators" :creator="creator"/>
                         </div>
 
                         <RowDivider text="Expand" class="mt-4 mb-4"/>
