@@ -1,41 +1,38 @@
 <template>
 
 
-    <div class="flex flex-col gap-y-2">
 
+    <ConsistentContentHolder class="flex h-full w-full my-auto  dark:border-zinc-900 bg-zinc-50 ">
 
-
-    <ConsistentContentHolder class="flex h-full my-auto  border-none bg-zinc-50 ">
-
-        <div class="w-full flex flex-col gap-y-3 p-3 py-5 rounded-xl text-center items-center align-middle relative">
-
-
+        <div class=" flex flex-row w-full p-3 py-5 rounded-xl text-center items-center align-middle relative overflow-hidden">
 
             <!--profile picture-->
-            <a v-bind:href="'/channel/' + creator.slug" class=" p-2 mx-auto w-full rounded-full overflow-hidden flex-shrink-0">
-                <img class=" rounded-full w-full  mx-auto w-full aspect-square shadow" v-bind:src="creator.avatar_url">
-
+            <a v-bind:href="'/channel/' + creator.slug" class=" min-w-16 w-24  rounded-full overflow-hidden flex-shrink-0">
+                <img class=" rounded-full w-full  mx-auto w-full aspect-square shadow " v-bind:src="creator.avatar_url">
             </a>
 
+            <div class="flex flex-col pl-5 align-items-start text-left">
 
-            <p  class="font-bold text-2xl mx-2 break-all line-clamp-1" v-text="creator.name"/>
+                <div class="flex flex-row align-middle justify-center mb-1 gap-x-2">
+                    <p  class="font-bold text-2xl break-all line-clamp-1  text-left" v-text="creator.name"/>
+                    <SubscribeButton :channel="creator" class="  inline-flex text-xl my-auto " />
 
-            <!-- badges-->
-            <div class="flex justify-center -mt-1">
-                <div class="flex flex-row flex-wrap mx-auto gap-2 justify-center justify-items-center align-items-center align-middle ">
-                    <!--Livestreaming badge-->
-                    <Badge text="Livestreaming" v-if="creator.is_live">
-                        <font-awesome-icon :icon="['fas', 'fire']" class="w-3 h-3 mr-1.5 text-red-500 animate-pulse"/>
-                    </Badge>
+                </div>
+
+                <!-- badges-->
+                <div class="flex flex-row flex-wrap gap-2  ">
 
                     <!--Sources badges-->
                     <Badge v-for="source in creator.sources" :key="source" :text="source" :source="source" v-if="creator.sources[0] != null"/>
+                    <!--Livestreaming badge-->
+                    <Badge text="Livestreaming" v-if="creator.is_live" class="animate-bounce">
+                        <font-awesome-icon :icon="['fas', 'fire']" class="w-3 h-3 mr-1.5 text-red-500 animate-pulse"/>
+                    </Badge>
                 </div>
             </div>
 
 
 
-            <SubscribeButton :channel="creator" class="mt-3" />
 
 
 </div>
@@ -43,7 +40,6 @@
 </ConsistentContentHolder>
 
 
-    </div>
 </template>
 
 <script>

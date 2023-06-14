@@ -15,6 +15,7 @@ import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.
 import {shuffle} from "lodash";
 import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
+import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
 
 const props = defineProps({
     searchQuery: String,
@@ -139,11 +140,11 @@ function search(searchQuery,page = 1) {
 
                         <!--<RowDivider/>-->
 
-                        <div class="grid grid-cols-6 gap-4 ">
+                        <div class="grid grid-rows-6 gap-4 ">
                             <CreatorSearchCard v-for="creator in creators" :creator="creator"  />
                         </div>
 
-                        <RowDivider/>
+                        <RowDivider text="Expand" class="mt-4 mb-4"/>
 
                         <div class="px-0 relative w-full  ">
                             <!--<x-search-stream-card :stream="$stream"/>-->

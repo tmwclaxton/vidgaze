@@ -1,5 +1,5 @@
 <template>
-    <div :class="getClasses" class="mx-auto w-max rounded-xl flex flex-row items-center  overflow-hidden px-3 h-6 w-max text-xs text-zinc-100 dark:text-white">
+    <div :class="getClasses" class=" w-max rounded-xl flex flex-row items-center  overflow-hidden px-3 h-6 w-max text-xs text-zinc-100 dark:text-white">
         <slot class="w-3 h-3 mr-1.5"></slot>
 
         <YouTubeIcon v-if="source === 'YouTube'" class="w-4 mr-1.5" />
@@ -49,7 +49,7 @@ const getClasses = computed(() => {
     const classes = sourceClasses[props.source];
 
     if (!classes) {
-        return 'bg-zinc-600 dark:bg-zinc-800';
+        return ' bg-vidgaze-blue';
     }
 
     return classes;
