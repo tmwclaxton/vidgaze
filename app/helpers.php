@@ -97,6 +97,18 @@ function number_format_short($n, $precision = 1)
     return $n_format . $suffix;
 }
 
+function capitalisePlatformName($platform)
+{
+    // if youtube capitalise the first letter and the 't' in tube, for everything else just capitalise the first letter
+    if ($platform == 'youtube') {
+        $platform = ucfirst($platform);
+        $platform = str_replace('tube', 'Tube', $platform);
+    } else {
+        $platform = ucfirst($platform);
+    }
+    return $platform;
+}
+
 function generateRandomString($length = 10)
 {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

@@ -13,11 +13,14 @@ import { ref } from 'vue';
 import CreatorSearchCard from "@/Pages/Viewer/Search/Partials/CreatorSearchCard.vue";
 import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.vue";
 import {shuffle} from "lodash";
+import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
+import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
 
 const props = defineProps({
     searchQuery: String,
 });
 
+const filters = ref(false);
 const searchQuery = ref(props.searchQuery);
 
 search(searchQuery,1);
@@ -54,6 +57,10 @@ function search(searchQuery,page = 1) {
         });
 
 }
+
+
+
+
 </script>
 
 
@@ -128,24 +135,26 @@ function search(searchQuery,page = 1) {
 
                 <!--<livewire:search-results :searchQuery="$searchQuery"/>-->
                 <div >
-                    <section v-if="true">
-                        <p v-if="searchQuery" class="text dark:textDark text-base font-bold my-3">Results for: {{ searchQuery}}</p>
-                        <p class="text dark:textDark text-base font-bold my-3">Creators</p>
-                        <CreatorSearchCard v-for="creator in creators" :creator="creator"/>
-                        <!--<x-channel-card :creator="$creator"/>-->
-                        <!--<x-hr class="mt-2 mb-2"/>-->
+                    <section v-if="true" class="mt-4">
 
-                        <p class="text dark:textDark text-base font-bold my-3">Streams</p>
+                        <!--<RowDivider/>-->
+
+                        <div class="grid grid-cols-6 gap-4 ">
+                            <CreatorSearchCard v-for="creator in creators" :creator="creator"  />
+                        </div>
+
+                        <RowDivider/>
+
                         <div class="px-0 relative w-full  ">
                             <!--<x-search-stream-card :stream="$stream"/>-->
 
                         </div>
-                        <p class="text dark:textDark text-base font-bold my-3">Videos</p>
                         <div class="px-0 relative w-full grid grid-cols-5 gap-4 ">
                             <!--<x-search-video-card :video="$video"/>-->
                             <VideoStreamCard v-for="video in videos" :item="video"/>
 
                         </div>
+
                     </section>
 
 

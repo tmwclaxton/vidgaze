@@ -1,11 +1,11 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
-import Title from "@/Components/Title.vue";
+import Title from "@/Components/General/Title.vue";
 
 import StreamIcon from '~/images/icons/livestreams.svg';
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
-import ConsistentContentHolder from "@/Components/ConsistentContentHolder.vue";
-import HorizontalLineText from "@/Components/HorizontalLineText.vue";
+import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
+import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
 import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
 import StudioLinkButton from "@/Components/Buttons/StudioLinkButton.vue";
 import YouTubeIcon from '#icons/youtube.svg';

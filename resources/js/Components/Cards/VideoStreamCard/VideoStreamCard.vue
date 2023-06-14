@@ -100,9 +100,7 @@ const dotsIconShow = computed(() => {
                     <span
                         class="pt-1 line-clamp-2 overflow-hidden leading-5 font-bold  text-base  inline-flex">
 
-                        <a :href="route('watch.show', {slug: item.slug})" v-text="item.title" :title="item.title" class="pr-2"></a>
-
-                        <p v-text="item.preferred_source" class="text-xs font-normal text-gray-500 dark:text-gray-400"/>
+                        <a :href="route('watch.show', {slug: item.slug})" v-text="item.title" :title="item.title" class="pr-2 line-clamp-2 mb-0.5"></a>
 
                     </span>
 
@@ -125,12 +123,18 @@ const dotsIconShow = computed(() => {
                                         <p class="text-sm font-medium " v-text="item.creator.name"></p>
                                     </a>
 
-                                    <div v-if="item.duration != null" class=" info-tag dark:info-tag-dark inline-flex pb-0.5 ">
-                                        <ClockIcon class="w-3 h-3 mr-1 my-auto dark:hidden"/>
-                                        <ClockFillIcon class="w-3 h-3 mr-1 my-auto hidden dark:flex"/>
+                                    <div v-if="item.duration != null" class=" info-tag dark:info-tag-dark flex pb-0.5 ">
+                                        <!--<ClockIcon class="w-3 h-3 mr-1 my-auto dark:hidden"/>-->
+                                        <ClockFillIcon class="w-3 h-3 mr-1 my-auto hid den dark: flex"/>
                                         <p class="line-clamp-1 " v-text="(item.time_published)"/>
 
                                     </div>
+
+                                    <div v-if="item.preferred_source != null" class=" info-tag dark:info-tag-dark flex flex-row gap-2 items-center align-middle pb-0.5 ">
+                                        <font-awesome-icon :icon="['fas', 'location-dot']" class=" ml-0.5 h-3 my-auto" />
+                                        <p class="line-clamp-1 capitalize" v-text="(item.preferred_source)"/>
+                                    </div>
+
                                     <a  v-if="item.category != null && !category_page" :href="route('category.show',{slug:item.category.slug})" class=" info-tag dark:info-tag-dark inline-flex mb-0.5 ">
                                         <!--<ClockIcon class="w-3 h-3 mr-1 .5 my-auto dark:hidden"/>-->
                                         <!--<ClockFillIcon class="w-3 h-3 mr-1 .5 my-auto hidden dark:flex"/>-->
