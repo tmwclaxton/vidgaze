@@ -31,7 +31,8 @@ class VideoResource extends JsonResource
             'dislikes' => $this->dislike_count,
             'creator' => new CreatorResource($this->creator()->first()),
             'comment_count' => number_format_short($this->comment_count),
-            'preferred_source' => $this->preferred_source,
+            // capitalize the first letter of the preference and if youtube capitalize the 'T' in 'YouTube'
+            'preferred_source' => capitalisePlatformName($this->preferred_source),
             'external_id' => $this->getPreferredSourceID(),
         ];
     }

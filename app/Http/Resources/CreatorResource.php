@@ -26,7 +26,10 @@ class CreatorResource extends JsonResource
             'subscriber_count' => number_format_short($this->subscriber_count)  . " " . Str::plural('Subscribers', $this->subscriber_count) ,
             'is_live' => $this->is_live,
             'contact_email' => $this->contact_email,
-            'sources' => $this->sources(),
+            // get name of each source by plucking source_name and use capitalisePlatformName for each one to format it
+            'sources' => $this->sources->pluck('source_name')->map(function ($source) {
+                return capitalisePlatformName($source);
+            }),
         ];
     }
 }
