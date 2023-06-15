@@ -58,7 +58,8 @@ function search(searchQuery,page = 1) {
             // handle success
             // console.log(response);
             creators.value = response.data.creators.data;
-            videos.value = shuffle(response.data.videos.data);
+            videos.value = response.data.videos.data;
+            // videos.value = shuffle(videos.value);
             playlists.value = response.data.playlists.data;
             podcasts.value = response.data.podcasts.data;
             streams.value = response.data.streams.data;
