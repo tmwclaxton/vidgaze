@@ -44,6 +44,8 @@ function searchEntered() {
     if (searchInput.value.length > 0 && (window.innerWidth > 640  || navStore.getExpandedSearchResults())) {
         // Inertia.get('/search', { q: searchInput.value }); // can't use this because it does a full page reload
         router.visit('/search?q=' + searchInput.value);
+        // close the search results dropdown
+        navStore.toggleExpandedSearchResultsOff();
     }
 }
 

@@ -4,7 +4,7 @@
 
     <ConsistentContentHolder class="flex h-full w-full my-auto  dark:border-zinc-900 bg-zinc-50 ">
 
-        <div class=" flex flex-row w-full p-3 py-5 rounded-xl text-center items-center align-middle relative overflow-hidden">
+        <div class=" flex flex-row w-full px-2 sm:px-8 py-5 rounded-xl text-center items-center align-middle relative overflow-hidden">
 
             <!--profile picture-->
             <a v-bind:href="'/channel/' + creator.slug" class=" min-w-16 w-24  rounded-full overflow-hidden flex-shrink-0">
@@ -13,7 +13,7 @@
 
             <div class="flex flex-col pl-5 align-items-start text-left">
 
-                <div class="flex flex-row align-middle justify-center mb-1 gap-x-5">
+                <div class="flex flex-row align-middle justify-center mb-2 gap-x-5">
                     <p  class="font-bold text-2xl break-all line-clamp-1  text-left" v-text="creator.name"/>
                     <SubscribeButton :channel="creator" class="  inline-flex text-xl my-auto " />
 

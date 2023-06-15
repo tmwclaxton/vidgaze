@@ -17,6 +17,7 @@ import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
 import CreatorSearchSkeleton from "@/Components/Cards/CreatorSearchCard/CreatorSearchSkeleton.vue";
+import VideoStreamSearchCard from "@/Components/Cards/VideoStreamSearchCard/VideoStreamSearchCard.vue";
 
 const props = defineProps({
     searchQuery: String,
@@ -95,7 +96,6 @@ function search(searchQuery,page = 1) {
 
 
         <div class=" mx-auto pb-10 pt-4 px-6 lg:px-16">
-            <section v-if="true" >
                 <!--filter button-->
                 <button v-if="false" class="mb-2 flex text-left ml-1 text-base  "
                         v-on:click="filters = !filters" >
@@ -159,25 +159,21 @@ function search(searchQuery,page = 1) {
 
                         <!--<RowDivider/>-->
 
-                        <div class="flex flex-col gap-4 ">
+                        <div class="flex flex-col flex-wrap gap-4 ">
                             <CreatorSearchCard v-if="creators.length > 0" v-for="creator in creators.slice(0,visibleCreatorsCount)" :creator="creator"/>
                             <CreatorSearchSkeleton v-else v-for="i in 2"/>
                         </div>
 
-                        <RowDivider v-if="creators.length > 2" text="Expand" class="mt-4 mb-4" @click="toggleVisibleCreators">
+                        <RowDivider v-if="creators.length > 2" class="mt-4 mb-4" @click="toggleVisibleCreators" :text="expandCreators ? 'Show less' : 'Show more'">
                             <font-awesome-icon v-if="expandCreators" :icon="['fas', 'caret-up']" />
                             <font-awesome-icon v-if="!expandCreators" :icon="['fas', 'caret-down']" />
                         </RowDivider>
 
                         <RowDivider v-else class="mt-4 mb-4" />
 
-                        <div class="px-0 relative w-full  ">
-                            <!--<x-search-stream-card :stream="$stream"/>-->
-
-                        </div>
-                        <div class="px-0 relative w-full grid grid-cols-5 gap-4 ">
+                        <div class="px-0 relative w-full grid grid-cols-1 gap-4 ">
                             <!--<x-search-video-card :video="$video"/>-->
-                            <VideoStreamCard v-for="video in videos" :item="video"/>
+                            <VideoStreamSearchCard v-for="video in videos" :item="video"/>
 
                         </div>
 
@@ -185,16 +181,6 @@ function search(searchQuery,page = 1) {
 
 
                 </div>
-            </section>
-
-            <section v-if="false">
-                <!--<x-error-message text="Loading..."/>-->
-                <!--<x-skeleton-profile/>-->
-                <!--<x-skeleton-video/>-->
-                <!--<x-skeleton-video/>-->
-                <!--<x-skeleton-video/>-->
-
-            </section>
 
         </div>
 
