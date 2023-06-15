@@ -90,7 +90,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
 
-        // has to be async as we need to wait for the dailymotion player to be ready
+        // has to be async as we need to wait for the Dailymotion player to be ready
         async isPlayerPlaying(player) {
             this.debugMessage('is player playing');
 
@@ -101,12 +101,12 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             let playing = false;
 
-            if (player.object.preferred_source === 'youtube') {
+            if (player.object.preferred_source === 'YouTube') {
 
                 // this.debugMessage(player.player)
                 try {
                     const state = await player.player.getPlayerState();
-                    // this.debugMessage('Youtube player state: ' + state);
+                    // this.debugMessage('YouTube player state: ' + state);
                     playing = state === 1;
                 } catch (error) {
                     throw new Error(error);
@@ -114,7 +114,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             }
 
-            else if (player.object.preferred_source === 'vimeo') {
+            else if (player.object.preferred_source === 'Vimeo') {
 
                 try {
                     let paused;
@@ -131,7 +131,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             }
 
-            else if (player.object.preferred_source === 'dailymotion') {
+            else if (player.object.preferred_source === 'Dailymotion') {
                 try {
                     const state = await player.player.getState();
                     playing = state.playerIsPlaying;
@@ -182,11 +182,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 return;
             }
 
-            if (item.object.preferred_source === 'youtube') {
+            if (item.object.preferred_source === 'YouTube') {
                 item.player.destroy();
-            } else if (item.object.preferred_source === 'vimeo') {
+            } else if (item.object.preferred_source === 'Vimeo') {
                 await toRaw(item.player).unload();
-            } else if (item.object.preferred_source === 'dailymotion') {
+            } else if (item.object.preferred_source === 'Dailymotion') {
                 await item.player.destroy();
             } else if (item.object.preferred_source === 'Twitch') {
                 await toRaw(item.player).destroy();
@@ -238,13 +238,13 @@ export const usePlayerStore = defineStore('PlayerStore', {
             playerDiv.classList.add('w-full');
 
             // // create player
-            if (object.preferred_source === "youtube") {
+            if (object.preferred_source === "YouTube") {
                 this.buildYouTubePlayer(playerDiv, object, startTime, autoplay);
-            } else if (object.preferred_source === "vimeo") {
+            } else if (object.preferred_source === "Vimeo") {
                 this.buildVimeoPlayer(playerDiv, object, startTime, autoplay);
-            } else if (object.preferred_source === "dailymotion") {
+            } else if (object.preferred_source === "Dailymotion") {
                 this.buildDailymotionPlayer(playerDiv, object, startTime, autoplay);
-            } else if (object.preferred_source === "twitch") {
+            } else if (object.preferred_source === "Twitch") {
                 this.buildTwitchPlayer(playerDiv, object, startTime, autoplay);
             }
 
@@ -270,19 +270,19 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     // when YouTube video ends run the endVideo function
                     onStateChange: (event) => {
                         if (event.data === 0) { // this state means the video has ended
-                            // this.debugMessage('BUILDYOUTUBE: YouTube video ended')
+                            // this.debugMessage('BUILDYouTube: YouTube video ended')
                             this.endVideo(external_id);
                         }
                         if (event.data === 1) { // this state means the video is playing
-                            // this.debugMessage('BUILDYOUTUBE: YouTube video playing')
+                            // this.debugMessage('BUILDYouTube: YouTube video playing')
                             this.startViewRecord(external_id);
                         }
                         if (event.data === 2) { // this state means the video is paused
-                            // this.debugMessage('BUILDYOUTUBE: YouTube video paused')
+                            // this.debugMessage('BUILDYouTube: YouTube video paused')
                             this.pauseViewRecord(external_id);
                         }
                         if (event.data === 3) { // this state means the video is buffering
-                            // this.debugMessage('BUILDYOUTUBE: YouTube video buffering')
+                            // this.debugMessage('BUILDYouTube: YouTube video buffering')
                             this.pauseViewRecord(external_id);
                         }
                     }
@@ -318,7 +318,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     document.getElementById(playerDiv.id).firstElementChild.classList.add("h-full", "w-full","p-0", "relative");
                     document.getElementById(playerDiv.id).firstElementChild.removeAttribute("style");
 
-                    // reset all vimeo players to default size
+                    // reset all Vimeo players to default size
                     htmlcollection = document.getElementsByClassName("player");
                     for (let i = 0; i < htmlcollection.length; i++) {
                         htmlcollection[i].removeAttribute("style");
@@ -340,7 +340,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             });
 
             player.ready().then(function () {
-                // this.debugMessage('BUILDVIMEO: Vimeo player ready');
+                // this.debugMessage('BUILDVimeo: Vimeo player ready');
                 // ensure player is ready before pushing to players array
                 this.pushPlayer(player, object);
 
@@ -471,11 +471,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
             console.log([player.object.preferred_source, player]);
 
             // check object preferred source
-            if (["vimeo", "twitch"].includes(player.object.preferred_source)) {
+            if (["Vimeo", "Twitch"].includes(player.object.preferred_source)) {
                 await toRaw(player.player).play();
-            } else if (player.object.preferred_source === "dailymotion") {
+            } else if (player.object.preferred_source === "Dailymotion") {
                 await player.player.play();
-            } else if (player.object.preferred_source === "youtube") {
+            } else if (player.object.preferred_source === "YouTube") {
                 // console.log(player.player);
                 await player.player.playVideo();
             }
@@ -491,11 +491,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
             console.log([player.object.preferred_source, player]);
 
             // check object preferred source
-            if (["vimeo", "twitch"].includes(player.object.preferred_source)) {
+            if (["Vimeo", "Twitch"].includes(player.object.preferred_source)) {
                 await toRaw(player.player).pause();
-            } else if (player.object.preferred_source === "dailymotion") {
+            } else if (player.object.preferred_source === "Dailymotion") {
                 await player.player.pause();
-            } else if (player.object.preferred_source === "youtube") {
+            } else if (player.object.preferred_source === "YouTube") {
                 await player.player.pauseVideo();
             }
         },
