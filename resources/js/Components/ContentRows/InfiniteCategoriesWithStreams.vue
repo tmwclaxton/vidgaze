@@ -25,7 +25,7 @@
 <script setup>
 import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.vue";
 import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCard/VideoStreamSkeleton.vue";
-import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
+import RowDivider from "@/Components/General/RowDivider.vue";
 
 const name = 'InfiniteCategoriesWithStreams';
 const props = defineProps({

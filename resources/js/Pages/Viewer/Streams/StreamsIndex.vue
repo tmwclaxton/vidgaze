@@ -7,7 +7,7 @@ import TopStreamsRow from "@/Components/ContentRows/TopStreamsRow.vue";
 import CategoriesRow from "@/Components/ContentRows/CategoriesRow.vue";
 import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCard/VideoStreamSkeleton.vue";
 import {debounce} from "lodash";
-import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
+import RowDivider from "@/Components/General/RowDivider.vue";
 import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.vue";
 import InfiniteCategoriesWithStreams from "@/Components/ContentRows/InfiniteCategoriesWithStreams.vue";
 const name = "StreamsIndex";

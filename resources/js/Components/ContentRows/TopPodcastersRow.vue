@@ -19,7 +19,7 @@
 <script setup>
 import PodcastCreatorCard from "@/Components/Cards/PodcastCards/PocastCreatorCard/PodcastCreatorCard.vue";
 import PodcastCreatorSkeleton from "@/Components/Cards/PodcastCards/PocastCreatorCard/PodcastCreatorSkeleton.vue";
-import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
+import RowDivider from "@/Components/General/RowDivider.vue";
 import { ref, onMounted } from "vue";
 import axios from 'axios';
 

@@ -70,7 +70,7 @@ const skeletonCount = computed(() => {
         class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4"
     >
         <PodcastCard v-for="podcast in podcasts" :podcast="podcast" />
-        <PodcastSkeleton v-for="i in skeletonCount" />
+        <PodcastSkeleton v-for="i in skeletonCount" class="mb-4" />
     </div>
 
     <!--skeleton loading-->

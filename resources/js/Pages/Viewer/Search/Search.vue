@@ -9,13 +9,14 @@ export default {
 </script>
 <script setup>
 import axios from "axios";
-import { ref } from 'vue';
-import CreatorSearchCard from "@/Pages/Viewer/Search/Partials/CreatorSearchCard.vue";
+import {computed, ref} from 'vue';
+import CreatorSearchCard from "@/Components/Cards/CreatorSearchCard/CreatorSearchCard.vue";
 import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.vue";
 import {shuffle} from "lodash";
 import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
-import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
+import RowDivider from "@/Components/General/RowDivider.vue";
 import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
+import CreatorSearchSkeleton from "@/Components/Cards/CreatorSearchCard/CreatorSearchSkeleton.vue";
 
 const props = defineProps({
     searchQuery: String,
@@ -26,15 +27,21 @@ const searchQuery = ref(props.searchQuery);
 
 // show 2 creators by default and expand to show all
 //set default state, could be based on some attributes
+const visibleCreatorsCount = ref(2);
 const expandCreators = ref(false);
-//we only need this for creators.
-const visibleCreators = ref(null);
 
+// computed property to return the visible creators
+const toggleVisibleCreators = () => {
+    expandCreators.value = !expandCreators.value;
+    // if expandCreators is true, return all creators else return the first 2 creators
+    visibleCreatorsCount.value = expandCreators.value ? creators.value.length : 2;
+    console.log(visibleCreatorsCount.value);
+};
 
 
 search(searchQuery,1);
 
-const creators = ref(null);
+const creators = ref([]);
 const videos = ref(null);
 const playlists = ref(null);
 const podcasts = ref(null);
@@ -48,13 +55,12 @@ function search(searchQuery,page = 1) {
     axios.get(url)
         .then(function (response) {
             // handle success
-            console.log(response);
+            // console.log(response);
             creators.value = response.data.creators.data;
             videos.value = shuffle(response.data.videos.data);
             playlists.value = response.data.playlists.data;
             podcasts.value = response.data.podcasts.data;
             streams.value = response.data.streams.data;
-            visibleCreators.value = creators.value.slice(0,2);
 
 
 
@@ -147,19 +153,23 @@ function search(searchQuery,page = 1) {
                     </div>
                 </div>
 
-                <!--<x-hr class="mt-2 mb-2"/>-->
 
-                <!--<livewire:search-results :searchQuery="$searchQuery"/>-->
                 <div >
                     <section v-if="true" class="mt-4">
 
                         <!--<RowDivider/>-->
 
-                        <div class="grid grid-rows-6 gap-4 ">
-                            <CreatorSearchCard v-for="creator in creators" :creator="creator"/>
+                        <div class="flex flex-col gap-4 ">
+                            <CreatorSearchCard v-if="creators.length > 0" v-for="creator in creators.slice(0,visibleCreatorsCount)" :creator="creator"/>
+                            <CreatorSearchSkeleton v-else v-for="i in 2"/>
                         </div>
 
-                        <RowDivider text="Expand" class="mt-4 mb-4"/>
+                        <RowDivider v-if="creators.length > 2" text="Expand" class="mt-4 mb-4" @click="toggleVisibleCreators">
+                            <font-awesome-icon v-if="expandCreators" :icon="['fas', 'caret-up']" />
+                            <font-awesome-icon v-if="!expandCreators" :icon="['fas', 'caret-down']" />
+                        </RowDivider>
+
+                        <RowDivider v-else class="mt-4 mb-4" />
 
                         <div class="px-0 relative w-full  ">
                             <!--<x-search-stream-card :stream="$stream"/>-->

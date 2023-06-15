@@ -443,11 +443,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // find player in players array
             for (let i = 0; i < this.players.length; i++) {
                 if (this.players[i]['object'].external_id === external_id) {
-                    // this.debugMessage('FINDPLAYER: found player' + external_id);
+                    this.debugMessage('FINDPLAYER: found player' + external_id);
                     return this.players[i];
                 }
             }
-            // this.debugMessage('FINDPLAYER: player not found' + external_id);
+            this.debugMessage('FINDPLAYER: player not found' + external_id);
             return false;
         },
 

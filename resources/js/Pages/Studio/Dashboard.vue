@@ -6,7 +6,7 @@ import StreamIcon from '~/images/icons/livestreams.svg';
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
 import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
-import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
+import RowDivider from "@/Components/General/RowDivider.vue";
 import StudioLinkButton from "@/Components/Buttons/StudioLinkButton.vue";
 import YouTubeIcon from '#icons/youtube.svg';
 import TwitchIcon from '#icons/twitch.svg';
