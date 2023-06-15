@@ -2,11 +2,10 @@
 
 
 
-    <ConsistentContentHolder class="flex h-32 w-full my-auto  dark:border-zinc-900 bg-zinc-50 ">
+    <ConsistentContentHolder class="flex h-48 w-full my-auto  dark:border-zinc-900 bg-zinc-50 p-5">
 
-        <div class=" flex flex-row w-full p-3 py-5 rounded-xl text-center items-center align-middle relative overflow-hidden">
+        <!--<skeleton-div class="w-36 rounded-md aspect-[21/12] h-full"></skeleton-div>-->
 
-        </div>
 
     </ConsistentContentHolder>
 
@@ -17,10 +16,11 @@
 import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
 import Badge from "@/Components/General/Badge.vue";
+import SkeletonDiv from "@/Components/General/SkeletonDiv.vue";
 
 export default {
-name: "CreatorSearchSkeleton",
-components: {Badge, ConsistentContentHolder, SubscribeButton},
+name: "VideoStreamSearchSkeleton",
+components: {SkeletonDiv, Badge, ConsistentContentHolder, SubscribeButton},
 props: {
 creator: {
     type: Object,

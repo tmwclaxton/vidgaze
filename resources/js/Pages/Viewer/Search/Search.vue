@@ -18,6 +18,7 @@ import RowDivider from "@/Components/General/RowDivider.vue";
 import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
 import CreatorSearchSkeleton from "@/Components/Cards/CreatorSearchCard/CreatorSearchSkeleton.vue";
 import VideoStreamSearchCard from "@/Components/Cards/VideoStreamSearchCard/VideoStreamSearchCard.vue";
+import VideoStreamSearchSkeleton from "@/Components/Cards/VideoStreamSearchCard/VideoStreamSearchSkeleton.vue";
 
 const props = defineProps({
     searchQuery: String,
@@ -174,7 +175,8 @@ function search(searchQuery,page = 1) {
 
                         <div class="px-0 relative w-full grid grid-cols-1 gap-4 ">
                             <!--<x-search-video-card :video="$video"/>-->
-                            <VideoStreamSearchCard v-for="video in videos" :item="video"/>
+                            <VideoStreamSearchCard v-if="videos" v-for="video in videos" :item="video"/>
+                            <VideoStreamSearchSkeleton v-else v-for="i in 8"/>
 
                         </div>
 
