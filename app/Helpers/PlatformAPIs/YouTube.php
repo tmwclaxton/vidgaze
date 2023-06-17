@@ -40,7 +40,7 @@ class YouTube implements iSearchable, iIsPlatform, iCanLogin
             'mine' => true,
         ])->getItems()[0];
 
-        return $this->extractCreatorToDTO($data);
+        return self::extractCreatorToDTO($data);
     }
 
 
@@ -74,7 +74,7 @@ class YouTube implements iSearchable, iIsPlatform, iCanLogin
 
 
         return array_map(function ($creator){
-            return $this->extractCreatorToDTO($creator);
+            return self::extractCreatorToDTO($creator);
         },$creators);
     }
 
@@ -207,7 +207,7 @@ class YouTube implements iSearchable, iIsPlatform, iCanLogin
         ];
     }
 
-    private function extractCreatorToDTO(\Google\Service\YouTube\Channel $data): CreatorDTO
+    private static function extractCreatorToDTO(\Google\Service\YouTube\Channel $data): CreatorDTO
     {
         $creatorDTO = new CreatorDTO(Platform::YouTube, $data->id);
         $creatorDTO->name = $data->snippet->title;

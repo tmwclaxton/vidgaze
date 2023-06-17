@@ -21,6 +21,13 @@ class JoshPing
     public static function ping()
     {
 
+        $start = microtime(true);
+        $query = new SearchQueryDTO('pwediepie', 5);
+
+
+        $results = Search::search($query, false);
+        $time = microtime(true) - $start;
+        ddd($time, $results);
         $creator = Creator::where('name', 'joshuasy10')->with('sources');
         $creator_source = $creator->first()->sources->first();
 //        dd($creator_source->access_token);
