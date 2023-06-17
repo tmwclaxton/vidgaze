@@ -8,6 +8,7 @@ use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\iCanLogin;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
 use App\Helpers\Tools;
@@ -15,7 +16,7 @@ use Carbon\Carbon;
 use Google_Service_YouTube;
 use Laravel\Octane\Facades\Octane;
 
-class YouTube implements iSearchable, iIsPlatform
+class YouTube implements iSearchable, iIsPlatform, iCanLogin
 {
 
     public Google_Service_YouTube $client;
@@ -160,4 +161,37 @@ class YouTube implements iSearchable, iIsPlatform
             return $resultDTO;
         },$videos->getItems());
     }
+
+
+
+
+    public static function getLogInUrl(array $scopes = null, string $redirect_url_path = null){
+        //check if user already has linked their account
+        $creator = auth()->user()->creator()->with('sources')->first();
+        if(!$creator){
+            abort(403, 'You must be logged in to link your YouTube account');
+        }
+        if(!$creator->sources->contains('source_name', Platform::YouTube->value)){
+            return (new Google($scopes, $redirect_url_path))->client->createAuthUrl();
+        }
+        else{
+            abort(403, 'You have already claimed a YouTube channel');
+        }
+    }
+
+    public static function getRefreshAccessToken($refreshToken): array
+    {
+        $google = new Google();
+        $google->client->refreshToken($refreshToken);
+        $access_token = $google->client->getAccessToken();
+
+        return [
+            'access_token' => $access_token['access_token'],
+            'refresh_token' => $access_token['refresh_token'],
+            'expires_in' => $access_token['expires_in'],
+        ];
+    }
+
+
+
 }

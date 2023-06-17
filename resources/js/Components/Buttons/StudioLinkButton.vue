@@ -2,7 +2,7 @@
 import { defineProps } from 'vue';
 
 const props = defineProps({
-    link: {
+    platform: {
         type: String,
         required: true
     },
@@ -19,7 +19,7 @@ const props = defineProps({
 
 </script>
 <template>
-    <a :href="link" class="w-max ">
+    <a :href="'/studio/login/'+platform" class="w-max ">
         <button type="button" :class="buttonClasses" class="h-full w-max flex flex-row inline-flex items-center gap-2
          dark:bg-vidgaze-blue dark:hover:bg-zinc-800 dark:text-zinc-200 text-zinc-900 text-sm font-medium rounded-lg px-5 py-2.5 text-center ">
             <slot></slot>

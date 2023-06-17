@@ -26,10 +26,10 @@ Route::middleware('auth')->group(function () {
     Route::get('studio/stream/{stream:slug}', [StreamController::class,'edit'])->name("studio.stream.edit");
     Route::get('studio/unionise', [UnionController::class,'index'])->name("studio.unionise");
     Route::get('import', [ImportingController::class,'index'])->name('studio.importing.index');
-    Route::get('import/{platform}', [ImportingController::class,'studio.import']);
-    Route::get('import/login/{platform}', [ImportingController::class,'studio.logIn']);
-    Route::get('studio/link/{platform}', [LinkingController::class,'studio.link']);
-    Route::post('studio/login/{platform}', [LinkingController::class,'studio.logIn']);
+    Route::get('import/{platform}', [ImportingController::class,'import'])->name('studio.import');
+//    Route::get('import/login/{platform}', [ImportingController::class,'logIn'])->name('studio.logIn');
+    Route::get('studio/link/{platform}', [LinkingController::class,'link'])->name('studio.link');
+    Route::get('studio/login/{platform}', [LinkingController::class,'logIn'])->name('studio.logIn');
 });
 
 

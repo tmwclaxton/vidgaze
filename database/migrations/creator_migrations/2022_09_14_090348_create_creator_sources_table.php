@@ -26,6 +26,8 @@ return new class extends Migration
                 Platform::Twitch->value]
             )->index();
             $table->string('external_channel_id')->index();
+            $table->string('access_token')->nullable();
+            $table->string('refresh_token')->nullable();
             $table->timestamps();
             $table->unique(['source_name', 'external_channel_id']);
         });

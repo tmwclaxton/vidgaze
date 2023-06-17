@@ -17,6 +17,10 @@ class JoshPing
 
     public static function ping()
     {
+//        dd(config('platforms.google.redirect_url.link'));
+        echo YouTube::login();
+        die();
+
 //        dd(array_map(fn($audience) => $audience->value, Audience::getAll()));
         $query = new SearchQueryDTO('pints', 5);
 //        ddd(Podcasts::search($query));
