@@ -2,11 +2,8 @@
 import { Head } from '@inertiajs/vue3';
 import Title from "@/Components/General/Title.vue";
 
-import StreamIcon from '~/images/icons/livestreams.svg';
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
-import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
-import RowDivider from "@/Components/General/RowDivider.vue";
 import StudioLinkButton from "@/Components/Buttons/StudioLinkButton.vue";
 import YouTubeIcon from '#icons/youtube.svg';
 import TwitchIcon from '#icons/twitch.svg';
@@ -16,6 +13,14 @@ import ConnectChannels from "@/Pages/Studio/Partials/ConnectChannels.vue";
 import ItemPerformance from "@/Pages/Studio/Partials/ItemPerformance.vue";
 import LatestComment from "@/Pages/Studio/Partials/LatestComment.vue";
 import ChannelOverview from "@/Pages/Studio/Partials/ChannelOverview.vue";
+import {defineProps} from "vue";
+
+let props = defineProps({
+    claimed_platforms: {
+        type: Object,
+        required: true
+    }
+})
 
 </script>
 <script>
@@ -24,7 +29,9 @@ export default {
     layout: AuthenticatedLayout,
 
 };
+
 </script>
+
 <template>
     <Head title="Studio Dashboard" />
 
@@ -47,16 +54,16 @@ export default {
                     <div class="border-t border-zinc-200 dark:border-zinc-600 my-2 mb-3"></div>
 
                     <div class="flex flex-row flex-wrap gap-2 ">
-                        <StudioLinkButton platform="youtube" text="Sign in with YouTube" buttonClasses="bg-red-200 hover:bg-red-300">
+                        <StudioLinkButton v-if="!claimed_platforms.youtube" platform="youtube" text="Sign in with YouTube" buttonClasses="bg-red-200 hover:bg-red-300">
                             <YouTubeIcon class="w-6 h-6 my-auto text-zinc-200"/>
                         </StudioLinkButton>
-                        <StudioLinkButton platform="dailymotion" text="Sign in with Dailymotion" buttonClasses="bg-zinc-200 hover:bg-zinc-300">
+                        <StudioLinkButton v-if="!claimed_platforms.dailymotion" platform="dailymotion" text="Sign in with Dailymotion" buttonClasses="bg-zinc-200 hover:bg-zinc-300">
                             <DailyMotionIcon class="w-6 h-6 my-auto  "/>
                         </StudioLinkButton>
-                        <StudioLinkButton platform="twitch" text="Sign in with Twitch" buttonClasses="bg-purple-200 hover:bg-purple-300">
+                        <StudioLinkButton v-if="!claimed_platforms.twitch" platform="twitch" text="Sign in with Twitch" buttonClasses="bg-purple-200 hover:bg-purple-300">
                             <TwitchIcon class="w-6 h-6 my-auto "/>
                         </StudioLinkButton>
-                        <StudioLinkButton platform="vimeo" text="Sign in with Vimeo" buttonClasses="bg-blue-200 hover:bg-blue-300">
+                        <StudioLinkButton v-if="!claimed_platforms.vimeo" platform="vimeo" text="Sign in with Vimeo" buttonClasses="bg-blue-200 hover:bg-blue-300">
                             <VimeoIcon class="w-6 h-6 my-auto "/>
                         </StudioLinkButton>
 

@@ -21,15 +21,37 @@ class YouTube implements iSearchable, iIsPlatform, iCanLogin
 
     public Google_Service_YouTube $client;
 
-    public function __construct($code = null, array $scopes = null, string $redirect_url_path = null)
+    public function __construct($code = null, $access_token = null, array $scopes = null, string $redirect_url_path = null)
     {
         $google = new Google($scopes, $redirect_url_path);
         if(isset($code)){
             $accessToken = $google->client->fetchAccessTokenWithAuthCode($code);
             $google->client->setAccessToken($accessToken);
         }
+        if (isset($access_token)) {
+            $google->client->setAccessToken($access_token);
+        }
         $this->client = new Google_Service_YouTube($google->client);
     }
+
+    public function getMyCreator(): CreatorDTO
+    {
+        $data = $this->client->channels->listChannels(['snippet', 'brandingSettings'], [
+            'mine' => true,
+        ])->getItems()[0];
+
+        return $this->extractCreatorToDTO($data);
+    }
+
+
+
+
+
+
+
+
+
+
 
     public static function getPlatform(): Platform
     {
@@ -52,14 +74,7 @@ class YouTube implements iSearchable, iIsPlatform, iCanLogin
 
 
         return array_map(function ($creator){
-            $creatorDTO = new CreatorDTO(Platform::YouTube, $creator->id);
-            $creatorDTO->name = $creator->snippet->title;
-            $creatorDTO->avatar_url = $creator->snippet->thumbnails->default->url;
-            $creatorDTO->banner_url = $creator->brandingSettings->image? $creator->brandingSettings->image->bannerExternalUrl.'=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj' : null;
-            $creatorDTO->description = $creator->snippet->description;
-            $creatorDTO->region = $creator->snippet->country ?? null;
-            $creatorDTO->language = $creator->snippet->defaultLanguage ?? null;
-            return $creatorDTO;
+            return $this->extractCreatorToDTO($creator);
         },$creators);
     }
 
@@ -192,6 +207,17 @@ class YouTube implements iSearchable, iIsPlatform, iCanLogin
         ];
     }
 
+    private function extractCreatorToDTO(\Google\Service\YouTube\Channel $data): CreatorDTO
+    {
+        $creatorDTO = new CreatorDTO(Platform::YouTube, $data->id);
+        $creatorDTO->name = $data->snippet->title;
+        $creatorDTO->avatar_url = $data->snippet->thumbnails->default->url;
+        $creatorDTO->banner_url = $data->brandingSettings->image ? $data->brandingSettings->image->bannerExternalUrl . '=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj' : null;
+        $creatorDTO->description = $data->snippet->description;
+        $creatorDTO->region = $data->snippet->country ?? null;
+        $creatorDTO->language = $data->snippet->defaultLanguage ?? null;
+        return $creatorDTO;
+    }
 
 
 }

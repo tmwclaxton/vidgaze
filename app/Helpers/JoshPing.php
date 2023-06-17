@@ -5,11 +5,14 @@ namespace App\Helpers;
 use App\Enums\Audience;
 use App\Enums\Platform;
 use App\Helpers\PlatformAPIs\Dailymotion;
+use App\Helpers\PlatformAPIs\Google;
 use App\Helpers\PlatformAPIs\Podcasts;
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\PlatformAPIs\Vimeo;
 use App\Helpers\PlatformAPIs\YouTube;
+use App\Models\CreatorModels\Creator;
 use App\Models\CreatorModels\CreatorSource;
+use Google_Service_YouTube;
 use Laravel\Octane\Facades\Octane;
 
 class JoshPing
@@ -17,8 +20,18 @@ class JoshPing
 
     public static function ping()
     {
-//        dd(config('platforms.google.redirect_url.link'));
-        echo YouTube::login();
+
+        $creator = Creator::where('name', 'joshuasy10')->with('sources');
+        $creator_source = $creator->first()->sources->first();
+//        dd($creator_source->access_token);
+//        dd($creator_source->refresh_token);
+
+        $refreshed = YouTube::getRefreshAccessToken($creator_source->refresh_token);
+        $creator_source->update(['access_token' => $refreshed['access_token'], 'refresh_token' => $refreshed['refresh_token']]);
+
+        $yt = new YouTube(null, $creator_source->access_token);
+        $yt_channel_id = $yt->getMyCreator()->id;
+        dd($yt_channel_id);
         die();
 
 //        dd(array_map(fn($audience) => $audience->value, Audience::getAll()));

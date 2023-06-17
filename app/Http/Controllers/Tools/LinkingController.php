@@ -25,31 +25,25 @@ class LinkingController extends Controller
         switch ($platform) {
             case Platform::YouTube->value:
                 try {
-                    $client = resolve(Google::class)->client;
-                    $client->fetchAccessTokenWithAuthCode($code);
-//                    $access_token = $client->getAccessToken();
-//                    dd($access_token);
-                    //$client->setAccessToken($access_token);
+                    $yt = new YouTube($code);
+                    $yt_channel_id = $yt->getMyCreator()->id;
 
-                    // Define service object for making API requests.
-                    $youtube = new Google_Service_YouTube($client);
-                    $queryParams = [
-                        'mine' => true
-                    ];
-                    $response = $youtube->channels->listChannels('id', $queryParams);
+                    self::breakIfChannelClaimed($yt_channel_id, Platform::YouTube);
 
-                    ddd($response);
-                    self::breakIfChannelClaimed($response[0]['id'], Platform::YouTube);
-
-                    $source = new CreatorSource();
-                    $source->source_name = Platform::YouTube->value;
-                    $source->external_channel_id = $response[0]['id'];
-                    $source->creator_id = Auth::user()->creator->id;
-                    $source->save();
+                    CreatorSource::create([
+                        'source_name' => Platform::YouTube->value,
+                        'external_channel_id' => $yt_channel_id,
+                        'creator_id' => Auth::user()->creator->id,
+                        'access_token' => $yt->client->getClient()->getAccessToken()['access_token'],
+                        'refresh_token' => $yt->client->getClient()->getAccessToken()['refresh_token'],
+                    ]);
 
                     return redirect()->route('studio');
                 } catch (\Exception $e) {
-                    return abort('401');
+                    if($e->getCode() == 403) {
+                        return abort('403', $e->getMessage());
+                    }
+                    return abort('401',$e->getMessage());
                 }
 
             case Platform::Dailymotion->value:
@@ -143,10 +137,14 @@ class LinkingController extends Controller
 
     private static function breakIfChannelClaimed(string $externalChannelID, Platform $source)
     {
-        if( (bool)(CreatorSource::where('external_channel_id', '=', $externalChannelID)
-            ->where('source_name', '=', $source->name)->first()))
-        {
-            return abort(403,"That channel has already been claimed by another user");
+        $user = CreatorSource::where('external_channel_id', $externalChannelID)
+            ->where('source_name', $source->name)->first()->creator->user();
+
+        if( $user->exists()) {
+            if($user->first()->id == auth()->user()->id){
+                throw new \Exception("You have already claimed this channel", 403);
+            }
+            throw new \Exception('That channel has already been claimed by another user', 403);
         }
     }
 }

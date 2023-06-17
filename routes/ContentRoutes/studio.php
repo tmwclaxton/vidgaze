@@ -16,7 +16,15 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth')->group(function () {
 
     Route::get('/studio', function () {
-        return Inertia::render('Studio/Dashboard');
+        $sources = [];
+            auth()->user()->creator->with('sources')->first()->sources()->get(['source_name', 'external_channel_id'])->each(
+            function ($source) use (&$sources){
+                $sources[$source->source_name] = $source->external_channel_id;
+            }
+        );
+        return Inertia::render('Studio/Dashboard',[
+            'claimed_platforms' => $sources
+        ]);
     })->name("studio.dashboard");
 
     Route::get('studio/upload',  [VideoUploadController::class, 'edit'])->name("studio.upload");
