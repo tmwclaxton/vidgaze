@@ -41,7 +41,6 @@ export default {
 
             <!--connect channels-->
             <div class="col-span-4 row-span-1">
-<<<<<<< HEAD
                 <ConsistentContentHolder class="p-5 h-full">
                     <p class="font-bold text-lg">Connect your Channels to VidGaze</p>
 
@@ -63,9 +62,7 @@ export default {
 
                     </div>
                 </ConsistentContentHolder>
-=======
                 <ConnectChannels/>
->>>>>>> aa416ccac98adef5d92051d04746cb04a090bcf8
             </div>
 
 
