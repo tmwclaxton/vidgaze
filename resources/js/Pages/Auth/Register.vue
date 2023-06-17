@@ -5,7 +5,7 @@ import InputLabel from '@/Components/Inputs/InputLabel.vue';
 import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
 import TextInput from '@/Components/Inputs/TextInput.vue';
 import Checkbox from "@/Components/Inputs/Checkbox.vue";
-import HorizontalLineText from "@/Components/HorizontalLineText.vue";
+import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import GoogleButton from "@/Components/Buttons/GoogleButton.vue";
 import AppleButton from "@/Components/Buttons/AppleButton.vue";

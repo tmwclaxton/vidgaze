@@ -1,7 +1,7 @@
 <script setup>
 import SearchIcon from '~/images/icons/search.svg';
 import CloseNavSVG from '~/images/icons/exit.svg';
-import { Link } from '@inertiajs/vue3';
+import {Link, router} from '@inertiajs/vue3';
 import { defineProps, defineEmits, ref, watch, computed } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import SearchSuggestion from '@/Shared/Navigation/Partials/SearchSuggestion.vue';
@@ -39,8 +39,13 @@ watch(searchInput, value => {
 
 function searchEntered() {
     // console.log(searchInput.value);
-    if (searchInput.value.length > 0 && navStore.getExpandedSearchResults()) {
-        Inertia.get('/search', { q: searchInput.value });
+    // if (searchInput.value.length > 0 && ( expandedSearchResults is oepn when in mobile view so width < 4
+
+    if (searchInput.value.length > 0 && (window.innerWidth > 640  || navStore.getExpandedSearchResults())) {
+        // Inertia.get('/search', { q: searchInput.value }); // can't use this because it does a full page reload
+        router.visit('/search?q=' + searchInput.value);
+        // close the search results dropdown
+        navStore.toggleExpandedSearchResultsOff();
     }
 }
 
@@ -104,8 +109,14 @@ function goToSelectedResult() {
         }
     }else {
         searchEntered();
+        // close the search results dropdown
+        navStore.toggleExpandedSearchResultsOff();
     }
 }
+
+// on mount get the search query from the url 'q' parameter
+const query = new URLSearchParams(window.location.search);
+searchInput.value = query.get('q') || '';
 
 
 </script>

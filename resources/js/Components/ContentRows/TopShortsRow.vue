@@ -5,7 +5,7 @@ import {onMounted, onUnmounted, ref} from "vue";
 import {debounce} from "lodash";
 import ShortsSkeleton from "@/Components/Cards/ShortsCard/ShortsSkeleton.vue";
 import ShortsCard from "@/Components/Cards/ShortsCard/ShortsCard.vue";
-import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
+import RowDivider from "@/Components/General/RowDivider.vue";
 
 const name = 'TopShortsRow';
 const shorts = ref([]);

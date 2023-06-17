@@ -10,7 +10,7 @@
             <VideoStreamCard :item="video" />
         </template>
         <!--skeleton loading-->
-        <template v-if="trending_videos.length === 0" v-for="i in 6">
+        <template v-if="trending_videos === null || trending_videos.length === 0" v-for="i in 6">
             <VideoStreamSkeleton />
         </template>
     </div>
@@ -22,13 +22,14 @@
 <script setup>
 import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.vue";
 import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCard/VideoStreamSkeleton.vue";
-import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
+import RowDivider from "@/Components/General/RowDivider.vue";
 
 const name = 'TrendingVideosRow';
 const props = defineProps({
     trending_videos: {
         type: Array,
-        required: true
+        required: false,
+        default: null
     }
 });
 </script>

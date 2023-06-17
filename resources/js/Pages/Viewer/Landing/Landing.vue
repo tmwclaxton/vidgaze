@@ -1,7 +1,7 @@
 <script setup>
 import {onMounted, onUnmounted, ref} from "vue";
 import FounderCard from "@/Pages/Viewer/Landing/Partials/FounderCard.vue";
-import Footer from "@/Components/Footer.vue";
+import Footer from "@/Components/General/Footer.vue";
 
 
 // this changes the opacity of the elements with the class "target" as you scroll

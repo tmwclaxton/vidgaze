@@ -85,7 +85,7 @@ onUnmounted(() => {
             <div class=" mx-auto h-full  flex flex-row align-middle justify-center">
 
                 <div class=" aspect-[9/16] h-full flex-grow flex flex-col">
-                <p v-text="video.external_id + ' * ' + video.preferred_source"></p>
+                <!--<p v-text="video.external_id + ' * ' + video.preferred_source"></p>-->
 
                     <div class="w-full h-full rounded-xl without-ring flex flex-col relative overflow-hidden">
 

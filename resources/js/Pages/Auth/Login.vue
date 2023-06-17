@@ -9,7 +9,7 @@ import AppleButton from '@/Components/Buttons/AppleButton.vue';
 
 import TextInput from '@/Components/Inputs/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import HorizontalLineText from "@/Components/HorizontalLineText.vue";
+import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
 
 defineProps({
     canResetPassword: Boolean,

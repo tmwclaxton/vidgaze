@@ -20,7 +20,7 @@
 <script setup>
 import CategorySkeleton from "@/Components/Cards/CategoryCard/CategorySkeleton.vue";
 import CategoryCard from "@/Components/Cards/CategoryCard/CategoryCard.vue";
-import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
+import RowDivider from "@/Components/General/RowDivider.vue";
 
 const name = 'CategoriesRow';
 const props = defineProps({

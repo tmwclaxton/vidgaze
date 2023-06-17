@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('name',100)->index();
             $table->boolean('server_made')->default(false); //eg watch history, stops user form removing the playlist
             $table->enum('visibility', ['public', 'unlisted', 'private', 'hidden']); // (eg disliked videos)
-            $table->json('list')->nullable(); //in json format
+            //$table->json('list')->nullable(); //in json format
             $table->string('description', 500)->nullable();
             $table->integer('video_count')->default('0')->index();
             $table->string('recent_video_image')->nullable();

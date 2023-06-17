@@ -55,7 +55,11 @@ const handleScroll = () => {
 
 // debounced version of fetchVideos that waits for 500ms before calling
 const debouncedFetchVideos = debounce(() => {
-    fetchVideos([...trending_videos.value, ...videos.value]);
+    if (trending_videos.value) {
+        fetchVideos([...trending_videos.value, ...videos.value]);
+    } else {
+        fetchVideos([...videos.value]);
+    }
 }, 500);
 
 const fetchTrendingVideos = async () => {
@@ -78,9 +82,17 @@ const fetchVideos = async (videoArray) => {
                 perPage: 40,
                 videoIds
             }
-        });
+        }).then(
+            response => {
+                return response;
+            }
+            ).catch(error => {
+                console.log(error);
+            }
+        )
 
         setTimeout(() => {
+            // console.log(response.data.data);
             if (!response.data.error) {
                 videos.value = videos.value.concat(response.data.data);
             } else {

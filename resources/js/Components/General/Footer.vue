@@ -45,7 +45,7 @@
         </div>
         <br class="my-3 border-zinc-200 sm:mx-auto dark:border-zinc-700 lg:my-3">
         <div class="sm:flex sm:items-center sm:justify-between">
-            <span class="text-sm text-zinc-500 sm:text-center dark:text-zinc-200">© <span >{{ currYear }}</span> <a href="/"
+            <span class="text-sm text-zinc-500 sm:text-center dark:text-zinc-200">© <span >{{ currYear }}</span> <a href="/public"
                                                                                         class="hover:underline">VidGaze™</a>. All Rights Reserved.
         </span>
             <div class="flex mt-4 space-x-6 sm:justify-center sm:mt-0">

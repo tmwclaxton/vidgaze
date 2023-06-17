@@ -5,7 +5,7 @@ import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.
 import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCard/VideoStreamSkeleton.vue";
 
 import StreamIcon from '~/images/icons/livestreams.svg';
-import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
+import RowDivider from "@/Components/General/RowDivider.vue";
 const streams = ref([]);
 const name = 'PopularStreams';
 const fetchStreams = async () => {

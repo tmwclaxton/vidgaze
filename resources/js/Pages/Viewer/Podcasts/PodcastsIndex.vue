@@ -2,7 +2,7 @@
 import { Head } from '@inertiajs/vue3';
 import PaddingLayout from "@/Layouts/Partials/ConsistentPadding.vue";
 import PodcastCreatorCard from "@/Components/Cards/PodcastCards/PocastCreatorCard/PodcastCreatorCard.vue";
-import RowDivider from "@/Components/ContentRows/Partials/RowDivider.vue";
+import RowDivider from "@/Components/General/RowDivider.vue";
 import PodcastCard from "@/Components/Cards/PodcastCards/PocastCard/PodcastCard.vue";
 import PodcastCategoryCard from "@/Components/Cards/PodcastCards/PodcastCategoryCard/PodcastCategoryCard.vue";
 import PodcastSkeleton from "@/Components/Cards/PodcastCards/PocastCard/PodcastSkeleton.vue";
