@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\VideoCollection;
+use App\Http\Resources\VideoResource;
 use App\Models\CreatorModels\ChannelDisinterest;
 use App\Models\CreatorModels\CreatorInteraction;
 use App\Models\PlaylistModels\Playlist;
@@ -32,13 +33,12 @@ class VideoController extends Controller
 
     public function show(Video $video)
     {
-        if (request()->header('X-Inertia')) {
-            return Inertia::render('Viewer/Watch/Watch', [$video]);
-        } else {
-            return ['data' => [
-                'video' => $video,
-            ]];
-        }
+        return Inertia::render('Viewer/Watch/Watch',
+            [
+                'data' => [
+                    'video' => new VideoResource($video)
+                ]
+            ]);
     }
 
 

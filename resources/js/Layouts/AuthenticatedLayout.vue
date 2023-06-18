@@ -44,12 +44,12 @@ let showingNavigationDropdown = ref(false);
 
         <div class=" flex flex-col   ">
 
-            <Nav v-if="!(route().current('login') || route().current('register') || route().current('password.request') || route().current('password.reset') || route().current('password.email') || route().current('password.store'))"/>
+            <Nav v-if="usePage().props.layoutDisplay !== 'auth'"/>
 
             <!-- Page Content -->
             <main class="flex flex-row flex-grow    " >
 
-                <div v-if="!route().current('about') && !(route().current('login') || route().current('register') || route().current('password.request') || route().current('password.reset') || route().current('password.email') || route().current('password.store'))"
+                <div v-if="usePage().props.layoutDisplay !== 'auth' && usePage().props.layoutDisplay !== 'wide'"
                      class="pointer-events-none opacity-0 flex-shrink-0 transition  ease-in-out"  :class="{'sm:w-64  ': navStore.getNavigationDropdown(), 'sm:w-24': !navStore.getNavigationDropdown()}">
 
                 </div>

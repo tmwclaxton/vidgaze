@@ -35,10 +35,10 @@ const getPodcastInfo = async () => {
 <template>
     <div @mouseenter="getPodcastInfo" class="cursor-pointer select-none rounded   w-full h-full ">
         <div class=" relative  group">
-            <a href="">
+            <Link href="">
                 <img class="w-full aspect-square block rounded "
                      v-bind:src="podcast.thumbnail_url"/>
-            </a>
+            </Link>
             <div class="absolute bg-black rounded pointer-events-none
         bg-opacity-0 group-hover:bg-opacity-40 group-hover:opacity-100
         w-full h-full top-0 flex items-center transition justify-evenly duration-300">
