@@ -51,7 +51,7 @@ const dotsIconShow = computed(() => {
 
 <template>
 
-    <div :id="'box_' + itemType + '_' + item.id" class="relative group  ">
+    <div :id="'box_' + itemType + '_' + item.id" class="relative   ">
         <!--hide content hidden button and cover-->
         <div :id="'hide_' + itemType + '_' + item.id" @click="hideItemToggle" class="w-0 h-0 opacity-0 pointer-events-none " ></div>
         <div  v-if="hideItem" class="w-full h-32 rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex flex-col align-middle justify-center items-center select-none">
@@ -60,8 +60,8 @@ const dotsIconShow = computed(() => {
                 Show
             </div>
         </div>
-        <div  v-if="!hideItem" class="flex flex-row">
-            <div class="relative w-48 lg:w-96 aspect-[21/12] h-max overflow-hidden rounded-md flex-shrink-0">
+        <div  v-if="!hideItem" class="flex flex-row ">
+            <div class="group relative w-48 lg:w-96 aspect-[21/12] h-max overflow-hidden rounded-md flex-shrink-0">
                 <a :href="route('watch.show', {slug: item.slug})" class="">
                     <img class="object-cover w-full h-full bg-zinc-900" v-bind:src="item.thumbnail_url"   alt=""/>
                 </a>

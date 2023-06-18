@@ -30,6 +30,7 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->constrained();
             $table->string('contact_email')->nullable();
             $table->boolean('is_live')->default(false)->index()->nullable();
+            $table->boolean('featured')->default(false);
             $table->timestamp('last_api_update')->nullable();
             $table->timestamps();
         });

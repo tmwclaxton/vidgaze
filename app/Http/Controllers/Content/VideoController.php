@@ -30,10 +30,19 @@ class VideoController extends Controller
     // update - when form submitted save the edits
     // destroy - delete one item
 
-    public function index()
+    public function show(Video $video)
     {
-        return Inertia::render('Viewer/Videos/VideosIndex');
+        if (request()->header('X-Inertia')) {
+            return Inertia::render('Viewer/Watch/Watch', [$video]);
+        } else {
+            return ['data' => [
+                'video' => $video,
+            ]];
+        }
     }
+
+
+
     public function shorts()
     {
         return Inertia::render('Viewer/Shorts/ShortsIndex');
