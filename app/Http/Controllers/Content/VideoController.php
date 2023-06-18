@@ -33,12 +33,11 @@ class VideoController extends Controller
 
     public function show(Video $video)
     {
-        return Inertia::render('Viewer/Watch/Watch',
-            [
-                'data' => [
-                    'video' => new VideoResource($video)
-                ]
-            ]);
+        //forbidden if visibility is set to private and you don't own it
+        if ($this->visibility == 'private' && $this->creator_id != Auth::user()->creator->id) {
+            abort(401);
+        }
+        return Inertia::render('Viewer/Watch/Watch', ['item' => new VideoResource($video)]);
     }
 
 

@@ -20,6 +20,14 @@ const resetPlayer = () => {
 
 }
 
+const props = defineProps({
+    item: {
+        type: Object,
+        required: true
+    }
+
+});
+
 onMounted( () => {
 
     // get video details
@@ -37,7 +45,7 @@ onMounted( () => {
 <template>
     <AuthenticatedLayout>
 
-        <div class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4']">
+        <div class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4 mx-24']">
 
 
             <!--player with theatre mode-->
