@@ -32,9 +32,11 @@ class StreamController extends Controller
 
     public function topStreams()
     {
-        $streams = new StreamCollection( Stream::orderBy('viewers', 'DESC')->where('visibility', '=','public')
-            ->where('streams.is_live', '=',true)
-            ->take(6)->get() );
+        $streams = new StreamCollection(
+            Stream::orderBy('viewers', 'DESC')
+                ->where('visibility', '=','public')
+                ->where('streams.is_live', '=',true)
+                ->take(6)->get() );
         return $streams;
     }
 
@@ -54,20 +56,16 @@ class StreamController extends Controller
 
 
     public function show(Stream $stream) {
-        //forbidden if visibility is set to private and you don't own it
-        if ($this->visibility == 'private' && $this->creator_id != Auth::user()->creator->id) {
-            abort(401);
-        }
+        $this->checkVisibilityAndOwnership();
         return Inertia::render('Viewer/Watch/Watch', ['item' => new StreamResource($stream)]);
     }
 
 
+
     public function edit(Stream $stream)
     {
-        //forbidden if visibility is set to private and you don't own it
-        if ($stream->visibility == 'private' && $stream->creator_id != Auth::user()->creator->id) {
-            abort(401);
-        }
+        $this->checkVisibilityAndOwnership();
+
         return view('studio.stream', [
             'item'=> $stream,
         ]);
@@ -85,5 +83,11 @@ class StreamController extends Controller
         //
     }
 
+    private function checkVisibilityAndOwnership() {
+        //forbidden if visibility is set to private and you don't own it
+        if ($this->visibility == 'private' && $this->creator_id != Auth::user()->creator->id) {
+            abort(401);
+        }
+    }
 
 }

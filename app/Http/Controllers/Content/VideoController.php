@@ -33,10 +33,7 @@ class VideoController extends Controller
 
     public function show(Video $video)
     {
-        //forbidden if visibility is set to private and you don't own it
-        if ($this->visibility == 'private' && $this->creator_id != Auth::user()->creator->id) {
-            abort(401);
-        }
+        $this->checkVisibilityAndOwnership();
         return Inertia::render('Viewer/Watch/Watch', ['item' => new VideoResource($video)]);
     }
 
@@ -167,5 +164,10 @@ class VideoController extends Controller
         return $data;
     }
 
-
+    private function checkVisibilityAndOwnership() {
+        //forbidden if visibility is set to private and you don't own it
+        if ($this->visibility == 'private' && $this->creator_id != Auth::user()->creator->id) {
+            abort(401);
+        }
+    }
 }
