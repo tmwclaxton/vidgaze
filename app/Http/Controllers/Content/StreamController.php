@@ -56,7 +56,7 @@ class StreamController extends Controller
 
 
     public function show(Stream $stream) {
-        $this->checkVisibilityAndOwnership();
+        $this->checkVisibilityAndOwnership($stream);
         return Inertia::render('Viewer/Watch/Watch', ['item' => new StreamResource($stream)]);
     }
 
@@ -83,9 +83,9 @@ class StreamController extends Controller
         //
     }
 
-    private function checkVisibilityAndOwnership() {
+    private function checkVisibilityAndOwnership($item) {
         //forbidden if visibility is set to private and you don't own it
-        if ($this->visibility == 'private' && $this->creator_id != Auth::user()->creator->id) {
+        if ($item->visibility == 'private' && $item->creator_id != Auth::user()->creator->id) {
             abort(401);
         }
     }

@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref, watch} from 'vue';
+import {computed, onMounted, ref, watch} from 'vue';
 
 import Nav from '@/Shared/Navigation/Nav.vue';
 import ToastList from "@/Components/Toast/ToastList.vue";
@@ -10,26 +10,36 @@ import VideoStreamMiniPlayer from "@/Components/Modals/MiniPlayers/VideoStreamMi
 import ShareModel from "@/Components/Modals/ShareModel.vue";
 import ConfirmModal from "@/Components/Modals/ConfirmModal.vue";
 import {usePage} from "@inertiajs/vue3";
+import {usePlayerStore} from "@/Stores/PlayerStore";
 
+const playerStore = usePlayerStore();
 const navStore = useNavStore();
 const name = 'AuthenticatedLayout';
 let showingNavigationDropdown = ref(false);
 
+const loadScript = (src, id) => {
+    if (!document.getElementById(id)) {
+        const tag = document.createElement('script');
+        tag.src = src;
+        tag.id = id;
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    }
+};
 
+// once 4 loadscripts are loaded update state of playerStore
 
-// navStore.showingStudioLinks = ref(props.isStudioRoute);
+const loadScripts = async () => {
+    await loadScript('https://geo.dailymotion.com/libs/player/xfjc3.js', 'dailymotion-api')
+    await loadScript('https://www.youtube.com/iframe_api', 'youtube-api');
+    await loadScript('https://player.vimeo.com/api/player.js', 'vimeo-api');
+    await loadScript('https://player.twitch.tv/js/embed/v1.js', 'twitch-api');
+    playerStore.scriptsLoaded = true
+};
 
-//about page computed
-// const aboutPage = computed(() => {
-//     return route().current('about');
-// });
-//
-// const authPages = computed(() => {
-//     // return
-//     return true;
-// });
-
-// I'm sorry I couldn't figure it out, nothing worked
+onMounted(() => {
+    loadScripts();
+});
 
 </script>
 

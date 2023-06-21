@@ -11,6 +11,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             isViewRecording: false,
             viewRecordTimer: null,
             viewRecordDuration: 0,
+            scriptsLoaded: false
         }
     },
     getters: {
@@ -24,7 +25,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
         shortsPage() {
             // use ziggy to check if we are on the shorts page
             return route().current('videos.shorts');
-        }
+        },
     },
 
     actions: {

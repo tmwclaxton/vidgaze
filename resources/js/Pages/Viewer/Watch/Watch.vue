@@ -1,7 +1,10 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import {usePlayerStore} from "@/Stores/PlayerStore";
+
+const playerStore = usePlayerStore();
 
 const name = 'Watch';
 
@@ -24,19 +27,44 @@ const props = defineProps({
     item: {
         type: Object,
         required: true
-    }
 
+
+    }
 });
 
 onMounted( () => {
+    console.log(props.item.data);
+    // create player
+    // wait until scriptsLoaded is true in PlayerStore
+    console.log("scripts loaded");
+    // playerStore.createPlayer('watch_player', props.item.data.video_id);
+
+    //every 2 seconds, check if the playerScript is loaded and if it is, build the player
+    const interval = setInterval(() => {
+        if (playerStore.scriptsLoaded) {
+            console.log("scripts loaded");
+            // playerStore.createPlayer('watch_player', props.item.data.video_id);
+            playerStore.buildPlayer('watch_player', props.item.data, 0, true)
+            clearInterval(interval);
+        }
+    }, 1000);
 
     // get video details
+
 
     // get video suggestions
 
     // get video comments
 
 
+});
+
+watch(() => playerStore.scriptsLoaded, (scriptsLoaded) => {
+    if (scriptsLoaded) {
+        console.log("scripts loaded");
+        // playerStore.createPlayer('watch_player', props.item.data.video_id);
+        playerStore.buildPlayer('watch_player', props.item.data, 0, true)
+    }
 });
 
 
@@ -49,12 +77,12 @@ onMounted( () => {
 
 
             <!--player with theatre mode-->
-            <div :class="[theatre ? 'col-span-12 px-39 w-full ' : ' col-span-12 lg:col-span-8  ']" class="mx-auto w-full shadow-lg relative flex flex-col gap-y-4">
+            <div :class="[theatre ? 'col-span-12   w-full ' : ' col-span-12 lg:col-span-8  ']" class=" w-full  relative flex flex-col gap-y-4">
 
-                <div :class="[theatre ? ' h-[calc(100vh-10rem)] ' : 'h-[calc(100vh-10rem)] rounded-lg ']" class="bg-black ">
-                    <div :class="[ theatre ? 'aspect-video mx-auto h-full ' : 'w-full aspect-video max-h-screen']">
+                <div :class="[theatre ? '   ' : ' rounded-lg ']" class="bg-black max-h-[calc(100vh-10rem)] overflow-hidden">
+                    <div :class="[ theatre ? 'aspect-video  h-full w-full' : 'w-full aspect-video max-h-screen']">
                         <!--video player-->
-                        <div id="player" class="w-full h-full  without-ring flex relative">
+                        <div id="watch_player" class="w-full h-full  without-ring flex relative ">
 
                         </div>
 
@@ -66,6 +94,7 @@ onMounted( () => {
                 <!--video details-->
                 <div class="bg-red-500 w-full  " :class="[theatre ? '' : ' rounded-lg']">
                     <p>test</p>
+                    <button @click="theatre = !theatre">Theatre</button>
                 </div>
 
                 <div class="col-span-12 col-span-8 bg-white">
@@ -76,9 +105,9 @@ onMounted( () => {
 
             <!--video suggestions-->
 
-            <div class="bg-green-500 relative  gap-2 flex flex-col " :class="[theatre ? '' : 'col-span-12 lg:col-span-4 rounded-lg ']">
+            <div class="bg-green-500 relative w-full gap-2 flex flex-col " :class="[theatre ? 'col-span-12' : 'col-span-12 lg:col-span-4 rounded-lg ']">
 
-                <div class="h-96 bg-blue-400" v-for="n in 10" :key="n">
+                <div class="h-96 bg-blue-400 w-full" v-for="n in 10" :key="n">
 
                 </div>
 
@@ -100,7 +129,7 @@ onMounted( () => {
         <!--        <div :class="[theatre ? 'col-span-12  ' : 'col-span-12 lg:col-span-8']">-->
         <!--            <div-->
         <!--                :class="[ theatre ? 'h-[calc(100vh-10rem)] px-39 w-full  ' : '']"-->
-        <!--                class="mx-auto w-full bg-black rounded-lg shadow-lg relative"-->
+        <!--                class="mx-auto w-full bg-black rounded-lg  relative"-->
         <!--            >-->
         <!--                <div :class="[ theatre ? 'aspect-video mx-auto h-full ' : 'w-full aspect-video max-h-screen']">-->
         <!--                    &lt;!&ndash;video player&ndash;&gt;-->
