@@ -72,12 +72,6 @@ onMounted(() => {
     });
 
 
-
-
-
-    // loadScript('https://api.dmcdn.net/all.js', 'dailymotion-api')
-
-    // Dailymotion works by loading the script specifically for each individual video
 });
 
 const checkIfInViewport = debounce(() => {

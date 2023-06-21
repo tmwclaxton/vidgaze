@@ -7,11 +7,13 @@ export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
             debug: true,
+
+            scriptsLoaded: false, // this is true when the scripts have been loaded
             players: [], //in the form of [[type => "video", object => {id: 1, ...}, player => player_object], ...] this is so we can have multiple players on the page like for shorts and be able to control them individually
-            isViewRecording: false,
-            viewRecordTimer: null,
-            viewRecordDuration: 0,
-            scriptsLoaded: false
+            isViewRecording: false,  // this is true when we are recording the view of a video
+            viewRecordTimer: null, // the timer that is running to record the view
+            viewRecordDuration: 0, // this is the total time spent watching the video
+            currentTimePosition: 0, // i.e. 0 seconds into the video or 45 seconds into the video, this is the current time position of the video this helps when switching between watch page and mini player
         }
     },
     getters: {
@@ -66,6 +68,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         startViewRecord(external_id) {
+            const interval = 2.5;
             this.debugMessage('start view record');
             if (!this.isViewRecording) {
                 this.isViewRecording = true;
@@ -75,7 +78,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     try {
                         const isPlaying = await this.isPlayerPlaying(player);
                         if (isPlaying) {
-                            this.viewRecordDuration += 5;
+                            this.viewRecordDuration += interval;
                             this.debugMessage('STARTVIEWRECORD: View Record Duration: ' + this.viewRecordDuration);
                         } else {
                             this.debugMessage('STARTVIEWRECORD: Error: Player is not playing');
@@ -86,7 +89,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                         this.debugMessage('STARTVIEWRECORD: Error: ' + error);
                         clearInterval(this.viewRecordTimer);
                     }
-                }, 5000);
+                }, interval * 1000);
             }
         },
 
@@ -109,6 +112,10 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     const state = await player.player.getPlayerState();
                     // this.debugMessage('YouTube player state: ' + state);
                     playing = state === 1;
+
+                    // while we are here lets get the current time position
+                    this.currentTimePosition = await player.player.getCurrentTime();
+
                 } catch (error) {
                     throw new Error(error);
                 }
@@ -126,6 +133,10 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     paused = await toRaw(player.player).getPaused();
                     // this.debugMessage('Vimeo player state: ' + paused);
                     playing = !paused;
+
+                    // while we are here lets get the current time position
+                    this.currentTimePosition = await toRaw(player.player).getCurrentTime();
+
                 } catch (error) {
                     throw new Error(error);
                 }
@@ -135,8 +146,17 @@ export const usePlayerStore = defineStore('PlayerStore', {
             else if (player.object.preferred_source === 'Dailymotion') {
                 try {
                     const state = await player.player.getState();
+                    console.log(state);
+
                     playing = state.playerIsPlaying;
-                    // this.debugMessage('Dailymotion player state: ' + playerIsPlaying);
+                    console.log(playing);
+
+                    // while we are here lets get the current time position
+                    this.currentTimePosition = state.videoTime;
+
+                    this.debugMessage('Dailymotion player state: ' + playing);
+
+
                 } catch (error) {
                     throw new Error(error);
                 }
@@ -144,6 +164,9 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 let paused = await toRaw(player.player).isPaused();
                 playing = !paused;
                 this.debugMessage('Twitch player state: ' + playing);
+
+                // while we are here lets get the current time position
+                this.currentTimePosition = await toRaw(player.player).getCurrentTime();
             }
 
             return playing;
@@ -202,9 +225,42 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         },
 
+        async loadScript(src, id)  {
+            if (!document.getElementById(id)) {
+                const tag = document.createElement('script');
+                tag.src = src;
+                tag.id = id;
+                const firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            }
+        },
 
+        async loadScripts() {
+            this.debugMessage('load scripts');
+            // load scripts
+            await this.loadScript('https://geo.dailymotion.com/libs/player/xfjc3.js', 'dailymotion-api')
+            await this.loadScript('https://www.youtube.com/iframe_api', 'youtube-api');
+            await this.loadScript('https://player.vimeo.com/api/player.js', 'vimeo-api');
+            await this.loadScript('https://player.twitch.tv/js/embed/v1.js', 'twitch-api');
+
+            this.scriptsLoaded = true
+
+        },
 
         async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false) {
+
+            // run this.loadScripts() but wait for it to finish the scripts to actually load
+
+            // until scriptsLoaded is true wait 1 second and try again
+            if (!this.scriptsLoaded) {
+                await this.loadScripts(); // don't worry about this running multiple times, it checks if the script by id exists before trying to add it again
+                setTimeout(() => {
+                    this.debugMessage('scripts not loaded yet, trying again in 1 second')
+                    this.buildPlayer(playerDivHolderID, object, startTime, autoplay);
+                }, 1000);
+                return;
+            }
+
 
             //create player_div element inside player_div_holder
             if (playerDivHolderID === null) {

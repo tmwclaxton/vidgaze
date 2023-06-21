@@ -3,8 +3,10 @@ import {onMounted, ref, watch} from "vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {usePlayerStore} from "@/Stores/PlayerStore";
+import {useQueueStore} from "@/Stores/QueueStore";
 
 const playerStore = usePlayerStore();
+const queueStore = useQueueStore();
 
 const name = 'Watch';
 
@@ -33,21 +35,32 @@ const props = defineProps({
 });
 
 onMounted( () => {
-    console.log(props.item.data);
-    // create player
-    // wait until scriptsLoaded is true in PlayerStore
-    console.log("scripts loaded");
-    // playerStore.createPlayer('watch_player', props.item.data.video_id);
+    // console.log(props.item.data);
 
-    //every 2 seconds, check if the playerScript is loaded and if it is, build the player
-    const interval = setInterval(() => {
-        if (playerStore.scriptsLoaded) {
-            console.log("scripts loaded");
-            // playerStore.createPlayer('watch_player', props.item.data.video_id);
-            playerStore.buildPlayer('watch_player', props.item.data, 0, true)
-            clearInterval(interval);
-        }
-    }, 1000);
+
+    // if video/stream was already playing by accessing the queueStore's index and is same as props.item.external_id, resume from where it left off
+    const queueStoreExternalId = queueStore.items[queueStore.index]['object'].external_id;
+    if (queueStoreExternalId !== null && queueStoreExternalId === props.item.external_id) {
+        console.log("resume from where it left off");
+
+        // grab the current time from the playerStore
+
+        // first step find the player
+        playerStore.findPlayer(queueStoreExternalId);
+        // second step get the current time
+        const currentTime = playerStore.getCurrentTime();
+
+        playerStore.buildPlayer('watch_player', props.item.data, currentTime, true)
+    } else {
+        console.log("start from beginning");
+        // playerStore.createPlayer('watch_player', props.item.data.video_id);
+        playerStore.buildPlayer('watch_player', props.item.data, 0, true)
+    }
+    // create player
+    playerStore.buildPlayer('watch_player', props.item.data, 0, true)
+
+
+
 
     // get video details
 
