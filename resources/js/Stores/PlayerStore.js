@@ -70,26 +70,27 @@ export const usePlayerStore = defineStore('PlayerStore', {
         startViewRecord(external_id) {
             const interval = 2.5;
             this.debugMessage('start view record');
+            console.log(external_id);
             if (!this.isViewRecording) {
                 this.isViewRecording = true;
-                let player = this.findPlayer(external_id);
+                // let player = this.findPlayer(external_id);
 
-                this.viewRecordTimer = setInterval(async () => {
-                    try {
-                        const isPlaying = await this.isPlayerPlaying(player);
-                        if (isPlaying) {
-                            this.viewRecordDuration += interval;
-                            this.debugMessage('STARTVIEWRECORD: View Record Duration: ' + this.viewRecordDuration);
-                        } else {
-                            this.debugMessage('STARTVIEWRECORD: Error: Player is not playing');
-                            clearInterval(this.viewRecordTimer);
-
-                        }
-                    } catch (error) {
-                        this.debugMessage('STARTVIEWRECORD: Error: ' + error);
-                        clearInterval(this.viewRecordTimer);
-                    }
-                }, interval * 1000);
+                // this.viewRecordTimer = setInterval(async () => {
+                //     try {
+                //         const isPlaying = await this.isPlayerPlaying(player);
+                //         if (isPlaying) {
+                //             this.viewRecordDuration += interval;
+                //             this.debugMessage('STARTVIEWRECORD: View Record Duration: ' + this.viewRecordDuration);
+                //         } else {
+                //             this.debugMessage('STARTVIEWRECORD: Error: Player is not playing');
+                //             clearInterval(this.viewRecordTimer);
+                //
+                //         }
+                //     } catch (error) {
+                //         this.debugMessage('STARTVIEWRECORD: Error: ' + error);
+                //         clearInterval(this.viewRecordTimer);
+                //     }
+                // }, interval * 1000);
             }
         },
 
@@ -161,12 +162,14 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     throw new Error(error);
                 }
             } else if (player.object.preferred_source === 'Twitch') {
-                let paused = await toRaw(player.player).isPaused();
-                playing = !paused;
-                this.debugMessage('Twitch player state: ' + playing);
-
-                // while we are here lets get the current time position
-                this.currentTimePosition = await toRaw(player.player).getCurrentTime();
+                // let player = await toRaw(player.player);
+                //
+                // let paused = await toRaw(player.player).isPaused();
+                // playing = !paused;
+                // this.debugMessage('Twitch player state: ' + playing);
+                //
+                // // while we are here lets get the current time position
+                // this.currentTimePosition = await toRaw(player.player).getCurrentTime();
             }
 
             return playing;
@@ -225,27 +228,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         },
 
-        async loadScript(src, id)  {
-            if (!document.getElementById(id)) {
-                const tag = document.createElement('script');
-                tag.src = src;
-                tag.id = id;
-                const firstScriptTag = document.getElementsByTagName('script')[0];
-                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-            }
-        },
-
-        async loadScripts() {
-            this.debugMessage('load scripts');
-            // load scripts
-            await this.loadScript('https://geo.dailymotion.com/libs/player/xfjc3.js', 'dailymotion-api')
-            await this.loadScript('https://www.youtube.com/iframe_api', 'youtube-api');
-            await this.loadScript('https://player.vimeo.com/api/player.js', 'vimeo-api');
-            await this.loadScript('https://player.twitch.tv/js/embed/v1.js', 'twitch-api');
-
-            this.scriptsLoaded = true
-
-        },
 
         async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false) {
 
@@ -297,16 +279,19 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // // create player
             if (object.preferred_source === "YouTube") {
                 this.buildYouTubePlayer(playerDiv, object, startTime, autoplay);
+                playerDiv.removeAttribute('style');
             } else if (object.preferred_source === "Vimeo") {
                 this.buildVimeoPlayer(playerDiv, object, startTime, autoplay);
+                playerDiv.removeAttribute('style');
             } else if (object.preferred_source === "Dailymotion") {
                 this.buildDailymotionPlayer(playerDiv, object, startTime, autoplay);
+                playerDiv.removeAttribute('style');
             } else if (object.preferred_source === "Twitch") {
                 this.buildTwitchPlayer(playerDiv, object, startTime, autoplay);
             }
 
 
-            playerDiv.removeAttribute('style');
+
 
         },
 
@@ -445,8 +430,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         buildTwitchPlayer(playerDiv, object, startTime = 0, autoplay = false) {
-            let external_id = object.external_id;
-            // let external_id = 'monstercat';
+            // let external_id = object.external_id;
+            let external_id = 'monstercat';
             const player = new Twitch.Player(playerDiv, {
                 channel: external_id,
                 parent: ["localhost","127.0.0.1","vidgaze.tv","www.vidgaze.tv","www.staging.vidgaze.tv","staging.vidgaze.tv"],
@@ -456,7 +441,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 controls: true,
             });
 
-            this.pushPlayer(player);
             // on play start view record
             player.addEventListener(Twitch.Player.PLAY, () => {
                 this.startViewRecord(external_id);
@@ -472,12 +456,13 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 this.endVideo(external_id);
             });
 
+            this.pushPlayer(player, object);
         },
 
         pushPlayer(player, object) {
             // check if player is already in players array
             if (this.findPlayer(object.external_id)) {
-                // this.debugMessage('player already in array')
+                this.debugMessage('player already in array')
                 return;
             }
 
@@ -556,5 +541,29 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 await player.player.pauseVideo();
             }
         },
+
+
+
+        async loadScript(src, id)  {
+            if (!document.getElementById(id)) {
+                const tag = document.createElement('script');
+                tag.src = src;
+                tag.id = id;
+                const firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            }
+        },
+
+        async loadScripts() {
+            this.debugMessage('load scripts');
+            // load scripts
+            await this.loadScript('https://geo.dailymotion.com/libs/player/xfjc3.js', 'dailymotion-api')
+            await this.loadScript('https://www.youtube.com/iframe_api', 'youtube-api');
+            await this.loadScript('https://player.vimeo.com/api/player.js', 'vimeo-api');
+            await this.loadScript('https://player.twitch.tv/js/embed/v1.js', 'twitch-api');
+
+            this.scriptsLoaded = true
+
+        }
     }
 })
