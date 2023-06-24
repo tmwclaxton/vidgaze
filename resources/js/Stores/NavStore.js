@@ -15,7 +15,7 @@ export const useNavStore = defineStore('NavStore', {
     },
     getters: {
         showingStudioLinks() {
-            return usePage().props.isStudioRoute
+            return usePage().props.layoutDisplay === 'studio'
         }
     },
     actions: {

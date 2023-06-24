@@ -12,6 +12,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/feed/liked_videos', [PlaylistController::class, 'liked'])->name("feed.liked-videos");
     Route::get('/feed/history', [PlaylistController::class, 'history'])->name("feed.history");
     Route::get('/feed/subscriptions', [CreatorInteractionController::class, 'index'])->name("feed.subscriptions");
+
 });
 Route::get('/playlist/{playlist:slug}', [PlaylistController::class, 'show'])->name("playlist");
 

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Content;
 use App\Helpers\Tokens\TokenHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\StreamCollection;
+use App\Http\Resources\StreamResource;
 use App\Models\Category;
 use App\Models\StreamModels\Stream;
 use Illuminate\Support\Facades\Auth;
@@ -25,27 +26,20 @@ class StreamController extends Controller
             ->take(8)
             ->get();
 
-
-
-        //return view('livestreams',[
-        //    'stream'=> $stream,
-        //    'webhookToken' => $webhookToken,
-        //    'creator' => $stream->creator,
-        //    'external_id' => $stream->getPrimarySourceID(),
-        //    'categories' => $categories,
-        //]);
         return Inertia::render('Viewer/Streams/StreamsIndex');
 
     }
 
     public function topStreams()
     {
-        $streams = new StreamCollection( Stream::orderBy('viewers', 'DESC')->where('visibility', '=','public')
-            ->where('streams.is_live', '=',true)
-            ->take(6)->get() );
+        $streams = new StreamCollection(
+            Stream::orderBy('viewers', 'DESC')
+                ->where('visibility', '=','public')
+                ->where('streams.is_live', '=',true)
+                ->take(6)->get() );
         return $streams;
-
     }
+
 
 
 
@@ -62,30 +56,16 @@ class StreamController extends Controller
 
 
     public function show(Stream $stream) {
-
-        //forbidden if visibility is set to private and you don't own it
-        if ($stream->visibility == 'private' && $stream->creator_id != Auth::user()->creator->id) {
-            abort(401);
-        }
-        $creatorID = Auth::user() ? Auth::user()->id : "empty";
-
-        $webhookToken = TokenHelper::generateToken(session()->getId(), $creatorID, $stream->id);
-
-        return view('stream', [
-            'stream'=> $stream,
-            'webhookToken' => $webhookToken,
-            'creator' => $stream->creator,
-            'external_id' => $stream->getPrimarySourceID()
-            ]);
+        $this->checkVisibilityAndOwnership($stream);
+        return Inertia::render('Viewer/Watch/Watch', ['item' => new StreamResource($stream)]);
     }
+
 
 
     public function edit(Stream $stream)
     {
-        //forbidden if visibility is set to private and you don't own it
-        if ($stream->visibility == 'private' && $stream->creator_id != Auth::user()->creator->id) {
-            abort(401);
-        }
+        $this->checkVisibilityAndOwnership();
+
         return view('studio.stream', [
             'item'=> $stream,
         ]);
@@ -103,5 +83,11 @@ class StreamController extends Controller
         //
     }
 
+    private function checkVisibilityAndOwnership($item) {
+        //forbidden if visibility is set to private and you don't own it
+        if ($item->visibility == 'private' && $item->creator_id != Auth::user()->creator->id) {
+            abort(401);
+        }
+    }
 
 }

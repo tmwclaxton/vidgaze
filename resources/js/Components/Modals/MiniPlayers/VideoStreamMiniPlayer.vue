@@ -74,10 +74,7 @@ onMounted(() => {
 
 
 
-    loadScript('https://geo.dailymotion.com/libs/player/xfjc3.js', 'dailymotion-api')
-    loadScript('https://www.youtube.com/iframe_api', 'youtube-api');
-    loadScript('https://player.vimeo.com/api/player.js', 'vimeo-api');
-    loadScript('https://player.twitch.tv/js/embed/v1.js', 'twitch-api');
+
     // loadScript('https://api.dmcdn.net/all.js', 'dailymotion-api')
 
     // Dailymotion works by loading the script specifically for each individual video
@@ -109,15 +106,7 @@ const checkIfInViewport = debounce(() => {
     }, 100);
 }, 300);
 
-const loadScript = (src, id) => {
-    if (!document.getElementById(id)) {
-        const tag = document.createElement('script');
-        tag.src = src;
-        tag.id = id;
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    }
-};
+
 
 const toggleExpandQueue = () => {
     expandQueue.value = !expandQueue.value;

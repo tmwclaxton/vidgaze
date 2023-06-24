@@ -7,9 +7,9 @@
         <div class=" flex flex-row w-full px-2 sm:px-8 py-5 rounded-xl text-center items-center align-middle relative overflow-hidden">
 
             <!--profile picture-->
-            <a v-bind:href="'/channel/' + creator.slug" class=" min-w-16 w-24  rounded-full overflow-hidden flex-shrink-0">
+            <Link v-bind:href="'/channel/' + creator.slug" class=" min-w-16 w-24  rounded-full overflow-hidden flex-shrink-0">
                 <img class=" rounded-full w-full  mx-auto w-full aspect-square shadow " v-bind:src="creator.avatar_url">
-            </a>
+            </Link>
 
             <div class="flex flex-col pl-5 align-items-start text-left">
 

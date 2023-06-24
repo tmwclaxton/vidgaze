@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class StreamResource extends JsonResource
@@ -15,6 +16,8 @@ class StreamResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
+
         return [
             'id' => $this->id,
             'slug' => $this->slug,
@@ -24,7 +27,7 @@ class StreamResource extends JsonResource
             'is_live' => $this->is_live,
             'tags' => $this->tags,
             'category' => new CategoryResource($this->category),
-            'preferred_source' => $this->preferred_source,
+            'preferred_source' => capitalisePlatformName($this->preferred_source),
             'viewers' =>  number_format_short($this->viewers) . " " . Str::plural('Viewer', $this->viewers) ,
             'live_viewer_count' => number_format_short($this->live_viewer_count),
             'thumbnail_url' => $this->thumbnail_url,

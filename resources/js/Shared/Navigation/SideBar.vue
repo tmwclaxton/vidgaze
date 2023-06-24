@@ -43,7 +43,7 @@ const name = 'SideBar';
         <div class="  flex flex-row flex-grow top-0 overflow-x-hidden w-full ml-0  bg-vidgaze-blue-nav "
              :class="{ 'opacity-0 pointer-events-none  ': !navStore.getNavigationDropdown(),
               'w-screen sm:w-64 opacity-100 pointer-events-auto': navStore.getNavigationDropdown(),
-               'sm:opacity-100 sm:pointer-events-auto sm:flex sm:w-24' : !route().current('about') && !navStore.getNavigationDropdown()
+               'sm:opacity-100 sm:pointer-events-auto sm:flex sm:w-24' :  usePage().props.layoutDisplay !== 'wide' && !navStore.getNavigationDropdown()
         }">
 
             <div

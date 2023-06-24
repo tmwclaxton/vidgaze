@@ -70,9 +70,9 @@ const dotsIconShow = computed(() => {
         </div>
         <div  v-if="!hideItem">
             <div class="relative aspect-[21/12] overflow-hidden rounded-md ">
-                <a :href="route('watch.show', {slug: item.slug})">
+                <Link :href="route('watch.show', {slug: item.slug})">
                     <img class="object-cover w-full h-full bg-zinc-900" v-bind:src="item.thumbnail_url"   alt=""/>
-                </a>
+                </Link>
 
                 <!--<Duration />-->
 
@@ -100,28 +100,28 @@ const dotsIconShow = computed(() => {
                     <span
                         class="pt-1 line-clamp-2 overflow-hidden leading-5 font-bold  text-base  inline-flex">
 
-                        <a :href="route('watch.show', {slug: item.slug})" v-text="item.title" :title="item.title" class="pr-2 line-clamp-2 mb-0.5"></a>
+                        <Link :href="route('watch.show', {slug: item.slug})" v-text="item.title" :title="item.title" class="pr-2 line-clamp-2 mb-0.5"></Link>
 
                     </span>
 
                         <div class=" flex flex-row pt-1">
                             <div class=" mt-1 flex-shrink-0">
                                 <div v-if="!channel_page" class="flex-shrink-0 pr-2">
-                                    <a class="without-ring " :href="route('channel.show', {creator: {slug: item.creator.slug}})">
+                                    <Link class="without-ring " :href="route('channel.show', {creator: {slug: item.creator.slug}})">
 
                                         <img v-if="item.creator.avatar_url != null"
                                              class=" pointer-events-auto w-9 aspect-square rounded-full bg-zinc-800 "
                                              v-bind:src="item.creator.avatar_url">
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                             <div class="my-auto">
                                 <div class="  space-y-0    text-xs font-normal">
-                                    <a v-if="!channel_page" :href="route('channel.show', {creator: {slug: item.creator.slug}})"
+                                    <Link v-if="!channel_page" :href="route('channel.show', {creator: {slug: item.creator.slug}})"
                                        class="w-max without-ring pointer-events-auto line-clamp-1 text-hover dark:text-hover-dark  ">
 
                                         <p class="text-sm font-medium " v-text="item.creator.name"></p>
-                                    </a>
+                                    </Link>
 
                                     <div v-if="item.duration != null" class=" info-tag dark:info-tag-dark flex pb-0.5 ">
                                         <!--<ClockIcon class="w-3 h-3 mr-1 my-auto dark:hidden"/>-->
@@ -135,13 +135,13 @@ const dotsIconShow = computed(() => {
                                         <p class="line-clamp-1 capitalize" v-text="(item.preferred_source)"/>
                                     </div>
 
-                                    <a  v-if="item.category != null && !category_page" :href="route('category.show',{slug:item.category.slug})" class=" info-tag dark:info-tag-dark inline-flex mb-0.5 ">
+                                    <Link  v-if="item.category != null && !category_page" :href="route('category.show',{slug:item.category.slug})" class=" info-tag dark:info-tag-dark inline-flex mb-0.5 ">
                                         <!--<ClockIcon class="w-3 h-3 mr-1 .5 my-auto dark:hidden"/>-->
                                         <!--<ClockFillIcon class="w-3 h-3 mr-1 .5 my-auto hidden dark:flex"/>-->
                                         <font-awesome-icon class="my-auto mr-1" :icon="['fas', 'gamepad']" />
                                         <p class="line-clamp-1 font-semibold" v-text="(item.category.name)"/>
 
-                                    </a>
+                                    </Link>
 
                                     <div v-if="item.live_viewer_count > 0" class="
                                         capitalize flex flex-row items-center  text-xs font-semibold

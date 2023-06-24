@@ -51,7 +51,7 @@ const dotsIconShow = computed(() => {
 
 <template>
 
-    <div :id="'box_' + itemType + '_' + item.id" class="relative group  ">
+    <div :id="'box_' + itemType + '_' + item.id" class="relative   ">
         <!--hide content hidden button and cover-->
         <div :id="'hide_' + itemType + '_' + item.id" @click="hideItemToggle" class="w-0 h-0 opacity-0 pointer-events-none " ></div>
         <div  v-if="hideItem" class="w-full h-32 rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex flex-col align-middle justify-center items-center select-none">
@@ -60,11 +60,11 @@ const dotsIconShow = computed(() => {
                 Show
             </div>
         </div>
-        <div  v-if="!hideItem" class="flex flex-row">
-            <div class="relative w-48 lg:w-96 aspect-[21/12] h-max overflow-hidden rounded-md flex-shrink-0">
-                <a :href="route('watch.show', {slug: item.slug})" class="">
+        <div  v-if="!hideItem" class="flex flex-row ">
+            <div class="group relative w-48 lg:w-96 aspect-[21/12] h-max overflow-hidden rounded-md flex-shrink-0">
+                <Link :href="route('watch.show', {slug: item.slug})" class="">
                     <img class="object-cover w-full h-full bg-zinc-900" v-bind:src="item.thumbnail_url"   alt=""/>
-                </a>
+                </Link>
 
                 <!--<Duration />-->
 
@@ -93,28 +93,28 @@ const dotsIconShow = computed(() => {
                     <!-- title -->
                     <span
                         class="pt-1 line-clamp-2 overflow-hidden leading-5  font-bold text-md lg:text-2xl inline-flex">
-                        <a :href="route('watch.show', {slug: item.slug})" v-text="item.title" :title="item.title" class="pr-2 line-clamp-2 mb-0.5 break-all"></a>
+                        <Link :href="route('watch.show', {slug: item.slug})" v-text="item.title" :title="item.title" class="pr-2 line-clamp-2 mb-0.5 break-all"></Link>
                     </span>
 
                         <div class=" flex flex-row pt-1">
                             <div class=" mt-1 flex-shrink-0">
                                 <!--profile picture-->
                                 <div v-if="!channel_page" class="flex-shrink-0 pr-2">
-                                    <a class="without-ring " :href="route('channel.show', {creator: {slug: item.creator.slug}})">
+                                    <Link class="without-ring " :href="route('channel.show', {creator: {slug: item.creator.slug}})">
                                         <img v-if="item.creator.avatar_url != null"
                                              class=" pointer-events-auto w-9 aspect-square rounded-full bg-zinc-800 "
                                              v-bind:src="item.creator.avatar_url">
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                             <div class="my-auto">
                                 <div class="  space-y-0  ">
 
                                     <!--channel name-->
-                                    <a v-if="!channel_page" :href="route('channel.show', {creator: {slug: item.creator.slug}})"
+                                    <Link v-if="!channel_page" :href="route('channel.show', {creator: {slug: item.creator.slug}})"
                                        class="w-max without-ring pointer-events-auto line-clamp-1 text-hover dark:text-hover-dark mb-1 ">
                                         <p class="text-sm sm:text-lg font-bold " v-text="item.creator.name"></p>
-                                    </a>
+                                    </Link>
 
                                     <!--<div v-if="item.duration != null" class=" info-tag dark:info-tag-dark flex pb-0.5 ">-->
                                     <!--    &lt;!&ndash;<ClockIcon class="w-3 h-3 mr-1 my-auto dark:hidden"/>&ndash;&gt;-->

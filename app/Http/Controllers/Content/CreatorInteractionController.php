@@ -9,9 +9,15 @@ use App\Models\StreamModels\Stream;
 use App\Models\VideoModels\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class CreatorInteractionController extends Controller
 {
+    public function index()
+    {
+        return Inertia::render('Viewer/Feed/Subscriptions/SubscriptionsIndex');
+    }
+
     public function getSubscriptionFeed()
     {
         $subscriptions = Auth::user()->creator->subscriptions;

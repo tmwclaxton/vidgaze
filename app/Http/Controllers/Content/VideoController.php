@@ -4,12 +4,9 @@ namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\VideoCollection;
-use App\Models\CreatorModels\ChannelDisinterest;
+use App\Http\Resources\VideoResource;
 use App\Models\CreatorModels\CreatorInteraction;
-use App\Models\PlaylistModels\Playlist;
-use App\Models\PlaylistModels\PlaylistVideo;
 use App\Models\VideoModels\Video;
-use App\Models\VideoModels\VideoDisinterest;
 use App\Models\VideoModels\VideoInteraction;
 use App\Models\VideoModels\VideoView;
 use Illuminate\Http\Request;
@@ -17,7 +14,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use function Deployer\Support\array_merge_alternate;
 
 class VideoController extends Controller
 {
@@ -30,10 +26,14 @@ class VideoController extends Controller
     // update - when form submitted save the edits
     // destroy - delete one item
 
-    public function index()
+    public function show(Video $video)
     {
-        return Inertia::render('Viewer/Videos/VideosIndex');
+        $this->checkVisibilityAndOwnership($video);
+        return Inertia::render('Viewer/Watch/Watch', ['item' => new VideoResource($video)]);
     }
+
+
+
     public function shorts()
     {
         return Inertia::render('Viewer/Shorts/ShortsIndex');
@@ -159,5 +159,10 @@ class VideoController extends Controller
         return $data;
     }
 
-
+    private function checkVisibilityAndOwnership($item) {
+        //forbidden if visibility is set to private and you don't own it
+        if ($item->visibility == 'private' && $item->creator_id != Auth::user()->creator->id) {
+            abort(401);
+        }
+    }
 }
