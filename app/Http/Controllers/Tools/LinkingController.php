@@ -14,6 +14,7 @@ use App\Helpers\PlatformAPIs\YouTube;
 use App\Http\Controllers\Controller;
 use App\Models\CreatorModels\CreatorSource;
 use Google_Service_YouTube;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 
 class LinkingController extends Controller
@@ -47,14 +48,43 @@ class LinkingController extends Controller
                 }
 
             case Platform::Dailymotion->value:
-                try {
+//                try {
                     $dailymotion_client = (new Dailymotion(true))->client;
-                    $dailymotion_client->getAccessToken();
+//                $dailymotion_client->getAccessToken();
 
+
+                $client = new Client();
+
+                $tokenEndpoint = 'https://api.dailymotion.com/oauth/token';
+                $clientID = config('platforms.dailymotion.client_key');
+                $clientSecret = config('platforms.dailymotion.client_secret');
+                $redirectURI = config('platforms.dailymotion.redirect_url');
+                $authorizationCode = $code;
+
+                $response = $client->post($tokenEndpoint, [
+                    'form_params' => [
+                        'grant_type' => 'authorization_code',
+                        'client_id' => $clientID,
+                        'client_secret' => $clientSecret,
+                        'redirect_uri' => $redirectURI,
+                        'code' => $authorizationCode,
+                    ],
+                ]);
+
+                $responseData = json_decode($response->getBody(), true);
+                dd($responseData);
+                $accessToken = $responseData['access_token'];
+                $expiresIn = $responseData['expires_in'];
+                $refreshToken = $responseData['refresh_token'];
+
+
+
+                $dailymotion_client->getAccessToken();
                     $response = $dailymotion_client->get('/me', array('fields' => array('id')));
 
                     self::breakIfChannelClaimed($response['id'], Platform::Dailymotion);
 
+                    dd($response);
                     $source = new CreatorSource();
                     $source->source_name = Platform::Dailymotion->value;
                     $source->external_channel_id = $response['id'];
@@ -62,9 +92,9 @@ class LinkingController extends Controller
                     $source->save();
 
                     return redirect()->route('studio');
-                } catch (\Exception $e) {
-                    return abort('401');
-                }
+//                } catch (\Exception $e) {
+//                    return abort('401');
+//                }
             case Platform::Vimeo->value:
                 try {
                     $vimeo = resolve(\App\Helpers\PlatformAPIs\Vimeo::class)->client;
