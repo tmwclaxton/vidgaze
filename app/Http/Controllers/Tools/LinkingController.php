@@ -10,6 +10,7 @@ use App\Helpers\OAuth\LogInWithYouTube;
 use App\Helpers\PlatformAPIs\Dailymotion;
 use App\Helpers\PlatformAPIs\Google;
 use App\Helpers\PlatformAPIs\Twitch;
+use App\Helpers\PlatformAPIs\Vimeo;
 use App\Helpers\PlatformAPIs\YouTube;
 use App\Http\Controllers\Controller;
 use App\Models\CreatorModels\CreatorSource;
@@ -39,7 +40,7 @@ class LinkingController extends Controller
                         'refresh_token' => $yt->client->getClient()->getAccessToken()['refresh_token'],
                     ]);
 
-                    return redirect()->route('studio');
+                    return redirect()->route('studio.dashboard');
                 } catch (\Exception $e) {
                     if($e->getCode() == 403) {
                         return abort('403', $e->getMessage());
@@ -91,31 +92,32 @@ class LinkingController extends Controller
                     $source->creator_id = Auth::user()->creator->id;
                     $source->save();
 
-                    return redirect()->route('studio');
+
+                    return redirect()->route('studio.dashboard');
 //                } catch (\Exception $e) {
 //                    return abort('401');
 //                }
             case Platform::Vimeo->value:
-                try {
-                    $vimeo = resolve(\App\Helpers\PlatformAPIs\Vimeo::class)->client;
-                    $token = $vimeo->accessToken($code, convertRedirectPathToUrl(config('platforms.vimeo.redirect_url')));
-                    $vimeo->setToken($token['body']['access_token']);
+//                try {
 
-                    $me = $vimeo->request('/me');
-                    $id = str_replace("/users/", "", $me["body"]["uri"]);
+                    $vimeo = (new Vimeo($code));
 
-                    self::breakIfChannelClaimed($id, Platform::Vimeo);
+                    $vm_channel_id = $vimeo->getMyCreator()->id;
 
-                    $source = new CreatorSource();
-                    $source->source_name = Platform::Vimeo->value;
-                    $source->external_channel_id = $id;
-                    $source->creator_id = Auth::user()->creator->id;
-                    $source->save();
+                    self::breakIfChannelClaimed($vm_channel_id, Platform::Vimeo);
 
-                    return redirect()->route('studio');
-                } catch (\Exception $e) {
-                    return abort('401');
-                }
+                    CreatorSource::create([
+                        'source_name' => Platform::Vimeo->value,
+                        'external_channel_id' => $vm_channel_id,
+                        'creator_id' => Auth::user()->creator->id,
+                        'access_token' => $vimeo->access_token,
+                        'refresh_token' => null,
+                    ]);
+
+                return redirect()->route('studio.dashboard');
+//                } catch (\Exception $e) {
+//                    return abort('401');
+//                }
             case Platform::Twitch->value:
                 try {
                     $twitch_oauth = resolve(Twitch::class)->client->getOauthApi();
@@ -139,7 +141,7 @@ class LinkingController extends Controller
                     $source->creator_id = Auth::user()->creator->id;
                     $source->save();
 
-                    return redirect()->route('studio');
+                    return redirect()->route('studio.dashboard');
                 } catch (\Exception $e) {
                     return abort('401');
                 }
@@ -167,8 +169,11 @@ class LinkingController extends Controller
 
     private static function breakIfChannelClaimed(string $externalChannelID, Platform $source)
     {
-        $user = CreatorSource::where('external_channel_id', $externalChannelID)
-            ->where('source_name', $source->name)->first()->creator->user();
+        $source = CreatorSource::where('external_channel_id', $externalChannelID)
+            ->where('source_name', $source->name)->first();
+
+        if(!$source) return;
+        $user = $source->creator->user();
 
         if( $user->exists()) {
             if($user->first()->id == auth()->user()->id){

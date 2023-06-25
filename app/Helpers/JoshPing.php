@@ -20,7 +20,7 @@ class JoshPing
 
     public static function ping()
     {
-        dd(Tools::convertRedirectPathToUrl(config('platforms.dailymotion.redirect_url')));
+        dd(Tools::convertRedirectPathToUrl(config('platforms.vimeo.redirect_url')));
 
 
         return dd('pong');
