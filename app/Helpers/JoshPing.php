@@ -20,8 +20,8 @@ class JoshPing
 
     public static function ping()
     {
-        dd(Tools::convertRedirectPathToUrl(config('platforms.vimeo.redirect_url')));
 
+        dd(auth()->user()->creator->sources()->get('source_name')->toArray());
 
         return dd('pong');
     }

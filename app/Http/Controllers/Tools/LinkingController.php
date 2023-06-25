@@ -98,7 +98,7 @@ class LinkingController extends Controller
 //                    return abort('401');
 //                }
             case Platform::Vimeo->value:
-//                try {
+                try {
 
                     $vimeo = (new Vimeo($code));
 
@@ -115,31 +115,27 @@ class LinkingController extends Controller
                     ]);
 
                 return redirect()->route('studio.dashboard');
-//                } catch (\Exception $e) {
-//                    return abort('401');
-//                }
+                } catch (\Exception $e) {
+                    return abort('401');
+                }
             case Platform::Twitch->value:
                 try {
                     $twitch_oauth = resolve(Twitch::class)->client->getOauthApi();
-                    $token = $twitch_oauth->getUserAccessToken($code,convertRedirectPathToUrl(strval(config('platforms.twitch.redirect_url'))));
+                    $tokens = json_decode($twitch_oauth->getUserAccessToken($code,convertRedirectPathToUrl(strval(config('platforms.twitch.redirect_url'))))->getBody()->getContents());
 
-                    $data = json_decode($token->getBody()->getContents());
-                    // Your bearer token
-                    $twitch_access_token = $data->access_token ?? null;
 
-                    // Make the API call. A ResponseInterface object is returned.
-                    $response = resolve(Twitch::class)->client->getUsersApi()->getUserByAccessToken($twitch_access_token);
-                    // Get and decode the actual content sent by Twitch.
-                    $responseContent = json_decode($response->getBody()->getContents(),true);
-                    $id = $responseContent["data"][0]["id"];
+                    $twitch = new Twitch($tokens->access_token);
+                    $twitch_channel_id = $twitch->getMyCreator()->id;
 
-                    self::breakIfChannelClaimed($id, Platform::Twitch);
+                    self::breakIfChannelClaimed($twitch_channel_id, Platform::Twitch);
 
-                    $source = new CreatorSource();
-                    $source->source_name = Platform::Twitch->value;
-                    $source->external_channel_id = $id;
-                    $source->creator_id = Auth::user()->creator->id;
-                    $source->save();
+                    CreatorSource::create([
+                        'source_name' => Platform::Twitch->value,
+                        'external_channel_id' => $twitch_channel_id,
+                        'creator_id' => Auth::user()->creator->id,
+                        'access_token' => $tokens->access_token,
+                        'refresh_token' => $tokens->refresh_token
+                    ]);
 
                     return redirect()->route('studio.dashboard');
                 } catch (\Exception $e) {
