@@ -12,6 +12,8 @@ const name = 'Watch';
 
 const theatre = ref(false);
 
+
+
 const layout = AuthenticatedLayout;
 
 const video = ref(null);
@@ -31,6 +33,10 @@ const props = defineProps({
         required: true
 
 
+    },
+    type: {
+        type: String,
+        required: true
     }
 });
 
