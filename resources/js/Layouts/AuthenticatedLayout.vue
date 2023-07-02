@@ -30,11 +30,7 @@ const loadScript = (src, id) => {
 // once 4 loadscripts are loaded update state of playerStore
 
 const loadScripts = async () => {
-    await loadScript('https://geo.dailymotion.com/libs/player/xfjc3.js', 'dailymotion-api')
-    await loadScript('https://www.youtube.com/iframe_api', 'youtube-api');
-    await loadScript('https://player.vimeo.com/api/player.js', 'vimeo-api');
-    await loadScript('https://player.twitch.tv/js/embed/v1.js', 'twitch-api');
-    playerStore.scriptsLoaded = true
+
 };
 
 onMounted(() => {

@@ -36,6 +36,7 @@ class VideoResource extends JsonResource
             // capitalize the first letter of the preference and if youtube capitalize the 'T' in 'YouTube'
             'preferred_source' => capitalisePlatformName($this->preferred_source),
             'external_id' => $this->getPreferredSourceID(),
+            'type' => 'video',
         ];
     }
 }

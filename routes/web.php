@@ -38,6 +38,7 @@ Route::get('/shares', [ShareController::class, 'index'])->name('share.index');
 
 // view listener route
 Route::post('/view-listener', [ViewListenerController::class,'message'])->name('view.listener');
+//Route::get('/view-listener', [ViewListenerController::class,'
 
 
 

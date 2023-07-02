@@ -29,7 +29,10 @@ class VideoController extends Controller
     public function show(Video $video)
     {
         $this->checkVisibilityAndOwnership($video);
-        return Inertia::render('Viewer/Watch/Watch', ['item' => new VideoResource($video)]);
+        return Inertia::render('Viewer/Watch/Watch', [
+            'item' => new VideoResource($video),
+            'type' => 'video'
+        ]);
     }
 
 

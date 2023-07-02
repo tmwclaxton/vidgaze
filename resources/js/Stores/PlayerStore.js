@@ -2,16 +2,18 @@ import {defineStore} from 'pinia'
 import {useQueueStore} from "@/Stores/QueueStore";
 import {toRaw} from "vue";
 import {usePage} from "@inertiajs/vue3";
-
+import axios from "axios";
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
             debug: true,
+
+            scriptsLoaded: false, // this is true when the scripts have been loaded
             players: [], //in the form of [[type => "video", object => {id: 1, ...}, player => player_object], ...] this is so we can have multiple players on the page like for shorts and be able to control them individually
-            isViewRecording: false,
-            viewRecordTimer: null,
-            viewRecordDuration: 0,
-            scriptsLoaded: false
+            isViewRecording: false,  // this is true when we are recording the view of a video
+            viewRecordTimer: null, // the timer that is running to record the view
+            viewRecordDuration: 0, // this is the total time spent watching the video
+            currentTimePosition: 0, // i.e. 0 seconds into the video or 45 seconds into the video, this is the current time position of the video this helps when switching between watch page and mini player
         }
     },
     getters: {
@@ -19,8 +21,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // Compute the value of showMiniPlayer based on your logic
             // For example, you can check if players array is not empty
             let queueStore = useQueueStore();
-            // also depends on what page you are on ...
-            return queueStore.items !== undefined && queueStore.items.length > 0 && usePage().url !== '/shorts';
+            // also depends on what page you are on ... // url doesn't contian shorts or watch
+            return queueStore.items !== undefined && queueStore.items.length > 0 && usePage().url !== '/shorts' && !route().current('watch.show');
         },
         shortsPage() {
             // use ziggy to check if we are on the shorts page
@@ -34,6 +36,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 console.log(message);
             }
         },
+
 
 
         endVideo(external_id) {
@@ -66,7 +69,9 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         startViewRecord(external_id) {
+            const interval = 2.5;
             this.debugMessage('start view record');
+            console.log(external_id);
             if (!this.isViewRecording) {
                 this.isViewRecording = true;
                 let player = this.findPlayer(external_id);
@@ -75,8 +80,33 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     try {
                         const isPlaying = await this.isPlayerPlaying(player);
                         if (isPlaying) {
-                            this.viewRecordDuration += 5;
+                            this.viewRecordDuration += interval;
                             this.debugMessage('STARTVIEWRECORD: View Record Duration: ' + this.viewRecordDuration);
+
+                            // console.log(
+                            //     [
+                            //         player.object.id,
+                            //         player.object.type,
+                            //         this.viewRecordDuration,
+                            //         this.currentTimePosition
+                            //
+                            //     ]
+                            // );
+
+                            // check no values are null
+                            if (player.object.id && player.object.type && this.viewRecordDuration && this.currentTimePosition) {
+                                //using ziggy to get the view record route view.listener
+                                axios.post(route('view.listener'), {
+                                    item_id: player.object.id,
+                                    type: player.object.type,
+                                    watch_duration: this.viewRecordDuration,
+                                    view_point: this.currentTimePosition
+                                });
+                            } else {
+                                console.log('null values');
+                            }
+
+
                         } else {
                             this.debugMessage('STARTVIEWRECORD: Error: Player is not playing');
                             clearInterval(this.viewRecordTimer);
@@ -86,7 +116,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                         this.debugMessage('STARTVIEWRECORD: Error: ' + error);
                         clearInterval(this.viewRecordTimer);
                     }
-                }, 5000);
+                }, interval * 1000);
             }
         },
 
@@ -109,6 +139,10 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     const state = await player.player.getPlayerState();
                     // this.debugMessage('YouTube player state: ' + state);
                     playing = state === 1;
+
+                    // while we are here lets get the current time position
+                    this.currentTimePosition = await player.player.getCurrentTime();
+
                 } catch (error) {
                     throw new Error(error);
                 }
@@ -126,6 +160,10 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     paused = await toRaw(player.player).getPaused();
                     // this.debugMessage('Vimeo player state: ' + paused);
                     playing = !paused;
+
+                    // while we are here lets get the current time position
+                    this.currentTimePosition = await toRaw(player.player).getCurrentTime();
+
                 } catch (error) {
                     throw new Error(error);
                 }
@@ -135,21 +173,35 @@ export const usePlayerStore = defineStore('PlayerStore', {
             else if (player.object.preferred_source === 'Dailymotion') {
                 try {
                     const state = await player.player.getState();
+                    console.log(state);
+
                     playing = state.playerIsPlaying;
-                    // this.debugMessage('Dailymotion player state: ' + playerIsPlaying);
+                    console.log(playing);
+
+                    // while we are here lets get the current time position
+                    this.currentTimePosition = state.videoTime;
+
+                    this.debugMessage('Dailymotion player state: ' + playing);
+
+
                 } catch (error) {
                     throw new Error(error);
                 }
             } else if (player.object.preferred_source === 'Twitch') {
-                let paused = await toRaw(player.player).isPaused();
-                playing = !paused;
-                this.debugMessage('Twitch player state: ' + playing);
+                // let player = await toRaw(player.player);
+                //
+                // let paused = await toRaw(player.player).isPaused();
+                // playing = !paused;
+                // this.debugMessage('Twitch player state: ' + playing);
+                //
+                // // while we are here lets get the current time position
+                // this.currentTimePosition = await toRaw(player.player).getCurrentTime();
             }
 
             return playing;
         },
 
-        pauseViewRecord(external_id) {
+        pauseViewRecord(external_id = null) {
             this.debugMessage('pause view record' + external_id);
             if (this.isViewRecording) {
                 this.isViewRecording = false;
@@ -158,7 +210,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         },
 
-        stopViewRecord(external_id) {
+        stopViewRecord(external_id = null) {
             this.debugMessage('stop view record' + external_id);
             if (this.isViewRecording) {
                 this.isViewRecording = false;
@@ -203,12 +255,41 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
 
+        async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false, checkViewHistoryStartTime = true) {
 
-        async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false) {
+            // run this.loadScripts() but wait for it to finish the scripts to actually load
 
-            //create player_div element inside player_div_holder
+            // until scriptsLoaded is true wait 1 second and try again
+            if (!this.scriptsLoaded) {
+                await this.loadScripts(); // don't worry about this running multiple times, it checks if the script by id exists before trying to add it again
+                setTimeout(() => {
+                    this.debugMessage('scripts not loaded yet, trying again in 1 second')
+                    this.buildPlayer(playerDivHolderID, object, startTime, autoplay, checkViewHistoryStartTime);
+                }, 1000);
+                return;
+            }
+
+            if (checkViewHistoryStartTime && usePage().props.auth.user !== null) {
+                this.debugMessage('checking view history start time')
+                // get the view history for this video and set the start time to the last time they watched it
+                const videoId = object.id;
+                try {
+                    const response = await axios.get(route('video.interaction', {videoId: videoId}));
+                    const data = response.data;
+                    if (data !== undefined && data.view_point !== null) {
+                        this.debugMessage('setting start time to: ' + data.view_point)
+                        startTime = data.view_point;
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+
+            }
+
+
+            //create player_div element inside miniplayer_div_holder
             if (playerDivHolderID === null) {
-                playerDivHolderID = document.getElementById('player_div_holder');
+                playerDivHolderID = document.getElementById('miniplayer_div_holder');
             } else {
                 playerDivHolderID = document.getElementById(playerDivHolderID);
             }
@@ -241,17 +322,16 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // // create player
             if (object.preferred_source === "YouTube") {
                 this.buildYouTubePlayer(playerDiv, object, startTime, autoplay);
+                playerDiv.removeAttribute('style');
             } else if (object.preferred_source === "Vimeo") {
                 this.buildVimeoPlayer(playerDiv, object, startTime, autoplay);
+                playerDiv.removeAttribute('style');
             } else if (object.preferred_source === "Dailymotion") {
                 this.buildDailymotionPlayer(playerDiv, object, startTime, autoplay);
+                playerDiv.removeAttribute('style');
             } else if (object.preferred_source === "Twitch") {
                 this.buildTwitchPlayer(playerDiv, object, startTime, autoplay);
             }
-
-
-            playerDiv.removeAttribute('style');
-
         },
 
         buildYouTubePlayer(playerDiv, object, startTime = 0, autoplay = false) {
@@ -389,8 +469,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         buildTwitchPlayer(playerDiv, object, startTime = 0, autoplay = false) {
-            let external_id = object.external_id;
-            // let external_id = 'monstercat';
+            // let external_id = object.external_id;
+            let external_id = 'monstercat';
             const player = new Twitch.Player(playerDiv, {
                 channel: external_id,
                 parent: ["localhost","127.0.0.1","vidgaze.tv","www.vidgaze.tv","www.staging.vidgaze.tv","staging.vidgaze.tv"],
@@ -400,7 +480,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 controls: true,
             });
 
-            this.pushPlayer(player);
             // on play start view record
             player.addEventListener(Twitch.Player.PLAY, () => {
                 this.startViewRecord(external_id);
@@ -416,12 +495,13 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 this.endVideo(external_id);
             });
 
+            this.pushPlayer(player, object);
         },
 
         pushPlayer(player, object) {
             // check if player is already in players array
             if (this.findPlayer(object.external_id)) {
-                // this.debugMessage('player already in array')
+                this.debugMessage('player already in array')
                 return;
             }
 
@@ -500,5 +580,29 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 await player.player.pauseVideo();
             }
         },
+
+
+
+        async loadScript(src, id)  {
+            if (!document.getElementById(id)) {
+                const tag = document.createElement('script');
+                tag.src = src;
+                tag.id = id;
+                const firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            }
+        },
+
+        async loadScripts() {
+            this.debugMessage('load scripts');
+            // load scripts
+            await this.loadScript('https://geo.dailymotion.com/libs/player/xfjc3.js', 'dailymotion-api')
+            await this.loadScript('https://www.youtube.com/iframe_api', 'youtube-api');
+            await this.loadScript('https://player.vimeo.com/api/player.js', 'vimeo-api');
+            await this.loadScript('https://player.twitch.tv/js/embed/v1.js', 'twitch-api');
+
+            this.scriptsLoaded = true
+
+        }
     }
 })
