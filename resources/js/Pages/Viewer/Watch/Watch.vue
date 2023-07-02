@@ -1,9 +1,10 @@
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {onMounted, onUnmounted, ref, watch} from "vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {usePlayerStore} from "@/Stores/PlayerStore";
 import {useQueueStore} from "@/Stores/QueueStore";
+import {round} from "lodash";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -43,27 +44,27 @@ const props = defineProps({
 onMounted( () => {
     // console.log(props.item.data);
 
+    playerStore.destroyPlayers();
+
 
     // if video/stream was already playing by accessing the queueStore's index and is same as props.item.external_id, resume from where it left off
-    const queueStoreExternalId = queueStore.items[queueStore.index]['object'].external_id;
-    if (queueStoreExternalId !== null && queueStoreExternalId === props.item.external_id) {
-        console.log("resume from where it left off");
+    const queueStoreItem = queueStore.items[queueStore.index];
+    const queueStoreExternalId = queueStoreItem !== undefined ? queueStoreItem.object.external_id : null;
 
-        // grab the current time from the playerStore
+    // check if video was on queue or not
+    if (queueStoreExternalId === null || queueStoreExternalId !== props.item.data.external_id) {
 
-        // first step find the player
-        playerStore.findPlayer(queueStoreExternalId);
-        // second step get the current time
-        const currentTime = playerStore.getCurrentTime();
-
-        playerStore.buildPlayer('watch_player', props.item.data, currentTime, true)
-    } else {
         console.log("start from beginning");
-        // playerStore.createPlayer('watch_player', props.item.data.video_id);
-        playerStore.buildPlayer('watch_player', props.item.data, 0, true)
+        playerStore.currentTimePosition = 0;
+        playerStore.buildPlayer('watch_player', props.item.data, 0, true);
+    } else {
+
+        console.log("resume from where it left off");
+        const currentTime = round(playerStore.currentTimePosition);
+        playerStore.buildPlayer('watch_player', props.item.data, currentTime, true);
+
+
     }
-    // create player
-    playerStore.buildPlayer('watch_player', props.item.data, 0, true)
 
 
 
@@ -78,13 +79,38 @@ onMounted( () => {
 
 });
 
-watch(() => playerStore.scriptsLoaded, (scriptsLoaded) => {
-    if (scriptsLoaded) {
-        console.log("scripts loaded");
-        // playerStore.createPlayer('watch_player', props.item.data.video_id);
-        playerStore.buildPlayer('watch_player', props.item.data, 0, true)
+onUnmounted(() => {
+    // stop view record
+    playerStore.stopViewRecord();
+    // destroy players
+    playerStore.destroyPlayers();
+
+    // watch showMiniPlayer if it is changed to true check if queueStore has any items if so then build the player
+    if (queueStore.items.length > 0) {
+
+
+        const queueStoreItem = queueStore.items[queueStore.index];
+        const queueStoreExternalId = queueStoreItem !== undefined ? queueStoreItem.object.external_id : null;
+
+        let currentTime = 0;
+
+        // if the video that was playing was in the queue get time and rebuild player with time in mini player
+        if (queueStoreExternalId !== null && queueStoreExternalId === props.item.data.external_id) {
+            // get the current time from the playerStore
+            currentTime = round(playerStore.currentTimePosition);
+
+        } else {
+            // get time by checking the server's view history time
+            currentTime = round(250);
+
+        }
+
+        playerStore.buildPlayer('miniplayer_div_holder', queueStoreItem.object, currentTime, true);
     }
 });
+
+
+
 
 
 </script>

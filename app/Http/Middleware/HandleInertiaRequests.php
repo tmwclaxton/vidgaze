@@ -42,7 +42,7 @@ class HandleInertiaRequests extends Middleware
 
         if ($request->routeIs('about') || $request->routeIs('watch.*')) {
             $layoutDisplay = 'wide';
-        } elseif ($request->routeIs('login') || $request->routeIs('auth.*')) {
+        } elseif ($request->routeIs('login') || $request->routeIs('register') || $request->routeIs('password.request') || $request->routeIs('auth.*')) {
             $layoutDisplay = 'auth';
         } elseif ($request->routeIs('studio.*')) {
             $layoutDisplay = 'studio';

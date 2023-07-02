@@ -33,6 +33,7 @@ class StreamResource extends JsonResource
             'thumbnail_url' => $this->thumbnail_url,
             'creator' => new CreatorResource( $this->creator()->first() ),
             'external_id' => $this->getPreferredSourceID(),
+            'type' => 'stream',
         ];
     }
 }

@@ -2,7 +2,6 @@ import {defineStore} from 'pinia'
 import {useQueueStore} from "@/Stores/QueueStore";
 import {toRaw} from "vue";
 import {usePage} from "@inertiajs/vue3";
-
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
@@ -21,8 +20,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // Compute the value of showMiniPlayer based on your logic
             // For example, you can check if players array is not empty
             let queueStore = useQueueStore();
-            // also depends on what page you are on ...
-            return queueStore.items !== undefined && queueStore.items.length > 0 && usePage().url !== '/shorts';
+            // also depends on what page you are on ... // url doesn't contian shorts or watch
+            return queueStore.items !== undefined && queueStore.items.length > 0 && usePage().url !== '/shorts' && !route().current('watch.show');
         },
         shortsPage() {
             // use ziggy to check if we are on the shorts page
@@ -36,6 +35,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 console.log(message);
             }
         },
+
 
 
         endVideo(external_id) {
@@ -73,24 +73,49 @@ export const usePlayerStore = defineStore('PlayerStore', {
             console.log(external_id);
             if (!this.isViewRecording) {
                 this.isViewRecording = true;
-                // let player = this.findPlayer(external_id);
+                let player = this.findPlayer(external_id);
 
-                // this.viewRecordTimer = setInterval(async () => {
-                //     try {
-                //         const isPlaying = await this.isPlayerPlaying(player);
-                //         if (isPlaying) {
-                //             this.viewRecordDuration += interval;
-                //             this.debugMessage('STARTVIEWRECORD: View Record Duration: ' + this.viewRecordDuration);
-                //         } else {
-                //             this.debugMessage('STARTVIEWRECORD: Error: Player is not playing');
-                //             clearInterval(this.viewRecordTimer);
-                //
-                //         }
-                //     } catch (error) {
-                //         this.debugMessage('STARTVIEWRECORD: Error: ' + error);
-                //         clearInterval(this.viewRecordTimer);
-                //     }
-                // }, interval * 1000);
+                this.viewRecordTimer = setInterval(async () => {
+                    try {
+                        const isPlaying = await this.isPlayerPlaying(player);
+                        if (isPlaying) {
+                            this.viewRecordDuration += interval;
+                            this.debugMessage('STARTVIEWRECORD: View Record Duration: ' + this.viewRecordDuration);
+
+                            // console.log(
+                            //     [
+                            //         player.object.id,
+                            //         player.object.type,
+                            //         this.viewRecordDuration,
+                            //         this.currentTimePosition
+                            //
+                            //     ]
+                            // );
+
+                            // check no values are null
+                            if (player.object.id && player.object.type && this.viewRecordDuration && this.currentTimePosition) {
+                                //using ziggy to get the view record route view.listener
+                                axios.post(route('view.listener'), {
+                                    item_id: player.object.id,
+                                    type: player.object.type,
+                                    watch_duration: this.viewRecordDuration,
+                                    view_point: this.currentTimePosition
+                                });
+                            } else {
+                                console.log('null values');
+                            }
+
+
+                        } else {
+                            this.debugMessage('STARTVIEWRECORD: Error: Player is not playing');
+                            clearInterval(this.viewRecordTimer);
+
+                        }
+                    } catch (error) {
+                        this.debugMessage('STARTVIEWRECORD: Error: ' + error);
+                        clearInterval(this.viewRecordTimer);
+                    }
+                }, interval * 1000);
             }
         },
 
@@ -175,7 +200,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             return playing;
         },
 
-        pauseViewRecord(external_id) {
+        pauseViewRecord(external_id = null) {
             this.debugMessage('pause view record' + external_id);
             if (this.isViewRecording) {
                 this.isViewRecording = false;
@@ -184,7 +209,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         },
 
-        stopViewRecord(external_id) {
+        stopViewRecord(external_id = null) {
             this.debugMessage('stop view record' + external_id);
             if (this.isViewRecording) {
                 this.isViewRecording = false;
@@ -244,9 +269,9 @@ export const usePlayerStore = defineStore('PlayerStore', {
             }
 
 
-            //create player_div element inside player_div_holder
+            //create player_div element inside miniplayer_div_holder
             if (playerDivHolderID === null) {
-                playerDivHolderID = document.getElementById('player_div_holder');
+                playerDivHolderID = document.getElementById('miniplayer_div_holder');
             } else {
                 playerDivHolderID = document.getElementById(playerDivHolderID);
             }
@@ -289,10 +314,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
             } else if (object.preferred_source === "Twitch") {
                 this.buildTwitchPlayer(playerDiv, object, startTime, autoplay);
             }
-
-
-
-
         },
 
         buildYouTubePlayer(playerDiv, object, startTime = 0, autoplay = false) {

@@ -10,51 +10,61 @@ use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoInteraction;
 use App\Models\VideoModels\VideoView;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class ViewListenerController extends Controller
 {
-    const LOGGED_OUT_VIEWER_ID = 'empty';
+    const LOGGED_OUT_VIEWER_ID = null;
     private Video $video;
     private Stream $stream;
     private PodcastEpisode $podcast;
+    private string $error_message = '';
 
 
     public function message(Request $request)
     {
-
         $data = $request->all();
         $item_id = $data['item_id'] ?? null;
         $type = $data['type'] ?? null;
         $watch_duration = $data['watch_duration'] ?? null; //how long watch
-        $token = $data['token'] ?? null;
         $view_point = $data['view_point'] ?? null; //where they watched up to
 
         // if logged in
         if (!auth()->check()) {
             $viewer_id = self::LOGGED_OUT_VIEWER_ID;
         } else {
-            $viewer_id = auth()->user()->id;
+            $viewer_id = auth()->user()->creator->id;
         }
 
         // get session id
         $session_id = $request->session()->getId();
 
         // Check if a client with the same data exists
-        $liveClient = LiveClient::where(['item_id' => $item_id,'type' => $type,'viewer_id' => $viewer_id, 'session_id'])->first();
+        $liveClient = LiveClient::where(
+            [
+                'viewer_id' => $viewer_id,
+                'session_id' => $session_id,
+                'item_id' => $item_id,
+                'type' => $type,
+            ])->first();
 
         // If no client with the same token exists, create a new client
         if (!$liveClient) {
+
             $liveClient = new LiveClient();
-            $liveClient->token = $token;
+            $liveClient->viewer_id = $viewer_id;
+            $liveClient->session_id = $session_id;
             $liveClient->item_id = $item_id;
             $liveClient->type = $type;
             $liveClient->save();
+
             return response()->json(['success' => 'New client created'], 200);
         }
 
         $liveClient->touch();
 
         if($liveClient->type === "video") {
+
             // we only need to find the video model if we haven't already counted the view or live viewer count
             if ($liveClient->live_viewer_counted === false || $liveClient->view_counted === false) {
                 $this->video = Video::find($liveClient->item_id);
@@ -79,6 +89,11 @@ class ViewListenerController extends Controller
                 }
             }
 
+            if (Auth()->check()) {
+                // Record the view point only if logged in
+                $this->recordVideoViewPoint($viewer_id, $item_id, $view_point);
+            }
+
             //increment view count on video model
             if ( $liveClient->view_counted === false ) {
                 if ($viewer_id !== self::LOGGED_OUT_VIEWER_ID ) {
@@ -89,9 +104,6 @@ class ViewListenerController extends Controller
                         // Attempt to increment the view count
                         $this->incrementViewCount($liveClient);
                     }
-
-                    // Record the view point only if logged in
-                    $this->recordVideoViewPoint($viewer_id, $item_id, $view_point);
 
                 } else {
                     // if not logged in increment view count threshold is higher
@@ -105,7 +117,11 @@ class ViewListenerController extends Controller
                 }
             }
 
-            return response()->json(['success' => 'View recorded'], 200);
+            return response()->json([
+                'success' => 'View recorded',
+                'message' => $this->error_message,
+
+            ], 200);
 
         }
 
@@ -146,7 +162,7 @@ class ViewListenerController extends Controller
         return response()->json(['error' => 'Invalid type'], 400);
     }
 
-    private function recordVideoViewPoint(string $viewer_id, string $item_id, int $viewPoint): void
+    private function recordVideoViewPoint(mixed $viewer_id, string $item_id, int $viewPoint): void
     {
         //this records where in the video was watched to
         VideoInteraction::updateOrCreate(
@@ -155,37 +171,42 @@ class ViewListenerController extends Controller
         )->update(['view_point' => $viewPoint]);
     }
 
-    private function recordVideoView(string $viewer_id, string $item_id, string $session_id, int $watch_duration): void
+    private function recordVideoView(mixed $viewer_id, string $item_id, string $session_id, int $watch_duration): void
     {
-        // Retrieve the view for the given viewer, video, and session
+        // Retrieve the view for the given viewer, video, and session within the last 5 minutes otherwise create a new view
         $view = VideoView::where([
             'session_id' => $session_id,
             'video_id' => $item_id,
-        ])->orWhere([
+        ])->where([
             'viewer_id' => $viewer_id,
             'video_id' => $item_id,
-        ])->first();
+        ])->where('created_at', '>=', Carbon::now()->subMinutes(5))->get()->first();
+
+        //$this->error_message = "item_id: $item_id, viewer_id: $viewer_id, session_id: $session_id, watch_duration: $watch_duration";
+
+
         // If the view does not exist, create a new view if the duration is under 2 minutes
         if ($view === null) {
-
-            if ($watch_duration <= 120) {
-                if ($viewer_id !== self::LOGGED_OUT_VIEWER_ID) {
-                    //create video view
-                    $videoView = VideoView::create([
-                        'viewer_id' => $viewer_id,
-                        'video_id' => $item_id,
-                        'session_id' => $session_id,
-                        'duration' => $watch_duration
-                    ]);
-                } else {
-                    $videoView = VideoView::create([
-                        'video_id' => $item_id,
-                        'session_id' => $session_id,
-                        'duration' => $watch_duration
-                    ]);
-                }
-                $videoView->save();
+            if ($watch_duration >= 120) { // check that user isn't trying to cheat the system
+                return;
             }
+            if ($viewer_id !== self::LOGGED_OUT_VIEWER_ID) {
+                //create video view
+                $videoView = VideoView::create([
+                    'viewer_id' => $viewer_id,
+                    'video_id' => $item_id,
+                    'session_id' => $session_id,
+                    'duration' => $watch_duration
+                ]);
+            } else {
+                $videoView = VideoView::create([
+                    'video_id' => $item_id,
+                    'session_id' => $session_id,
+                    'duration' => $watch_duration
+                ]);
+            }
+            $videoView->save();
+
         } else {
             // If the view exists, update the duration if the difference between the new and old duration is under 20 seconds
             // and the total duration is under 2 minutes since the last update

@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {onMounted, onUnmounted, ref, watch} from "vue";
 
 import {usePlayerStore} from "@/Stores/PlayerStore";
 import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
@@ -9,7 +9,7 @@ import CornerInfo from "@/Components/Cards/VideoStreamCard/Partials/CornerInfo.v
 import QueueItem from "@/Components/Modals/MiniPlayers/Partials/QueueItem.vue";
 import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
 import {useToastStore} from "@/Stores/ToastStore";
-import {debounce} from "lodash";
+import {debounce, round} from "lodash";
 const confirmStore = useConfirmModalStore();
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -71,13 +71,20 @@ onMounted(() => {
 
     });
 
+});
 
+onUnmounted( () => {
+    window.removeEventListener('resize', () => {
+        checkIfInViewport();
+    });
+    window.removeEventListener('mouseup', () => {
+        isDragging = false;
+    });
 });
 
 const checkIfInViewport = debounce(() => {
-
-
     setTimeout(() => {
+        if (!draggableDiv.value) return;
         console.log('checkIfInViewport');
         const rect = draggableDiv.value.getBoundingClientRect();
         if (!draggableDiv.value) return;
@@ -98,7 +105,7 @@ const checkIfInViewport = debounce(() => {
             draggableDiv.value.style.top = clampedTop + 'px';
         }
     }, 100);
-}, 300);
+}, 100);
 
 
 
@@ -152,7 +159,7 @@ const closeMiniPlayer = () => {
 
 <template>
     <div ref="draggableDiv"   class="z-40 fixed shadow shadow-md
-     bg-white dark:bg-vidgaze-blue-dropdown rounded-xl overflow-hidden  w-96" v-bind:class="playerStore.showMiniPlayer ? 'flex flex-col' : 'hidden' ">
+     bg-white dark:bg-vidgaze-blue-dropdown rounded-xl overflow-hidden flex flex-col w-96" v-bind:class="playerStore.showMiniPlayer ? '' : 'opacity-0 w-0 h-0 pointer-events-none' ">
         <!--top part with creator & subscribe button-->
         <div v-if="queueStore.items[queueStore.index] !== undefined" class="overflow-hidden h-0 group-hover: h-full  group-hover: p-2 duration-300 ease-in-out transition delay-75 flex flex-row gap-x-2 ">
             <div class="flex-shrink-0 cursor-pointer h-12 my-auto aspect-square rounded-full bg-zinc-200 dark:bg-zinc-800 relative">
@@ -174,7 +181,7 @@ const closeMiniPlayer = () => {
         <div class="flex justify-between   select-none">
                 <div class="player w-full aspect-21/12 overflow-hidden">
                     <!--this is where the embed gets build inside-->
-                    <div id="player_div_holder" class="w-full h-full bg-black"></div>
+                    <div id="miniplayer_div_holder" class="w-full h-full bg-black"></div>
                 </div>
         </div>
 
