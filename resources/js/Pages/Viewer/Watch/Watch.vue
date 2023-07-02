@@ -101,11 +101,10 @@ onUnmounted(() => {
 
         } else {
             // get time by checking the server's view history time
-            currentTime = round(250);
 
         }
 
-        playerStore.buildPlayer('miniplayer_div_holder', queueStoreItem.object, currentTime, true);
+        playerStore.buildPlayer('miniplayer_div_holder', queueStoreItem.object, currentTime, true, true);
     }
 });
 

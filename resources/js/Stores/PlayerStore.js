@@ -2,6 +2,7 @@ import {defineStore} from 'pinia'
 import {useQueueStore} from "@/Stores/QueueStore";
 import {toRaw} from "vue";
 import {usePage} from "@inertiajs/vue3";
+import axios from "axios";
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
@@ -254,7 +255,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
 
-        async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false) {
+        async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false, checkViewHistoryStartTime = true) {
 
             // run this.loadScripts() but wait for it to finish the scripts to actually load
 
@@ -263,9 +264,26 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 await this.loadScripts(); // don't worry about this running multiple times, it checks if the script by id exists before trying to add it again
                 setTimeout(() => {
                     this.debugMessage('scripts not loaded yet, trying again in 1 second')
-                    this.buildPlayer(playerDivHolderID, object, startTime, autoplay);
+                    this.buildPlayer(playerDivHolderID, object, startTime, autoplay, checkViewHistoryStartTime);
                 }, 1000);
                 return;
+            }
+
+            if (checkViewHistoryStartTime && usePage().props.auth.user !== null) {
+                this.debugMessage('checking view history start time')
+                // get the view history for this video and set the start time to the last time they watched it
+                const videoId = object.id;
+                try {
+                    const response = await axios.get(route('video.interaction', {videoId: videoId}));
+                    const data = response.data;
+                    if (data !== undefined && data.view_point !== null) {
+                        this.debugMessage('setting start time to: ' + data.view_point)
+                        startTime = data.view_point;
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+
             }
 
 
