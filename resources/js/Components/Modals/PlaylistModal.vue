@@ -79,9 +79,9 @@ const createPlaylist = () => {
 
 
 <template>
-    <div v-if="playlistModalStore.showMenu"  class="z-40 absolute left-1/2 right-1/2 flex-grow h-max flex flex-row justify-center">
-        <div class="fixed my-auto inset-y-0 h-max">
-            <OptionHolder class="min-w-64 shadow-md h-max" v-on-click-outside="onClickOutsideHandler" >
+    <div v-if="playlistModalStore.showMenu"  class="pointer-events-none z-40 absolute left-1/2 right-1/2 flex-grow h-max w-max flex flex-row justify-center">
+        <div class="pointer-events-none  fixed my-auto inset-y-0 h-max flex">
+            <OptionHolder class="min-w-64 shadow-md h-max mx-auto pointer-events-auto" v-on-click-outside="onClickOutsideHandler" >
                 <!--<div class="w-full flex flex-row p-4 select-none ">-->
                 <div class="flex justify-between px-4 py-2  ">
                     <p class="text-lg my-auto font-semibold ">Save to...</p>

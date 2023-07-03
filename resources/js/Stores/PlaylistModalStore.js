@@ -16,6 +16,7 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                 axios.get(route('playlists.modal.refresh', {video_ids:  this.videoIds.join()}))
                     .then(response => {
                         this.playlists = response.data['playlists'];
+                        // this.showMenu = true;
                     })
                     .catch(error => {
                         console.log(error);
