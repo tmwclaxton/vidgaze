@@ -5,9 +5,20 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {usePlayerStore} from "@/Stores/PlayerStore";
 import {useQueueStore} from "@/Stores/QueueStore";
 import {round} from "lodash";
+import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
+
+import ShareIcon from '~/images/icons/share.svg'
+import LibraryIcon from '~/images/icons/library.svg';
+import TheatreIcon from '~/images/icons/expand.svg';
+import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
+import {useShareModalStore} from "@/Stores/ShareModelStore";
+import {useContentModalStore} from "@/Stores/ContentModalStore";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
+const playlistModalStore = usePlaylistModalStore();
+const shareModalStore = useShareModalStore();
+const contentModalStore = useContentModalStore();
 
 const name = 'Watch';
 
@@ -18,15 +29,10 @@ const theatre = ref(false);
 const layout = AuthenticatedLayout;
 
 const video = ref(null);
-const comments = ref(null);
+const comments = ref(null)
+const isCollapsed = ref(true);
 
-const playNext = () => {
 
-}
-
-const resetPlayer = () => {
-
-}
 
 const props = defineProps({
     item: {
@@ -40,6 +46,36 @@ const props = defineProps({
         required: true
     }
 });
+
+const playlistToggled = ref(false); // can't seem to get it work directly with the store
+const showShare = ref(false);
+function togglePlaylistModal()  {
+    if (props.item.data.type !== 'video') {
+        return;
+    }
+    playlistModalStore.videoIds = [props.item.data.id];
+
+
+    if (!playlistToggled.value) {
+        playlistModalStore.getPlaylists();
+        playlistModalStore.showMenu = true;
+    } else {
+        playlistModalStore.showMenu = false;
+    }
+    playlistToggled.value = !playlistToggled.value;
+}
+
+const share = () => {
+    if (showShare.value) {
+        shareModalStore.showMenu = false;
+    } else {
+        contentModalStore.itemType = props.item.data.type;
+        contentModalStore.item = props.item.data;
+        contentModalStore.shareContent();
+    }
+    showShare.value = !showShare.value;
+
+};
 
 onMounted( () => {
     // console.log(props.item.data);
@@ -112,12 +148,14 @@ onUnmounted(() => {
 
 
 
+
+
 </script>
 
 <template>
     <AuthenticatedLayout>
 
-        <div class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4 mx-24']">
+        <div class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4 md:mx-24']">
 
 
             <!--player with theatre mode-->
@@ -135,14 +173,101 @@ onUnmounted(() => {
 
                 </div>
 
-                <!--video details-->
-                <div class="bg-red-500 w-full  " :class="[theatre ? '' : ' rounded-lg']">
-                    <p>test</p>
-                    <button @click="theatre = !theatre">Theatre</button>
-                </div>
+                <div :class="[theatre ? 'px-2 sm:px-5 ' : 'px-5 sm:px-0 ']" class="">
 
-                <div class="col-span-12 col-span-8 bg-white">
-                    <p>Comment section</p>
+                    <!--video details-->
+                    <div class="bg-re d-500 w-full  " :class="[theatre ? ' ' : ' ']">
+                        <div class="px-3 sm:px-0 pt-3 ">
+
+                            <p class="text-lg font-bold leading-6 line-clamp-2 text dark:textDark" v-text="props.item.data.title"/>
+                            <div class="flex py-3 justify-between text dark:textDark">
+                                <div class="flex flex-col">
+                                    <p class=" pr-3 " v-text="props.item.data.view_count + ' · ' + props.item.data.time_published"/>
+                                    <span class="pr-3  pt-0.5 font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
+                                            v-text="props.item.data.live_viewer_count + ' Watching'"/>
+                                </div>
+                                <div class="text dark:textDark ml-auto flex flex-row gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
+
+                                    <!--<x-share link="{{route('watch', ['video'=> $video->slug])}}"-->
+                                    <!--         title="Check out this cool video on VidGaze - {{$video->title}}">-->
+                                    <div @click="share" class="flex flex-row cursor-pointer align-middle items-center">
+                                        <ShareIcon class="h-5"/>
+                                        <p class="pl-2  ">Share</p>
+                                    </div>
+                                    <!--</x-share>-->
+
+                                    <div v-if="$page.props.auth.user" @click="togglePlaylistModal()" class="flex flex-row cursor-pointer align-middle items-center" >
+                                        <LibraryIcon class="h-5"/>
+                                        <p class="pl-2">Save</p>
+                                    </div>
+
+                                    <!--<x-award-button type="video" object_id="{{$video->id}}">-->
+                                    <!--    <div class="flex flex-row    cursor-pointer"-->
+                                    <!--         @click=" shadowDiv = true">-->
+                                    <!--        <x-icon name="present" class="h-5"/>-->
+                                    <!--        <p class="pl-2">Award</p>-->
+                                    <!--    </div>-->
+                                    <!--</x-award-button>-->
+                                    <div
+                                        class="hidden lg:flex   flex-row cursor-pointer align-middle items-center"
+                                        @click="theatre = ! theatre">
+                                        <TheatreIcon class="h-5"/>
+                                        <p class="pl-2">Theatre</p>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                            <!--<livewire:awards-bar type="video" :object="$video"/>-->
+
+                            <RowDivider/>
+
+                            <div class=" py-6 ">
+                                <div class="flex justify-between">
+                                    <span class="flex flex-row   w-full overflow-hidden">
+                                        <a v-if="props.item.data.creator != null" href="/channel/" class="flex-shrink-0">
+                                            <img class="hover:cursor-pointer my-auto object-cover w-11 h-11 mr-2 rounded-full flex-shrink-0"
+                                                v-bind:src="props.item.data.creator.avatar_url" alt="Profile image"/>
+                                        </a>
+                                        <div class="pl-1 flex flex-col my-auto">
+                                            <a href="/channel/"
+                                               class="text-sm font-bold hover:cursor-pointer text dark:textDark w-44 xs:w-full break-words">
+                                                <span v-text="props.item.data.creator.name"></span>
+                                            </a>
+                                            <p class="text-xs text dark:textDark leading-4" v-text="props.item.data.creator.subscriber_count"/>
+                                        </div>
+
+                                        <div class="ml-auto my-auto">
+
+                                           <SubscribeButton :channel="props.item.data.creator"  />
+                                        </div>
+                                    </span>
+
+
+                                </div>
+
+
+                                <div
+                                     style="" class=" ml-14   pt-3   text dark:textDark text-sm">
+                                    <p id="description" style="line-height: 20px;"
+                                       v-bind:class="{' line-clamp-3': isCollapsed}" v-text="props.item.data.description"/>
+
+                                    <button class="font-bold mt-5 text-xs uppercase"
+                                            @click="isCollapsed = !isCollapsed"
+                                            v-text="!isCollapsed ? 'Show less' : 'Show more'"
+                                    ></button>
+                                </div>
+                            </div>
+                            <RowDivider/>
+                        </div>
+
+                    </div>
+
+                    <div class="col-span-12 col-span-8 "  >
+                        <p>Open Comment section button</p>
+                    </div>
+
                 </div>
             </div>
 
@@ -214,27 +339,27 @@ onUnmounted(() => {
 
         <!--                        &lt;!&ndash;<x-share link="{{route('watch', ['video'=> $video->slug])}}"&ndash;&gt;-->
         <!--                        &lt;!&ndash;         title="Check out this cool video on VidGaze - {{$video->title}}">&ndash;&gt;-->
-        <!--                        &lt;!&ndash;    <div @click="shadowDiv=true;" class="flex flex-row mr-2 md:mr-5    cursor-pointer">&ndash;&gt;-->
+        <!--                        &lt;!&ndash;    <div @click="shadowDiv=true;" class="flex flex-row    cursor-pointer">&ndash;&gt;-->
         <!--                        &lt;!&ndash;        <x-icon name="share" class="h-5"/>&ndash;&gt;-->
         <!--                        &lt;!&ndash;        <p class="pl-2  ">Share</p>&ndash;&gt;-->
         <!--                        &lt;!&ndash;    </div>&ndash;&gt;-->
         <!--                        &lt;!&ndash;</x-share>&ndash;&gt;-->
         <!--                        &lt;!&ndash;@auth&ndash;&gt;-->
-        <!--                        &lt;!&ndash;<div class="flex flex-row mr-2 md:mr-5    cursor-pointer"&ndash;&gt;-->
+        <!--                        &lt;!&ndash;<div class="flex flex-row    cursor-pointer"&ndash;&gt;-->
         <!--                        &lt;!&ndash;     @click="saveDropdown = true; shadowDiv = true">&ndash;&gt;-->
         <!--                        &lt;!&ndash;    <x-icon name="library" class="h-5"/>&ndash;&gt;-->
         <!--                        &lt;!&ndash;    <p class="pl-2">Save</p>&ndash;&gt;-->
         <!--                        &lt;!&ndash;</div>&ndash;&gt;-->
         <!--                        &lt;!&ndash;@endauth&ndash;&gt;-->
         <!--                        &lt;!&ndash;<x-award-button type="video" object_id="{{$video->id}}">&ndash;&gt;-->
-        <!--                        &lt;!&ndash;    <div class="flex flex-row mr-2 md:mr-5    cursor-pointer"&ndash;&gt;-->
+        <!--                        &lt;!&ndash;    <div class="flex flex-row    cursor-pointer"&ndash;&gt;-->
         <!--                        &lt;!&ndash;         @click=" shadowDiv = true">&ndash;&gt;-->
         <!--                        &lt;!&ndash;        <x-icon name="present" class="h-5"/>&ndash;&gt;-->
         <!--                        &lt;!&ndash;        <p class="pl-2">Award</p>&ndash;&gt;-->
         <!--                        &lt;!&ndash;    </div>&ndash;&gt;-->
         <!--                        &lt;!&ndash;</x-award-button>&ndash;&gt;-->
         <!--                        <div-->
-        <!--                            class="hidden lg:flex   mr-2 md:mr-5 flex-row  cursor-pointer"-->
+        <!--                            class="hidden lg:flex   flex-row  cursor-pointer"-->
         <!--                            v-on:click="theatre = ! theatre">-->
         <!--                            &lt;!&ndash;<x-icon name="expand" class="h-5"/>&ndash;&gt;-->
         <!--                            <p class="pl-2">Theatre</p>-->

@@ -1,4 +1,4 @@
-<script setup>
+ <script setup>
 import TickIcon from '#icons/tick.svg';
 import ClockIcon from '#icons/clock.svg';
 import ShareIcon from '#icons/share.svg';
