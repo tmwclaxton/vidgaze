@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, onUnmounted, ref, watch} from "vue";
+import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {usePlayerStore} from "@/Stores/PlayerStore";
@@ -53,6 +53,7 @@ const props = defineProps({
 
 const playlistToggled = ref(false); // can't seem to get it work directly with the store
 const showShare = ref(false);
+const showMoreDescriptionButton = ref(false);
 function togglePlaylistModal()  {
     if (props.item.data.type !== 'video') {
         return;
@@ -80,9 +81,21 @@ const share = () => {
     showShare.value = !showShare.value;
 
 };
-
+function shouldShowMoreDescriptionButton() {
+    const el = document.getElementById('description');
+    const divHeight = el.offsetHeight;
+    const lineHeight = parseInt(el.style.lineHeight);
+    return divHeight / lineHeight >= 3;
+}
 onMounted( () => {
-    // console.log(props.item.data);
+
+
+
+    // should description show more button be shown?
+    showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
+
+
+
 
     playerStore.destroyPlayers();
 
@@ -147,7 +160,6 @@ onUnmounted(() => {
         playerStore.buildPlayer('miniplayer_div_holder', queueStoreItem.object, currentTime, true, true);
     }
 });
-
 
 
 
@@ -262,7 +274,7 @@ onUnmounted(() => {
                                     <p id="description" style="line-height: 20px;"
                                        v-bind:class="{' line-clamp-3': isCollapsed}" v-text="props.item.data.description"/>
 
-                                    <button class="font-bold mt-5 text-xs uppercase"
+                                    <button v-if="showMoreDescriptionButton" class="font-bold mt-5 text-xs uppercase"
                                             @click="isCollapsed = !isCollapsed"
                                             v-text="!isCollapsed ? 'Show less' : 'Show more'"
                                     ></button>
