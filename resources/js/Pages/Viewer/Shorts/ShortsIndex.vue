@@ -92,6 +92,11 @@ function createVisibleIndices() {
         // if in middle
         visibleIndices =  [index - 1, index, index + 1, index + 2];
     }
+
+    // check visible indices are within bounds of shorts
+    // if return what ever is within bounds
+    visibleIndices = visibleIndices.filter(index => index >= 0 && index < shorts.value.length);
+
     // get external ids of shorts that should be visible
     console.log(['These shorts should be loaded',  visibleIndices.map(index => shorts.value[index].external_id)]);
     return visibleIndices;

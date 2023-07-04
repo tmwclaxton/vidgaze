@@ -117,7 +117,7 @@ onUnmounted(() => {
                 <!--Buttons-->
                 <div class="flex flex-col gap-4 select-none justify-end text dark:textDark ml-6">
 
-                    <LikeDislikeButtons :video="video" />
+                    <LikeDislikeButtons :video="video" :orientation-vertical="true"/>
 
                     <div class="flex flex-col gap-1  cursor-pointer h-14 aspect-square rounded-full">
                         <CommentsIcon class="h-full mx-auto" />

@@ -311,6 +311,13 @@ export const usePlayerStore = defineStore('PlayerStore', {
             this.debugMessage('build player ' + object.preferred_source);
 
             // embeds often rebuild the div they are in which is a pain so we will just remove the div and rebuild it
+
+
+            // if div with id of object.external_id exists remove it
+            if (document.getElementById(object.external_id)) {
+                document.getElementById(object.external_id).remove();
+            }
+
             // // create player_div element inside player_div_holder
             let playerDiv = playerDivHolderID.appendChild(document.createElement('div'));
             playerDiv.id = object.external_id;
@@ -437,7 +444,12 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             dailymotion.createPlayer(playerDiv.id, {
                 video: external_id,
-                start: startTime,
+                params: {
+                    startTime: startTime,
+                    autoplay: autoplay,
+                    mute: false,
+
+                }
             }).then((resolvedPlayer) => {
                 player = resolvedPlayer;
 
