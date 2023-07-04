@@ -13,6 +13,9 @@ import TheatreIcon from '~/images/icons/expand.svg';
 import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
 import {useContentModalStore} from "@/Stores/ContentModalStore";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
+import SecondaryButton from "@/Components/Buttons/SecondaryButton.vue";
+import TertiaryButton from "@/Components/Buttons/TertiaryButton.vue";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -264,9 +267,16 @@ onUnmounted(() => {
 
                     </div>
 
-                    <div class="col-span-12 col-span-8 "  >
-                        <p>Open Comment section button</p>
-                    </div>
+                    <!--<div class="w-full rounded-lg p-4 text-centre"  >-->
+                        <TertiaryButton class="w-full text-center" @click="toggleCommentSection()">
+                            <p class="w-full text-center">Open Comments</p>
+                        </TertiaryButton>
+                        <!--<p>Open Comment section button</p>-->
+                    <!--</div>-->
+
+                    <RowDivider class=" " :class="[theatre ? 'flex ' : 'flex lg:hidden ']"/>
+
+
 
                 </div>
             </div>
