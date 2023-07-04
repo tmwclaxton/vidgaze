@@ -17,6 +17,7 @@ import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
 import SecondaryButton from "@/Components/Buttons/SecondaryButton.vue";
 import TertiaryButton from "@/Components/Buttons/TertiaryButton.vue";
 import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
+import CommentSection from "@/Components/CommentSection/CommentSection.vue";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -34,8 +35,8 @@ const layout = AuthenticatedLayout;
 
 const video = ref(null);
 const comments = ref(null)
-const isCollapsed = ref(true);
-
+const isDescriptionCollapsed = ref(true);
+const showCommentSection = ref(false);
 
 
 const props = defineProps({
@@ -193,10 +194,10 @@ onUnmounted(() => {
 
                     <!--video details-->
                     <div class="bg-re d-500 w-full  " :class="[theatre ? ' ' : ' ']">
-                        <div class="px-3 sm:px-0 pt-3 ">
+                        <div class="px-3 sm:px-0   ">
 
                             <p class="text-lg font-bold leading-6 line-clamp-2 text dark:textDark" v-text="props.item.data.title"/>
-                            <div class="flex py-2 justify-between text dark:textDark flex flex-row flex-wrap gap-8 ">
+                            <div class="flex pt-2 -mb-2 justify-between text dark:textDark flex flex-row flex-wrap gap-8 ">
 
                                 <div class="flex flex-col">
                                     <p class=" pr-3 " v-text="props.item.data.view_count + ' · ' + props.item.data.time_published"/>
@@ -272,11 +273,11 @@ onUnmounted(() => {
                                 <div
                                      style="" class=" ml-14   pt-3   text dark:textDark text-sm">
                                     <p id="description" style="line-height: 20px;"
-                                       v-bind:class="{' line-clamp-3': isCollapsed}" v-text="props.item.data.description"/>
+                                       v-bind:class="{' line-clamp-3': isDescriptionCollapsed}" v-text="props.item.data.description"/>
 
                                     <button v-if="showMoreDescriptionButton" class="font-bold mt-5 text-xs uppercase"
-                                            @click="isCollapsed = !isCollapsed"
-                                            v-text="!isCollapsed ? 'Show less' : 'Show more'"
+                                            @click="isDescriptionCollapsed = !isDescriptionCollapsed"
+                                            v-text="!isDescriptionCollapsed ? 'Show less' : 'Show more'"
                                     ></button>
                                 </div>
                             </div>
@@ -285,12 +286,12 @@ onUnmounted(() => {
 
                     </div>
 
-                    <!--<div class="w-full rounded-lg p-4 text-centre"  >-->
-                        <TertiaryButton class="w-full text-center" @click="toggleCommentSection()">
-                            <p class="w-full text-center">Open Comments</p>
-                        </TertiaryButton>
-                        <!--<p>Open Comment section button</p>-->
-                    <!--</div>-->
+                    <TertiaryButton v-if="!showCommentSection" class="w-full text-center" @click="showCommentSection = !showCommentSection">
+                        <p class="w-full text-center">Open Comments</p>
+                    </TertiaryButton>
+
+                    <CommentSection :type="props.item.data.type" :item="props.item.data" v-if="showCommentSection"  />
+
 
                     <RowDivider class=" " :class="[theatre ? 'flex ' : 'flex lg:hidden ']"/>
 
@@ -304,6 +305,9 @@ onUnmounted(() => {
 
             <div class="bg-green-500 relative w-full gap-2 flex flex-col " :class="[theatre ? 'col-span-12' : 'col-span-12 lg:col-span-4 rounded-lg ']">
 
+                <p>Queue & playlist support needed</p>
+                <p>Endpoint for getting recommended or channel videos</p>
+                <p>Show more button</p>
                 <div class="h-96 bg-blue-400 w-full" v-for="n in 10" :key="n">
 
                 </div>
@@ -314,81 +318,6 @@ onUnmounted(() => {
 
 
         </div>
-
-
-
-        <!--    &lt;!&ndash;Side suggestions and playlist holder&ndash;&gt;-->
-        <!--    <div id="holder1" class="w-full grid grid-cols-12 lg:absolute lg:top-0 lg:left-0 pointer-events-none "-->
-        <!--         :class=" theatre ? 'px-0 pt-2  ' : 'pt-3 px-2 sm:px-0 sm:pt-5 lg:px-12 xl:px-24'">-->
-        <!--        <div class="pointer-events-none  col-span-12 lg:col-span-8 bg-transparent h-0 "-->
-        <!--        >-->
-        <!--        </div>-->
-        <!--        &lt;!&ndash;playlists&ndash;&gt;-->
-        <!--        <div class="h-full col-span-12 lg:col-span-4 pointer-events-auto lg:pl-5 "-->
-        <!--             :class=" theatre ? 'lg:mt-[calc(100vh-10rem)]  p-2 pt-4   lg:mr-24' : ' '" >-->
-
-        <!--            &lt;!&ndash;@isset($playlist)&ndash;&gt;-->
-
-        <!--            &lt;!&ndash;<div class="border-generic dark:border-generic-dark flex-col mb-5">&ndash;&gt;-->
-        <!--            &lt;!&ndash;    <div class="p-2 generic-background   dark:bg-zinc-900">&ndash;&gt;-->
-        <!--            &lt;!&ndash;        <p class="font-bold text dark:textDark">&ndash;&gt;-->
-        <!--            &lt;!&ndash;            {{$playlist->name}}&ndash;&gt;-->
-        <!--            &lt;!&ndash;        </p>&ndash;&gt;-->
-
-        <!--            &lt;!&ndash;        <p class="font-bold text dark:textDark text-xs opacity-80 ">&ndash;&gt;-->
-        <!--            &lt;!&ndash;            <a href="/channel/{{$playlist->owner->slug}}">&ndash;&gt;-->
-        <!--            &lt;!&ndash;                {{$playlist->owner->name}}&ndash;&gt;-->
-        <!--            &lt;!&ndash;            </a>&ndash;&gt;-->
-        <!--            &lt;!&ndash;        </p>&ndash;&gt;-->
-        <!--            &lt;!&ndash;    </div>&ndash;&gt;-->
-        <!--            &lt;!&ndash;    <x-hr class="w-full"/>&ndash;&gt;-->
-        <!--            &lt;!&ndash;    <div id="playlistHolder" class=" flex flex-col h-96 overflow-y-scroll ">&ndash;&gt;-->
-
-        <!--                    &lt;!&ndash;@foreach($playlist_videos as $index=>$playlist_video)&ndash;&gt;-->
-        <!--                    &lt;!&ndash;@if ($index >= ($current_video_key-50) && $index < ($current_video_key + 50))&ndash;&gt;-->
-
-        <!--                    &lt;!&ndash;<a @if ($index == $current_video_key) id="currentVideo" @endif&ndash;&gt;-->
-        <!--                    &lt;!&ndash;   href="{{ route('watch.playlist',['video'=>$playlist_video,'playlist'=>$playlist]) }}"&ndash;&gt;-->
-        <!--                    &lt;!&ndash;   class="w-full py-3 px-4 hover:bg-zinc-300 dark:hover:bg-zinc-800 flex flex-row gap-x-5 cursor-pointer">&ndash;&gt;-->
-        <!--                    &lt;!&ndash;    @if($playlist_video->id == $video->id)&ndash;&gt;-->
-        <!--                    &lt;!&ndash;    <x-icon name="extend-down" class="w-5 fill dark:fill-dark -rotate-90"/>&ndash;&gt;-->
-        <!--                    &lt;!&ndash;    @else&ndash;&gt;-->
-        <!--                    &lt;!&ndash;    <p class="w-5 text dark:textDark text-center font-bold my-auto">{{($index + 1)}}</p>&ndash;&gt;-->
-        <!--                    &lt;!&ndash;    @endif&ndash;&gt;-->
-        <!--                    &lt;!&ndash;    <x-watch-playlist-video :video="$playlist_video" :playlist="$playlist"/>&ndash;&gt;-->
-        <!--                    &lt;!&ndash;</a>&ndash;&gt;-->
-        <!--                    &lt;!&ndash;@if($index+1 != count($playlist_videos))&ndash;&gt;-->
-        <!--                    &lt;!&ndash;<x-hr class="w-full "/>&ndash;&gt;-->
-        <!--                    &lt;!&ndash;@endif&ndash;&gt;-->
-        <!--                    &lt;!&ndash;@endif&ndash;&gt;-->
-
-        <!--                    &lt;!&ndash;@endforeach&ndash;&gt;-->
-        <!--            &lt;!&ndash;    </div>&ndash;&gt;-->
-        <!--            &lt;!&ndash;</div>&ndash;&gt;-->
-
-
-        <!--            &lt;!&ndash;@endisset&ndash;&gt;-->
-
-        <!--            &lt;!&ndash;infinite scroll&ndash;&gt;-->
-        <!--            <div class="px-2 " :class=" theatre ? '   lg:mr-8 ' : ''">-->
-        <!--                &lt;!&ndash;<livewire:watch-infinite-scroll :creator="$creator" :video="$video"/>&ndash;&gt;-->
-
-
-        <!--            </div>-->
-        <!--        </div>-->
-        <!--    </div>-->
-
-        <!--    &lt;!&ndash;commentsection&ndash;&gt;-->
-        <!--    <div class="grid grid-cols-12 px-4 sm:px-2 lg:px-0 pt-3 ">-->
-        <!--        <div class="  col-span-12 lg:col-span-8 "-->
-        <!--             :class=" theatre ? 'lg:pl-12' : ''">-->
-
-        <!--            &lt;!&ndash;<livewire:comment-section :video="$video" :simple="false" :firstCommentSlug="$firstCommentSlug"/>&ndash;&gt;-->
-
-        <!--        </div>-->
-        <!--        <div class="col-span-4 bg-transparent pointer-events-none"></div>-->
-        <!--    </div>-->
-        <!--</div>-->
 
 
 
