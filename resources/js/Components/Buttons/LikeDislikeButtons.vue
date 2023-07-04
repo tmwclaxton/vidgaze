@@ -1,11 +1,18 @@
 <template>
-        <div @click="toggleLike" class="select-none flex flex-col gap-1 cursor-pointer">
-            <ThumbsUpIcon class="h-8 mx-auto" :class="likeButtonClasses" />
-            <p class="font-bold text-sm text-center" v-text="video.likes" />
+        <div @click="toggleLike" class="select-none flex gap-1 cursor-pointer justify-center "
+             :class="[props.orientationVertical ? 'flex-col' : 'flex-row gap-x-3 ']">
+            <ThumbsUpIcon class="transform transition-all duration-200  my-auto flex-shrink-0"  :class="[ props.orientationVertical ? 'mx-auto h-8' : 'h-6', likeButtonClasses]"  />
+            <p class="font-bold text-sm text-center my-auto" v-text="video.likes" />
         </div>
-        <div @click="toggleDislike" class="select-none flex flex-col gap-1 cursor-pointer">
-            <ThumbsDownIcon class="h-8 mx-auto" :class="dislikeButtonClasses" />
-            <p class="font-bold text-sm text-center" v-text="video.dislikes" />
+
+        <!--vertical hr-->
+        <hr v-if="!props.orientationVertical" class="border border-gray-300 dark:border-gray-700 w-0.5 h-8 rounded" />
+
+        <div @click="toggleDislike" class="select-none flex gap-1 cursor-pointer justify-center "
+             :class="[props.orientationVertical ? 'flex-col' : 'flex-row gap-x-3']">
+            <!--combine likeButtonClass and the props.ortientaitonVertical classes-->
+            <ThumbsDownIcon class="transform transition duration-200 my-auto   " :class="[ props.orientationVertical ? 'mx-auto h-8' : 'w-6 h-6', dislikeButtonClasses]" />
+            <p class="font-bold text-sm text-center my-auto " v-text="video.dislikes" />
         </div>
 </template>
 
@@ -25,6 +32,11 @@ const props = defineProps({
     video: {
         type: Object,
         required: true
+    },
+    orientationVertical: {
+        type: Boolean,
+        required: true,
+        default: 'horizontal'
     }
 });
 
@@ -116,7 +128,7 @@ const likeButtonClasses = computed(() => ({
 }));
 
 const dislikeButtonClasses = computed(() => ({
-    'text-blue-600': disliked.value,
+    'text-red-600': disliked.value,
     '': !disliked.value
 }));
 

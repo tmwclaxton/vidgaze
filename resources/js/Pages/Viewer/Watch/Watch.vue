@@ -16,6 +16,7 @@ import {useContentModalStore} from "@/Stores/ContentModalStore";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
 import SecondaryButton from "@/Components/Buttons/SecondaryButton.vue";
 import TertiaryButton from "@/Components/Buttons/TertiaryButton.vue";
+import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -183,7 +184,8 @@ onUnmounted(() => {
                         <div class="px-3 sm:px-0 pt-3 ">
 
                             <p class="text-lg font-bold leading-6 line-clamp-2 text dark:textDark" v-text="props.item.data.title"/>
-                            <div class="flex py-3 justify-between text dark:textDark">
+                            <div class="flex py-2 justify-between text dark:textDark flex flex-row flex-wrap gap-8 ">
+
                                 <div class="flex flex-col">
                                     <p class=" pr-3 " v-text="props.item.data.view_count + ' · ' + props.item.data.time_published"/>
                                     <span class="pr-3  pt-0.5 font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
@@ -191,13 +193,17 @@ onUnmounted(() => {
                                 </div>
                                 <div class="text dark:textDark ml-auto flex flex-row gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
 
-                                    <!--<x-share link="{{route('watch', ['video'=> $video->slug])}}"-->
-                                    <!--         title="Check out this cool video on VidGaze - {{$video->title}}">-->
+
+                                    <div class="bg-zinc-200 dark:bg-vidgaze-blue-nav rounded-xl p-1 px-5 flex flex-row gap-x-3 h-max my-auto">
+                                        <LikeDislikeButtons :video="props.item.data" :orientationVertical="false"/>
+
+                                    </div>
+
+
                                     <div @click="share" class="flex flex-row cursor-pointer align-middle items-center">
                                         <ShareIcon class="h-5"/>
                                         <p class="pl-2  ">Share</p>
                                     </div>
-                                    <!--</x-share>-->
 
                                     <div v-if="$page.props.auth.user" @click="togglePlaylistModal()" class="flex flex-row cursor-pointer align-middle items-center" >
                                         <LibraryIcon class="h-5"/>
@@ -224,7 +230,7 @@ onUnmounted(() => {
 
                             <!--<livewire:awards-bar type="video" :object="$video"/>-->
 
-                            <RowDivider/>
+                            <RowDivider class="my-2"/>
 
                             <div class=" py-6 ">
                                 <div class="flex justify-between">
