@@ -100,7 +100,7 @@ onMounted( () => {
 
     playerStore.destroyPlayers().then(() => {
         console.log("players destroyed");
-    
+
 
         // if video/stream was already playing by accessing the queueStore's index and is same as props.item.external_id, resume from where it left off
         const queueStoreItem = queueStore.items[queueStore.index];
@@ -266,7 +266,7 @@ onUnmounted(() => {
                                             <p class="text-xs text dark:textDark leading-4" v-text="props.item.data.creator.subscriber_count"/>
                                         </div>
 
-                                        <div class="ml-auto my-auto">
+                                        <div class="ml-auto sm:ml-5 my-auto">
 
                                            <SubscribeButton :channel="props.item.data.creator"  />
                                         </div>
@@ -296,7 +296,7 @@ onUnmounted(() => {
                         <p class="w-full text-center">Open Comments</p>
                     </TertiaryButton>
 
-                    <CommentSection :type="props.item.data.type" :item="props.item.data" v-if="showCommentSection"  />
+                    <CommentSection :item="props.item.data" v-if="showCommentSection"  />
 
 
                     <RowDivider class=" " :class="[theatre ? 'flex ' : 'flex lg:hidden ']"/>
