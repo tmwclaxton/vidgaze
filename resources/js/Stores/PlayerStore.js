@@ -219,7 +219,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             this.viewRecordDuration = 0;
         },
 
-        destroyPlayers() {
+        async destroyPlayers() {
             // iterate through players and get object external_id and destroy div using that as id
             this.players.forEach(item => {
                 this.destroyItem(item).then(r => {})
@@ -256,11 +256,12 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
 
         async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false, checkViewHistoryStartTime = true) {
-
+            playerDivHolderID = playerDivHolderID || 'miniplayer_div_holder';
+            this.debugMessage('HERE '+ playerDivHolderID);
             // run this.loadScripts() but wait for it to finish the scripts to actually load
 
             // until scriptsLoaded is true wait 1 second and try again
-            if (!this.scriptsLoaded) {
+            if (!this.scriptsLoaded && document.getElementById(playerDivHolderID)) {
                 await this.loadScripts(); // don't worry about this running multiple times, it checks if the script by id exists before trying to add it again
                 setTimeout(() => {
                     this.debugMessage('scripts not loaded yet, trying again in 1 second')
@@ -287,23 +288,20 @@ export const usePlayerStore = defineStore('PlayerStore', {
             }
 
 
-            //create player_div element inside miniplayer_div_holder
-            if (playerDivHolderID === null) {
-                playerDivHolderID = document.getElementById('miniplayer_div_holder');
-            } else {
-                playerDivHolderID = document.getElementById(playerDivHolderID);
-            }
+            // get the div holder
+            let playerDivHolder = document.getElementById(playerDivHolderID);
 
-            if(playerDivHolderID === null){
+
+            if(playerDivHolder === null){
                 console.log('CATASTROPHIC ERROR!!!! a playerDivHolder could be not found for this player with id: ' + playerDivHolderID);
-                console.log(playerDivHolderID)
+                // console.log(playerDivHolderID)
                 console.log(object)
                 return;
             }
 
             //remove all children of player_div_holder
-            while (playerDivHolderID.firstChild) {
-                playerDivHolderID.removeChild(playerDivHolderID.firstChild);
+            while (playerDivHolder.firstChild) {
+                playerDivHolder.removeChild(playerDivHolder.firstChild);
             }
 
             this.show = true;
@@ -316,12 +314,16 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // if div with id of object.external_id exists remove it
             if (document.getElementById(object.external_id)) {
                 document.getElementById(object.external_id).remove();
+                 console.log('removed player div with id: ' + object.external_id);
             }
 
-            console.log(object.external_id)
 
             // // create player_div element inside player_div_holder
-            let playerDiv = playerDivHolderID.appendChild(document.createElement('div'));
+            let playerDiv = playerDivHolder.appendChild(document.createElement('div'));
+            if (playerDiv === null) {
+                console.log('CATASTROPHIC ERROR!!!! a playerDiv could be not found for this player with id: ' + object.external_id);
+                return;
+            }
             playerDiv.id = object.external_id;
 
             // // add h-full and w-full classes to player_div
@@ -441,7 +443,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         buildDailymotionPlayer(playerDiv, object, startTime = 0, autoplay = false) {
             const external_id = object.external_id;
-            console.log(playerDiv.id)
             let player;
 
 

@@ -98,29 +98,33 @@ onMounted( () => {
 
 
 
-    playerStore.destroyPlayers();
+    playerStore.destroyPlayers().then(() => {
+        console.log("players destroyed");
+    
+
+        // if video/stream was already playing by accessing the queueStore's index and is same as props.item.external_id, resume from where it left off
+        const queueStoreItem = queueStore.items[queueStore.index];
+        const queueStoreExternalId = queueStoreItem !== undefined ? queueStoreItem.object.external_id : null;
 
 
-    // if video/stream was already playing by accessing the queueStore's index and is same as props.item.external_id, resume from where it left off
-    const queueStoreItem = queueStore.items[queueStore.index];
-    const queueStoreExternalId = queueStoreItem !== undefined ? queueStoreItem.object.external_id : null;
 
-    // check if video was on queue or not
-    if (queueStoreExternalId === null || queueStoreExternalId !== props.item.data.external_id) {
+        // check if video was on queue or not
+        if (queueStoreExternalId === null || queueStoreExternalId !== props.item.data.external_id) {
 
-        console.log("start from beginning");
-        playerStore.currentTimePosition = 0;
-        playerStore.buildPlayer('watch_player', props.item.data, 0, true);
-    } else {
+            console.log("start from beginning");
+            playerStore.currentTimePosition = 0;
+            playerStore.buildPlayer('watch_player', props.item.data, 0, true);
+        } else {
 
-        console.log("resume from where it left off");
-        const currentTime = round(playerStore.currentTimePosition);
-        playerStore.buildPlayer('watch_player', props.item.data, currentTime, true);
+            console.log("resume from where it left off");
+            const currentTime = round(playerStore.currentTimePosition);
+            playerStore.buildPlayer('watch_player', props.item.data, currentTime, true);
 
 
-    }
+        }
 
 
+    });
 
 
     // get video details
@@ -137,29 +141,31 @@ onUnmounted(() => {
     // stop view record
     playerStore.stopViewRecord();
     // destroy players
-    playerStore.destroyPlayers();
+    playerStore.destroyPlayers().then(() => {
+        console.log("players destroyed");
 
-    // watch showMiniPlayer if it is changed to true check if queueStore has any items if so then build the player
-    if (queueStore.items.length > 0) {
+        // watch showMiniPlayer if it is changed to true check if queueStore has any items if so then build the player
+        if (queueStore.items.length > 0) {
 
 
-        const queueStoreItem = queueStore.items[queueStore.index];
-        const queueStoreExternalId = queueStoreItem !== undefined ? queueStoreItem.object.external_id : null;
+            const queueStoreItem = queueStore.items[queueStore.index];
+            const queueStoreExternalId = queueStoreItem !== undefined ? queueStoreItem.object.external_id : null;
 
-        let currentTime = 0;
+            let currentTime = 0;
 
-        // if the video that was playing was in the queue get time and rebuild player with time in mini player
-        if (queueStoreExternalId !== null && queueStoreExternalId === props.item.data.external_id) {
-            // get the current time from the playerStore
-            currentTime = round(playerStore.currentTimePosition);
+            // if the video that was playing was in the queue get time and rebuild player with time in mini player
+            if (queueStoreExternalId !== null && queueStoreExternalId === props.item.data.external_id) {
+                // get the current time from the playerStore
+                currentTime = round(playerStore.currentTimePosition);
 
-        } else {
-            // get time by checking the server's view history time
+            } else {
+                // get time by checking the server's view history time
 
+            }
+
+            playerStore.buildPlayer('miniplayer_div_holder', queueStoreItem.object, currentTime, true, true);
         }
-
-        playerStore.buildPlayer('miniplayer_div_holder', queueStoreItem.object, currentTime, true, true);
-    }
+    });
 });
 
 
@@ -273,7 +279,7 @@ onUnmounted(() => {
                                 <div
                                      style="" class=" ml-14   pt-3   text dark:textDark text-sm">
                                     <p id="description" style="line-height: 20px;"
-                                       v-bind:class="{' line-clamp-3': isDescriptionCollapsed}" v-text="props.item.data.description"/>
+                                       v-bind:class="{' line-clamp-3': isDescriptionCollapsed}" v-html="props.item.data.description"/>
 
                                     <button v-if="showMoreDescriptionButton" class="font-bold mt-5 text-xs uppercase"
                                             @click="isDescriptionCollapsed = !isDescriptionCollapsed"
