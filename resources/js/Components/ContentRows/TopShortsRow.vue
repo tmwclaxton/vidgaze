@@ -63,6 +63,11 @@ onUnmounted(() => {
 
 const handleResize = debounce(() => {
     const screenSize = getScreenSize();
+    // check there enough shorts to show for the current screen size if not set to the max available
+    if (shorts.value.length < shortsPerPage[screenSize]) {
+        computedShorts.value = shorts.value;
+        return;
+    }
     computedShorts.value = shorts.value.slice(0, shortsPerPage[screenSize]);
 }, 500);
 </script>

@@ -318,6 +318,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 document.getElementById(object.external_id).remove();
             }
 
+            console.log(object.external_id)
+
             // // create player_div element inside player_div_holder
             let playerDiv = playerDivHolderID.appendChild(document.createElement('div'));
             playerDiv.id = object.external_id;
@@ -439,6 +441,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         buildDailymotionPlayer(playerDiv, object, startTime = 0, autoplay = false) {
             const external_id = object.external_id;
+            console.log(playerDiv.id)
             let player;
 
 
