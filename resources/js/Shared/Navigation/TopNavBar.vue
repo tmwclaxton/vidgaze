@@ -80,18 +80,20 @@ const name = 'TopNavBar';
                     <!--log in-->
                     <div v-if="$page.props.auth.user == null"
                          class="hidden sm:flex sm:items-center   flex-shrink-0">
-                        <div class="flex gap-x-2">
+                        <div class="flex gap-x-2 flex-row-reverse">
                             <Link :href="route('login')" >
 
                                 <TopNavButton>
-                                    Log In
+                                    <font-awesome-icon :icon="['fas', 'right-to-bracket']" class="h-4 w-auto"/>
+                                    <p>Log In</p>
                                 </TopNavButton>
 
                             </Link>
                             <Link :href="route('register')" >
 
                                 <TopNavButton>
-                                    Sign Up
+                                    <font-awesome-icon :icon="['fas', 'user-plus']" class="h-4 w-auto"/>
+                                    <p>Sign Up</p>
                                 </TopNavButton>
 
                             </Link>
