@@ -196,14 +196,14 @@ onUnmounted(() => {
 
                 </div>
 
-                <div :class="[theatre ? 'px-2 sm:px-5 ' : 'px-5 sm:px-0 ']" class="">
+                <div :class="[theatre ? 'px-2 sm:px-5 ' : 'px-0 sm:px-0 ']" class="">
 
                     <!--video details-->
                     <div class="bg-re d-500 w-full  " :class="[theatre ? ' ' : ' ']">
-                        <div class="px-3 sm:px-0   ">
+                        <div class=" w-full  ">
 
                             <p class="text-lg font-bold leading-6 line-clamp-2 text dark:textDark" v-text="props.item.data.title"/>
-                            <div class="flex pt-2 -mb-2 justify-between text dark:textDark flex flex-row flex-wrap gap-8 ">
+                            <div class="px-3 sm:px-0 flex pt-2 -mb-2 justify-between text dark:textDark flex flex-row flex-wrap gap-8 ">
 
                                 <div class="flex flex-col">
                                     <p class=" pr-3 " v-text="props.item.data.view_count + ' · ' + props.item.data.time_published"/>

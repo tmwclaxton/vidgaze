@@ -42,15 +42,19 @@ function resetTextArea() {
 };
 
 const cancelComment = () => {
-    // confirm that user wants to cancel comment
-    confirmStore.buttonOneText = 'Go Back';
-    confirmStore.buttonTwoText = 'Delete';
-    confirmStore.title = 'Are you sure, this will delete your comment?';
-    confirmStore.show = true;
-    confirmStore.continue = () => {
+    if (comment.value.length > 0) {
+        // confirm that user wants to cancel comment
+        confirmStore.buttonOneText = 'Go Back';
+        confirmStore.buttonTwoText = 'Delete';
+        confirmStore.title = 'Are you sure, this will delete your comment?';
+        confirmStore.show = true;
+        confirmStore.continue = () => {
+            commentOptions.value = false;
+            resetTextArea();
+        };
+    } else {
         commentOptions.value = false;
-        resetTextArea();
-    };
+    }
 };
 
 </script>

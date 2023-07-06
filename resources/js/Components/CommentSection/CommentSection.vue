@@ -31,7 +31,7 @@ onMounted(() => {
 <template>
 
 
-    <div id="comment_section" class=" flex flex-col w-full">
+    <div id="comment_section" class=" flex flex-col w-full px-3">
 
         <!--number of comments and order by input (should only be visible when over 5 comments)-->
         <div class="grid  grid-cols-2">
