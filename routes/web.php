@@ -23,6 +23,7 @@ use Inertia\Inertia;
 */
 
 require __DIR__ . '/ContentRoutes/videos.php';
+require __DIR__ . '/ContentRoutes/comments.php';
 require __DIR__ . '/ContentRoutes/podcasts.php';
 require __DIR__ . '/ContentRoutes/streams.php';
 require __DIR__ . '/ContentRoutes/channels.php';
