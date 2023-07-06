@@ -1,6 +1,8 @@
 <script setup>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
+import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
+const confirmStore = useConfirmModalStore();
 
 const name = 'CommentTextarea';
 const commentOptions = ref(false);
@@ -23,7 +25,7 @@ const submit = () => {
     } catch (error) {
         // error handling
     }
-    comment.value = '';
+    // comment.value = '';
 }
 
 const resizeTextarea = (event) => {
@@ -31,12 +33,32 @@ const resizeTextarea = (event) => {
     event.target.style.height = event.target.scrollHeight + 'px';
 }
 
+const textarea = ref(null);
+function resetTextArea() {
+    comment.value = '';
+    commentOptions.value = false;
+    // remove style attribute
+    textarea.value.removeAttribute('style');
+};
+
+const cancelComment = () => {
+    // confirm that user wants to cancel comment
+    confirmStore.buttonOneText = 'Go Back';
+    confirmStore.buttonTwoText = 'Delete';
+    confirmStore.title = 'Are you sure, this will delete your comment?';
+    confirmStore.show = true;
+    confirmStore.continue = () => {
+        commentOptions.value = false;
+        resetTextArea();
+    };
+};
+
 </script>
 
 
 <template>
     <form @submit.prevent="submit" class="w-full">
-        <textarea   v-model="comment" @input="resizeTextarea($event)"
+        <textarea  ref="textarea" v-model="comment" @input="resizeTextarea($event)"
             @click="commentOptions = true" class="h-9 mb-3 mt-3 w-full peer block p-2 resize-none text-sm text dark:textDark  bg-transparent
           border-t-0 border-x-0 border-b-1 border-zinc-300 focus:border-zinc-400 dark:border-zinc-600 dark:focus:border-zinc-400
           focus:border-1 focus:ring-0 overflow-y-hidden"
@@ -46,7 +68,7 @@ const resizeTextarea = (event) => {
 
         <div v-show="commentOptions" class=" justify-end w-full flex  ">
 
-            <QuaternaryButton class="mr-2" @click="commentOptions = false;">
+            <QuaternaryButton class="mr-2" @click=" cancelComment">
                 <font-awesome-icon :icon="['fas', 'ban']" class="w-4 h-4"/>
                 <span class="font-semibold">Cancel</span>
             </QuaternaryButton>
