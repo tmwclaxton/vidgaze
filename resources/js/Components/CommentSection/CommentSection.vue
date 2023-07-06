@@ -1,5 +1,5 @@
 <template>
-    <div id="comment_section" class="  grid grid-cols-1 w-full">
+    <div id="comment_section" class=" flex flex-col w-full">
 
         <!--number of comments and order by input (should only be visible when over 5 comments)-->
         <div class="grid  grid-cols-2">
@@ -13,21 +13,7 @@
 
             <div  >
                 <div  >
-                <textarea @click="commentOptions = true" class="h-9 mb-3 mt-3 w-full peer block p-2 resize-none text-sm text dark:textDark  bg-transparent
-                      border-t-0 border-x-0 border-b-1 border-zinc-300 focus:border-vidgaze-blue dark:border-zinc-600 dark:focus:border-zinc-400
-                      focus:border-1 focus:ring-0 overflow-y-hidden"
-                          placeholder="Leave a comment..."></textarea>
-
-                    <div v-show="commentOptions" class=" justify-end w-full flex  ">
-                        <button type="button" @click="commentOptions = false;"
-                                class="mr-2 bg-white-200 text dark:textDark  focus:ring-zinc-200 max-w-min rect_button">
-                            Cancel
-                        </button>
-                        <button type="button" @click="commentOptions = false;"
-                                class="rect_button  text dark:textDark generic_button_2 dark:generic-background-dark_3 max-w-min mr-0">
-                            Comment
-                        </button>
-                    </div>
+                    <CommentTextarea :item="item" :comment_id="null" />
 
                     <!--<p class="text-red-500 font-semibold text-center">{{$error}}</p>-->
 
@@ -54,6 +40,7 @@
 
 <script setup>
 import {ref} from "vue";
+import CommentTextarea from "@/Components/CommentSection/Partials/CommentTextarea.vue";
 
 const name = 'CommentSection';
 const commentOptions = ref(false);
