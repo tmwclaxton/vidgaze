@@ -10,10 +10,11 @@ use Illuminate\Support\Facades\Auth;
 class CommentInteractionController extends Controller
 {
 
-    private function commentUserChecks(Comment $comment) {
+    private function verifyUserPermissions(Comment $comment): void
+    {
         // check if user is authenticated
         if (!Auth::user()) {
-            return response()->json([
+            response()->json([
                 'error' => 'You are not authenticated'
             ], 401);
         }
@@ -48,7 +49,7 @@ class CommentInteractionController extends Controller
 
     public function toggleLike(Comment $comment) {
 
-        $this->commentUserChecks($comment);
+        $this->verifyUserPermissions($comment);
 
         $commentInteraction = $this->getInteraction($comment);
 
@@ -79,7 +80,7 @@ class CommentInteractionController extends Controller
 
     public function toggleDislike(Comment $comment) {
 
-        $this->commentUserChecks($comment);
+        $this->verifyUserPermissions($comment);
 
         $commentInteraction = $this->getInteraction($comment);
 
