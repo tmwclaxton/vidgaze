@@ -1,4 +1,36 @@
+<script setup>
+import {onMounted, ref} from "vue";
+import CommentTextarea from "@/Components/CommentSection/Partials/CommentTextarea.vue";
+import Comment from "@/Components/CommentSection/Comment.vue";
+
+const name = 'CommentSection';
+const comments = ref([]);
+
+const props = defineProps({
+    item: {
+        type: Object,
+        required: true
+    },
+});
+
+
+// grab comment slug from url if it exists and send that along with get request so it can be highlighted and put at top of comments
+
+onMounted(() => {
+    // axios.get('/api/comments/' + props.item.id)
+    //     .then(response => {
+    //         comments.value = response.data;
+    //     })
+    //     .catch(error => {
+    //         console.log(error);
+    //     });
+});
+
+</script>
+
 <template>
+
+
     <div id="comment_section" class=" flex flex-col w-full">
 
         <!--number of comments and order by input (should only be visible when over 5 comments)-->
@@ -30,6 +62,20 @@
             <!--    class="font-semibold"> Log in </span> to comment-->
             <!--</a>-->
 
+            <div v-if="item.comment_count > 0" class="flex flex-col w-full  ">
+
+                <Comment/>
+
+                <!--<x-button wire:click="loadMore" name="rect_button"-->
+                <!--          class=" mt-1 w-full generic_button_2">-->
+                <!--    Load More Comments-->
+                <!--</x-button>-->
+                <!--<x-error-message image_url="/images/mascot/ThumbsUp.png" :explore="false" text="Looks like there aren't any comments yet.  Be the first!"/>-->
+
+            </div>
+
+
+
         </div>
 
 
@@ -38,23 +84,4 @@
 </template>
 
 
-<script setup>
-import {ref} from "vue";
-import CommentTextarea from "@/Components/CommentSection/Partials/CommentTextarea.vue";
 
-const name = 'CommentSection';
-const commentOptions = ref(false);
-const comment_id = ref(null);
-const comment_text = ref(null);
-
-const props = defineProps({
-    item: {
-        type: Object,
-        required: true
-    },
-});
-</script>
-
-<style scoped>
-
-</style>
