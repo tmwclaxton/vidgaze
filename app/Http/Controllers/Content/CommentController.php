@@ -133,8 +133,6 @@ class CommentController extends Controller
 
     }
 
-
-
     public function update(Request $request) {
         $comment = Comment::find($request->commentId);
         $body = $request->body ?? null;
