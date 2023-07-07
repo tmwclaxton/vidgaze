@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\JoshPing;
 use App\Http\Controllers\Content\CategoryController;
 use App\Http\Controllers\Content\MusicController;
 use App\Http\Controllers\Content\PodcastController;
@@ -68,7 +69,7 @@ Route::get('/privacy_policy', [SupportController::class,'privacy'])->name('priva
 
 
 Route::get('/ping', function(){
-    return \App\Helpers\JoshPing::ping();
+    return JoshPing::ping();
 });
 
 

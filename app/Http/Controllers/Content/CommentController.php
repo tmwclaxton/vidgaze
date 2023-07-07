@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CommentInteraction;
 use App\Models\CommentModels\Comment;
 use App\Models\VideoModels\Video;
+use App\Services\MixPanelTrackingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,7 +14,7 @@ class CommentController extends Controller
 {
 
     protected array $rules = [
-        'body' => 'required|regex:/^[A-Za-z0-9\-! ,\'\"\/@\.:\(\)]+$/|max:10000|min:3',
+        'body' => 'required|regex:/^[A-Za-z0-9\-! ,\'\"\/@\.:\(\)]+$/|max:10000|min:1',
         'video_id' => 'required|exists:videos,id',
         'parent_id' => 'nullable|exists:comments,id',
    ];
@@ -42,12 +43,15 @@ class CommentController extends Controller
     // update - when form submitted save the edits
     // destroy - delete one item
 
-    public function infinite(Request $request, int $firstCommentId = null) {
-        // get order by, limit, offset, and video id from request
+    public function infinite(Request $request) {
+        // get order by, limit, offset, and video id from request,
         $perPage = $request->perPage ?? 20;
         $commentIds = $request->commentIds ?? [];
         $orderByMethod = $request->input('category') ?? 'Order By';
         $videoId = $request->input('videoId') ?? null;
+        $firstCommentId = $request->input('firstCommentId') ?? null;
+        $parentId = $request->input('parentId') ?? null;
+
 
         // if commentIds is not an array, explode the ids into an array
         if (!is_array($commentIds) ) {
@@ -56,7 +60,7 @@ class CommentController extends Controller
 
         // get the query
         $query = Comment::query()
-            ->where([['parent_comment_id', '=', null], ['video_id', '=', $videoId]]);
+            ->where([['parent_comment_id', '=', $parentId], ['video_id', '=', $videoId]]);
 
         // if firstCommentId is not null, add where clause to query
         if ($firstCommentId !== null) {
@@ -101,26 +105,39 @@ class CommentController extends Controller
         ]);
     }
 
-    public function create()
+    public function store(Request $request)
     {
-        //
+
+        if (!(isset(Auth::user()->creator->id) && $this->validate($request, $this->rules))) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Comment could not be created',
+            ]);
+        }
+        $comment = Comment::create([
+            'creator_id' => Auth::user()->creator->id,
+            'video_id' => $this->video->id,
+            'parent_comment_id' => $this->comment_id,
+            'body' => $this->body,
+        ]);
+
+        $this->video->comment_count++;
+        $this->video->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Comment created successfully',
+            'comment' => $comment,
+        ]);
+
+
     }
 
-    public function store() {
 
-    }
 
-    public function show(Video $video) {
-
-    }
-
-    //public function edit(Comment $comment)
-    //{
-    //    $this->verifyUserPermissions($comment);
-    //
-    //}
-
-    public function update(Comment $comment, string $body) {
+    public function update(Request $request) {
+        $comment = Comment::find($request->commentId);
+        $body = $request->body ?? null;
         $this->verifyUserPermissions($comment);
 
         if ( !$this->validate( request(), $this->rules ) ) {
@@ -139,8 +156,9 @@ class CommentController extends Controller
         ]);
     }
 
-    public function destroy(Comment $comment)
+    public function destroy(Request $request)
     {
+        $comment = Comment::find($request->commentId);
         $this->verifyUserPermissions($comment);
 
         if ($success = $comment->delete() === false) {
