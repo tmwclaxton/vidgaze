@@ -22,7 +22,7 @@ class JoshPing
     public static function ping()
     {
         $podcast = Spotify::search(new SearchQueryDTO(
-            'joe rogan',
+            request('search'),
             1,
         ))[0]->content;
         return Spotify::exampleEmbed($podcast->id);
