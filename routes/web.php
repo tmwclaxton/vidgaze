@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\JoshPing;
 use App\Http\Controllers\Content\CategoryController;
 use App\Http\Controllers\Content\MusicController;
 use App\Http\Controllers\Content\PodcastController;
@@ -23,6 +24,7 @@ use Inertia\Inertia;
 */
 
 require __DIR__ . '/ContentRoutes/videos.php';
+require __DIR__ . '/ContentRoutes/comments.php';
 require __DIR__ . '/ContentRoutes/podcasts.php';
 require __DIR__ . '/ContentRoutes/streams.php';
 require __DIR__ . '/ContentRoutes/channels.php';
@@ -38,6 +40,7 @@ Route::get('/shares', [ShareController::class, 'index'])->name('share.index');
 
 // view listener route
 Route::post('/view-listener', [ViewListenerController::class,'message'])->name('view.listener');
+//Route::get('/view-listener', [ViewListenerController::class,'
 
 
 
@@ -66,7 +69,7 @@ Route::get('/privacy_policy', [SupportController::class,'privacy'])->name('priva
 
 
 Route::get('/ping', function(){
-    return \App\Helpers\JoshPing::ping();
+    return JoshPing::ping();
 });
 
 

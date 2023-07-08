@@ -9,6 +9,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { Link } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
 import VueClickAway from "vue3-click-away";
+import VueHoneypot from 'vue-honeypot'
 /* import the fontawesome core - utility functions*/
 import { library } from '@fortawesome/fontawesome-svg-core';
 /* import font awesome icon component */
@@ -30,6 +31,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(VueClickAway)
+            .component('VueHoneyPot', VueHoneypot)
             .component('font-awesome-icon', FontAwesomeIcon)
             .component('Link', Link)
             .component('Head', Head)

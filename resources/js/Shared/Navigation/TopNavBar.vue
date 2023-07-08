@@ -9,6 +9,7 @@ import CloseNavSVG from '~/images/icons/exit.svg';
 import {Link} from "@inertiajs/vue3";
 import Searchbar from "@/Shared/Navigation/Partials/Searchbar.vue";
 import {useNavStore} from "@/Stores/NavStore";
+import TopNavButton from "@/Components/Buttons/QuaternaryButton.vue";
 const navStore = useNavStore();
 
 
@@ -67,27 +68,33 @@ const name = 'TopNavBar';
                     <!--Buy Vidcoins button-->
                     <div v-if="!navStore.showingStudioLinks" class="hidden 2xl:flex sm:items-center mr-2 flex-shrink-0 group">
                         <Link :href="route('login')"  >
-                            <button class="flex flex-row items-center justify-center
-                            text-sm capitalize bg-zinc-900 hover:bg-zinc-800 text-white p-2 px-5 rounded-md font-bold flex flex-row space-x-3">
+
+                            <TopNavButton>
                                 <img src="/images/vidcoins/coins/PileofCoins2.png" alt="VidCoins"
                                      class="h-4 w-auto group-hover:shake">
                                 <p>Get VidCoins</p>
-                            </button>
+                            </TopNavButton>
+
                         </Link>
                     </div>
                     <!--log in-->
                     <div v-if="$page.props.auth.user == null"
                          class="hidden sm:flex sm:items-center   flex-shrink-0">
-                        <div class="flex gap-x-2">
+                        <div class="flex gap-x-2 flex-row-reverse">
                             <Link :href="route('login')" >
-                                <button class="text-sm capitalize bg-zinc-900 hover:bg-zinc-800 text-white p-2 px-5 rounded-md font-bold">
-                                    Log In
-                                </button>
+
+                                <TopNavButton>
+                                    <font-awesome-icon :icon="['fas', 'right-to-bracket']" class="h-4 w-auto"/>
+                                    <p>Log In</p>
+                                </TopNavButton>
+
                             </Link>
                             <Link :href="route('register')" >
-                                <button class="text-sm capitalize bg-zinc-900 hover:bg-zinc-800 text-white p-2 px-5 rounded-md font-bold">
-                                    Sign Up
-                                </button>
+
+                                <TopNavButton>
+                                    <font-awesome-icon :icon="['fas', 'user-plus']" class="h-4 w-auto"/>
+                                    <p>Sign Up</p>
+                                </TopNavButton>
 
                             </Link>
                         </div>

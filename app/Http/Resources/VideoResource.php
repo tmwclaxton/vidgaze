@@ -32,10 +32,11 @@ class VideoResource extends JsonResource
             'likes' => $this->like_count,
             'dislikes' => $this->dislike_count,
             'creator' => new CreatorResource($this->creator()->first()),
-            'comment_count' => number_format_short($this->comment_count),
+            'comment_count' => number_format_short($this->comment_count) . " " . Str::plural('Comment', $this->comment_count),
             // capitalize the first letter of the preference and if youtube capitalize the 'T' in 'YouTube'
             'preferred_source' => capitalisePlatformName($this->preferred_source),
             'external_id' => $this->getPreferredSourceID(),
+            'type' => 'video',
         ];
     }
 }

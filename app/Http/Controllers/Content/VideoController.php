@@ -29,7 +29,10 @@ class VideoController extends Controller
     public function show(Video $video)
     {
         $this->checkVisibilityAndOwnership($video);
-        return Inertia::render('Viewer/Watch/Watch', ['item' => new VideoResource($video)]);
+        return Inertia::render('Viewer/Watch/Watch', [
+            'item' => new VideoResource($video),
+            'type' => 'video'
+        ]);
     }
 
 
@@ -144,11 +147,20 @@ class VideoController extends Controller
             $videos = new VideoCollection($query->take($perPage)->get());
         }
 
-        // error handling
-        if (!isset($videos)) {
-            return response([
-                'error' => 'No videos found'
-            ]);
+        // If there are not enough videos, get random public videos
+        if (!isset($videos) || $videos->count() < $perPage) {
+            // get random public videos that are not in the videoIds array and get the amt to make up the difference if there are some videos already
+            if (isset($videos)) {
+                $amt = $perPage - $videos->count();
+            } else {
+                $amt = $perPage;
+            }
+            $randomVideos = new VideoCollection(Video::where('visibility', 'public')->whereNotIn('id', $videoIds)->inRandomOrder()->take($amt)->get());
+            if (isset($videos)) {
+                $videos = $videos->merge($randomVideos);
+            } else {
+                $videos = $randomVideos;
+            }
         }
 
 

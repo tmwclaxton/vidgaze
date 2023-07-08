@@ -25,10 +25,19 @@ const classes = computed(() => {
     return classString;
 });
 
+// if screen is mobile sized when the navigation is expanded and the user clicks a link, close the navigation
+const closeNavigation = () => {
+    if (window.innerWidth < 1200) {
+        setTimeout(() => {
+            navStore.showingNavigationDropdown = false;
+        }, 100 );
+    }
+};
+
 </script>
 
 <template>
-    <Link v-if="!span" :href="href" :class="classes">
+    <Link v-if="!span" :href="href" :class="classes" @click="closeNavigation" >
         <slot />
     </Link>
     <span v-else :class="classes" class=" select-none cursor-pointer ">

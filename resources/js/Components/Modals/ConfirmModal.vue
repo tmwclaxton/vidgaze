@@ -7,6 +7,8 @@
  const confirmModalStore = useConfirmModalStore();
  const name = 'ConfirmModal';
 
+ // watch
+
 </script>
 
 <template>
@@ -24,13 +26,13 @@
                 <font-awesome-icon :icon="['fass', 'circle-exclamation']"  class="mx-auto mb-4 text-zinc-400 w-14 h-14 dark:text-zinc-200" />
                 <h3 class="  text-lg font-normal text-zinc-500 dark:text-zinc-400" v-text="confirmModalStore.title"/>
             </div>
-            <div class="flex flex-col justify-center gap-2 px-5 pb-5">
-                <PrimaryButton class="w-full" @click="confirmModalStore.clickButtonOne">
+            <div class="flex flex-row justify-center gap-2 px-5 pb-5">
+                <SecondaryButton class="w-full" @click="confirmModalStore.clickButtonOne">
                     <p class="mx-auto font-bold" v-text="confirmModalStore.buttonOneText"/>
-                </PrimaryButton>
-                <SecondaryButton class="w-full" @click="confirmModalStore.clickButtonTwo">
-                    <p class="mx-auto font-bold" v-text="confirmModalStore.buttonTwoText"/>
                 </SecondaryButton>
+                <PrimaryButton class="w-full" @click="confirmModalStore.clickButtonTwo">
+                    <p class="mx-auto font-bold" v-text="confirmModalStore.buttonTwoText"/>
+                </PrimaryButton>
             </div>
         </div>
     </div>
