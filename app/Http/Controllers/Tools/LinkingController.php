@@ -3,18 +3,15 @@
 namespace App\Http\Controllers\Tools;
 
 use App\Enums\Platform;
-use App\Helpers\OAuth\LogInWithDailymotion;
-use App\Helpers\OAuth\LogInWithTwitch;
-use App\Helpers\OAuth\LogInWithVimeo;
-use App\Helpers\OAuth\LogInWithYouTube;
 use App\Helpers\PlatformAPIs\Dailymotion;
-use App\Helpers\PlatformAPIs\Google;
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\PlatformAPIs\Vimeo;
 use App\Helpers\PlatformAPIs\YouTube;
+use App\Helpers\Tools;
 use App\Http\Controllers\Controller;
 use App\Models\CreatorModels\CreatorSource;
-use Google_Service_YouTube;
+use DailymotionAuthRequiredException;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 
@@ -41,17 +38,38 @@ class LinkingController extends Controller
                     ]);
 
                     return redirect()->route('studio.dashboard');
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     if($e->getCode() == 403) {
-                        return abort('403', $e->getMessage());
+                        abort('403', $e->getMessage());
                     }
-                    return abort('401',$e->getMessage());
+                    abort('401',$e->getMessage());
                 }
 
             case Platform::Dailymotion->value:
-//                try {
-                    $dailymotion_client = (new Dailymotion(true))->client;
+                try {
+
+                $api = new \Dailymotion();
+
+                $api->setGrantType(
+                    \Dailymotion::GRANT_TYPE_AUTHORIZATION,
+                    config('platforms.dailymotion.client_key'),
+                    config('platforms.dailymotion.client_secret'),
+                    ['email','userinfo','manage_videos','manage_playlists','manage_subscriptions','manage_likes'],
+                    ['redirect_uri'=>Tools::convertRedirectPathToUrl(config('platforms.dailymotion.redirect_url'))]
+                );
+//                    $dm = (new Dailymotion(true));
+//                    dd($dm->client->getSession());
+//                    dd($dm);
+                try
+                {
+                    dd($api->getAccessToken());
+                }
+                catch (DailymotionAuthRequiredException $e)
+                {
+                    return redirect($api->getAuthorizationUrl());
+                }
 //                $dailymotion_client->getAccessToken();
+
 
 
                 $client = new Client();
@@ -94,9 +112,9 @@ class LinkingController extends Controller
 
 
                     return redirect()->route('studio.dashboard');
-//                } catch (\Exception $e) {
-//                    return abort('401');
-//                }
+                } catch (Exception $e) {
+                    abort('401');
+                }
             case Platform::Vimeo->value:
                 try {
 
@@ -115,8 +133,8 @@ class LinkingController extends Controller
                     ]);
 
                 return redirect()->route('studio.dashboard');
-                } catch (\Exception $e) {
-                    return abort('401');
+                } catch (Exception $e) {
+                    abort('401');
                 }
             case Platform::Twitch->value:
                 try {
@@ -138,12 +156,12 @@ class LinkingController extends Controller
                     ]);
 
                     return redirect()->route('studio.dashboard');
-                } catch (\Exception $e) {
-                    return abort('401');
+                } catch (Exception $e) {
+                    abort('401');
                 }
 
             default:
-                return abort(400);
+                abort(400);
         }
     }
 
@@ -155,7 +173,7 @@ class LinkingController extends Controller
             $auth_url = $platform::getLoginUrl();
         }
         else {
-            return abort(400);
+            abort(400);
         }
 
         if (!isset($auth_url)) abort(400);
@@ -173,9 +191,9 @@ class LinkingController extends Controller
 
         if( $user->exists()) {
             if($user->first()->id == auth()->user()->id){
-                throw new \Exception("You have already claimed this channel", 403);
+                throw new Exception("You have already claimed this channel", 403);
             }
-            throw new \Exception('That channel has already been claimed by another user', 403);
+            throw new Exception('That channel has already been claimed by another user', 403);
         }
     }
 }
