@@ -52,7 +52,7 @@ const subscribe = () => {
             });
         });
 
-};
+    };
 
 onMounted(() => {
     // Check if user is subscribed to channel by checking in auth subscriptions

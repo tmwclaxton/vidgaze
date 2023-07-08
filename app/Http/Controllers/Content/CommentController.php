@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Content;
 
+use App\Enums\Kind;
 use App\Http\Controllers\Controller;
 use App\Models\CommentInteraction;
 use App\Models\CommentModels\Comment;
@@ -15,8 +16,11 @@ class CommentController extends Controller
 
     protected array $rules = [
         'body' => 'required|regex:/^[A-Za-z0-9\-! ,\'\"\/@\.:\(\)]+$/|max:10000|min:1',
-        'video_id' => 'required|exists:videos,id',
-        'parent_id' => 'nullable|exists:comments,id',
+        'parent_comment_id' => 'nullable|exists:comments,id',
+        // item id must be integer
+        'item_id' => 'required|integer',
+        // item type can be video, podcast, or stream
+        'item_type' => 'required|in:video,podcast,stream',
    ];
 
     private function verifyUserPermissions(Comment $comment): void
@@ -108,26 +112,58 @@ class CommentController extends Controller
     public function store(Request $request)
     {
 
+
+        //get info from request
+        $item_type = $request->item_type;
+        $item_id = $request->item_id;
+        $parent_comment_id = $request->parent_comment_id ?? null;
+        $body = $request->body;
+
+
+
         if (!(isset(Auth::user()->creator->id) && $this->validate($request, $this->rules))) {
             return response()->json([
-                'success' => false,
+                'type' => false,
                 'message' => 'Comment could not be created',
             ]);
         }
-        $comment = Comment::create([
-            'creator_id' => Auth::user()->creator->id,
-            'video_id' => $this->video->id,
-            'parent_comment_id' => $this->comment_id,
-            'body' => $this->body,
-        ]);
 
-        $this->video->comment_count++;
-        $this->video->save();
+        switch ($item_type) {
+            case 'video':
+                // grab video
+                $video = Video::find($item_id);
+
+                if ($video === null) {
+                    return response()->json([
+                        'type' => false,
+                        'message' => 'Video could not be found',
+                    ]);
+                }
+
+                $comment = Comment::create([
+                    'creator_id' => Auth::user()->creator->id,
+                    'video_id' => $item_id,
+                    'parent_comment_id' => $parent_comment_id,
+                    'body' => $body
+                ]);
+
+                $video->comment_count++;
+                $video->save();
+
+                break;
+        }
+
+        if ($comment === null) {
+            return response()->json([
+                'type' => false,
+                'message' => 'Comment could not be created',
+            ]);
+        }
+
 
         return response()->json([
-            'success' => true,
+            'type' => true,
             'message' => 'Comment created successfully',
-            'comment' => $comment,
         ]);
 
 

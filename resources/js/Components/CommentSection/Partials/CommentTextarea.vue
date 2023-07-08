@@ -2,8 +2,13 @@
 import {onMounted, ref} from "vue";
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
-const confirmStore = useConfirmModalStore();
+import {useToastStore} from "@/Stores/ToastStore";
 
+import {usePage} from "@inertiajs/vue3";
+import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
+const confirmStore = useConfirmModalStore();
+const toastStore = useToastStore();
+const commentSectionStore = useCommentSectionStore();
 const name = 'CommentTextarea';
 const commentOptions = ref(false);
 const comment = ref('');
@@ -19,13 +24,18 @@ const props = defineProps({
     }
 });
 
-const submit = () => {
+const submitComment = () => {
     try {
-        this.$refs.honeypot.validate()
+        this.$refs.honeypot.validate();
     } catch (error) {
         // error handling
     }
-    // comment.value = '';
+
+    commentSectionStore.storeComment(comment.value, props.item.id, props.item.type, props.comment_id)
+    commentOptions.value = false
+    comment.value = ''
+    resetTextArea()
+
 }
 
 const resizeTextarea = (event) => {
@@ -39,7 +49,7 @@ function resetTextArea() {
     commentOptions.value = false;
     // remove style attribute
     textarea.value.removeAttribute('style');
-};
+}
 
 const cancelComment = () => {
     if (comment.value.length > 0) {
@@ -57,6 +67,7 @@ const cancelComment = () => {
     }
 };
 
+
 </script>
 
 
@@ -68,7 +79,7 @@ const cancelComment = () => {
           focus:border-1 focus:ring-0 overflow-y-hidden"
                  placeholder="Leave a comment..."></textarea>
 
-        <VueHoneyPot ref="honeypot"/>
+        <!--<VueHoneyPot ref="honeypot"/>-->
 
         <div v-show="commentOptions" class=" justify-end w-full flex  ">
 
@@ -76,7 +87,7 @@ const cancelComment = () => {
                 <font-awesome-icon :icon="['fas', 'ban']" class="w-4 h-4"/>
                 <span class="font-semibold">Cancel</span>
             </QuaternaryButton>
-            <QuaternaryButton class="mr-2" @click="commentOptions = false; submit">
+            <QuaternaryButton class="mr-2" @click="submitComment">
                 <font-awesome-icon :icon="['fas', 'comment']" class="w-4 h-4"/>
                 <span class="font-semibold">Comment</span>
             </QuaternaryButton>
