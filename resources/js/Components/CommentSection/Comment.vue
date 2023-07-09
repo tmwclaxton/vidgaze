@@ -4,7 +4,8 @@ import TertiaryButton from "@/Components/Buttons/TertiaryButton.vue";
 import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
 import {usePage} from "@inertiajs/vue3";
 import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
-
+import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
+const confirmStore = useConfirmModalStore();
 const CommentSectionStore = useCommentSectionStore();
 
 const name = 'Comment';
@@ -36,6 +37,20 @@ const share = () => {
 
 
 }
+
+const deleteComment = () => {
+    // confirm that user wants to delete comment
+    confirmStore.buttonOneText = 'Cancel';
+    confirmStore.buttonTwoText = 'Delete';
+    confirmStore.title = 'Are you sure, this will delete your comment?';
+    confirmStore.show = true;
+    confirmStore.continue = () => {
+        CommentSectionStore.deleteComment(props.comment.id);
+        confirmStore.show = false;
+    };
+};
+
+
 </script>
 
 <template>
@@ -133,8 +148,8 @@ const share = () => {
                                     </TertiaryButton>
                                 </span>
 
-                                <span >
-                                    <TertiaryButton>
+                                <span @click="deleteComment">
+                                    <TertiaryButton >
                                         <font-awesome-icon :icon="['fas', 'trash']" class="h-5 aspect-square"/>
                                         <span class="text-sm font-semibold">Delete</span>
                                     </TertiaryButton>

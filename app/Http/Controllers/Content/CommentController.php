@@ -181,7 +181,7 @@ class CommentController extends Controller
     }
 
     public function update(Request $request) {
-        $comment = Comment::find($request->commentId);
+        $comment = Comment::find($request->comment_id);
         $body = $request->body ?? null;
         $this->verifyUserPermissions($comment);
 
@@ -203,17 +203,31 @@ class CommentController extends Controller
 
     public function destroy(Request $request)
     {
-        $comment = Comment::find($request->commentId);
+        $comment = Comment::find($request->input('comment_id'));
+        $item_type = $request->input('item_type'); // for future use
+        $item_id = $request->input('item_id');
+        $video = Video::find($item_id);
+
+
+        if ($comment === null) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Comment could not be found',
+            ]);
+        }
+
         $this->verifyUserPermissions($comment);
 
         if ($success = $comment->delete() === false) {
             $message = 'Comment could not be deleted';
         } else {
             $message = 'Comment deleted successfully';
+            $video->comment_count--;
+            $video->save();
         }
 
         return response()->json([
-            'success' => $success,
+            'type' => $success ? 'success' : 'error',
             'message' => $message,
         ]);
     }

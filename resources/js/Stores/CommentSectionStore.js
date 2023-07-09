@@ -130,10 +130,14 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
             shareStore.getShareLinks(link, title);
         },
 
-        deleteComment(comment) {
+        deleteComment(comment_id) {
             const toastStore = useToastStore();
 
-            axios.delete(route('comments.destroy', {comment: comment.id}))
+            axios.delete(route('comments.destroy', {
+                comment_id: comment_id,
+                item_id: this.item.id,
+                item_type: this.item_type,
+            }))
                 .then(response => {
                     // console.log(response.data);
                     toastStore.add({
@@ -142,7 +146,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                     });
 
                     // remove comment from comments array
-                    this.comments = this.comments.filter(item => item.id !== comment.id);
+                    this.comments = this.comments.filter(comment => comment.id !== comment_id);
 
                 })
                 .catch(error => {
