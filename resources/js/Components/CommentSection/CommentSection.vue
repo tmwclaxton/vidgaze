@@ -9,7 +9,6 @@ import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
 const CommentSectionStore = useCommentSectionStore();
 
 const name = 'CommentSection';
-const comments = ref([]);
 const categoryOptions = [
     {value: 'best', label: 'Best'},
     {value: 'new', label: 'New'},
@@ -33,50 +32,14 @@ onMounted(() => {
     CommentSectionStore.item_type = props.item.type;
 
     // grab interactions first then comments
-    CommentSectionStore.getCommentInteractions().then(
-
-
-    );
+    CommentSectionStore.getCommentInteractions();
     setTimeout(() => {
-        fetchComments(comments.value);
+        CommentSectionStore.fetchComments(props.item.id, props.item.type, category.value);
     }, 200); // 200ms delay
 
 });
 
-const fetchComments = async (commentsArray) => {
-    try {
-        const comment_ids = commentsArray.map(comment => comment.id).join(',');
-        const response = await axios.get(route('comments.infinite'), {
-            params: {
-                item_id: props.item.id,
-                item_type: props.item.type,
-                per_page: 10,
-                comment_ids: comment_ids,
-                category: category.value,
-                first_comment_id: null,
-                parent_comment_id: null
-            }
-        }).then(
-            response => {
-                return response;
-            }
-        ).catch(error => {
-                console.log(error);
-            }
-        )
 
-        setTimeout(() => {
-            // console.log(response.data);
-            if (!response.data.error) {
-                comments.value = comments.value.concat(response.data.comments);
-            } else {
-                console.log(response.data.error);
-            }
-        }, 200); // 200ms delay
-    } catch (error) {
-        console.log(error);
-    }
-};
 </script>
 
 <template>
@@ -118,9 +81,9 @@ const fetchComments = async (commentsArray) => {
                 class="font-semibold"> Log in </span> to comment
             </a>
 
-            <div class="flex flex-col w-full my-5" v-if="comments.length > 0">
+            <div class="flex flex-col w-full my-5" v-if="CommentSectionStore.comments.length > 0">
 
-                <Comment v-for="comment in comments" :comment="comment"/>
+                <Comment v-for="comment in CommentSectionStore.comments" :comment="comment"/>
 
                 <!--<x-button wire:click="loadMore" name="rect_button"-->
                 <!--          class=" mt-1 w-full generic_button_2">-->

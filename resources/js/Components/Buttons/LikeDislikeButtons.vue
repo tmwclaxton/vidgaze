@@ -2,7 +2,7 @@
         <div @click="toggleLike" class="select-none flex gap-1 cursor-pointer justify-center "
              :class="[props.orientationVertical ? 'flex-col' : 'flex-row gap-x-3 ']">
             <ThumbsUpIcon class="transform transition-all duration-200  my-auto flex-shrink-0"  :class="[ props.orientationVertical ? 'mx-auto h-8' : 'h-6', likeButtonClasses]"  />
-            <p class="font-bold text-sm text-center my-auto" v-text="item.like_count" />
+            <p class="font-bold text-sm text-center my-auto" v-text="item.like_count ?? 0" />
         </div>
 
         <!--vertical hr-->
@@ -12,7 +12,7 @@
              :class="[props.orientationVertical ? 'flex-col' : 'flex-row gap-x-3']">
             <!--combine likeButtonClass and the props.ortientaitonVertical classes-->
             <ThumbsDownIcon class="transform transition duration-200 my-auto   " :class="[ props.orientationVertical ? 'mx-auto h-8' : 'w-6 h-6', dislikeButtonClasses]" />
-            <p class="font-bold text-sm text-center my-auto " v-text="item.dislike_count" />
+            <p class="font-bold text-sm text-center my-auto " v-text="item.dislike_count ?? 0" />
         </div>
 </template>
 
@@ -53,8 +53,10 @@ const props = defineProps({
 const item = computed(() => {
     if (props.video !== undefined) {
         return props.video;
-    } else {
+    } else if (props.comment !== undefined) {
         return props.comment;
+    } else {
+        return null;
     }
 });
 

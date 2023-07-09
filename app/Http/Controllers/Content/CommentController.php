@@ -174,6 +174,7 @@ class CommentController extends Controller
         return response()->json([
             'type' => 'success',
             'message' => 'Comment created successfully',
+            'comment' => new CommentResource($comment),
         ]);
 
 
