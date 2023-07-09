@@ -88,18 +88,18 @@ class CommentController extends Controller
 
         // order the query by the orderByMethod passed in
         switch ($category) {
-            case 'Order By':
-            case 'Best':
+            case 'order by':
+            case 'best':
                 $query->orderBy('like_count', 'DESC')
                     ->orderBy('dislike_count', 'ASC');
                 break;
-            case 'New':
+            case 'new':
                 $query->orderBy('created_at', 'DESC');
                 break;
-            case 'Controversial':
+            case 'controversial':
                 $query->orderBy('dislike_count', 'DESC');
                 break;
-            case 'Old':
+            case 'old':
                 $query->orderBy('created_at', 'ASC');
                 break;
         }

@@ -23,7 +23,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                         item_type: item_type,
                         per_page: 10,
                         comment_ids: comment_ids,
-                        category: category.value,
+                        category: category,
                         first_comment_id: null,
                         parent_comment_id: null
                     }
@@ -49,6 +49,37 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
             }
         },
 
+        async getCommentInteractions() {
+            axios.get(route('comment.interactions', {
+                item_id: this.item.id,
+                item_type: this.item_type,
+            }))
+                .then(response => {
+                    // console.log(response.data);
+                    this.commentInteractions = response.data;
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+
+        getCommentInteraction(comment_id) {
+            //0 both unselected, 1 like button, 2-->
+            // check liked value if like then 1, if dislike then 2 otherwise null
+            // console.log(comment_id);
+
+            const commentInteraction = this.commentInteractions.result.find(interaction => interaction.comment_id === comment_id);
+            // console.log(commentInteraction);
+            if (commentInteraction) {
+                if (commentInteraction.liked === 'like') {
+                    return 1;
+                } else if (commentInteraction.liked === 'dislike') {
+                    return 2;
+                }
+            }
+            return 0;
+
+        },
 
         storeComment(body, item_id, item_type, parent_comment_id = null) {
             const toastStore = useToastStore();
@@ -90,39 +121,6 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
 
         },
 
-        async getCommentInteractions() {
-            axios.get(route('comment.interactions', {
-                item_id: this.item.id,
-                item_type: this.item_type,
-            }))
-            .then(response => {
-                // console.log(response.data);
-                this.commentInteractions = response.data;
-            })
-            .catch(error => {
-                console.log(error);
-            });
-        },
-
-        getCommentInteraction(comment_id) {
-           //0 both unselected, 1 like button, 2-->
-            // check liked value if like then 1, if dislike then 2 otherwise null
-            // console.log(comment_id);
-
-            const commentInteraction = this.commentInteractions.result.find(interaction => interaction.comment_id === comment_id);
-            // console.log(commentInteraction);
-            if (commentInteraction) {
-                if (commentInteraction.liked === 'like') {
-                    return 1;
-                } else if (commentInteraction.liked === 'dislike') {
-                    return 2;
-                }
-            }
-            return 0;
-
-        },
-
-
         shareComment(comment) {
             const shareStore = useShareModalStore();
 
@@ -130,6 +128,30 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
             const link = route('watch.show', { video: {slug: this.item.slug }, comment: comment.id });
             const title = "Check out this comment on VidGaze" + this.item.title
             shareStore.getShareLinks(link, title);
+        },
+
+        deleteComment(comment) {
+            const toastStore = useToastStore();
+
+            axios.delete(route('comments.destroy', {comment: comment.id}))
+                .then(response => {
+                    // console.log(response.data);
+                    toastStore.add({
+                        message: response.data.message,
+                        type: response.data.type
+                    });
+
+                    // remove comment from comments array
+                    this.comments = this.comments.filter(item => item.id !== comment.id);
+
+                })
+                .catch(error => {
+                    console.log(error);
+                    toastStore.add({
+                        message: 'Something went wrong, please try again later',
+                        type: 'error'
+                    });
+                });
         }
 
     }

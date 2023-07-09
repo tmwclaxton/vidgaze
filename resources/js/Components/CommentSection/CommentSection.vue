@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import CommentTextarea from "@/Components/CommentSection/Partials/CommentTextarea.vue";
 import Comment from "@/Components/CommentSection/Comment.vue";
 import SelectInput from "@/Components/Inputs/SelectInput.vue";
@@ -22,6 +22,13 @@ const props = defineProps({
         type: Object,
         required: true
     },
+});
+
+// watch for changes in category and fetch comments again
+watch(category, (value) => {
+    CommentSectionStore.comments = [];
+    CommentSectionStore.getCommentInteractions();
+    CommentSectionStore.fetchComments(props.item.id, props.item.type, category.value);
 });
 
 
