@@ -166,14 +166,14 @@ class CommentController extends Controller
 
         if ($comment === null) {
             return response()->json([
-                'type' => false,
+                'type' => 'error',
                 'message' => 'Comment could not be created',
             ]);
         }
 
 
         return response()->json([
-            'type' => true,
+            'type' => 'success',
             'message' => 'Comment created successfully',
         ]);
 

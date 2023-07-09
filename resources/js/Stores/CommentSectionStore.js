@@ -1,11 +1,14 @@
 import { defineStore } from 'pinia'
 import {useToastStore} from "@/Stores/ToastStore";
+import {useShareModalStore} from "@/Stores/ShareModelStore";
 
 export const useCommentSectionStore = defineStore('CommentSectionStore', {
     state: () => {
         return {
             // showingStudioLinks: false,
             commentInteractions: [],
+            item: null,
+            item_type: null,
 
         }
     },
@@ -36,9 +39,6 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                     message: response.data.message,
                     type: response.data.type
                 });
-
-
-
             })
             .catch(error => {
                 // Handle comment creation error
@@ -51,16 +51,27 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
 
         },
 
-        getComments(item_id, item_type) {
-            // $per_page = $request->input('per_page') ?? 10;
-            // $comment_ids = $request->comment_ids ?? [];
-            // $category = $request->input('category') ?? 'Order By';
-            // $item_id = $request->input('item_id') ?? null;
-            // $item_type = $request->input('item_type') ?? null;
-            // $first_comment_id = $request->input('first_comment_id') ?? null;
-            // $parent_comment_id = $request->input('parent_comment_id') ?? null;
-            // query comments using ziggy to route name comments.infinite
+        getCommentInteractions(item_id, item_type) {
+            axios.get(route('comments.index', {
+                item_id: item_id,
+                item_type: item_type,
+            }))
+            .then(response => {
+                this.commentInteractions = response.data;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
 
+
+        shareComment(comment) {
+            const shareStore = useShareModalStore();
+
+            shareStore.showMenu = true; // show share menu
+            const link = route('watch.show', { video: {slug: this.item.slug }, comment: comment.id });
+            const title = "Check out this comment on VidGaze" + this.item.title
+            shareStore.getShareLinks(link, title);
         }
 
     }

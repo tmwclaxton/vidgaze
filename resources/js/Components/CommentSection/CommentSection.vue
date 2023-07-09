@@ -5,6 +5,8 @@ import Comment from "@/Components/CommentSection/Comment.vue";
 import SelectInput from "@/Components/Inputs/SelectInput.vue";
 import Option from "@/Components/Modals/Partials/Option.vue";
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
+import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
+const CommentSectionStore = useCommentSectionStore();
 
 const name = 'CommentSection';
 const comments = ref([]);
@@ -28,6 +30,9 @@ const props = defineProps({
 
 onMounted(() => {
     fetchVideos(comments.value);
+    CommentSectionStore.item = props.item;
+    CommentSectionStore.item_type = props.item.type;
+
 });
 
 const fetchVideos = async (commentsArray) => {
@@ -36,7 +41,7 @@ const fetchVideos = async (commentsArray) => {
         const response = await axios.get(route('comments.infinite'), {
             params: {
                 item_id: props.item.id,
-                item_type: 'video',
+                item_type: props.item.type,
                 per_page: 10,
                 comment_ids: comment_ids,
                 category: category.value,

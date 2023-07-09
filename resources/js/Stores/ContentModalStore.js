@@ -190,7 +190,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             } else if (this.itemType === 'stream') {
                 link = route('stream.show', { stream: {slug: this.item.slug } });
                 title = "Check out this cool stream on VidGaze" + this.item.title
-            }else if (this.itemType === 'short') {
+            } else if (this.itemType === 'short') {
                 link = route('short.show', { video: {slug: this.item.slug } });
                 title = "Check out this cool short on VidGaze" + this.item.title
             }

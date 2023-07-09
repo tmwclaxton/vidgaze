@@ -2,6 +2,10 @@
 import {computed, ref} from "vue";
 import TertiaryButton from "@/Components/Buttons/TertiaryButton.vue";
 import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
+import {usePage} from "@inertiajs/vue3";
+import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
+
+const CommentSectionStore = useCommentSectionStore();
 
 const name = 'Comment';
 const props = defineProps({
@@ -20,11 +24,17 @@ const body = ref(props.comment.body);
 const isCollapsed = ref(true);
 const editable = computed(() => {
     // checked logged in and is owner of comment OR is admin
-    const user = $page.props.auth.user;
+    const user = usePage().props.auth.user;
 
     return (user && (user.id === props.comment.owner.id || $page.props.auth.admin));
 
 });
+
+const share = () => {
+    CommentSectionStore.shareComment(props.comment);
+
+
+}
 </script>
 
 <template>
@@ -32,7 +42,7 @@ const editable = computed(() => {
 
 
         <div class="flex flex-col w-full">
-                <div id="comment" class='w-full  flex group relative bg-zinc-100 dark:bg-zinc-900 p-4 px-3 rounded'>
+                <div id="comment" class='w-full  flex relative bg-zinc-100 dark:bg-zinc-900 p-4 px-3 rounded'>
 
 
                     <div class=" flex flex-row w-full">
@@ -106,8 +116,6 @@ const editable = computed(() => {
                                 <TertiaryButton>
                                     <LikeDislikeButtons  :orientation-vertical="false" :comment="comment" value="0"/>
                                 </TertiaryButton>
-                                <!--<x-comment-button wire_click="like" class="{{ $liked == 'like' ? 'fill-blue-600' : ''}}" svgIcon="like" text="{{$comment->like_count}}"/>-->
-                                <!--<x-comment-button wire_click="dislike" class="{{ $liked == 'dislike' ? 'fill-blue-600' : ''}}" svgIcon="dislike" text="{{$comment->dislike_count}}"/>-->
 
                                 <span v-if="!simple" @click="comment = ! comment" >
                                     <!--<x-comment-button class="w-4" svgIcon="message" text="Reply"/>-->
@@ -141,7 +149,7 @@ const editable = computed(() => {
 
 
                                 <!--share button-->
-                                <span>
+                                <span @click="share()">
                                     <tertiary-button >
                                         <font-awesome-icon :icon="['fas', 'reply']" class="h-5 aspect-square"/>
                                         <span class="text-sm font-semibold">Share</span>
