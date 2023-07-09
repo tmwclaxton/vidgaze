@@ -51,17 +51,36 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
 
         },
 
-        getCommentInteractions(item_id, item_type) {
-            axios.get(route('comments.index', {
-                item_id: item_id,
-                item_type: item_type,
+        async getCommentInteractions() {
+            axios.get(route('comment.interactions', {
+                item_id: this.item.id,
+                item_type: this.item_type,
             }))
             .then(response => {
+                // console.log(response.data);
                 this.commentInteractions = response.data;
             })
             .catch(error => {
                 console.log(error);
             });
+        },
+
+        getCommentInteraction(comment_id) {
+           //0 both unselected, 1 like button, 2-->
+            // check liked value if like then 1, if dislike then 2 otherwise null
+            // console.log(comment_id);
+
+            const commentInteraction = this.commentInteractions.result.find(interaction => interaction.comment_id === comment_id);
+            // console.log(commentInteraction);
+            if (commentInteraction) {
+                if (commentInteraction.liked === 'like') {
+                    return 1;
+                } else if (commentInteraction.liked === 'dislike') {
+                    return 2;
+                }
+            }
+            return 0;
+
         },
 
 

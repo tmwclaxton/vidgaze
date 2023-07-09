@@ -54,10 +54,10 @@ const toggleLike = () => {
             });
 
             if (response.data.result === "like") {
-                props.podcast.likes++;
+                props.podcast.like_count++;
                 liked.value = true;
             } else {
-                props.podcast.likes--;
+                props.podcast.like_count--;
                 liked.value = false;
             }
         })

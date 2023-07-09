@@ -29,13 +29,21 @@ const props = defineProps({
 // grab comment slug from url if it exists and send that along with get request so it can be highlighted and put at top of comments
 
 onMounted(() => {
-    fetchVideos(comments.value);
     CommentSectionStore.item = props.item;
     CommentSectionStore.item_type = props.item.type;
 
+    // grab interactions first then comments
+    CommentSectionStore.getCommentInteractions().then(
+
+
+    );
+    setTimeout(() => {
+        fetchComments(comments.value);
+    }, 200); // 200ms delay
+
 });
 
-const fetchVideos = async (commentsArray) => {
+const fetchComments = async (commentsArray) => {
     try {
         const comment_ids = commentsArray.map(comment => comment.id).join(',');
         const response = await axios.get(route('comments.infinite'), {
@@ -58,7 +66,7 @@ const fetchVideos = async (commentsArray) => {
         )
 
         setTimeout(() => {
-            console.log(response.data);
+            // console.log(response.data);
             if (!response.data.error) {
                 comments.value = comments.value.concat(response.data.comments);
             } else {
@@ -110,16 +118,10 @@ const fetchVideos = async (commentsArray) => {
                 class="font-semibold"> Log in </span> to comment
             </a>
 
-            <div class="flex flex-col w-full" v-if="comments.length > 0">
-                <p v-text="comments.length + ' Comments'" class="text-sm font-semibold mb-2 dark:textDark"></p>
+            <div class="flex flex-col w-full my-5" v-if="comments.length > 0">
 
                 <Comment v-for="comment in comments" :comment="comment"/>
 
-                <QuaternaryButton
-                    class="mr-2" @click="">
-                    <font-awesome-icon :icon="['fas', 'comments']" class="w-4 h-4"/>
-                    <span class="font-semibold">Load more</span>
-                </QuaternaryButton>
                 <!--<x-button wire:click="loadMore" name="rect_button"-->
                 <!--          class=" mt-1 w-full generic_button_2">-->
                 <!--    Load More Comments-->
@@ -128,6 +130,11 @@ const fetchVideos = async (commentsArray) => {
 
             </div>
 
+            <QuaternaryButton
+                class="mr-2" @click="">
+                <font-awesome-icon :icon="['fas', 'comments']" class="w-4 h-4"/>
+                <span class="font-semibold">Load more</span>
+            </QuaternaryButton>
 
 
         </div>

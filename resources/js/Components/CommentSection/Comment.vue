@@ -22,6 +22,7 @@ const props = defineProps({
 const editComment = ref(false);
 const body = ref(props.comment.body);
 const isCollapsed = ref(true);
+
 const editable = computed(() => {
     // checked logged in and is owner of comment OR is admin
     const user = usePage().props.auth.user;
@@ -111,10 +112,10 @@ const share = () => {
                             ></button>
 
                             <div class="  flex flex-row gap-x-2  font-semibold pt-3 hover:cursor-pointer select-none">
-                                <!--0 both unselected, 1 like button, 2-->
+
 
                                 <TertiaryButton>
-                                    <LikeDislikeButtons  :orientation-vertical="false" :comment="comment" value="0"/>
+                                    <LikeDislikeButtons  :orientation-vertical="false" :comment="comment" :setLikeValue="CommentSectionStore.getCommentInteraction(comment.id)" />
                                 </TertiaryButton>
 
                                 <span v-if="!simple" @click="comment = ! comment" >

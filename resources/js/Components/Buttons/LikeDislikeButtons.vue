@@ -2,7 +2,7 @@
         <div @click="toggleLike" class="select-none flex gap-1 cursor-pointer justify-center "
              :class="[props.orientationVertical ? 'flex-col' : 'flex-row gap-x-3 ']">
             <ThumbsUpIcon class="transform transition-all duration-200  my-auto flex-shrink-0"  :class="[ props.orientationVertical ? 'mx-auto h-8' : 'h-6', likeButtonClasses]"  />
-            <p class="font-bold text-sm text-center my-auto" v-text="video.likes" />
+            <p class="font-bold text-sm text-center my-auto" v-text="item.like_count" />
         </div>
 
         <!--vertical hr-->
@@ -12,7 +12,7 @@
              :class="[props.orientationVertical ? 'flex-col' : 'flex-row gap-x-3']">
             <!--combine likeButtonClass and the props.ortientaitonVertical classes-->
             <ThumbsDownIcon class="transform transition duration-200 my-auto   " :class="[ props.orientationVertical ? 'mx-auto h-8' : 'w-6 h-6', dislikeButtonClasses]" />
-            <p class="font-bold text-sm text-center my-auto " v-text="video.dislikes" />
+            <p class="font-bold text-sm text-center my-auto " v-text="item.dislike_count" />
         </div>
 </template>
 
@@ -32,10 +32,6 @@ const props = defineProps({
     video: {
         type: Object,
         required: false,
-        default: {
-            likes: 0,
-            dislikes: 0
-        }
     },
     comment: {
         type: Object,
@@ -46,10 +42,19 @@ const props = defineProps({
         required: true,
         default: false
     },
-    value: {
-        type: String,
+
+    setLikeValue: {
+        type: Number,
         required: false,
         default: null
+    },
+
+});
+const item = computed(() => {
+    if (props.video !== undefined) {
+        return props.video;
+    } else {
+        return props.comment;
     }
 });
 
@@ -70,14 +75,14 @@ const toggleLike = () => {
     axios.post(likeRoute)
         .then(response => {
             if (response.data.result === "like") {
-                props.video.likes++;
+                item.value.like_count++;
                 liked.value = true;
                 if (disliked.value) {
-                    props.video.dislikes--;
+                    item.value.dislike_count--;
                     disliked.value = false;
                 }
             } else {
-                props.video.likes--;
+                item.value.like_count--;
                 liked.value = false;
             }
         })
@@ -98,7 +103,7 @@ const toggleDislike = () => {
 
     let dislikeRoute = '';
     if (props.comment === undefined) {
-        dislikeRoute = route('video.dislike.toggle', { videoId: props.video.id  });
+        dislikeRoute = route('video.dislike.toggle', { videoId: item.value.id  });
     } else {
         dislikeRoute = route('comment.dislike.toggle', { commentId: props.comment.id  });
     }
@@ -108,14 +113,14 @@ const toggleDislike = () => {
         .then(response => {
 
             if (response.data.result === "dislike") {
-                props.video.dislikes++;
+                item.value.dislike_count++;
                 disliked.value = true;
                 if (liked.value) {
-                    props.video.likes--;
+                    item.value.like_count--;
                     liked.value = false;
                 }
             } else {
-                props.video.dislikes--;
+                item.value.dislike_count--;
                 disliked.value = false;
             }
         })
@@ -140,7 +145,8 @@ const dislikeButtonClasses = computed(() => ({
 }));
 
 onMounted(async () => {
-    if (usePage().props.auth.user !== null && props.value === null) {
+    // console.log(props.setLikeValue)
+    if (usePage().props.auth.user !== null && props.setLikeValue === null) {
         // check if user has liked or disliked the video
         const videoId = props.video.id;
         try {
@@ -156,9 +162,9 @@ onMounted(async () => {
         }
     } else {
         // 0 both unselected, 1 like button, 2 dislike button
-        if (props.value.value === 1) {
+        if (props.setLikeValue === 1) {
             liked.value = true;
-        } else if (props.value.value === 2) {
+        } else if (props.setLikeValue === 2) {
             disliked.value = true;
         }
     }

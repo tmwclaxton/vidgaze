@@ -9,7 +9,6 @@ use App\Http\Resources\CommentResource;
 use App\Models\CommentInteraction;
 use App\Models\CommentModels\Comment;
 use App\Models\VideoModels\Video;
-use App\Services\MixPanelTrackingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

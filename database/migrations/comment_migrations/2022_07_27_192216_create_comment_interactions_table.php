@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('comment_likes');
+        Schema::dropIfExists('comment_interactions');
     }
 };

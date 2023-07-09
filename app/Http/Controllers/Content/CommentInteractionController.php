@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Content;
 use App\Http\Controllers\Controller;
 use App\Models\CommentModels\Comment;
 use App\Models\CommentModels\CommentInteraction;
-use Composer\DependencyResolver\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CommentInteractionController extends Controller
@@ -90,22 +90,31 @@ class CommentInteractionController extends Controller
         $comments = null;
 
         // get type of item (video / stream / podcast) and id of item
-        $itemType = $request->input('itemType');
-        $itemId = $request->input('itemId');
+        $itemType = $request->input('item_type');
+        $itemId = $request->input('item_id');
 
         // get all comments for item and has user's creator id
         if ($itemType == 'video') {
-            $comments = Comment::query()->where([['video_id', '=', $itemId],['creator_id', '=', Auth::user()->creator->id]])->get();
+            //$comments = CommentInteraction::query()->where([['video_id', '=', $itemId],['creator_id', '=', Auth::user()->creator->id]])->get();
+            $commentInteractions = Comment::query()->join('comment_interactions', 'comments.id', '=', 'comment_interactions.comment_id')->where([['comments.video_id', '=', $itemId],['comment_interactions.creator_id', '=', Auth::user()->creator->id]])->get();
+            //return $commentInteractions;
+            // format so it return the comment id and the interaction
+            $commentInteractions = $commentInteractions->map(function($commentInteraction) {
+                return [
+                    'comment_id' => $commentInteraction->comment_id,
+                    'liked' => $commentInteraction->liked,
+                ];
+            });
         }
 
-        if (!$comments) {
+        if (!$commentInteractions) {
             return response()->json([
-                'message' => 'No comments found',
+                'message' => 'No comment interactions found',
             ], 200);
         }
 
         return response()->json([
-            'result' => $comments,
+            'result' => $commentInteractions,
         ], 200);
 
     }
