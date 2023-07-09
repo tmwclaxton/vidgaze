@@ -119,8 +119,8 @@ onUnmounted(() => {
 
                     <LikeDislikeButtons :video="video" :orientation-vertical="true"/>
 
-                    <div class="flex flex-col gap-1  cursor-pointer h-14 aspect-square rounded-full">
-                        <CommentsIcon class="h-full mx-auto" />
+                    <div class="flex flex-col gap-1  cursor-pointer ">
+                        <CommentsIcon class="h-8 mx-auto" />
                         <p class="font-bold text-sm text-center" v-text="video.comment_count"/>
                     </div>
 

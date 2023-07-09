@@ -213,10 +213,10 @@ onUnmounted(() => {
                                 <div class="text dark:textDark ml-auto flex flex-row gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
 
 
-                                    <div class="bg-zinc-200 dark:bg-vidgaze-blue-nav rounded-xl p-1 px-5 flex flex-row gap-x-3 h-max my-auto">
+                                    <TertiaryButton>
                                         <LikeDislikeButtons :video="props.item.data" :orientationVertical="false"/>
+                                    </TertiaryButton>
 
-                                    </div>
 
 
                                     <div @click="share" class="flex flex-row cursor-pointer align-middle items-center">
@@ -302,10 +302,7 @@ onUnmounted(() => {
                     <CommentSection :item="props.item.data"
                                     v-bind:class="[showCommentSection ? 'flex' : 'hidden lg:flex']" />
 
-
                     <RowDivider class=" " :class="[theatre ? 'flex ' : 'flex lg:hidden ']"/>
-
-
 
                 </div>
             </div>
@@ -318,9 +315,7 @@ onUnmounted(() => {
                 <p>Queue & playlist support needed</p>
                 <p>Endpoint for getting recommended or channel videos</p>
                 <p>Show more button</p>
-                <div class="h-96 bg-blue-400 w-full" v-for="n in 10" :key="n">
 
-                </div>
 
 
             </div>

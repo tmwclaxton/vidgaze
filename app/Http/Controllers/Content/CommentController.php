@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Content;
 
 use App\Enums\Kind;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CommentCollection;
+use App\Http\Resources\CommentResource;
 use App\Models\CommentInteraction;
 use App\Models\CommentModels\Comment;
 use App\Models\VideoModels\Video;
@@ -49,35 +51,44 @@ class CommentController extends Controller
 
     public function infinite(Request $request) {
         // get order by, limit, offset, and video id from request,
-        $perPage = $request->perPage ?? 20;
-        $commentIds = $request->commentIds ?? [];
-        $orderByMethod = $request->input('category') ?? 'Order By';
-        $videoId = $request->input('videoId') ?? null;
-        $firstCommentId = $request->input('firstCommentId') ?? null;
-        $parentId = $request->input('parentId') ?? null;
+        $per_page = $request->input('per_page') ?? 10;
+        $comment_ids = $request->comment_ids ?? [];
+        $category = $request->input('category') ?? 'Order By';
+        $item_id = $request->input('item_id') ?? null;
+        $item_type = $request->input('item_type') ?? null;
+        $first_comment_id = $request->input('first_comment_id') ?? null;
+        $parent_comment_id = $request->input('parent_comment_id') ?? null;
 
 
         // if commentIds is not an array, explode the ids into an array
-        if (!is_array($commentIds) ) {
-            $commentIds = explode(',', $commentIds);
+        if (!is_array($comment_ids) ) {
+            $comment_ids = explode(',', $comment_ids);
+        }
+        switch ($item_type) {
+            case 'video':
+                // get the query
+                $query = Comment::query()
+                    ->where([['parent_comment_id', '=', $parent_comment_id], ['video_id', '=', $item_id]]);
+            break;
+            default:
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Unsupported item type']
+                );
         }
 
-        // get the query
-        $query = Comment::query()
-            ->where([['parent_comment_id', '=', $parentId], ['video_id', '=', $videoId]]);
-
         // if firstCommentId is not null, add where clause to query
-        if ($firstCommentId !== null) {
-            $query->where('id', '!=', $firstCommentId);
+        if ($first_comment_id !== null) {
+            $query->where('id', '!=', $first_comment_id);
         }
 
         // if commentIds is not empty, add where clause to query
-        if (!empty($commentIds)) {
-            $query->whereNotIn('id', $commentIds);
+        if (!empty($comment_ids)) {
+            $query->whereNotIn('id', $comment_ids);
         }
 
         // order the query by the orderByMethod passed in
-        switch ($orderByMethod) {
+        switch ($category) {
             case 'Order By':
             case 'Best':
                 $query->orderBy('like_count', 'DESC')
@@ -95,11 +106,11 @@ class CommentController extends Controller
         }
 
         // get the comments
-        $comments = $query->limit($perPage)->get();
+        $comments = new CommentCollection($query->limit($per_page)->get());
 
         // if firstCommentId is not null, add it to the beginning of the comments array
-        if ($firstCommentId !== null) {
-            $comments->prepend(Comment::find($firstCommentId));
+        if ($first_comment_id !== null) {
+            $comments->prepend(new CommentResource(Comment::find($first_comment_id)));
         }
 
         // return the comments

@@ -8,6 +8,9 @@
            rounded-lg appearance-none focus:outline-none focus:shadow-outline-blue focus:border-blue-300
             bg-white dark:bg-zinc-800 placeholder-zinc-400 dark:placeholder-zinc-500  border border-zinc-300 dark:border-zinc-600"
         >
+            <option v-if="title" value="default" selected="selected" class="hidden">
+                {{ title }}
+            </option>
             <option v-for="option in options" :key="option.value" :value="option.value" class="py-1">
                 {{ option.label }}
             </option>
@@ -29,6 +32,11 @@ defineProps({
     options: {
         type: Array,
         required: true
+    },
+    title: {
+        type: String,
+        required: false,
+        default: 'Select an option'
     }
 });
 </script>

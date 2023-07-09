@@ -1,5 +1,7 @@
 <script setup>
 import {computed, ref} from "vue";
+import TertiaryButton from "@/Components/Buttons/TertiaryButton.vue";
+import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
 
 const name = 'Comment';
 const props = defineProps({
@@ -15,6 +17,7 @@ const props = defineProps({
 });
 const editComment = ref(false);
 const body = ref(props.comment.body);
+const isCollapsed = ref(true);
 const editable = computed(() => {
     // checked logged in and is owner of comment OR is admin
     const user = $page.props.auth.user;
@@ -29,17 +32,18 @@ const editable = computed(() => {
 
 
         <div class="flex flex-col w-full">
-                <div id="comment" class='w-full  flex group relative text dark:textDark generic-background_2 dark:generic-background-dark_2 p-4 px-3 rounded'>
+                <div id="comment" class='w-full  flex group relative bg-zinc-100 dark:bg-zinc-900 p-4 px-3 rounded'>
 
 
                     <div class=" flex flex-row w-full">
 
 
                         <div class="w-9 mr-3 flex-shrink-0 ">
-                            <a href="/channel/{{comment.owner.slug}}">
+                            <a href="/channel/{{$comment.owner.slug}}">
+                                <!--v-bind:href="route('channel', comment.owner.slug)"-->
                                 <img
                                     class=" z-1 relative hover:cursor-pointer inline object-cover w-9 h-9  rounded-full"
-                                    src="{{comment.owner.avatar_url}}"
+                                    v-bind:src="comment.owner.avatar_url"
                                     alt="Profile image"/>
                             </a>
                         </div>
@@ -96,37 +100,52 @@ const editable = computed(() => {
                                     v-text="isCollapsed ? 'Show less' : 'Show more'"
                             ></button>
 
-                            <div class="  flex flex-row   font-semibold pt-3 hover:cursor-pointer select-none">
+                            <div class="  flex flex-row gap-x-2  font-semibold pt-3 hover:cursor-pointer select-none">
                                 <!--0 both unselected, 1 like button, 2-->
 
+                                <TertiaryButton>
+                                    <LikeDislikeButtons  :orientation-vertical="false" :comment="comment" value="0"/>
+                                </TertiaryButton>
                                 <!--<x-comment-button wire_click="like" class="{{ $liked == 'like' ? 'fill-blue-600' : ''}}" svgIcon="like" text="{{$comment->like_count}}"/>-->
                                 <!--<x-comment-button wire_click="dislike" class="{{ $liked == 'dislike' ? 'fill-blue-600' : ''}}" svgIcon="dislike" text="{{$comment->dislike_count}}"/>-->
 
                                 <span v-if="!simple" @click="comment = ! comment" >
                                     <!--<x-comment-button class="w-4" svgIcon="message" text="Reply"/>-->
+                                    <TertiaryButton>
+                                        <font-awesome-icon :icon="['fas', 'comment']" class="h-5 aspect-square"/>
+                                        <span class="text-sm font-semibold">Reply</span>
+                                    </TertiaryButton>
                                 </span>
 
                                 <span @click="editComment = !editComment">
-                                    <!--<x-comment-button  svgIcon="pencil" text="Edit"/>-->
+                                    <TertiaryButton>
+                                        <font-awesome-icon :icon="['fas', 'pencil']" class="h-5 aspect-square"/>
+                                        <span class="text-sm font-semibold">Edit</span>
+                                    </TertiaryButton>
                                 </span>
 
                                 <span >
-                                    <!--<x-comment-button   svgIcon="bin" text="Delete"/>-->
+                                    <TertiaryButton>
+                                        <font-awesome-icon :icon="['fas', 'trash']" class="h-5 aspect-square"/>
+                                        <span class="text-sm font-semibold">Delete</span>
+                                    </TertiaryButton>
                                 </span>
 
+                                <!--award button-->
+                                <!--<span>-->
+                                <!--    <tertiary-button >-->
+                                <!--        <font-awesome-icon :icon="['fas', 'gift']" class="h-5 aspect-square"/>-->
+                                <!--        <span class="text-sm font-semibold">Award</span>-->
+                                <!--    </tertiary-button>-->
+                                <!--</span>-->
 
-                                <!--<x-award-button type="comment" object_id="{{$comment->id}}">-->
-                                <!--    <span @click="awardDropdown = true; shadowDiv = true;comment_id = {{$comment->id}}">-->
-                                <!--        <x-comment-button  class="" svgIcon="present" text="Award"/>-->
-                                <!--    </span>-->
-                                <!--</x-award-button>-->
 
                                 <!--share button-->
                                 <span>
-                                    <!--<x-share link="{{route('watch', ['video' => $video->slug, 'comment' => $comment->id])}}"-->
-                                    <!--         title="Check out this funny comment on VidGaze - {{$video->title}}">-->
-                                    <!--    <x-comment-button  svgIcon="share" text="Share"/>-->
-                                    <!--</x-share>-->
+                                    <tertiary-button >
+                                        <font-awesome-icon :icon="['fas', 'reply']" class="h-5 aspect-square"/>
+                                        <span class="text-sm font-semibold">Share</span>
+                                    </tertiary-button>
                                 </span>
 
 
@@ -135,7 +154,7 @@ const editable = computed(() => {
 
 
                             </div>
-                            <div class="w-full flex flex-col" v-if="!simple && comment.replies.count > 0">
+                            <div class="w-full flex flex-col" v-if="!simple && comment.reply_count > 0">
                                 <span  class="select-none w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
                                         <!--<x-icon name="extend-down" class="fill-blue-600 h-3 my-auto mr-2"/>-->
                                         <!--<p class="font-bold">View {{$comment->replies->count()}} replies</p>-->

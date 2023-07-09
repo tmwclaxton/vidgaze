@@ -6,7 +6,7 @@
         </div>
 
         <!--vertical hr-->
-        <hr v-if="!props.orientationVertical" class="border border-gray-300 dark:border-gray-700 w-0.5 h-8 rounded" />
+        <hr v-if="!props.orientationVertical" class="border border-zinc-400 dark:border-gray-700 w-0.5 h-8 rounded" />
 
         <div @click="toggleDislike" class="select-none flex gap-1 cursor-pointer justify-center "
              :class="[props.orientationVertical ? 'flex-col' : 'flex-row gap-x-3']">
@@ -31,12 +31,25 @@ const disliked = ref(false);
 const props = defineProps({
     video: {
         type: Object,
-        required: true
+        required: false,
+        default: {
+            likes: 0,
+            dislikes: 0
+        }
+    },
+    comment: {
+        type: Object,
+        required: false
     },
     orientationVertical: {
         type: Boolean,
         required: true,
-        default: 'horizontal'
+        default: false
+    },
+    value: {
+        type: String,
+        required: false,
+        default: null
     }
 });
 
@@ -46,19 +59,16 @@ const toggleLike = () => {
         window.location.href = route('login');
         return;
     }
-
-    const videoId = props.video.id;
-    const likeRoute = route('video.like.toggle', { videoId });
+    let likeRoute = '';
+    if (props.comment === undefined) {
+        likeRoute = route('video.like.toggle', { videoId: props.video.id  });
+    } else {
+        likeRoute = route('comment.like.toggle', { commentId: props.comment.id  });
+    }
 
     // Send a POST request to the like route
     axios.post(likeRoute)
         .then(response => {
-            // Handle the successful response
-            // toastStore.add({
-            //     message: response.data.message,
-            //     type: 'success'
-            // });
-
             if (response.data.result === "like") {
                 props.video.likes++;
                 liked.value = true;
@@ -73,10 +83,9 @@ const toggleLike = () => {
         })
         .catch(error => {
             // Handle the error response
-            toastStore.add({
-                message: 'Error liking video',
-                type: 'error'
-            });
+            if (error.response.status === 401) {
+                window.location.href = route('login');
+            }
         });
 };
 
@@ -87,17 +96,16 @@ const toggleDislike = () => {
         return;
     }
 
-    const videoId = props.video.id;
-    const dislikeRoute = route('video.dislike.toggle', { videoId });
+    let dislikeRoute = '';
+    if (props.comment === undefined) {
+        dislikeRoute = route('video.dislike.toggle', { videoId: props.video.id  });
+    } else {
+        dislikeRoute = route('comment.dislike.toggle', { commentId: props.comment.id  });
+    }
 
     // Send a POST request to the dislike route
     axios.post(dislikeRoute)
         .then(response => {
-            // Handle the successful response
-            // toastStore.add({
-            //     message: response.data.message,
-            //     type: 'success'
-            // });
 
             if (response.data.result === "dislike") {
                 props.video.dislikes++;
@@ -113,10 +121,9 @@ const toggleDislike = () => {
         })
         .catch(error => {
             // Handle the error response
-            toastStore.add({
-                message: 'Error disliking video',
-                type: 'error'
-            });
+            if (error.response.status === 401) {
+                window.location.href = route('login');
+            }
         });
 };
 
@@ -133,7 +140,7 @@ const dislikeButtonClasses = computed(() => ({
 }));
 
 onMounted(async () => {
-    if (usePage().props.auth.user !== null) {
+    if (usePage().props.auth.user !== null && props.value === null) {
         // check if user has liked or disliked the video
         const videoId = props.video.id;
         try {
@@ -146,6 +153,13 @@ onMounted(async () => {
             }
         } catch (error) {
             console.log(error);
+        }
+    } else {
+        // 0 both unselected, 1 like button, 2 dislike button
+        if (props.value.value === 1) {
+            liked.value = true;
+        } else if (props.value.value === 2) {
+            disliked.value = true;
         }
     }
 

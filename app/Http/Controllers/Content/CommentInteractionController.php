@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
-use App\Models\CommentInteraction;
 use App\Models\CommentModels\Comment;
+use App\Models\CommentModels\CommentInteraction;
 use Composer\DependencyResolver\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,9 +14,9 @@ class CommentInteractionController extends Controller
 
 
     // formats the response for the like and dislike methods
-    private function formatLikeAndDislikeResponse(Comment $comment, $liked, $message): void
+    private function formatLikeAndDislikeResponse(Comment $comment, $liked, $message)
     {
-        response()->json([
+        return response()->json([
             'message' => $message,
             'result' => $liked,
             'like_count' => $comment->like_count,
@@ -26,8 +26,9 @@ class CommentInteractionController extends Controller
 
 
 
-    public function toggleLike(Comment $comment) {
+    public function toggleLike($commentId) {
 
+        $comment = Comment::findOrFail($commentId);
 
         $commentInteraction = $this->getInteraction($comment);
 
@@ -51,13 +52,14 @@ class CommentInteractionController extends Controller
         $commentInteraction->save();
         $comment->save();
 
-        $this->formatLikeAndDislikeResponse($comment, $liked, $message);
+        return $this->formatLikeAndDislikeResponse($comment, $liked, $message);
 
 
     }
 
-    public function toggleDislike(Comment $comment) {
+    public function toggleDislike($commentId) {
 
+        $comment = Comment::findOrFail($commentId);
 
         $commentInteraction = $this->getInteraction($comment);
 
@@ -81,7 +83,7 @@ class CommentInteractionController extends Controller
         $commentInteraction->save();
         $comment->save();
 
-        $this->formatLikeAndDislikeResponse($comment, $liked, $message);
+        return $this->formatLikeAndDislikeResponse($comment, $liked, $message);
     }
 
     public function getInteractionsByItem(Request $request) {
@@ -108,15 +110,13 @@ class CommentInteractionController extends Controller
 
     }
 
-    //private function getInteraction(Comment $comment) {
-    //
-    //    $commentInteraction = CommentInteraction::firstOrCreate([
-    //        'creator_id' => Auth::user()->creator->id,
-    //        'comment_id' => $comment->id,
-    //    ]);
-    //
-    //    return response()->json([
-    //        'result' => $commentInteraction,
-    //    ], 200);
-    //}
+    private function getInteraction(Comment $comment) {
+
+        $commentInteraction = CommentInteraction::firstOrCreate([
+            'creator_id' => Auth::user()->creator->id,
+            'comment_id' => $comment->id,
+        ]);
+
+        return $commentInteraction;
+    }
 }

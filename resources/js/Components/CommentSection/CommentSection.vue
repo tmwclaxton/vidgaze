@@ -2,9 +2,19 @@
 import {onMounted, ref} from "vue";
 import CommentTextarea from "@/Components/CommentSection/Partials/CommentTextarea.vue";
 import Comment from "@/Components/CommentSection/Comment.vue";
+import SelectInput from "@/Components/Inputs/SelectInput.vue";
+import Option from "@/Components/Modals/Partials/Option.vue";
+import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 
 const name = 'CommentSection';
 const comments = ref([]);
+const categoryOptions = [
+    {value: 'best', label: 'Best'},
+    {value: 'new', label: 'New'},
+    {value: 'controversial', label: 'Controversial'},
+    {value: 'old', label: 'Old'},
+];
+const category = ref('best');
 
 const props = defineProps({
     item: {
@@ -17,15 +27,43 @@ const props = defineProps({
 // grab comment slug from url if it exists and send that along with get request so it can be highlighted and put at top of comments
 
 onMounted(() => {
-    // axios.get('/api/comments/' + props.item.id)
-    //     .then(response => {
-    //         comments.value = response.data;
-    //     })
-    //     .catch(error => {
-    //         console.log(error);
-    //     });
+    fetchVideos(comments.value);
 });
 
+const fetchVideos = async (commentsArray) => {
+    try {
+        const comment_ids = commentsArray.map(comment => comment.id).join(',');
+        const response = await axios.get(route('comments.infinite'), {
+            params: {
+                item_id: props.item.id,
+                item_type: 'video',
+                per_page: 10,
+                comment_ids: comment_ids,
+                category: category.value,
+                first_comment_id: null,
+                parent_comment_id: null
+            }
+        }).then(
+            response => {
+                return response;
+            }
+        ).catch(error => {
+                console.log(error);
+            }
+        )
+
+        setTimeout(() => {
+            console.log(response.data);
+            if (!response.data.error) {
+                comments.value = comments.value.concat(response.data.comments);
+            } else {
+                console.log(response.data.error);
+            }
+        }, 200); // 200ms delay
+    } catch (error) {
+        console.log(error);
+    }
+};
 </script>
 
 <template>
@@ -35,17 +73,22 @@ onMounted(() => {
 
         <!--number of comments and order by input (should only be visible when over 5 comments)-->
         <div class="grid  grid-cols-2">
+
             <p class="   text-base font-bold" v-text="item.comment_count"/>
-            <!--<x-input name="select_plain" title="Order By" noHeading="true" class="ml-auto w-min"-->
-            <!--         :options="['Best','New','Controversial','Old']"/>-->
+
+            <SelectInput class="dark:bg-zinc-900 ml-auto w-40"
+                          :modelValue="'default'"
+                         v-model="category" @update:model-value="value => category = value" :options="categoryOptions" :title="'Order By'"/>
+
+
         </div>
 
         <div class="mb-3 w-full col-span-2 p-1">
 
 
-            <div  >
+            <div   v-if="$page.props.auth.user !== null">
                 <div  >
-                    <CommentTextarea :item="item" :comment_id="null" />
+                    <CommentTextarea :item="item" :comment_id="null"/>
 
                     <!--<p class="text-red-500 font-semibold text-center">{{$error}}</p>-->
 
@@ -57,15 +100,21 @@ onMounted(() => {
                 </div>
             </div>
 
-            <!--<a v-else v-bind:href="route('login')"-->
-            <!--   class="text dark:textDark  text-sm leading-tight my-3 w-full border-b-1 border-zinc-300"><span-->
-            <!--    class="font-semibold"> Log in </span> to comment-->
-            <!--</a>-->
+            <a v-else v-bind:href="route('login')"
+               class="text dark:textDark  text-sm leading-tight my-3 w-full border-b-1 border-zinc-300"><span
+                class="font-semibold"> Log in </span> to comment
+            </a>
 
-            <div v-if="item.comment_count > 0" class="flex flex-col w-full  ">
+            <div class="flex flex-col w-full" v-if="comments.length > 0">
+                <p v-text="comments.length + ' Comments'" class="text-sm font-semibold mb-2 dark:textDark"></p>
 
-                <Comment/>
+                <Comment v-for="comment in comments" :comment="comment"/>
 
+                <QuaternaryButton
+                    class="mr-2" @click="">
+                    <font-awesome-icon :icon="['fas', 'comments']" class="w-4 h-4"/>
+                    <span class="font-semibold">Load more</span>
+                </QuaternaryButton>
                 <!--<x-button wire:click="loadMore" name="rect_button"-->
                 <!--          class=" mt-1 w-full generic_button_2">-->
                 <!--    Load More Comments-->
