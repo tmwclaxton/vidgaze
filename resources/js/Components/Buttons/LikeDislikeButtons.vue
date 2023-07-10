@@ -6,7 +6,7 @@
         </div>
 
         <!--vertical hr-->
-        <hr v-if="!props.orientationVertical" class="border border-zinc-300 group-hover:border-zinc-400 dark:border-gray-700 w-0.5 h-8 rounded transition ease-in-out" />
+        <hr v-if="!props.orientationVertical" class="border border-zinc-300 group-hover:border-zinc-400 dark:border-gray-700 dark:group-hover:border-zinc-700 w-0.5 h-8 rounded transition ease-in-out" />
 
         <div @click="toggleDislike" class="select-none flex gap-1 cursor-pointer justify-center "
              :class="[props.orientationVertical ? 'flex-col' : 'flex-row gap-x-3']">

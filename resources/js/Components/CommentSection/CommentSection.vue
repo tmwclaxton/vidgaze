@@ -26,7 +26,6 @@ const props = defineProps({
 
 // watch for changes in category and fetch comments again
 watch(category, (value) => {
-    CommentSectionStore.comments = [];
     CommentSectionStore.getCommentInteractions();
     CommentSectionStore.fetchComments(props.item.id, props.item.type, category.value);
 });
@@ -57,9 +56,9 @@ onMounted(() => {
         <!--number of comments and order by input (should only be visible when over 5 comments)-->
         <div class="grid  grid-cols-2">
 
-            <p class="   text-base font-bold" v-text="item.comment_count"/>
+            <p class="   text-base font-bold" v-text="CommentSectionStore.commentCount"/>
 
-            <SelectInput class="dark:bg-zinc-900 ml-auto w-40"
+            <SelectInput class=" ml-auto w-40"
                           :modelValue="'default'"
                          v-model="category" @update:model-value="value => category = value" :options="categoryOptions" :title="'Order By'"/>
 
@@ -90,7 +89,7 @@ onMounted(() => {
 
             <div class="flex flex-col w-full my-5" v-if="CommentSectionStore.comments.length > 0">
 
-                <Comment v-for="comment in CommentSectionStore.comments" :comment="comment"/>
+                <Comment v-for="comment in CommentSectionStore.comments" :comment="comment" :key="comment.id" />
 
                 <!--<x-button wire:click="loadMore" name="rect_button"-->
                 <!--          class=" mt-1 w-full generic_button_2">-->
@@ -100,7 +99,7 @@ onMounted(() => {
 
             </div>
 
-            <QuaternaryButton
+            <QuaternaryButton v-if="CommentSectionStore.comments.length > 9"
                 class="mr-2" @click="">
                 <font-awesome-icon :icon="['fas', 'comments']" class="w-4 h-4"/>
                 <span class="font-semibold">Load more</span>

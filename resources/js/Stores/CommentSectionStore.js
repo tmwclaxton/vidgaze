@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import {useToastStore} from "@/Stores/ToastStore";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
+import {usePage} from "@inertiajs/vue3";
 
 export const useCommentSectionStore = defineStore('CommentSectionStore', {
     state: () => {
@@ -11,6 +12,12 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
             item: null,
             item_type: null,
 
+        }
+    },
+    getters: {
+        // comment count iwht pluralization
+        commentCount() {
+            return this.comments.length + " Comment" + (this.comments.length != 1 ? 's' : '');
         }
     },
     actions: {
@@ -50,13 +57,16 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
         },
 
         async getCommentInteractions() {
+            if (!usePage().props.auth.user) {
+                return;
+            }
             axios.get(route('comment.interactions', {
                 item_id: this.item.id,
                 item_type: this.item_type,
             }))
                 .then(response => {
                     // console.log(response.data);
-                    this.commentInteractions = response.data;
+                    this.commentInteractions = response.data.result;
                 })
                 .catch(error => {
                     console.log(error);
@@ -68,7 +78,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
             // check liked value if like then 1, if dislike then 2 otherwise null
             // console.log(comment_id);
 
-            const commentInteraction = this.commentInteractions.result.find(interaction => interaction.comment_id === comment_id);
+            const commentInteraction = this.commentInteractions.find(interaction => interaction.comment_id === comment_id);
             // console.log(commentInteraction);
             if (commentInteraction) {
                 if (commentInteraction.liked === 'like') {

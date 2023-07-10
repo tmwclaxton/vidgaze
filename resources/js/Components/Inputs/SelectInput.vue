@@ -45,17 +45,4 @@ defineProps({
 select:focus {
     outline: none;
 }
-
-@media (prefers-color-scheme: dark) {
-    .dark select {
-        background-color: #374151;
-        color: #D1D5DB;
-        border-color: #4B5563;
-    }
-
-    .dark select option {
-        background-color: #374151;
-        color: #D1D5DB;
-    }
-}
 </style>

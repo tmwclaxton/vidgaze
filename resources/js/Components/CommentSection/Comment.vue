@@ -23,12 +23,13 @@ const props = defineProps({
 const editComment = ref(false);
 const body = ref(props.comment.body);
 const isCollapsed = ref(true);
+const replyComment = ref(false);
 
 const editable = computed(() => {
     // checked logged in and is owner of comment OR is admin
     const user = usePage().props.auth.user;
 
-    return (user && (user.id === props.comment.owner.id || $page.props.auth.admin));
+    return (user && (user.data.creator.id === props.comment.owner.id || usePage().props.auth.admin));
 
 });
 
@@ -42,7 +43,7 @@ const deleteComment = () => {
     // confirm that user wants to delete comment
     confirmStore.buttonOneText = 'Cancel';
     confirmStore.buttonTwoText = 'Delete';
-    confirmStore.title = 'Are you sure, this will delete your comment?';
+    confirmStore.title = 'Are you sure, this will delete this comment?';
     confirmStore.show = true;
     confirmStore.continue = () => {
         CommentSectionStore.deleteComment(props.comment.id);
@@ -65,11 +66,11 @@ const deleteComment = () => {
 
 
                         <div class="w-9 mr-3 flex-shrink-0 ">
-                            <a href="/channel/{{$comment.owner.slug}}">
-                                <!--v-bind:href="route('channel', comment.owner.slug)"-->
+                            <a href="/channel/{{props.comment.owner.slug}}">
+                                <!--v-bind:href="route('channel', props.comment.owner.slug)"-->
                                 <img
                                     class=" z-1 relative hover:cursor-pointer inline object-cover w-9 h-9  rounded-full"
-                                    v-bind:src="comment.owner.avatar_url"
+                                    v-bind:src="props.comment.owner.avatar_url"
                                     alt="Profile image"/>
                             </a>
                         </div>
@@ -80,11 +81,11 @@ const deleteComment = () => {
 
                             <div class=" flex flex-row items-center">
                                 <p>
-                                    <a href="/channel/{{$comment.owner.slug}}">
-                                    <span class="text-sm   font-semibold hover:cursor-pointer  leading-tight  " v-text="comment.owner.name" />
+                                    <a href="/channel/{{props.comment.owner.slug}}">
+                                    <span class="text-sm   font-semibold hover:cursor-pointer  leading-tight  " v-text="props.comment.owner.name" />
                                     </a>
                                     <span class="mx-2 text dark:textDark font-bold leading-tight"> · </span>
-                                    <span class="text-sm font-semibold     leading-tight" v-text="comment.created_at"/>
+                                    <span class="text-sm font-semibold     leading-tight" v-text="props.comment.created_at"/>
 
                                 </p>
 
@@ -103,7 +104,6 @@ const deleteComment = () => {
                                v-bind:class="{' line-clamp-3': !isCollapsed}" v-html="body"/>
 
                             <div v-show="editComment && editable">
-                                <form method="POST">
                                     <!--<textarea id="message" style="min-height: 30px;"-->
                                     <!--          class="generic-textarea dark:generic-textarea-dark"-->
                                     <!--          placeholder="Edit your comment...">{{$comment->body}}</textarea>-->
@@ -117,7 +117,6 @@ const deleteComment = () => {
                                     <!--        Save-->
                                     <!--    </button>-->
                                     <!--</div>-->
-                                </form>
                             </div>
 
                             <button v-if="comment.body.length > 250 || (simple && comment.body.length > 73)"
@@ -133,7 +132,7 @@ const deleteComment = () => {
                                     <LikeDislikeButtons  :orientation-vertical="false" :comment="comment" :setLikeValue="CommentSectionStore.getCommentInteraction(comment.id)" />
                                 </TertiaryButton>
 
-                                <span v-if="!simple" @click="comment = ! comment" >
+                                <span v-if="!simple" @click="replyComment = !replyComment" >
                                     <!--<x-comment-button class="w-4" svgIcon="message" text="Reply"/>-->
                                     <TertiaryButton>
                                         <font-awesome-icon :icon="['fas', 'comment']" class="h-5 aspect-square"/>
@@ -141,14 +140,14 @@ const deleteComment = () => {
                                     </TertiaryButton>
                                 </span>
 
-                                <span @click="editComment = !editComment">
+                                <span  v-if="editable" @click="editComment = !editComment">
                                     <TertiaryButton>
                                         <font-awesome-icon :icon="['fas', 'pencil']" class="h-5 aspect-square"/>
                                         <span class="text-sm font-semibold">Edit</span>
                                     </TertiaryButton>
                                 </span>
 
-                                <span @click="deleteComment">
+                                <span  v-if="editable" @click="deleteComment">
                                     <TertiaryButton >
                                         <font-awesome-icon :icon="['fas', 'trash']" class="h-5 aspect-square"/>
                                         <span class="text-sm font-semibold">Delete</span>
@@ -179,13 +178,14 @@ const deleteComment = () => {
 
                             </div>
                             <div class="w-full flex flex-col" v-if="!simple && comment.reply_count > 0">
-                                <span  class="select-none w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
-                                        <!--<x-icon name="extend-down" class="fill-blue-600 h-3 my-auto mr-2"/>-->
-                                        <!--<p class="font-bold">View {{$comment->replies->count()}} replies</p>-->
-                                    </span>
-                                <span class="select-none w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
-                                        <!--<x-icon style="transform: scale(-1, -1);" name="extend-down" class="fill-blue-600 h-3 my-auto mr-2"/>-->
-                                        <!--<p class="font-bold">Minimise</p>-->
+                                <span v-if="isCollapsed" class="select-none w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
+
+                                    <font-awesome-icon :icon="['fas', 'caret-down']" class="fill-blue-600 h-3 my-auto mr-2"/>
+                                    <p class="font-bold">View {{ comment.reply_count_display}}</p>
+                                </span>
+                                <span v-else class="select-none w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
+                                    <font-awesome-icon :icon="['fas', 'caret-up']" class="fill-blue-600 h-3 my-auto mr-2"/>
+                                        <p class="font-bold">Minimise</p>
                                     </span>
                             </div>
                         </div>
