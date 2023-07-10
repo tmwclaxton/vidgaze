@@ -225,10 +225,20 @@ class CommentController extends Controller
 
         $this->verifyUserPermissions($comment);
 
+        $parent_comment_id = $comment->parent_comment_id;
+
         if ($success = $comment->delete() === false) {
             $message = 'Comment could not be deleted';
         } else {
             $message = 'Comment deleted successfully';
+
+            // if comment is a reply, decrement reply count
+            if ($parent_comment_id !== null) {
+                $parent_comment = Comment::find($parent_comment_id);
+                $parent_comment->reply_count--;
+                $parent_comment->save();
+            }
+
             $video->comment_count--;
             $video->save();
         }

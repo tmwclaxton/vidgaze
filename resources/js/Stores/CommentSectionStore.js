@@ -21,7 +21,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
         }
     },
     actions: {
-        async fetchComments(category, loadMore = false) {
+        async fetchComments(category, parent_comment_id = null, first_comment_id = null,loadMore = false) {
             try {
                 let comment_ids = null;
                 if (loadMore) {
@@ -37,8 +37,9 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                         per_page: 10,
                         comment_ids: comment_ids,
                         category: category,
-                        first_comment_id: null,
-                        parent_comment_id: null
+                        // grab comment attribute from url parameter
+                        first_comment_id: first_comment_id,
+                        parent_comment_id: parent_comment_id,
                     }
                 }).then(
                     response => {
@@ -169,6 +170,12 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
 
                     // remove comment from comments array
                     this.comments = this.comments.filter(comment => comment.id !== comment_id);
+
+                    // if parent id is not null then subtract 1 from reply count of parent comment
+                    if (response.data.parent_comment_id) {
+                        const parentComment = this.comments.find(comment => comment.id === response.data.parent_comment_id);
+                        parentComment.reply_count--;
+                    }
 
                 })
                 .catch(error => {
