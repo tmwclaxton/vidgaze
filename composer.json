@@ -12,6 +12,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.8",
         "jorenvanhocht/laravel-share": "^4.2",
+        "jwilsson/spotify-web-api-php": "^5.6",
         "laravel/framework": "^10.0",
         "laravel/horizon": "^5.15",
         "laravel/octane": "^1.5",
