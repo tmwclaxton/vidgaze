@@ -3,23 +3,24 @@ import {onMounted, ref} from "vue";
 
 const carouselItems = [
     {
-        imgSrc: '/images/banners/join_vidgaze.png'
+        imgSrc: '/images/banners/join_vidgaze.png',
+        link: route('register'),
     },
-    {
-        imgSrc:
-            "https://yt3.googleusercontent.com/MCKlDYo78cX-ODEurmP8J1q-Pkf27Sb2E0cD8kbgwDU8ZlmQVll7gLmbznsPrXvinS6577z-bA=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
-    },
-    {
-        imgSrc:
-            "https://yt3.googleusercontent.com/YYL2_SdOUsyoeHgeIdmy-pje47RTKWh95jMoJm8qY-g5Ib8yVPlUfarXJP6NPN_tUqOZkU1hgOo=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
-    },
-    {
-        imgSrc:
-            "https://yt3.googleusercontent.com/lns9gHx-jrwkKHjn5rm6leWtyPb-pBv3XsyxH3bdcwC9aXPK7EqcldpQBY7q6fYhchC0o2kbJQ=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
-    },
-    {
-        imgSrc: "https://yt3.googleusercontent.com/eQLr0tOKbUf2UqOfIZ2WQGxXouOl3xxA8VN4bCjG9_WyduAvNYBWRv9nWkLrTBQ9rhx9YEH5mA=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"
-    },
+    // {
+    //     imgSrc:
+    //         "https://yt3.googleusercontent.com/MCKlDYo78cX-ODEurmP8J1q-Pkf27Sb2E0cD8kbgwDU8ZlmQVll7gLmbznsPrXvinS6577z-bA=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+    // },
+    // {
+    //     imgSrc:
+    //         "https://yt3.googleusercontent.com/YYL2_SdOUsyoeHgeIdmy-pje47RTKWh95jMoJm8qY-g5Ib8yVPlUfarXJP6NPN_tUqOZkU1hgOo=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+    // },
+    // {
+    //     imgSrc:
+    //         "https://yt3.googleusercontent.com/lns9gHx-jrwkKHjn5rm6leWtyPb-pBv3XsyxH3bdcwC9aXPK7EqcldpQBY7q6fYhchC0o2kbJQ=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+    // },
+    // {
+    //     imgSrc: "https://yt3.googleusercontent.com/eQLr0tOKbUf2UqOfIZ2WQGxXouOl3xxA8VN4bCjG9_WyduAvNYBWRv9nWkLrTBQ9rhx9YEH5mA=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"
+    // },
 ];
 
 const activeIndex = ref(0);
