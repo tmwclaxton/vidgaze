@@ -21,13 +21,19 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
         }
     },
     actions: {
-        async fetchComments(item_id, item_type, category) {
+        async fetchComments(category, loadMore = false) {
             try {
-                const comment_ids = this.comments.map(comment => comment.id).join(',');
+                let comment_ids = null;
+                if (loadMore) {
+                    comment_ids = this.comments.map(comment => comment.id).join(',');
+                } else {
+                    this.comments = [];
+                }
+
                 const response = await axios.get(route('comments.infinite'), {
                     params: {
-                        item_id: item_id,
-                        item_type: item_type,
+                        item_id: this.item.id,
+                        item_type: this.item.type,
                         per_page: 10,
                         comment_ids: comment_ids,
                         category: category,
@@ -91,7 +97,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
 
         },
 
-        storeComment(body, item_id, item_type, parent_comment_id = null) {
+        storeComment(body, parent_comment_id = null) {
             const toastStore = useToastStore();
 
             if (body.length === 0) {
@@ -104,8 +110,8 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
 
             // make request using ziggy to route name comments.store
             axios.post(route('comments.store', {
-                item_id: item_id,
-                item_type: item_type,
+                item_id: this.item.id,
+                item_type: this.item.type,
                 parent_comment_id: parent_comment_id,
                 body: body
             }))
@@ -118,6 +124,12 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
 
                 // add comment to comments array
                 this.comments.unshift(response.data.comment);
+
+                // if parent id is not null then add 1 to reply count of parent comment
+                if (parent_comment_id) {
+                    const parentComment = this.comments.find(comment => comment.id === parent_comment_id);
+                    parentComment.reply_count++;
+                }
 
             })
             .catch(error => {
@@ -157,6 +169,37 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
 
                     // remove comment from comments array
                     this.comments = this.comments.filter(comment => comment.id !== comment_id);
+
+                })
+                .catch(error => {
+                    console.log(error);
+                    toastStore.add({
+                        message: 'Something went wrong, please try again later',
+                        type: 'error'
+                    });
+                });
+        },
+
+        editComment(comment_id, body) {
+            const toastStore = useToastStore();
+
+            axios.put(route('comments.update', {
+                comment_id: comment_id,
+                item_id: this.item.id,
+                item_type: this.item_type,
+            }), {
+                body: body
+            })
+                .then(response => {
+                    // console.log(response.data);
+                    toastStore.add({
+                        message: response.data.message,
+                        type: response.data.type
+                    });
+
+                    // update comment in comments array
+                    const commentIndex = this.comments.findIndex(comment => comment.id === comment_id);
+                    this.comments[commentIndex].body = body;
 
                 })
                 .catch(error => {

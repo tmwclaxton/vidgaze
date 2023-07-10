@@ -91,7 +91,8 @@ class CommentController extends Controller
             case 'order by':
             case 'best':
                 $query->orderBy('like_count', 'DESC')
-                    ->orderBy('dislike_count', 'ASC');
+                    ->orderBy('dislike_count', 'ASC')
+                    ->orderBy('created_at', 'DESC');
                 break;
             case 'new':
                 $query->orderBy('created_at', 'DESC');
@@ -161,6 +162,12 @@ class CommentController extends Controller
                 $video->save();
 
                 break;
+        }
+
+        if ($parent_comment_id !== null) {
+            $parent_comment = Comment::find($parent_comment_id);
+            $parent_comment->reply_count++;
+            $parent_comment->save();
         }
 
         if ($comment === null) {

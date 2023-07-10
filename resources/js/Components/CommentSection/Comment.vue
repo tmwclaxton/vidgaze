@@ -5,6 +5,7 @@ import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
 import {usePage} from "@inertiajs/vue3";
 import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
 import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
+import CommentTextarea from "@/Components/CommentSection/Partials/CommentTextarea.vue";
 const confirmStore = useConfirmModalStore();
 const CommentSectionStore = useCommentSectionStore();
 
@@ -35,8 +36,6 @@ const editable = computed(() => {
 
 const share = () => {
     CommentSectionStore.shareComment(props.comment);
-
-
 }
 
 const deleteComment = () => {
@@ -51,6 +50,14 @@ const deleteComment = () => {
     };
 };
 
+// replies computed text pluralization
+const noRepliesText = computed(() => {
+    if (props.comment.reply_count === 1) {
+        return props.comment.reply_count + ' Reply';
+    } else {
+        return props.comment.reply_count + ' Replies';
+    }
+});
 
 </script>
 
@@ -117,7 +124,13 @@ const deleteComment = () => {
                                     <!--        Save-->
                                     <!--    </button>-->
                                     <!--</div>-->
-                            </div>
+                            </div>   <!--        Cancel-->
+                            <!--    </button>-->
+                            <!--    <button type="submit" @click="editComment = false;"-->
+                            <!--            class="rect_button  text dark:textDark generic_button_2 dark:generic-background-dark_3 max-w-min mr-0">-->
+                            <!--        Save-->
+                            <!--    </button>-->
+                            <!--</div>-->
 
                             <button v-if="comment.body.length > 250 || (simple && comment.body.length > 73)"
                                     class="font-bold my-2 text-xs uppercase"
@@ -181,7 +194,7 @@ const deleteComment = () => {
                                 <span v-if="isCollapsed" class="select-none w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
 
                                     <font-awesome-icon :icon="['fas', 'caret-down']" class="fill-blue-600 h-3 my-auto mr-2"/>
-                                    <p class="font-bold">View {{ comment.reply_count_display}}</p>
+                                    <p class="font-bold">View {{ noRepliesText }}</p>
                                 </span>
                                 <span v-else class="select-none w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
                                     <font-awesome-icon :icon="['fas', 'caret-up']" class="fill-blue-600 h-3 my-auto mr-2"/>
@@ -193,7 +206,9 @@ const deleteComment = () => {
                     </div>
 
 
+
                 </div>
+                    <CommentTextarea :body="body" :comment_id="props.comment.id" action="reply" @close="replyComment = false" v-if="replyComment"/>
 
             </div>
 

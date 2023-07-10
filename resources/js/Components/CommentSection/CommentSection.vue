@@ -27,7 +27,7 @@ const props = defineProps({
 // watch for changes in category and fetch comments again
 watch(category, (value) => {
     CommentSectionStore.getCommentInteractions();
-    CommentSectionStore.fetchComments(props.item.id, props.item.type, category.value);
+    CommentSectionStore.fetchComments(category.value);
 });
 
 
@@ -40,7 +40,7 @@ onMounted(() => {
     // grab interactions first then comments
     CommentSectionStore.getCommentInteractions();
     setTimeout(() => {
-        CommentSectionStore.fetchComments(props.item.id, props.item.type, category.value);
+        CommentSectionStore.fetchComments(category.value);
     }, 200); // 200ms delay
 
 });
@@ -89,7 +89,8 @@ onMounted(() => {
 
             <div class="flex flex-col w-full my-5" v-if="CommentSectionStore.comments.length > 0">
 
-                <Comment v-for="comment in CommentSectionStore.comments" :comment="comment" :key="comment.id" />
+                <Comment v-for="comment in CommentSectionStore.comments.filter(comment => comment.parent_comment_id === null)"
+                         :comment="comment" :key="comment.id" />
 
                 <!--<x-button wire:click="loadMore" name="rect_button"-->
                 <!--          class=" mt-1 w-full generic_button_2">-->
