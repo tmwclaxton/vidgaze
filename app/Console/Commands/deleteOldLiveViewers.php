@@ -7,6 +7,7 @@ use App\Models\Stream;
 use App\Models\Video;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Symfony\Component\Console\Command\Command as CommandAlias;
 
 class deleteOldLiveViewers extends Command
 {
@@ -55,7 +56,7 @@ class deleteOldLiveViewers extends Command
             $liveClient->delete();
         }
 
-        return Command::SUCCESS;
+        return CommandAlias::SUCCESS;
     }
 
 }

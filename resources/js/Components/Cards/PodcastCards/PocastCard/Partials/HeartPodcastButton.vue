@@ -65,7 +65,7 @@ const toggleLike = () => {
             // Handle the error response
             toastStore.add({
                 message: 'Error liking video',
-                type: 'error'
+                type: 'warning'
             });
         });
 };

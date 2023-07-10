@@ -143,7 +143,7 @@ const noRepliesText = computed(() => {
                                     v-text="isCollapsed ? 'Show less' : 'Show more'"
                             ></button>
 
-                            <div class="  flex flex-row gap-x-2  font-semibold pt-3 hover:cursor-pointer select-none">
+                            <div class="  flex flex-row flex-wrap gap-2  font-semibold pt-3 hover:cursor-pointer select-none">
 
 
                                 <TertiaryButton>

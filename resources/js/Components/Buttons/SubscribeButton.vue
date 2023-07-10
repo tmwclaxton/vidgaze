@@ -48,7 +48,7 @@ const subscribe = () => {
             // Handle subscription error
             toastStore.add({
                 message: 'Something went wrong, please try again later',
-                type: 'error'
+                type: 'warning'
             });
         });
 

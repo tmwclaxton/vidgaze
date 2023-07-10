@@ -94,10 +94,10 @@ const copyToClipboard = (text) => {
         </a>
     </div>
 
-    <div class=" max-w-xl w-full mx-auto">
+    <div class="max-w-xs sm:max-w-sm md:max-w-xl  w-full mx-auto">
         <div @click="copyToClipboard(ShareModalStore.links.vidgaze)"
              class="overflow-hidden mx-6 bg-zinc-100 dark:bg-vidgaze-blue hover:bg-zinc-200 hover:dark:bg-vidgaze-blue/80 p-2 my-2 mb-4 rounded cursor-text relative flex flex-row">
-            <p class="font-semibold pr-8 " v-text="ShareModalStore.links.vidgaze"> </p>
+            <p class="font-semibold pr-8 break-all" v-text="ShareModalStore.links.vidgaze"> </p>
             <div
                 class="ml-auto  my-auto   h-full flex flex-row  cursor-pointer gap-x-2">
                 <p class=" font-semibold my-auto">Copy</p>

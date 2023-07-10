@@ -100,8 +100,7 @@ onMounted(() => {
 
             </div>
 
-            <QuaternaryButton v-if="CommentSectionStore.comments.length > 9"
-                class="mr-2" @click="">
+            <QuaternaryButton v-if="CommentSectionStore.comments.length > 9"  @click="">
                 <font-awesome-icon :icon="['fas', 'comments']" class="w-4 h-4"/>
                 <span class="font-semibold">Load more</span>
             </QuaternaryButton>

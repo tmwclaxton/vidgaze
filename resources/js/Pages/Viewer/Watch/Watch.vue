@@ -18,6 +18,8 @@ import SecondaryButton from "@/Components/Buttons/SecondaryButton.vue";
 import TertiaryButton from "@/Components/Buttons/TertiaryButton.vue";
 import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
 import CommentSection from "@/Components/CommentSection/CommentSection.vue";
+import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
+import FeatureCreatorButton from "@/Components/Buttons/FeatureCreatorButton.vue";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -211,6 +213,9 @@ onUnmounted(() => {
                                             v-text="props.item.data.live_viewer_count + ' Watching'"/>
                                 </div>
                                 <div class="text dark:textDark ml-auto flex flex-row gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
+
+
+                                    <FeatureCreatorButton v-if="$page.props.auth.admin" :creator_id="props.item.data.creator.id"/>
 
 
                                     <TertiaryButton>

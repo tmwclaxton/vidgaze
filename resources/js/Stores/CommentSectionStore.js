@@ -137,7 +137,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                 // Handle comment creation error
                 toastStore.add({
                     message: 'Something went wrong, please try again later',
-                    type: 'error'
+                    type: 'warning'
                 });
             });
 
@@ -182,7 +182,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                     console.log(error);
                     toastStore.add({
                         message: 'Something went wrong, please try again later',
-                        type: 'error'
+                        type: 'warning'
                     });
                 });
         },
@@ -213,7 +213,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                     console.log(error);
                     toastStore.add({
                         message: 'Something went wrong, please try again later',
-                        type: 'error'
+                        type: 'warning'
                     });
                 });
         }

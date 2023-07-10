@@ -71,7 +71,7 @@ class CommentController extends Controller
             break;
             default:
                 return response()->json([
-                    'type' => 'error',
+                    'type' => 'warning',
                     'message' => 'Unsupported item type']
                 );
         }
@@ -172,7 +172,7 @@ class CommentController extends Controller
 
         if ($comment === null) {
             return response()->json([
-                'type' => 'error',
+                'type' => 'warning',
                 'message' => 'Comment could not be created',
             ]);
         }
@@ -218,7 +218,7 @@ class CommentController extends Controller
 
         if ($comment === null) {
             return response()->json([
-                'type' => 'error',
+                'type' => 'warning',
                 'message' => 'Comment could not be found',
             ]);
         }
@@ -244,7 +244,7 @@ class CommentController extends Controller
         }
 
         return response()->json([
-            'type' => $success ? 'success' : 'error',
+            'type' => $success ? 'success' : 'warning',
             'message' => $message,
         ]);
     }

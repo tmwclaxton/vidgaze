@@ -33,7 +33,7 @@ const emit = defineEmits(["remove"]);
           'bg-blue-400 text-blue-700 dark:bg-blue-800 dark:text-blue-100': props.type == 'normal',
           'bg-red-300 text-red-700 dark:bg-red-800 dark:text-red-100': props.type == 'undo',
           'bg-green-400 text-zinc-900 dark:bg-green-900 dark:text-white': props.type == 'success',
-          'bg-red-400 text-red-900 dark:bg-red-800 dark:text-red-100': props.type == 'error'
+          'bg-red-400 text-red-900 dark:bg-red-800 dark:text-red-100': props.type == 'warning'
         }"
 
         >
@@ -43,7 +43,7 @@ const emit = defineEmits(["remove"]);
                                 :icon="['fas', 'rotate-left']"/>
             <font-awesome-icon v-if="props.type === 'success'" class="   aspect-square  mx-auto"
                                :icon="['fas', 'check']" />
-            <font-awesome-icon v-if="props.type === 'error'" class="    aspect-square  mx-auto"
+            <font-awesome-icon v-if="props.type === 'warning'" class="    aspect-square  mx-auto"
                                :icon="['fas', 'triangle-exclamation']" />
          </div>
         <div class="ml-3 text-sm font-normal">{{ props.message }}</div>

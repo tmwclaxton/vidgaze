@@ -68,7 +68,7 @@ const createPlaylist = () => {
     } else {
         toastStore.add({
             message:" Playlist name must be at least 4 characters long " +  playlistName.value.trim() + playlistVisibility.value,
-            type: 'error',
+            type: 'warning',
         });
         // Give focus to the playlist name input
         playlistNameInput.value.focus();

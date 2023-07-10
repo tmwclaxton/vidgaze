@@ -132,12 +132,12 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     if (error.response.data.error !== undefined) {
                         toastStore.add({
                             message: error.response.data.error,
-                            type: 'error',
+                            type: 'warning',
                         });
                     } else {
                         toastStore.add({
                             message: "Something went wrong.",
-                            type: 'error',
+                            type: 'warning',
                         });
                     }
                     return false;
@@ -171,7 +171,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                 .catch(error => {
                     toastStore.add({
                         message: "Sorry, we couldn't report this " + this.itemType + ". Please try again later.",
-                        type: 'error',
+                        type: 'warning',
                     });
                     return false;
                 });
@@ -220,12 +220,12 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                     if (error.response.data.error === undefined) {
                         toastStore.add({
                             message: error.response.data.error,
-                            type: 'error',
+                            type: 'warning',
                         });
                     } else {
                         toastStore.add({
                             message: "Something went wrong.",
-                            type: 'error',
+                            type: 'warning',
                         });
                     }
                     return false;

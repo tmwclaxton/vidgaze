@@ -49,7 +49,7 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                         this.getPlaylists();
                         toastStore.add({
                             message:"Removed from playlist",
-                            type: 'error',
+                            type: 'warning',
                         });
                     })
                     .catch(error => {
