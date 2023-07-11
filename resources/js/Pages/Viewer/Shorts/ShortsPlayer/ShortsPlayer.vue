@@ -8,13 +8,14 @@ import {useContentModalStore} from "@/Stores/ContentModalStore";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
 import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
 import {onMounted, onUnmounted, ref} from "vue";
+import CommentSection from "@/Components/CommentSection/CommentSection.vue";
 const contentModalStore = useContentModalStore();
 const shareModalStore = useShareModalStore();
 
 const name = 'ShortsPlayer'
 
 let showShare = false;
-const comment = false;
+const showCommentSection = ref(false);
 const props = defineProps({
     video: {
         type: Object,
@@ -107,9 +108,12 @@ onUnmounted(() => {
                         </div>
 
                         <!--Player-->
-                        <div :id="'player_div_holder_' + video.external_id" class=" bg-black w-full   flex-grow rounded-2xl without-ring flex relative overflow-hidden">
+                        <div v-if="!showCommentSection" :id="'player_div_holder_' + video.external_id" class=" bg-black w-full   flex-grow rounded-2xl without-ring flex relative overflow-hidden">
                             <!--<div :id="video.external_id" class="w-full h-full">-->
                             <!--</div>-->
+                        </div>
+                        <div v-else class=" border border-zinc-300 dark:border-zinc-500 p-2 py-4 w-full   flex-grow rounded-2xl without-ring flex relative overflow-hidden">
+                            <CommentSection :item="video" :simple="true" />
                         </div>
                     </div>
 
@@ -119,7 +123,7 @@ onUnmounted(() => {
 
                     <LikeDislikeButtons :video="video" :orientation-vertical="true"/>
 
-                    <div class="flex flex-col gap-1  cursor-pointer ">
+                    <div class="flex flex-col gap-1  cursor-pointer " @click="showCommentSection = !showCommentSection">
                         <CommentsIcon class="h-8 mx-auto" />
                         <p class="font-bold text-sm text-center" v-text="video.comment_count"/>
                     </div>
@@ -130,7 +134,7 @@ onUnmounted(() => {
                     </div>
                 </div>
 
-            </div>
+                </div>
 
         </div>
 

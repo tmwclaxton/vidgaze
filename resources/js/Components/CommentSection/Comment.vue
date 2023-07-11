@@ -69,7 +69,7 @@ const noRepliesText = computed(() => {
 
 
         <!--if parent comment id is set then no margin bottom otherwise mb-3-->
-        <div class="w-full inline-flex flex-col mt-2" :class=" props.comment.parent_comment_id != null ? 'mb-2' : 'mb-1'">
+        <div class="w-full inline-flex flex-col gap-y-2 " :class=" props.comment.parent_comment_id != null ? 'mb-0.5' : 'mb-6 mt-0'">
 
 
 

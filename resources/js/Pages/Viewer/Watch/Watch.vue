@@ -215,7 +215,7 @@ onUnmounted(() => {
                                     <span class="pr-3  pt-0.5 font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
                                             v-text="props.item.data.live_viewer_count + ' Watching'"/>
                                 </div>
-                                <div class="text dark:textDark ml-auto flex flex-row gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
+                                <div class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
 
 
                                     <FeatureCreatorButton v-if="$page.props.auth.admin" :creator_id="props.item.data.creator.id"/>

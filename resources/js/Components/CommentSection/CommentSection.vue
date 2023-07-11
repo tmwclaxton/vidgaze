@@ -22,6 +22,11 @@ const props = defineProps({
         type: Object,
         required: true
     },
+    simple: {
+        type: Boolean,
+        required: false,
+        default: false
+    }
 });
 
 // watch for changes in category and fetch comments again
@@ -34,6 +39,9 @@ watch(category, (value) => {
 // grab comment slug from url if it exists and send that along with get request so it can be highlighted and put at top of comments
 
 onMounted(() => {
+    if (props.simple) {
+        return;
+    }
     CommentSectionStore.item = props.item;
     CommentSectionStore.item_type = props.item.type;
 
