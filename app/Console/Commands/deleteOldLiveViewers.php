@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
+
 use App\Models\LiveClient;
-use App\Models\Stream;
-use App\Models\Video;
+use App\Models\StreamModels\Stream;
+use App\Models\VideoModels\Video;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
-use Symfony\Component\Console\Command\Command as CommandAlias;
 
 class deleteOldLiveViewers extends Command
 {
@@ -34,6 +34,12 @@ class deleteOldLiveViewers extends Command
     {
         $liveClients = LiveClient::where('updated_at', '<=', Carbon::now()->subMinute(1)->toDateTimeString())->take(100)->get();
 
+
+        if (count($liveClients) === 0) {
+            $this->info('No old live viewers to delete');
+            return 0;
+        }
+
         foreach ($liveClients as $liveClient) {
             if ($liveClient->type === 'video') {
                 $video = Video::find($liveClient->item_id);
@@ -56,7 +62,11 @@ class deleteOldLiveViewers extends Command
             $liveClient->delete();
         }
 
-        return CommandAlias::SUCCESS;
+         $this->info('Successfully deleted old live viewers');
+
+        // return success
+        return 0;
+
     }
 
 }
