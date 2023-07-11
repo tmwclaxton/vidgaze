@@ -19,8 +19,9 @@ return new class extends Migration
             $table->foreignId('video_id')->constrained()->cascadeOnDelete();
             $table->integer('like_count')->default('0')->unsigned();
             $table->integer('dislike_count')->default('0')->unsigned();
+            $table->integer('reply_count')->default('0')->unsigned();
+            $table->boolean('pinned')->default(false);
             $table->foreignId('parent_comment_id')->nullable()->references('id')->on('comments')->constrained()->cascadeOnDelete();
-            $table->json('awards_json')->nullable();//json format
             $table->string('body' ,10000);
 
             $table->timestamps();

@@ -18,16 +18,12 @@ use Illuminate\Support\Facades\Auth;
 class CreatorController extends Controller
 {
 
-    public function index()
-    {
-
-    }
-
-    public function infinite(Request $request)
+    public function index(Request $request)
     {
         //get ids from params
         $perPage = $request->perPage ?? 20;
         $podcasters = $request->podcaster ?? false;
+        $featured = $request->featured ?? false;
         $creatorIds = $request->creatorIds ?? [];
         if (!is_array($creatorIds) ) {
             //explode the ids into an array
@@ -43,6 +39,11 @@ class CreatorController extends Controller
             });
         }
 
+        // featured creators
+        if ($featured) {
+            $query->where('featured', '=', true);
+        }
+
         //don't get creatorIds
         if(count($creatorIds) > 0){
             $query->whereNotIn('id',$creatorIds);
@@ -51,35 +52,12 @@ class CreatorController extends Controller
         $creators = $query->orderBy('subscriber_count','desc')->paginate($perPage);
 
         return new CreatorCollection($creators);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreCreatorRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreCreatorRequest $request)
-    {
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param Creator $creator
-     * @return Application|Factory|View
-     */
+
+
+
     public function show(Creator $creator)
     {
         //moved to livewire channel content
@@ -95,112 +73,37 @@ class CreatorController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param Creator $creator
-     * @return Application|Factory|View
-     */
+
     public function edit(Creator $creator)
     {
         return view('studio/customise');
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return RedirectResponse
-     */
-    public function update()
-    {
-        // dd(request()->all());
-        request()->validate([
-            'name' => 'required|max:50',
-            'bio' => 'nullable|max:1000',
-            'contact_email' => 'email|nullable|max:320',
-            'avatar_url' => 'image|mimes:jpeg,png,jpg,svg,webp|nullable|max:4096||dimensions:min_width=98,min_height=98,max_width=1000,max_height=1000',
-            'banner_url' => 'image|mimes:jpeg,png,jpg,svg,webp|nullable|max:6144||dimensions:min_width=2048,min_height=1152'
-        ]);
-        $attributes = request()->all();
 
-        //profile picture
-        if(isset($attributes['avatar_url'])) {
-            //delete old file if it exists
-            if (Auth::User()->creator->avatar_url != null) {
-                if (file_exists(public_path() . Auth::User()->creator->avatar_url)) {
-                    unlink(public_path() . Auth::User()->creator->avatar_url);
-                }
-            }
-            //create thumbnail name
-            $imageName = time() . '-' . Auth::User()->creator->id . '-' . 'avatar' . '.' . request()->avatar_url->extension();
-            //this is not private, but outsider would have to guess url
-            request()->avatar_url->storePubliclyAs('profile_pictures', $imageName); //remember to symlink
-            //add url to record
-            Auth::User()->creator->update(['avatar_url' => '/storage/profile_pictures/' . $imageName]);
-
-        } elseif (isset($attributes['removeProfilePicture'] )) { //if user wants profile picture removed
-
-            //delete old file if it exists
-            if (Auth::User()->creator->avatar_url != null) {
-                if (file_exists(public_path() . Auth::User()->creator->avatar_url)) {
-                    if (is_file(public_path() . Auth::User()->creator->avatar_url)) {
-                        unlink(public_path() . Auth::User()->creator->avatar_url);
-                    }
-                }
-                //reset creator avatar url to null
-                Auth::User()->creator()->update(['avatar_url' => null]);
-            }
-        }
-
-        //banner picture
-        if(isset($attributes['banner_url'])) {
-            //delete old file if it exists
-            if (Auth::User()->creator->banner_url != null) {
-                if (file_exists(public_path() . Auth::User()->creator->banner_url)) {
-                    unlink(public_path() . Auth::User()->creator->banner_url);
-                }
-            }
-            //create banner name
-            $imageName = time() . '-' . Auth::User()->creator->id . '-' . 'banner' . '.' . request()->banner_url->extension();
-            //this is not private, but outsider would have to guess url
-            request()->banner_url->storePubliclyAs('profile_banners', $imageName); //remember to symlink
-            //add url to record
-            Auth::User()->creator->update(['banner_url' => '/storage/profile_banners/' . $imageName]);
-
-        } elseif (isset($attributes['removeBannerPicture'] )) { //if user wants profile banner removed
-
-            //delete old file if it exists
-            if (Auth::User()->creator->avatar_url != null) {
-
-                if (file_exists(public_path() . Auth::User()->creator->banner_url)) {
-                    if (is_file(public_path() . Auth::User()->creator->banner_url)) {
-                        unlink(public_path() . Auth::User()->creator->banner_url);
-                    }
-                }
-                //reset creator banner url to null
-                Auth::User()->creator()->update(['banner_url' => null]);
-            }
-        }
-
-        //keep biography consistent format
-        $attributes['bio'] = json_encode($attributes['bio']);
-        Auth::User()->creator()->update([
-            'name' =>  $attributes['name'],
-            'bio' =>  $attributes['bio'],
-            'contact_email' =>  $attributes['contact_email']
-        ]);
-
-        return back();
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param Creator $creator
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Creator $creator)
     {
         //
+    }
+
+    public function toggleFeatured(Request $request)
+    {
+
+        $creator = Creator::find($request->creator_id);
+
+        if(!$creator){
+            return response()->json([
+                'toastType' => 'warning',
+                'message' => 'Creator not found'
+            ]);
+        }
+
+        $creator->featured = !$creator->featured;
+        $creator->save();
+        $message = $creator->featured ? 'Creator featured status updated to true' : 'Creator featured status updated to false';
+
+        return response()->json([
+            'toastType' => $creator->featured ? 'success' : 'warning',
+            'message' => $message
+        ]);
     }
 }

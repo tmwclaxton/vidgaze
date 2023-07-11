@@ -26,25 +26,25 @@ let isToastMessageCalled = false;
 
 function toastMessages() {
     if (!isToastMessageCalled) {
-        if (props.flash.toast) {
+        if (props.flash.toast && props.flash.toast.length > 0) {
             toastStore.add({
                 message: props.flash.toast,
                 type: "normal",
             });
         }
-        if (props.flash.error) {
+        if (props.flash.error && props.flash.error.length > 0) {
             toastStore.add({
                 message: props.flash.error,
-                type: "error",
+                type: "warning",
             });
         }
-        if (props.flash.success) {
+        if (props.flash.success && props.flash.success.length > 0) {
             toastStore.add({
                 message: props.flash.success,
                 type: "success",
             });
         }
-        if (props.flash.status) {
+        if (props.flash.status && props.flash.status.length > 0) {
             toastStore.add({
                 message: props.flash.status,
                 type: "normal",

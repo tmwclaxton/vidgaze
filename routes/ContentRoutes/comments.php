@@ -2,12 +2,13 @@
 
 use App\Http\Controllers\Content\CommentController;
 use App\Http\Controllers\Content\CommentInteractionController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/comments/infinite', [CommentController::class, 'infinite'])->name('comments.infinite');
 Route::middleware(['auth'])->group(function () {
-    Route::get('/comments/store', [CommentController::class, 'store'])->name('comments.store');
-    Route::get('/comments/update', [CommentController::class, 'update'])->name('comments.update');
-    Route::get('/comments/destroy', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::post('/comments/store', [CommentController::class, 'store'])->name('comments.store');
+    Route::put('/comments/update', [CommentController::class, 'update'])->name('comments.update');
+    Route::delete('/comments/destroy', [CommentController::class, 'destroy'])->name('comments.destroy');
 });
 
 // comment interaction routes // check if user is authenticated in a group

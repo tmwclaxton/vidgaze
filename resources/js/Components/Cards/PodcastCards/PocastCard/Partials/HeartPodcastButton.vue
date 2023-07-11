@@ -54,10 +54,10 @@ const toggleLike = () => {
             });
 
             if (response.data.result === "like") {
-                props.podcast.likes++;
+                props.podcast.like_count++;
                 liked.value = true;
             } else {
-                props.podcast.likes--;
+                props.podcast.like_count--;
                 liked.value = false;
             }
         })
@@ -65,7 +65,7 @@ const toggleLike = () => {
             // Handle the error response
             toastStore.add({
                 message: 'Error liking video',
-                type: 'error'
+                type: 'warning'
             });
         });
 };

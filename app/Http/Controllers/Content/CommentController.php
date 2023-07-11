@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Content;
 
+use App\Enums\Kind;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CommentCollection;
+use App\Http\Resources\CommentResource;
 use App\Models\CommentInteraction;
 use App\Models\CommentModels\Comment;
 use App\Models\VideoModels\Video;
-use App\Services\MixPanelTrackingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,8 +17,11 @@ class CommentController extends Controller
 
     protected array $rules = [
         'body' => 'required|regex:/^[A-Za-z0-9\-! ,\'\"\/@\.:\(\)]+$/|max:10000|min:1',
-        'video_id' => 'required|exists:videos,id',
-        'parent_id' => 'nullable|exists:comments,id',
+        'parent_comment_id' => 'nullable|exists:comments,id',
+        // item id must be integer
+        'item_id' => 'required|integer',
+        // item type can be video, podcast, or stream
+        'item_type' => 'required|in:video,podcast,stream',
    ];
 
     private function verifyUserPermissions(Comment $comment): void
@@ -45,57 +50,67 @@ class CommentController extends Controller
 
     public function infinite(Request $request) {
         // get order by, limit, offset, and video id from request,
-        $perPage = $request->perPage ?? 20;
-        $commentIds = $request->commentIds ?? [];
-        $orderByMethod = $request->input('category') ?? 'Order By';
-        $videoId = $request->input('videoId') ?? null;
-        $firstCommentId = $request->input('firstCommentId') ?? null;
-        $parentId = $request->input('parentId') ?? null;
+        $per_page = $request->input('per_page') ?? 10;
+        $comment_ids = $request->comment_ids ?? [];
+        $category = $request->input('category') ?? 'Order By';
+        $item_id = $request->input('item_id') ?? null;
+        $item_type = $request->input('item_type') ?? null;
+        $first_comment_id = $request->input('first_comment_id') ?? null;
+        $parent_comment_id = $request->input('parent_comment_id') ?? null;
 
 
         // if commentIds is not an array, explode the ids into an array
-        if (!is_array($commentIds) ) {
-            $commentIds = explode(',', $commentIds);
+        if (!is_array($comment_ids) ) {
+            $comment_ids = explode(',', $comment_ids);
+        }
+        switch ($item_type) {
+            case 'video':
+                // get the query
+                $query = Comment::query()
+                    ->where([['parent_comment_id', '=', $parent_comment_id], ['video_id', '=', $item_id]]);
+            break;
+            default:
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => 'Unsupported item type']
+                );
         }
 
-        // get the query
-        $query = Comment::query()
-            ->where([['parent_comment_id', '=', $parentId], ['video_id', '=', $videoId]]);
-
         // if firstCommentId is not null, add where clause to query
-        if ($firstCommentId !== null) {
-            $query->where('id', '!=', $firstCommentId);
+        if ($first_comment_id !== null) {
+            $query->where('id', '!=', $first_comment_id);
         }
 
         // if commentIds is not empty, add where clause to query
-        if (!empty($commentIds)) {
-            $query->whereNotIn('id', $commentIds);
+        if (!empty($comment_ids)) {
+            $query->whereNotIn('id', $comment_ids);
         }
 
         // order the query by the orderByMethod passed in
-        switch ($orderByMethod) {
-            case 'Order By':
-            case 'Best':
+        switch ($category) {
+            case 'order by':
+            case 'best':
                 $query->orderBy('like_count', 'DESC')
-                    ->orderBy('dislike_count', 'ASC');
+                    ->orderBy('dislike_count', 'ASC')
+                    ->orderBy('created_at', 'DESC');
                 break;
-            case 'New':
+            case 'new':
                 $query->orderBy('created_at', 'DESC');
                 break;
-            case 'Controversial':
+            case 'controversial':
                 $query->orderBy('dislike_count', 'DESC');
                 break;
-            case 'Old':
+            case 'old':
                 $query->orderBy('created_at', 'ASC');
                 break;
         }
 
         // get the comments
-        $comments = $query->limit($perPage)->get();
+        $comments = new CommentCollection($query->limit($per_page)->get());
 
         // if firstCommentId is not null, add it to the beginning of the comments array
-        if ($firstCommentId !== null) {
-            $comments->prepend(Comment::find($firstCommentId));
+        if ($first_comment_id !== null) {
+            $comments->prepend(new CommentResource(Comment::find($first_comment_id)));
         }
 
         // return the comments
@@ -108,33 +123,72 @@ class CommentController extends Controller
     public function store(Request $request)
     {
 
+
+        //get info from request
+        $item_type = $request->item_type;
+        $item_id = $request->item_id;
+        $parent_comment_id = $request->parent_comment_id ?? null;
+        $body = $request->body;
+
+
+
         if (!(isset(Auth::user()->creator->id) && $this->validate($request, $this->rules))) {
             return response()->json([
-                'success' => false,
+                'type' => false,
                 'message' => 'Comment could not be created',
             ]);
         }
-        $comment = Comment::create([
-            'creator_id' => Auth::user()->creator->id,
-            'video_id' => $this->video->id,
-            'parent_comment_id' => $this->comment_id,
-            'body' => $this->body,
-        ]);
 
-        $this->video->comment_count++;
-        $this->video->save();
+        switch ($item_type) {
+            case 'video':
+                // grab video
+                $video = Video::find($item_id);
+
+                if ($video === null) {
+                    return response()->json([
+                        'type' => false,
+                        'message' => 'Video could not be found',
+                    ]);
+                }
+
+                $comment = Comment::create([
+                    'creator_id' => Auth::user()->creator->id,
+                    'video_id' => $item_id,
+                    'parent_comment_id' => $parent_comment_id,
+                    'body' => $body
+                ]);
+
+                $video->comment_count++;
+                $video->save();
+
+                break;
+        }
+
+        if ($parent_comment_id !== null) {
+            $parent_comment = Comment::find($parent_comment_id);
+            $parent_comment->reply_count++;
+            $parent_comment->save();
+        }
+
+        if ($comment === null) {
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Comment could not be created',
+            ]);
+        }
+
 
         return response()->json([
-            'success' => true,
+            'type' => 'success',
             'message' => 'Comment created successfully',
-            'comment' => $comment,
+            'comment' => new CommentResource($comment),
         ]);
 
 
     }
 
     public function update(Request $request) {
-        $comment = Comment::find($request->commentId);
+        $comment = Comment::find($request->comment_id);
         $body = $request->body ?? null;
         $this->verifyUserPermissions($comment);
 
@@ -156,17 +210,41 @@ class CommentController extends Controller
 
     public function destroy(Request $request)
     {
-        $comment = Comment::find($request->commentId);
+        $comment = Comment::find($request->input('comment_id'));
+        $item_type = $request->input('item_type'); // for future use
+        $item_id = $request->input('item_id');
+        $video = Video::find($item_id);
+
+
+        if ($comment === null) {
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Comment could not be found',
+            ]);
+        }
+
         $this->verifyUserPermissions($comment);
+
+        $parent_comment_id = $comment->parent_comment_id;
 
         if ($success = $comment->delete() === false) {
             $message = 'Comment could not be deleted';
         } else {
             $message = 'Comment deleted successfully';
+
+            // if comment is a reply, decrement reply count
+            if ($parent_comment_id !== null) {
+                $parent_comment = Comment::find($parent_comment_id);
+                $parent_comment->reply_count--;
+                $parent_comment->save();
+            }
+
+            $video->comment_count--;
+            $video->save();
         }
 
         return response()->json([
-            'success' => $success,
+            'type' => $success ? 'success' : 'warning',
             'message' => $message,
         ]);
     }

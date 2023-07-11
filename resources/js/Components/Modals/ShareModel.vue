@@ -23,9 +23,9 @@ const onClickOutsideHandler = [
 
 
 <template>
-    <div v-if="ShareModalStore.showMenu"  class="z-40 absolute left-1/2 right-1/2 flex-grow h-max flex flex-row justify-center">
+    <div v-if="ShareModalStore.showMenu"  class="z-40 absolute left-1/2 right-1/2 h-max flex flex-row justify-center max-w-xs overflow-hidden">
         <div class="fixed my-auto inset-y-0 h-max">
-            <OptionHolder class="min-w-64 shadow-md h-max" v-on-click-outside="onClickOutsideHandler" >
+            <OptionHolder class="shadow-md h-max" v-on-click-outside="onClickOutsideHandler" >
                 <!--<div class="w-full flex flex-row p-4 select-none ">-->
                 <div class="flex justify-between px-4 py-1  select-none">
                     <p class="text-lg my-auto font-semibold ">Share</p>

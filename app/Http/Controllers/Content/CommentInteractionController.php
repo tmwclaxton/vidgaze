@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
-use App\Models\CommentInteraction;
 use App\Models\CommentModels\Comment;
-use Composer\DependencyResolver\Request;
+use App\Models\CommentModels\CommentInteraction;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CommentInteractionController extends Controller
@@ -14,9 +14,9 @@ class CommentInteractionController extends Controller
 
 
     // formats the response for the like and dislike methods
-    private function formatLikeAndDislikeResponse(Comment $comment, $liked, $message): void
+    private function formatLikeAndDislikeResponse(Comment $comment, $liked, $message)
     {
-        response()->json([
+        return response()->json([
             'message' => $message,
             'result' => $liked,
             'like_count' => $comment->like_count,
@@ -26,8 +26,9 @@ class CommentInteractionController extends Controller
 
 
 
-    public function toggleLike(Comment $comment) {
+    public function toggleLike($commentId) {
 
+        $comment = Comment::findOrFail($commentId);
 
         $commentInteraction = $this->getInteraction($comment);
 
@@ -51,13 +52,14 @@ class CommentInteractionController extends Controller
         $commentInteraction->save();
         $comment->save();
 
-        $this->formatLikeAndDislikeResponse($comment, $liked, $message);
+        return $this->formatLikeAndDislikeResponse($comment, $liked, $message);
 
 
     }
 
-    public function toggleDislike(Comment $comment) {
+    public function toggleDislike($commentId) {
 
+        $comment = Comment::findOrFail($commentId);
 
         $commentInteraction = $this->getInteraction($comment);
 
@@ -81,42 +83,49 @@ class CommentInteractionController extends Controller
         $commentInteraction->save();
         $comment->save();
 
-        $this->formatLikeAndDislikeResponse($comment, $liked, $message);
+        return $this->formatLikeAndDislikeResponse($comment, $liked, $message);
     }
 
     public function getInteractionsByItem(Request $request) {
         $comments = null;
 
         // get type of item (video / stream / podcast) and id of item
-        $itemType = $request->input('itemType');
-        $itemId = $request->input('itemId');
+        $itemType = $request->input('item_type');
+        $itemId = $request->input('item_id');
 
         // get all comments for item and has user's creator id
         if ($itemType == 'video') {
-            $comments = Comment::query()->where([['video_id', '=', $itemId],['creator_id', '=', Auth::user()->creator->id]])->get();
+            //$comments = CommentInteraction::query()->where([['video_id', '=', $itemId],['creator_id', '=', Auth::user()->creator->id]])->get();
+            $commentInteractions = Comment::query()->join('comment_interactions', 'comments.id', '=', 'comment_interactions.comment_id')->where([['comments.video_id', '=', $itemId],['comment_interactions.creator_id', '=', Auth::user()->creator->id]])->get();
+            //return $commentInteractions;
+            // format so it return the comment id and the interaction
+            $commentInteractions = $commentInteractions->map(function($commentInteraction) {
+                return [
+                    'comment_id' => $commentInteraction->comment_id,
+                    'liked' => $commentInteraction->liked,
+                ];
+            });
         }
 
-        if (!$comments) {
+        if (!$commentInteractions) {
             return response()->json([
-                'message' => 'No comments found',
+                'message' => 'No comment interactions found',
             ], 200);
         }
 
         return response()->json([
-            'result' => $comments,
+            'result' => $commentInteractions,
         ], 200);
 
     }
 
-    //private function getInteraction(Comment $comment) {
-    //
-    //    $commentInteraction = CommentInteraction::firstOrCreate([
-    //        'creator_id' => Auth::user()->creator->id,
-    //        'comment_id' => $comment->id,
-    //    ]);
-    //
-    //    return response()->json([
-    //        'result' => $commentInteraction,
-    //    ], 200);
-    //}
+    private function getInteraction(Comment $comment) {
+
+        $commentInteraction = CommentInteraction::firstOrCreate([
+            'creator_id' => Auth::user()->creator->id,
+            'comment_id' => $comment->id,
+        ]);
+
+        return $commentInteraction;
+    }
 }

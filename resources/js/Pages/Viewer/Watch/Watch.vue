@@ -18,13 +18,16 @@ import SecondaryButton from "@/Components/Buttons/SecondaryButton.vue";
 import TertiaryButton from "@/Components/Buttons/TertiaryButton.vue";
 import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
 import CommentSection from "@/Components/CommentSection/CommentSection.vue";
+import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
+import FeatureCreatorButton from "@/Components/Buttons/FeatureCreatorButton.vue";
+import {useNavStore} from "@/Stores/NavStore";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
 const playlistModalStore = usePlaylistModalStore();
 const shareModalStore = useShareModalStore();
 const contentModalStore = useContentModalStore();
-
+const NavStore = useNavStore();
 const name = 'Watch';
 
 const theatre = ref(false);
@@ -90,6 +93,8 @@ function shouldShowMoreDescriptionButton() {
 }
 onMounted( () => {
 
+    // close sidebar
+    NavStore.showingNavigationDropdown = false;
 
 
     // should description show more button be shown?
@@ -210,13 +215,16 @@ onUnmounted(() => {
                                     <span class="pr-3  pt-0.5 font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
                                             v-text="props.item.data.live_viewer_count + ' Watching'"/>
                                 </div>
-                                <div class="text dark:textDark ml-auto flex flex-row gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
+                                <div class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
 
 
-                                    <div class="bg-zinc-200 dark:bg-vidgaze-blue-nav rounded-xl p-1 px-5 flex flex-row gap-x-3 h-max my-auto">
+                                    <FeatureCreatorButton v-if="$page.props.auth.admin" :creator_id="props.item.data.creator.id"/>
+
+
+                                    <TertiaryButton>
                                         <LikeDislikeButtons :video="props.item.data" :orientationVertical="false"/>
+                                    </TertiaryButton>
 
-                                    </div>
 
 
                                     <div @click="share" class="flex flex-row cursor-pointer align-middle items-center">
@@ -302,10 +310,7 @@ onUnmounted(() => {
                     <CommentSection :item="props.item.data"
                                     v-bind:class="[showCommentSection ? 'flex' : 'hidden lg:flex']" />
 
-
                     <RowDivider class=" " :class="[theatre ? 'flex ' : 'flex lg:hidden ']"/>
-
-
 
                 </div>
             </div>
@@ -318,9 +323,7 @@ onUnmounted(() => {
                 <p>Queue & playlist support needed</p>
                 <p>Endpoint for getting recommended or channel videos</p>
                 <p>Show more button</p>
-                <div class="h-96 bg-blue-400 w-full" v-for="n in 10" :key="n">
 
-                </div>
 
 
             </div>

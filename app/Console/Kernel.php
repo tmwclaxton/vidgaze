@@ -15,10 +15,10 @@ class Kernel extends ConsoleKernel
         // this prunes the telescope database every 48 hours
         $schedule->command('telescope:prune --hours=48')->daily();
         // this gets stream from 1 twitch category every minute
-        $schedule->command('refresh:one_twitch_category')->everyMinute();
+        //$schedule->command('refresh:one_twitch_category')->everyMinute();
         // this refreshes the twitch category info every 6 hours
-        $schedule->command('refresh:twitch-category-info')->everySixHours();
-        $schedule->command('refresh:streams')->everyMinute();
+        //$schedule->command('refresh:twitch-category-info')->everySixHours();
+        //$schedule->command('refresh:streams')->everyMinute();
         $schedule->command('delete:old_live_viewers')->everyMinute();
         //$schedule->command('refresh:subscriptions')->everyMinute();
     }

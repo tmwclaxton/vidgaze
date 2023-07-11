@@ -22,4 +22,10 @@ Route::middleware(['throttle:60,1','auth'])->group(function () {
 });
 
 //creator routes
-Route::get('creator/infinite', [CreatorController::class,'infinite'])->name("creator.infinite");
+Route::get('creator/index', [CreatorController::class,'index'])->name("creator.index");
+
+// toggle featured creator
+Route::middleware(['auth','admin'])->group(function () {
+    Route::post('/creator/featured', [CreatorController::class, 'toggleFeatured'])
+        ->name('creator.featured.toggle');
+});

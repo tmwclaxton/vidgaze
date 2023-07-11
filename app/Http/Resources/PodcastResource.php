@@ -27,8 +27,8 @@ class PodcastResource extends JsonResource
             'time_uploaded' => Carbon::parse($this->time_uploaded)->toDateTimeString(),
             'time_published' => Carbon::parse($this->time_published)->diffForHumans(),
             'thumbnail_url' => $this->thumbnail_url,
-            'likes' => $this->like_count,
-            'dislikes' => $this->dislike_count,
+            'like_count' => $this->like_count,
+            'dislike_count' => $this->dislike_count,
             'creator' => new CreatorResource($this->creator()->first()),
         ];
     }

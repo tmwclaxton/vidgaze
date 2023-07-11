@@ -28,7 +28,7 @@ const name = 'TopPodcastersRow';
 const creators = ref([]);
 
 const fetchCreators = async () => {
-    axios.get(route('creator.infinite'),  { params: { podcasters: true, perPage: 6  } } )
+    axios.get(route('creator.index'),  { params: { podcasters: true, perPage: 6  } } )
         .then(response => {
             setTimeout(() => {
                 creators.value = response.data.data;

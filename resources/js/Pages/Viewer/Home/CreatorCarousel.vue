@@ -1,37 +1,19 @@
 <script setup>
 import {onMounted, ref} from "vue";
+import {usePage} from "@inertiajs/vue3";
 
-const carouselItems = [
-    {
-        imgSrc: '/images/banners/join_vidgaze.png'
-    },
-    {
-        imgSrc:
-            "https://yt3.googleusercontent.com/MCKlDYo78cX-ODEurmP8J1q-Pkf27Sb2E0cD8kbgwDU8ZlmQVll7gLmbznsPrXvinS6577z-bA=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
-    },
-    {
-        imgSrc:
-            "https://yt3.googleusercontent.com/YYL2_SdOUsyoeHgeIdmy-pje47RTKWh95jMoJm8qY-g5Ib8yVPlUfarXJP6NPN_tUqOZkU1hgOo=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
-    },
-    {
-        imgSrc:
-            "https://yt3.googleusercontent.com/lns9gHx-jrwkKHjn5rm6leWtyPb-pBv3XsyxH3bdcwC9aXPK7EqcldpQBY7q6fYhchC0o2kbJQ=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
-    },
-    {
-        imgSrc: "https://yt3.googleusercontent.com/eQLr0tOKbUf2UqOfIZ2WQGxXouOl3xxA8VN4bCjG9_WyduAvNYBWRv9nWkLrTBQ9rhx9YEH5mA=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"
-    },
-];
+const carouselItems = ref([]);
 
 const activeIndex = ref(0);
 const carouselWrapper = ref(null);
 const isMouseOverCarousel = ref(false);
-function scrollToPrevItem() {
-    const desiredIndex = activeIndex.value > 0 ? activeIndex.value - 1 : carouselItems.length - 1;
+const scrollToPrevItem = () => {
+    const desiredIndex = activeIndex.value > 0 ? activeIndex.value - 1 : carouselItems.value.length - 1;
     scrollToItem(desiredIndex);
 }
 
-function scrollToNextItem() {
-    const desiredIndex = activeIndex.value < carouselItems.length - 1 ? activeIndex.value + 1 : 0;
+const scrollToNextItem = () => {
+    const desiredIndex = activeIndex.value < carouselItems.value.length - 1 ? activeIndex.value + 1 : 0;
     scrollToItem(desiredIndex);
 }
 
@@ -55,34 +37,60 @@ function handleMouseLeave() {
     isMouseOverCarousel.value = false;
 }
 
+
 onMounted(() => {
-    // console.log(carouselWrapper.value);
+    // if user is logged in, don't show join vidgaze banner
+    if (!usePage().props.auth.user) {
+        carouselItems.value = [
+            {
+                imgSrc: '/images/banners/join_vidgaze.png',
+                link: route('register')
+            }
+        ];
+    }
+
+    axios.get(route('creator.index', {featured: true}))
+        .then(response => {
+            response.data.data.forEach((item) => {
+                carouselItems.value.push({
+                    imgSrc: item.banner_url,
+                    link: ''
+                });
+            });
+        })
+        .catch(error => {
+            console.log(error);
+        } );
+
 
     setInterval(() => {
         if (!isMouseOverCarousel.value && carouselWrapper.value) {
             scrollToNextItem();
         }
     }, 7000); // scroll every 10 seconds
+
+
 });
 </script>
 
 <template>
-    <div class="relative group overflow-hidden h-75 shadow-md  "
+    <div class="relative group overflow-hidden h-75 shadow-md  w-full"
          @mouseenter="handleMouseEnter"
          @mouseleave="handleMouseLeave">
         <!-- Carousel wrapper -->
         <div ref="carouselWrapper"
              class="overflow-y-hidden overflow-x-hidden snap-mandatory snap-x  h-full w-full flex flex-row relative transition-all delay-75 duration-700 ease-in-out  opacity-100 point-events-auto" >
             <!-- Item -->
-            <div class="flex-shrink-0 h-full w-full relative snap-center  "
+            <a class="flex-shrink-0 h-full w-full relative snap-center  "
                  v-for="(item, index) in carouselItems"
                  :key="index"
                  :class="{'    ': activeIndex !== index,'  ': activeIndex === index}"
+                    :href="item.link"
             >
                 <img :src="item.imgSrc" class="block w-full h-full max-h-72 cursor-pointer" />
 
                  <!--<div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/50 h-screen w-full"></div>-->
-            </div>
+            </a>
         </div>
         <!-- Slider controls -->
         <div class="absolute z-30 flex space-x-3 -translate-x-1/2 bottom-5 left-1/2 pointer-events-none cursor-pointer ">
