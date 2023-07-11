@@ -194,9 +194,8 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                 comment_id: comment_id,
                 item_id: this.item.id,
                 item_type: this.item_type,
-            }), {
                 body: body
-            })
+            }))
                 .then(response => {
                     // console.log(response.data);
                     toastStore.add({

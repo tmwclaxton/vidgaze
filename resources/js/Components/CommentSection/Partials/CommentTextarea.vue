@@ -25,7 +25,7 @@ const props = defineProps({
         default: 'comment'
     }
 });
-const emits = defineEmits(['close' ]);
+const emits = defineEmits(['close','submit']);
 // submit button text depending on action
 
 const submitButtonText = computed(() => {
@@ -66,14 +66,11 @@ const submitComment = () => {
     } else if (props.action === 'reply') {
         commentSectionStore.storeComment(comment.value, props.comment_id)
     } else if (props.action === 'edit') {
-        commentSectionStore.editComment(comment.value, props.comment_id)
+        commentSectionStore.editComment(props.comment_id, comment.value)
     }
-    commentOptions.value = false
-    comment.value = ''
+
     resetTextArea()
-    if (props.action === 'reply' || props.action === 'edit') {
-        emits('close')
-    }
+    emits('close')
 }
 
 const resizeTextarea = (event) => {
@@ -83,8 +80,10 @@ const resizeTextarea = (event) => {
 
 const textarea = ref(null);
 function resetTextArea() {
-    comment.value = '';
-    commentOptions.value = false;
+    if (props.action === 'reply' || props.action === 'comment') {
+        commentOptions.value = false
+        comment.value = ''
+    }
     // remove style attribute
     textarea.value.removeAttribute('style');
 }

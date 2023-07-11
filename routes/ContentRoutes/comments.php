@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/comments/infinite', [CommentController::class, 'infinite'])->name('comments.infinite');
 Route::middleware(['auth'])->group(function () {
     Route::post('/comments/store', [CommentController::class, 'store'])->name('comments.store');
-    Route::post('/comments/update', [CommentController::class, 'update'])->name('comments.update');
+    Route::put('/comments/update', [CommentController::class, 'update'])->name('comments.update');
     Route::delete('/comments/destroy', [CommentController::class, 'destroy'])->name('comments.destroy');
 });
 

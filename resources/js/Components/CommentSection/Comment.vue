@@ -22,7 +22,6 @@ const props = defineProps({
     }
 });
 const editComment = ref(false);
-const body = ref(props.comment.body);
 const isCollapsed = ref(true);
 const replyComment = ref(false);
 
@@ -119,11 +118,11 @@ const noRepliesText = computed(() => {
 
 
                                 <p v-show="!editComment" class=" pr-2 pt-1 break-words   "
-                                   v-bind:class="{' line-clamp-3': !isCollapsed}" v-html="body"/>
+                                   v-bind:class="{' line-clamp-3': !isCollapsed}" v-html="props.comment.body"/>
 
                                 <div v-show="editComment && editable">
                                     <CommentTextarea :body="body" :comment_id="props.comment.id" action="edit"
-                                                     @close="editComment = false"/>
+                                                     @close="editComment = false" />
                                 </div>
 
                                 <button v-if="comment.body.length > 250 || (simple && comment.body.length > 73)"
