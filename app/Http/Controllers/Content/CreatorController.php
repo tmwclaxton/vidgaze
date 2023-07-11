@@ -23,6 +23,7 @@ class CreatorController extends Controller
         //get ids from params
         $perPage = $request->perPage ?? 20;
         $podcasters = $request->podcaster ?? false;
+        $featured = $request->featured ?? false;
         $creatorIds = $request->creatorIds ?? [];
         if (!is_array($creatorIds) ) {
             //explode the ids into an array
@@ -36,6 +37,11 @@ class CreatorController extends Controller
             Podcast::orderBy('view_count','desc')->take(10)->get()->each(function($podcast) use ($query){
                 $query->orWhere('id','=',$podcast->creator_id);
             });
+        }
+
+        // featured creators
+        if ($featured) {
+            $query->where('featured', '=', true);
         }
 
         //don't get creatorIds
