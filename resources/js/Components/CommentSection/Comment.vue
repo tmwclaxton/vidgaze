@@ -139,7 +139,7 @@ const noRepliesText = computed(() => {
                                                             :setLikeValue="CommentSectionStore.getCommentInteraction(comment.id)"/>
                                     </TertiaryButton>
 
-                                    <span v-if="!simple" @click="replyComment = !replyComment">
+                                    <span v-if="!simple && $page.props.auth.user !== null" @click="replyComment = !replyComment">
                                         <!--<x-comment-button class="w-4" svgIcon="message" text="Reply"/>-->
                                         <TertiaryButton>
                                             <font-awesome-icon :icon="['fas', 'comment']" class="h-5 aspect-square"/>
