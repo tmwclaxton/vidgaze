@@ -43,8 +43,13 @@ const placeholder = computed(() => {
     if (props.action === 'comment') {
         return 'Leave a comment...';
     } else if (props.action === 'reply') {
+        commentOptions.value = true;
         return 'Leave a reply...';
     } else if (props.action === 'edit') {
+        // set comment value to current comment
+        comment.value = commentSectionStore.comments.find(comment => comment.id === props.comment_id).body;
+        // set comment options to true
+        commentOptions.value = true;
         return 'Edit your comment...';
     }
 });
@@ -85,7 +90,8 @@ function resetTextArea() {
 }
 
 const cancelComment = () => {
-    if (comment.value.length > 0) {
+    // if comment has text
+    if (comment.value.length > 0 && props.action !== 'edit') {
         // confirm that user wants to cancel comment
         confirmStore.buttonOneText = 'Go Back';
         confirmStore.buttonTwoText = 'Delete';
@@ -95,6 +101,8 @@ const cancelComment = () => {
             commentOptions.value = false;
             resetTextArea();
         };
+    } else if(props.action === 'edit') {
+        commentOptions.value = true;
     } else {
         commentOptions.value = false;
     }

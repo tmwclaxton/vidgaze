@@ -65,18 +65,20 @@ const noRepliesText = computed(() => {
 
 <template>
     <div class="flex flex-row gap-x-2">
-        <div v-if="props.comment.parent_comment_id != null" class=" w-1 h-16 "></div>
+
+        <div v-if="props.comment.parent_comment_id != null" class=" w-0.5 col-span-1 my-4 bg-zinc-100 dark:bg-zinc-900 "></div>
+
 
         <!--if parent comment id is set then no margin bottom otherwise mb-3-->
-        <div class="w-full inline-flex flex-col mt-1" :class="{'mb-3': props.comment.parent_comment_id == null}">
+        <div class="w-full inline-flex flex-col mt-2" :class=" props.comment.parent_comment_id != null ? 'mb-2' : 'mb-1'">
 
 
 
                 <div class="flex flex-col w-full">
-                    <div id="comment" class='w-full  flex relative bg-zinc-100 dark:bg-zinc-900 p-4 px-3 rounded'>
+                    <div id="comment" class='w-full  flex flex-row relative '>
 
 
-                        <div class=" flex flex-row w-full">
+                        <div class=" flex flex-row w-full bg-zinc-100 dark:bg-zinc-900 p-4 px-3 rounded-xl">
 
 
                             <div class="w-9 mr-3 flex-shrink-0 ">
@@ -121,7 +123,7 @@ const noRepliesText = computed(() => {
 
                                 <div v-show="editComment && editable">
                                     <CommentTextarea :body="body" :comment_id="props.comment.id" action="edit"
-                                                     @close=""/>
+                                                     @close="editComment = false"/>
                                 </div>
 
                                 <button v-if="comment.body.length > 250 || (simple && comment.body.length > 73)"
