@@ -20,13 +20,14 @@ import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
 import CommentSection from "@/Components/CommentSection/CommentSection.vue";
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import FeatureCreatorButton from "@/Components/Buttons/FeatureCreatorButton.vue";
+import {useNavStore} from "@/Stores/NavStore";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
 const playlistModalStore = usePlaylistModalStore();
 const shareModalStore = useShareModalStore();
 const contentModalStore = useContentModalStore();
-
+const NavStore = useNavStore();
 const name = 'Watch';
 
 const theatre = ref(false);
@@ -92,6 +93,8 @@ function shouldShowMoreDescriptionButton() {
 }
 onMounted( () => {
 
+    // close sidebar
+    NavStore.showingNavigationDropdown = false;
 
 
     // should description show more button be shown?

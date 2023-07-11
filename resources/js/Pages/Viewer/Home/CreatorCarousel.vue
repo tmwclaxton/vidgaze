@@ -1,10 +1,8 @@
 <script setup>
 import {onMounted, ref} from "vue";
+import {usePage} from "@inertiajs/vue3";
 
-const carouselItems = ref([{
-    imgSrc: '/images/banners/join_vidgaze.png',
-    link: route('register')
-}]);
+const carouselItems = ref([]);
 
 const activeIndex = ref(0);
 const carouselWrapper = ref(null);
@@ -41,17 +39,15 @@ function handleMouseLeave() {
 
 
 onMounted(() => {
-//     imgSrc: 'https://yt3.googleusercontent.com/MCKlDYo78cX-ODEurmP8J1q-Pkf27Sb2E0cD8kbgwDU8ZlmQVll7gLmbznsPrXvinS6577z-bA=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj',
-//         link: 'test'
-
-    // lets test with the above just concat the array
-//     carouselItems.value = carouselItems.value.concat([
-//         {
-//             imgSrc: '/images/banners/join_vidgaze.png',
-//             link: route('register')
-//         },
-// =
-//     ]);
+    // if user is logged in, don't show join vidgaze banner
+    if (!usePage().props.auth.user) {
+        carouselItems.value = [
+            {
+                imgSrc: '/images/banners/join_vidgaze.png',
+                link: route('register')
+            }
+        ];
+    }
 
     axios.get(route('creator.index', {featured: true}))
         .then(response => {
@@ -78,22 +74,23 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="relative group overflow-hidden h-75 shadow-md  "
+    <div class="relative group overflow-hidden h-75 shadow-md  w-full"
          @mouseenter="handleMouseEnter"
          @mouseleave="handleMouseLeave">
         <!-- Carousel wrapper -->
         <div ref="carouselWrapper"
              class="overflow-y-hidden overflow-x-hidden snap-mandatory snap-x  h-full w-full flex flex-row relative transition-all delay-75 duration-700 ease-in-out  opacity-100 point-events-auto" >
             <!-- Item -->
-            <div class="flex-shrink-0 h-full w-full relative snap-center  "
+            <a class="flex-shrink-0 h-full w-full relative snap-center  "
                  v-for="(item, index) in carouselItems"
                  :key="index"
                  :class="{'    ': activeIndex !== index,'  ': activeIndex === index}"
+                    :href="item.link"
             >
                 <img :src="item.imgSrc" class="block w-full h-full max-h-72 cursor-pointer" />
 
                  <!--<div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/50 h-screen w-full"></div>-->
-            </div>
+            </a>
         </div>
         <!-- Slider controls -->
         <div class="absolute z-30 flex space-x-3 -translate-x-1/2 bottom-5 left-1/2 pointer-events-none cursor-pointer ">
