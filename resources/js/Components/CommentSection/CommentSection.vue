@@ -48,7 +48,10 @@ onMounted(() => {
     // grab interactions first then comments
     CommentSectionStore.getCommentInteractions();
     setTimeout(() => {
-        CommentSectionStore.fetchComments(category.value);
+        // grab comment parameter from url if it exists
+        const urlParams = new URLSearchParams(window.location.search);
+        const comment = urlParams.get('comment');
+        CommentSectionStore.fetchComments(category.value, null, comment);
     }, 200); // 200ms delay
 
 });
