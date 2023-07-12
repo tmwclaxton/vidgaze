@@ -150,7 +150,7 @@ const hideCommentsButton = computed(() => {
 
                     <div v-if="hideCommentsButton" class="flex flex-col gap-1  cursor-pointer " @click="showCommentSection = !showCommentSection">
                         <CommentsIcon class="h-8 mx-auto" />
-                        <p class="font-bold text-sm text-center" v-text="video.comment_count"/>
+                        <p class="font-bold text-sm text-center">Comments</p>
                     </div>
 
                     <div class="flex flex-col gap-1 cursor-pointer " @click="share">

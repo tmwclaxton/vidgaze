@@ -63,18 +63,18 @@ const noRepliesText = computed(() => {
 </script>
 
 <template>
-    <div class="flex flex-row gap-x-2">
+    <div class="flex flex-row gap-x-2"  :class=" props.comment.parent_comment_id === null ? 'my-2' : ' '">
 
-        <div v-if="props.comment.parent_comment_id != null" class=" w-0.5 col-span-1 my-4 bg-zinc-100 dark:bg-zinc-900 "></div>
+        <div v-if="props.comment.parent_comment_id != null" class=" w-0.5 col-span-1  g-zinc-100 dark:bg-zinc-900 " :class=" props.comment.parent_comment_id != null ? 'mt-2' : ' '"></div>
 
 
         <!--if parent comment id is set then no margin bottom otherwise mb-3-->
-        <div class="w-full inline-flex flex-col gap-y-2 " :class=" props.comment.parent_comment_id != null ? 'mb-0.5' : 'mb-6 mt-0'">
+        <div class="w-full inline-flex flex-col " >
 
 
 
                 <div class="flex flex-col w-full">
-                    <div id="comment" class='w-full  flex flex-row relative '>
+                    <div id="comment" class='w-full  flex flex-row relative  ' :class=" props.comment.parent_comment_id != null ? 'mt-2' : ' '">
 
 
                         <div class=" flex flex-row w-full bg-zinc-100 dark:bg-zinc-900 p-4 px-3 rounded-xl">
@@ -95,7 +95,7 @@ const noRepliesText = computed(() => {
 
 
                                 <div class=" flex flex-row items-center">
-                                    <p>
+                                    <p class="select-none">
                                         <a href="/channel/{{props.comment.owner.slug}}">
                                             <span class="text-sm   font-semibold hover:cursor-pointer  leading-tight  "
                                                   v-text="props.comment.owner.name"/>
@@ -103,6 +103,7 @@ const noRepliesText = computed(() => {
                                         <span class="mx-2 text dark:textDark font-bold leading-tight"> · </span>
                                         <span class="text-sm font-semibold     leading-tight"
                                               v-text="props.comment.created_at"/>
+
 
                                     </p>
 
@@ -117,8 +118,15 @@ const noRepliesText = computed(() => {
                                 </div>
 
 
+                                <!--comment body here -->
                                 <p v-show="!editComment" class=" pr-2 pt-1 break-words   "
                                    v-bind:class="{' line-clamp-3': !isCollapsed}" v-html="props.comment.body"/>
+
+                                <div v-if="props.comment.edited && !editComment" class="select-none">
+                                    <span class="text-xs italic text-red-600 dark:text-red-400 font-semibold select-none">
+                                        Edited
+                                    </span>
+                                </div>
 
                                 <div v-show="editComment && editable">
                                     <CommentTextarea :body="body" :comment_id="props.comment.id" action="edit"
