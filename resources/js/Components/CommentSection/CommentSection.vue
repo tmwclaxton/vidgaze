@@ -95,7 +95,7 @@ onMounted(() => {
                 class="font-semibold select-none"> Log in </span> to comment
             </a>
 
-            <div class="flex flex-col w-full my-5" v-if="CommentSectionStore.comments.length > 0">
+            <div class="flex flex-col w-full mt-5 mb-2" v-if="CommentSectionStore.comments.length > 0">
 
                 <Comment v-for="comment in CommentSectionStore.comments.filter(comment => comment.parent_comment_id === null)"
                          :comment="comment" :key="comment.id" />
@@ -108,7 +108,7 @@ onMounted(() => {
 
             </div>
 
-            <QuaternaryButton v-if="CommentSectionStore.comments.length > 9"  @click="">
+            <QuaternaryButton v-if="CommentSectionStore.comments.length > 9"  @click="CommentSectionStore.fetchComments(category, null, null, true);">
                 <font-awesome-icon :icon="['fas', 'comments']" class="w-4 h-4"/>
                 <span class="font-semibold">Load more</span>
             </QuaternaryButton>

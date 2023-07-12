@@ -22,6 +22,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
     },
     actions: {
         async fetchComments(category, parent_comment_id = null, first_comment_id = null,loadMore = false) {
+            const toastStore = useToastStore();
             try {
                 let comment_ids = null;
                 if (loadMore) {
@@ -54,6 +55,17 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                     // console.log(response.data);
                     if (!response.data.error) {
                         this.comments = this.comments.concat(response.data.comments);
+
+                        // if load more and no comment toast message
+                        if (loadMore && response.data.comments.length === 0) {
+                        console.log(response.data);
+
+                            toastStore.add({
+                                message: "No more comments",
+                                type: "warning"
+                            });
+                        }
+
                     } else {
                         console.log(response.data.error);
                     }
