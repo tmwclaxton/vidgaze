@@ -57,13 +57,12 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                         this.comments = this.comments.concat(response.data.comments);
 
                         // if load more and no comment toast message
-                        if (loadMore && response.data.comments.length === 0) {
-                        console.log(response.data);
+                        if (loadMore === true && response.data.comments.length === 0) {
 
-                            toastStore.add({
-                                message: "No more comments",
-                                type: "warning"
-                            });
+                            // toastStore.add({
+                            //     message: "No more comments",
+                            //     type: "warning"
+                            // });
                         }
 
                     } else {
