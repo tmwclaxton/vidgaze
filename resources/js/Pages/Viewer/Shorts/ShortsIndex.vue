@@ -30,7 +30,7 @@ const { list, containerProps, wrapperProps } = useVirtualList(shorts, {
 
 
 const category = ref('popular');
-const fetchShorts = async () => {
+const fetchShorts = async (first_video_slug = null) => {
     let shortsIds = [];
     if (shorts.value.length > 0) {
         // const shortsIds = shorts.value.map(short => short.id).join(','); // what if there are no shorts?
@@ -43,14 +43,15 @@ const fetchShorts = async () => {
             category: category.value,
             shorts: true,
             perPage: 8,
-            videoIds: shortsIds
+            videoIds: shortsIds,
+            first_video_slug: first_video_slug,
         }
     }).then(response => {
-            if (response.data.data === undefined || response.data.data.length === 0) {
+            if (response.data.videos.data === undefined || response.data.videos.data.length === 0) {
                 return;
             }
             console.log("FETCHING SHORTS");
-            shorts.value = shorts.value.concat(response.data.data);
+            shorts.value = shorts.value.concat(response.data.videos.data);
         })
         .catch(error => {
             console.log(error);
@@ -205,9 +206,13 @@ function playFullyVisiblePlayer(i) {
 onMounted(async () => {
     shorts.value = [];
     fullyVisibleIndex.value = 0;
-    playerStore.destroyPlayers();
+    await playerStore.destroyPlayers();
 
-    await fetchShorts().then(() => {
+    // if short slug is in url, play that short
+    const urlParams = new URLSearchParams(window.location.search);
+    const firstShort = urlParams.get('short');
+
+    await fetchShorts(firstShort).then(() => {
         // watch shorts for changes // debounce the function so it only runs once every 100s
         watch(shorts, (shorts) => debounce(() => {
             // console.log(shorts);

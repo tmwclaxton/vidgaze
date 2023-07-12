@@ -50,10 +50,17 @@ class VideoController extends Controller
         // Get the selected category
         $selectedCategory = $request->input('category') ?? 'popular';
         $shorts = $request->input('shorts') ?? false;
+        $first_video_slug = $request->input('first_video_slug') ?? null;
+
 
         if (!is_array($videoIds) ) {
             //explode the ids into an array
             $videoIds = explode(',', $videoIds);
+        }
+
+        // if first_video_id is set add it to videoIds to be ignored
+        if ($first_video_slug) {
+            $videoIds[] = $first_video_slug;
         }
 
         $query = Video::query();
@@ -115,7 +122,7 @@ class VideoController extends Controller
         $query->where('visibility', '=','public');
 
         if ($shorts) {
-            $query->where('duration', '<=', 60);
+            $query->where('duration', '<', 90);
         }
 
         // Filter by video platform
@@ -142,29 +149,41 @@ class VideoController extends Controller
         }
 
 
-        // Retrieve the videos
-        if ($query->exists()) {
-            $videos = new VideoCollection($query->take($perPage)->get());
-        }
+        $videos = $query->take($perPage)->get();
+
 
         // If there are not enough videos, get random public videos
-        if (!isset($videos) || $videos->count() < $perPage) {
-            // get random public videos that are not in the videoIds array and get the amt to make up the difference if there are some videos already
-            if (isset($videos)) {
-                $amt = $perPage - $videos->count();
-            } else {
-                $amt = $perPage;
-            }
-            $randomVideos = new VideoCollection(Video::where('visibility', 'public')->whereNotIn('id', $videoIds)->inRandomOrder()->take($amt)->get());
-            if (isset($videos)) {
-                $videos = $videos->merge($randomVideos);
-            } else {
-                $videos = $randomVideos;
+        //if (!isset($videos) || $videos->count() < $perPage) {
+        //    // get random public videos that are not in the videoIds array and get the amt to make up the difference if there are some videos already
+        //    if (isset($videos)) {
+        //        $amt = $perPage - $videos->count();
+        //    } else {
+        //        $amt = $perPage;
+        //    }
+        //    $randomVideos = new VideoCollection(Video::where('visibility', 'public')->whereNotIn('id', $videoIds)->inRandomOrder()->take($amt)->get());
+        //    if (isset($videos)) {
+        //        $videos = $videos->merge($randomVideos);
+        //    } else {
+        //        $videos = $randomVideos;
+        //    }
+        //}
+
+        // if first_video_slug is not null, then find that video and put it at the beginning of the collection
+        if ($first_video_slug) {
+            $first_video = Video::where('slug', $first_video_slug)->first();
+            if ($first_video) {
+                $videos->prepend($first_video);
             }
         }
 
+        // Retrieve the videos
+        if ($query->exists()) {
+            $videos = new VideoCollection($videos);
+        }
 
-        $data['data'] = $videos->shuffle();
+
+
+        $data['videos'] = $videos;
         $data['category'] = $selectedCategory;
         $data['perPage'] = $perPage;
         $data['ids'] = $videoIds;

@@ -9,7 +9,10 @@ use App\Http\Controllers\Content\VideoInteractionController;
 
 //Route::get('/videos',[VideoController::class,'index'])->name('videos.index');
 Route::get('/videos/infinite', [VideoController::class, 'infinite'])->name('videos.infinite');
+
 Route::get('/shorts', [VideoController::class,'shorts'])->name('videos.shorts');
+
+
 Route::get('short/{video:slug}', [VideoController::class,'short'])->name("short.show");
 
 //view routes

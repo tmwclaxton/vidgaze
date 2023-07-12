@@ -191,6 +191,8 @@ onUnmounted(() => {
 
 <template>
 
+        <Head :title="props.item.data.title"  />
+
 
         <div class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4 md:mx-24']">
 

@@ -60,6 +60,10 @@ onMounted(() => {
             if (entry.isIntersecting) {
                 // Emit an event upwards when the player becomes fully visible
                 emits('UpdateFullyVisibleIndex',props.index);
+                // change url to short/slug
+                window.history.pushState(null, null, 'shorts?short=' + props.video.slug);
+                // change title
+                document.title = props.video.title + ' | VidGaze';
 
 
             } else {

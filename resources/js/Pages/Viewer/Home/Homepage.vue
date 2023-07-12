@@ -66,7 +66,7 @@ const fetchTrendingVideos = async () => {
     axios.get(route('videos.infinite'),  { params: { category: 'trending', perPage: 6  } } )
         .then(response => {
             setTimeout(() => {
-                trending_videos.value = response.data.data;
+                trending_videos.value = response.data.videos.data
             }, 200); // 500ms delay
         })
         .catch(error => {
@@ -94,7 +94,12 @@ const fetchVideos = async (videoArray) => {
         setTimeout(() => {
             // console.log(response.data.data);
             if (!response.data.error) {
-                videos.value = videos.value.concat(response.data.data);
+                if (response.data.videos.data === undefined) {
+                    window.removeEventListener('scroll', handleScroll);
+                } else {
+                    videos.value = videos.value.concat(response.data.videos.data);
+
+                }
             } else {
                 console.log(response.data.error);
             }

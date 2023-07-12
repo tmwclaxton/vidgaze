@@ -27,7 +27,7 @@ import RowDivider from "@/Components/General/RowDivider.vue";
 const name = 'TrendingVideosRow';
 const props = defineProps({
     trending_videos: {
-        type: Array,
+        type: Object,
         required: false,
         default: null
     }
