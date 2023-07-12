@@ -19,8 +19,8 @@ Route::prefix('watch/{video:slug}')->name('watch.')->group(function () {
     Route::get('{playlist:slug}/shuffle', [VideoController::class, 'shuffle'])->name('playlist.shuffle');
 });
 
-// modal routes //throttle to 30 requests per minute
-Route::middleware(['throttle:60,1','auth'])->group(function () {
+// modal routes
+Route::middleware(['auth'])->group(function () {
 
     // This allows users to create and destroy VideoDisinterest records, indicating that they are not interested in a particular video.
     Route::post('/videos/{videoId}/disinterest', [VideoInteractionController::class, 'toggleDisinterest'])

@@ -10,7 +10,9 @@ import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
 import {computed, onMounted, onUnmounted, ref, watchEffect} from "vue";
 import CommentSection from "@/Components/CommentSection/CommentSection.vue";
 import {useNavStore} from "@/Stores/NavStore";
+import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
 const contentModalStore = useContentModalStore();
+const commentSectionStore = useCommentSectionStore();
 const shareModalStore = useShareModalStore();
 const navStore = useNavStore();
 
@@ -59,6 +61,10 @@ onMounted(() => {
                 // Emit an event upwards when the player becomes fully visible
                 emits('UpdateFullyVisibleIndex',props.index);
 
+
+            } else {
+                // hide comment section
+                showCommentSection.value = false;
             }
         });
     };
@@ -132,7 +138,7 @@ const hideCommentsButton = computed(() => {
 
                 </div>
 
-                <div v-if="showCommentSectionMobile"  class="w-96 mt-24 overflow-y-auto border border-zinc-300 dark:border-zinc-500 p-2 py-4  flex-grow rounded-r-2xl without-ring flex relative overflow-hidden">
+                <div v-if="showCommentSectionMobile"  class="w-96 mt-24 overflow-y-auto border border-zinc-300 dark:border-zinc-800 p-2 py-4  flex-grow rounded-r-2xl without-ring flex relative overflow-hidden">
                     <CommentSection :item="video" :simple="true" />
                 </div>
 

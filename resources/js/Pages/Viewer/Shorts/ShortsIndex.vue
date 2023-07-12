@@ -15,8 +15,9 @@ import { useInfiniteScroll, useVirtualList, useIntersectionObserver } from '@vue
 
 import {usePlayerStore} from "@/Stores/PlayerStore";
 import {debounce} from "lodash";
+import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
 const playerStore = usePlayerStore();
-
+const commentSectionStore = useCommentSectionStore();
 const name = 'Shorts'
 const shorts = ref([]);
 // this is the index of the short that is fully visible
@@ -75,6 +76,15 @@ const UpdateFullyVisibleIndex = (index) => {
 watch(fullyVisibleIndex, (index) => {
     console.log(['current short: ', index])
     buildPlayers();
+
+    commentSectionStore.item = shorts.value[index];
+    commentSectionStore.item_type = shorts.value[index].type;
+
+    // grab interactions first then comments
+    commentSectionStore.getCommentInteractions();
+    setTimeout(() => {
+        commentSectionStore.fetchComments(category.value);
+    }, 200); // 200ms delay
 
 });
 
