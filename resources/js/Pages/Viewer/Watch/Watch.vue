@@ -1,3 +1,11 @@
+
+<script>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+export default {
+    layout: AuthenticatedLayout
+};
+</script>
+
 <script setup>
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
@@ -21,6 +29,7 @@ import CommentSection from "@/Components/CommentSection/CommentSection.vue";
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import FeatureCreatorButton from "@/Components/Buttons/FeatureCreatorButton.vue";
 import {useNavStore} from "@/Stores/NavStore";
+import QueueItem from "@/Components/Modals/MiniPlayers/Partials/QueueItem.vue";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -181,7 +190,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <AuthenticatedLayout>
+
+        <Head :title="props.item.data.title"  />
+
 
         <div class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4 md:mx-24']">
 
@@ -318,11 +329,37 @@ onUnmounted(() => {
 
             <!--video suggestions-->
 
-            <div class="bg-green-500 relative w-full gap-2 flex flex-col " :class="[theatre ? 'col-span-12' : 'col-span-12 lg:col-span-4 rounded-lg ']">
+            <div class=" relative w-full gap-2 flex flex-col " :class="[theatre ? 'col-span-12' : 'col-span-12 lg:col-span-4  ']">
 
-                <p>Queue & playlist support needed</p>
-                <p>Endpoint for getting recommended or channel videos</p>
-                <p>Show more button</p>
+
+
+                    <!--playlist-->
+
+                <div v-if="queueStore.playlist !== null">
+                    <div class="border-generic dark:border-generic-dark flex-col mb-5">
+                        <div class="p-2 generic-background   dark:bg-zinc-900">
+                            <p class="font-bold text dark:textDark">
+                                <!--playlist name-->
+                            </p>
+
+                            <p class="font-bold text dark:textDark text-xs opacity-80 ">
+                                <!--<a href="/channel/{{$playlist->owner->slug}}">-->
+                                <!--    {{$playlist->owner->name}}-->
+                                <!--</a>-->
+                            </p>
+                        </div>
+                    </div>
+
+                    <div id="miniPlayerItemsHolder" class="relative flex flex-col pb-1 max-h-48 overflow-y-auto">
+                        <div v-for="(item, index) in queueStore.items">
+                            <QueueItem :item="item" :index="index" :key="index"/>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!--suggested videos-->
+
 
 
 
@@ -333,8 +370,6 @@ onUnmounted(() => {
         </div>
 
 
-
-    </AuthenticatedLayout>
 
 
 

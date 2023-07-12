@@ -3,7 +3,7 @@ import DotsIcon from '#icons/3dots.svg';
 // Import the contentModalStore module
 import {useContentModalStore} from "@/Stores/ContentModalStore.js";
 import {computed, onMounted, onUnmounted, ref} from "vue";
-import Queue from "@/Components/Cards/VideoStreamCard/Partials/Queue.vue";
+import Queue from "@/Components/Cards/VideoStreamCards/Partials/Queue.vue";
 const contentModalStore = useContentModalStore();
 
 const name = "ShortsCard";

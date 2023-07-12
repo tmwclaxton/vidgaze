@@ -10,6 +10,8 @@ export const useNavStore = defineStore('NavStore', {
             showingNavigationDropdown: false,
             expandedSearchBar: false, //this is for mobile search bar when you click the search icon it hides the hamburger and stuff
             expandedSearchResults: false,
+            height: 0,
+            width: 0,
 
         }
     },
@@ -34,6 +36,8 @@ export const useNavStore = defineStore('NavStore', {
 
         // there is an event listener for this in nav.vue
         handleResize() {
+            this.height = window.innerHeight;
+            this.width = window.innerWidth;
             if (window.innerWidth > 640) {
                 this.expandedSearchBar = false
             } else {

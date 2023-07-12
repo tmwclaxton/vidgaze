@@ -20,14 +20,14 @@
 </template>
 
 <script setup>
-import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.vue";
-import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCard/VideoStreamSkeleton.vue";
+import VideoStreamCard from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamCard.vue";
+import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamSkeleton.vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 
 const name = 'TrendingVideosRow';
 const props = defineProps({
     trending_videos: {
-        type: Array,
+        type: Object,
         required: false,
         default: null
     }

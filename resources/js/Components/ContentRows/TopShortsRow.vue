@@ -14,7 +14,7 @@ const fetchShorts = async () => {
     axios.get(route('videos.infinite'),  { params: { category: category.value, shorts: true, perPage: 8  } } )
         .then(response => {
             setTimeout(() => {
-                shorts.value = response.data.data;
+                shorts.value = response.data.videos.data;
                 // when shorts are fetched, we need to compute the number of shorts to show based on screen size
                 computedShorts.value = shorts.value.slice(0, shortsPerPage[getScreenSize()]);
             }, 500); // 500ms delay

@@ -5,7 +5,7 @@ import {usePlayerStore} from "@/Stores/PlayerStore";
 import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {useQueueStore} from "@/Stores/QueueStore";
-import CornerInfo from "@/Components/Cards/VideoStreamCard/Partials/CornerInfo.vue";
+import CornerInfo from "@/Components/Cards/VideoStreamCards/Partials/CornerInfo.vue";
 import QueueItem from "@/Components/Modals/MiniPlayers/Partials/QueueItem.vue";
 import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
 import {useToastStore} from "@/Stores/ToastStore";

@@ -6,6 +6,7 @@ export const useQueueStore = defineStore('QueueStore', {
             debug: true,
             items: [] ,
             index: 0,
+            playlist: null,
         }
     },
     getters: {
