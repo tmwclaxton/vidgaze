@@ -33,7 +33,7 @@
 import { useQueueStore} from "@/Stores/QueueStore";
 const queueStore = useQueueStore();
 import { usePlayerStore} from "@/Stores/PlayerStore";
-import CornerInfo from "@/Components/Cards/VideoStreamCard/Partials/CornerInfo.vue";
+import CornerInfo from "@/Components/Cards/VideoStreamCards/Partials/CornerInfo.vue";
 const playerStore = usePlayerStore();
 
 //props

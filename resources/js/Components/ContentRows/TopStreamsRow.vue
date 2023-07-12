@@ -1,8 +1,8 @@
 <script setup>
 
 import {onMounted, ref} from "vue";
-import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.vue";
-import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCard/VideoStreamSkeleton.vue";
+import VideoStreamCard from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamCard.vue";
+import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamSkeleton.vue";
 
 import StreamIcon from '~/images/icons/livestreams.svg';
 import RowDivider from "@/Components/General/RowDivider.vue";

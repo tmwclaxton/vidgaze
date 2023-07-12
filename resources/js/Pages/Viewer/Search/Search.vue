@@ -11,14 +11,14 @@ export default {
 import axios from "axios";
 import {computed, ref} from 'vue';
 import CreatorSearchCard from "@/Components/Cards/CreatorSearchCard/CreatorSearchCard.vue";
-import VideoStreamCard from "@/Components/Cards/VideoStreamCard/VideoStreamCard.vue";
+import VideoStreamCard from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamCard.vue";
 import {shuffle} from "lodash";
 import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
 import CreatorSearchSkeleton from "@/Components/Cards/CreatorSearchCard/CreatorSearchSkeleton.vue";
-import VideoStreamSearchCard from "@/Components/Cards/VideoStreamSearchCard/VideoStreamSearchCard.vue";
-import VideoStreamSearchSkeleton from "@/Components/Cards/VideoStreamSearchCard/VideoStreamSearchSkeleton.vue";
+import VideoStreamSearchCard from "@/Components/Cards/VideoStreamCards/VideoStreamSearchCard/VideoStreamSearchCard.vue";
+import VideoStreamSearchSkeleton from "@/Components/Cards/VideoStreamCards/VideoStreamSearchCard/VideoStreamSearchSkeleton.vue";
 
 const props = defineProps({
     searchQuery: String,
