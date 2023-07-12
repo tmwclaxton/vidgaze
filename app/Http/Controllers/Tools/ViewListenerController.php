@@ -90,6 +90,13 @@ class ViewListenerController extends Controller
             }
 
             if (Auth()->check()) {
+
+                // check if view point is less than 1 minute from the end of the video
+                if ($view_point > $this->video->duration - 60) {
+                    // if so record the view point as the start of the video
+                    $view_point = 0;
+                }
+
                 // Record the view point only if logged in
                 $this->recordVideoViewPoint($viewer_id, $item_id, $view_point);
             }
@@ -164,6 +171,7 @@ class ViewListenerController extends Controller
 
     private function recordVideoViewPoint(mixed $viewer_id, string $item_id, int $viewPoint): void
     {
+
         //this records where in the video was watched to
         VideoInteraction::updateOrCreate(
             ['video_id' => $item_id],
