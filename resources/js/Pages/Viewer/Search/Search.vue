@@ -58,12 +58,23 @@ function search(searchQuery,page = 1) {
         .then(function (response) {
             // handle success
             // console.log(response);
-            creators.value = response.data.creators.data;
-            videos.value = response.data.videos.data;
-            // videos.value = shuffle(videos.value);
-            playlists.value = response.data.playlists.data;
-            podcasts.value = response.data.podcasts.data;
-            streams.value = response.data.streams.data;
+            if (response.data.creators !== undefined) {
+                creators.value = response.data.creators.data;
+            } else {
+                visibleCreatorsCount.value = 0;
+            }
+            if (response.data.videos !== undefined) {
+                videos.value = response.data.videos.data;
+            }
+            if (response.data.playlists !== undefined) {
+                playlists.value = response.data.playlists.data;
+            }
+            if (response.data.podcasts !== undefined) {
+                podcasts.value = response.data.podcasts.data;
+            }
+            if (response.data.streams !== undefined) {
+                streams.value = response.data.streams.data;
+            }
 
 
 
@@ -161,17 +172,18 @@ function search(searchQuery,page = 1) {
 
                         <!--<RowDivider/>-->
 
-                        <div class="flex flex-col flex-wrap gap-4 ">
+                        <div v-if="visibleCreatorsCount.value > 0"
+                            class="flex flex-col flex-wrap gap-4 ">
                             <CreatorSearchCard v-if="creators.length > 0" v-for="creator in creators.slice(0,visibleCreatorsCount)" :creator="creator"/>
                             <CreatorSearchSkeleton v-else v-for="i in 2"/>
                         </div>
 
-                        <RowDivider v-if="creators.length > 2" class="mt-4 mb-4" @click="toggleVisibleCreators" :text="expandCreators ? 'Show less' : 'Show more'">
+                        <RowDivider v-if="visibleCreatorsCount.value > 0 && creators.length > 2" class="mt-4 mb-4" @click="toggleVisibleCreators" :text="expandCreators ? 'Show less' : 'Show more'">
                             <font-awesome-icon v-if="expandCreators" :icon="['fas', 'caret-up']" />
                             <font-awesome-icon v-if="!expandCreators" :icon="['fas', 'caret-down']" />
                         </RowDivider>
 
-                        <RowDivider v-else class="mt-4 mb-4" />
+                        <RowDivider v-else class="mt-4 mb-4" v-if="visibleCreatorsCount.value > 0" />
 
                         <div class="px-0 relative w-full grid grid-cols-1 gap-4 ">
                             <!--<x-search-video-card :video="$video"/>-->

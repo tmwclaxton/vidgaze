@@ -153,20 +153,20 @@ class VideoController extends Controller
 
 
         // If there are not enough videos, get random public videos
-        //if (!isset($videos) || $videos->count() < $perPage) {
-        //    // get random public videos that are not in the videoIds array and get the amt to make up the difference if there are some videos already
-        //    if (isset($videos)) {
-        //        $amt = $perPage - $videos->count();
-        //    } else {
-        //        $amt = $perPage;
-        //    }
-        //    $randomVideos = new VideoCollection(Video::where('visibility', 'public')->whereNotIn('id', $videoIds)->inRandomOrder()->take($amt)->get());
-        //    if (isset($videos)) {
-        //        $videos = $videos->merge($randomVideos);
-        //    } else {
-        //        $videos = $randomVideos;
-        //    }
-        //}
+        if (!isset($videos) || $videos->count() < $perPage) {
+            // get random public videos that are not in the videoIds array and get the amt to make up the difference if there are some videos already
+            if (isset($videos)) {
+                $amt = $perPage - $videos->count();
+            } else {
+                $amt = $perPage;
+            }
+            $randomVideos = new VideoCollection(Video::where('visibility', 'public')->whereNotIn('id', $videoIds)->inRandomOrder()->take($amt)->get());
+            if (isset($videos)) {
+                $videos = $videos->merge($randomVideos);
+            } else {
+                $videos = $randomVideos;
+            }
+        }
 
         // if first_video_slug is not null, then find that video and put it at the beginning of the collection
         if ($first_video_slug) {
