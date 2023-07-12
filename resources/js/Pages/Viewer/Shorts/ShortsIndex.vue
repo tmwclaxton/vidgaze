@@ -218,8 +218,8 @@ onMounted(async () => {
     <div v-bind="containerProps" class="max-h-[calc(100vh-4rem)] duration-75  overflow-y-scroll snap snap-y snap-mandatory ease-in-out" v>
         <div v-bind="wrapperProps">
             <div id="shortsScrollArea" class=" w-full ">
-                <template v-if="list.length > 0" v-for="{index, data} in list" :key="index">
-                    <ShortsPlayer :video="data" :index="index" v-if="data !== undefined" @UpdateFullyVisibleIndex="UpdateFullyVisibleIndex(index)"/>
+                <template v-if="list.length > 0" v-for="{index, data} in list" :key="index" >
+                    <ShortsPlayer :video="data" :index="index" v-if="data !== undefined" @UpdateFullyVisibleIndex="UpdateFullyVisibleIndex(index)" :key="index"/>
                 </template>
                 <template v-else>
                     <ShortsPlayerSkeleton />

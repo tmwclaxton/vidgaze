@@ -573,8 +573,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
             } else if (player.object.preferred_source === "Dailymotion") {
                 await player.player.play();
             } else if (player.object.preferred_source === "YouTube") {
-                // console.log(player.player);
-                await player.player.playVideo();
+                if (player.player.playVideo) {
+                    await player.player.playVideo();
+                } else {
+                    this.debugMessage('PAUSE: YouTube player.player.playVideo not found');
+                }
             }
 
         },
@@ -593,7 +596,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
             } else if (player.object.preferred_source === "Dailymotion") {
                 await player.player.pause();
             } else if (player.object.preferred_source === "YouTube") {
-                await player.player.pauseVideo();
+                if (player.player.pauseVideo) {
+                    await player.player.pauseVideo();
+                } else {
+                    this.debugMessage('PAUSE: YouTube player.player.pauseVideo not found');
+                }
             }
         },
 

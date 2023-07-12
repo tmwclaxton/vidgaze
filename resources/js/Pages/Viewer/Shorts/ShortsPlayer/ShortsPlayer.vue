@@ -7,10 +7,12 @@ import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import {useContentModalStore} from "@/Stores/ContentModalStore";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
 import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
-import {onMounted, onUnmounted, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref, watchEffect} from "vue";
 import CommentSection from "@/Components/CommentSection/CommentSection.vue";
+import {useNavStore} from "@/Stores/NavStore";
 const contentModalStore = useContentModalStore();
 const shareModalStore = useShareModalStore();
+const navStore = useNavStore();
 
 const name = 'ShortsPlayer'
 
@@ -50,12 +52,6 @@ onMounted(() => {
         threshold: 1.0,
     };
 
-    // if (props.index === 0) {
-    //     setTimeout(() => {
-    //         // console.log('first video');
-    //         emits('UpdateFullyVisibleIndex',props.index);
-    //     }, 2000);
-    // }
 
     const handleIntersection = (entries) => {
         entries.forEach((entry) => {
@@ -75,23 +71,42 @@ onUnmounted(() => {
     observer.disconnect();
 });
 
+const sizeToHide = 1268;
+
+// show comment section shoould be computed property if screen size is mobile
+const showCommentSectionMobile = computed(() => {
+    if (navStore.width < sizeToHide) {
+        return false;
+    } else {
+        return showCommentSection.value;
+    }
+});
+
+const hideCommentsButton = computed(() => {
+    if (navStore.width < sizeToHide) {
+        return false;
+    } else {
+        return true;
+    }
+});
+
 
 </script>
 
 <template>
     <section
         class="w-full h-[calc(100vh-4rem)] overflow-hidden  snap-start flex flex-col text dark:textDark" >
-        <div class="relative flex pt-8 py-10  h-full flex flex-col">
+        <div class="relative flex pt-4 py-6  h-full flex flex-col">
 
             <div class=" mx-auto h-full  flex flex-row align-middle justify-center">
 
                 <div class=" aspect-[9/16] h-full flex-grow flex flex-col">
                 <!--<p v-text="video.external_id + ' * ' + video.preferred_source"></p>-->
 
-                    <div class="w-full h-full rounded-xl without-ring flex flex-col relative overflow-hidden">
+                    <div class="w-full h-full  without-ring flex flex-col relative overflow-hidden">
 
                         <!--Channel information-->
-                        <div class="pb-3 gap-x-2 flex flex-row ">
+                        <div class="pb-3 gap-x-2 flex flex-row h-24">
                             <div class="flex-shrink-0 cursor-pointer w-14 h-14 rounded-full bg-zinc-200 dark:bg-zinc-800">
                                 <img class="w-full h-full rounded-full" v-bind:src="video.creator.avatar_url">
                             </div>
@@ -108,22 +123,26 @@ onUnmounted(() => {
                         </div>
 
                         <!--Player-->
-                        <div v-if="!showCommentSection" :id="'player_div_holder_' + video.external_id" class=" bg-black w-full   flex-grow rounded-2xl without-ring flex relative overflow-hidden">
+                        <div  :id="'player_div_holder_' + video.external_id" class=" bg-black w-full   flex-grow without-ring flex relative overflow-hidden"
+                        :class="showCommentSectionMobile ? 'rounded-l-2xl' : 'rounded-2xl'">
                             <!--<div :id="video.external_id" class="w-full h-full">-->
                             <!--</div>-->
-                        </div>
-                        <div v-else class=" border border-zinc-300 dark:border-zinc-500 p-2 py-4 w-full   flex-grow rounded-2xl without-ring flex relative overflow-hidden">
-                            <CommentSection :item="video" :simple="true" />
                         </div>
                     </div>
 
                 </div>
+
+                <div v-if="showCommentSectionMobile"  class="w-96 mt-24 overflow-y-auto border border-zinc-300 dark:border-zinc-500 p-2 py-4  flex-grow rounded-r-2xl without-ring flex relative overflow-hidden">
+                    <CommentSection :item="video" :simple="true" />
+                </div>
+
+
                 <!--Buttons-->
                 <div class="flex flex-col gap-4 select-none justify-end text dark:textDark ml-6">
 
                     <LikeDislikeButtons :video="video" :orientation-vertical="true"/>
 
-                    <div class="flex flex-col gap-1  cursor-pointer " @click="showCommentSection = !showCommentSection">
+                    <div v-if="hideCommentsButton" class="flex flex-col gap-1  cursor-pointer " @click="showCommentSection = !showCommentSection">
                         <CommentsIcon class="h-8 mx-auto" />
                         <p class="font-bold text-sm text-center" v-text="video.comment_count"/>
                     </div>
