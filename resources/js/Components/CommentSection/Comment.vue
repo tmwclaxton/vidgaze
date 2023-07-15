@@ -129,7 +129,7 @@ const noRepliesText = computed(() => {
                                 </div>
 
                                 <div v-show="editComment && editable">
-                                    <CommentTextarea :body="body" :comment_id="props.comment.id" action="edit"
+                                    <CommentTextarea :body="props.comment.body" :comment_id="props.comment.id" action="edit"
                                                      @close="editComment = false" />
                                 </div>
 
@@ -214,7 +214,7 @@ const noRepliesText = computed(() => {
 
                     </div>
 
-                    <CommentTextarea :body="body" :comment_id="props.comment.id" action="reply"
+                    <CommentTextarea :body="props.comment.body" :comment_id="props.comment.id" action="reply"
                                      @close="replyComment = false; isCollapsed = false" v-if="replyComment"/>
 
 
