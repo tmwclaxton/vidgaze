@@ -1,20 +1,21 @@
 <script setup>
-import {ref} from "vue";
-
+import {onMounted, ref} from "vue";
+import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
+import {usePlayerStore} from "@/Stores/PlayerStore";
+const contentRoutesStore = useContentRoutesStore();
+const playerStore = usePlayerStore();
 const name = 'SuggestionsScreen';
 
-const suggestions = ref([]);
+let suggestions = ref([]);
 
 // grab suggestions using axios and ziggy
-axios.get('/api/suggestions')
-    .then(response => {
-        suggestions.value = response.data;
-    })
-    .catch(error => {
-        console.log(error);
+onMounted(async () => {
+    if (playerStore.endScreen ) {
+        await contentRoutesStore.getVideos("popular", 6).then((response) => {
+            suggestions.value = response;
+        });
     }
-
-
+});
 </script>
 <template>
 

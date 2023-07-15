@@ -26,7 +26,7 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
                     console.log(error);
                 }
             )
-            return response;
+            return response.data.videos.data;
         },
 
         // get top streams

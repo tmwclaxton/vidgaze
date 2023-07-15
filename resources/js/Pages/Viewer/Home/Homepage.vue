@@ -68,7 +68,7 @@ const fetchTrendingVideos = async () => {
     await contentRoutesStore.getVideos('trending', 6)
         .then(response => {
             setTimeout(() => {
-                trending_videos.value = response.data.videos.data
+                trending_videos.value = response
             }, 200); // 500ms delay
         })
 
@@ -79,14 +79,10 @@ const fetchVideos = async (videoArray) => {
     const response = await contentRoutesStore.getVideos('popular', 40, videoIds)
 
     setTimeout(() => {
-        // console.log(response.data.data);
-        if (!response.data.error) {
-            if (response.data.videos.data === undefined) {
-                window.removeEventListener('scroll', handleScroll);
-            } else {
-                videos.value = videos.value.concat(response.data.videos.data);
-
-            }
+        if (response === undefined) {
+            window.removeEventListener('scroll', handleScroll);
+        } else {
+            videos.value = videos.value.concat(response);
         }
     }, 200); // 200ms delay
 
