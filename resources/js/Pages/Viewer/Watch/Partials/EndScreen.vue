@@ -1,7 +1,7 @@
 <script setup>
 import {usePlayerStore} from "@/Stores/PlayerStore";
 import {computed, onMounted, ref} from "vue";
-import SuggestionsScreen from "@/Pages/Viewer/Watch/Partials/SuggestionsScreen.vue";
+import SuggestionsScreen from "@/Pages/Viewer/Watch/Partials/SuggestionsScreen/SuggestionsScreen.vue";
 import {useQueueStore} from "@/Stores/QueueStore";
 import UpNextVideo from "@/Pages/Viewer/Watch/Partials/UpNextVideo.vue";
 const playerStore = usePlayerStore();

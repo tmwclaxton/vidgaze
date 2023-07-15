@@ -30,7 +30,7 @@ import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import FeatureCreatorButton from "@/Components/Buttons/FeatureCreatorButton.vue";
 import {useNavStore} from "@/Stores/NavStore";
 import QueueItem from "@/Components/Modals/MiniPlayers/Partials/QueueItem.vue";
-import SuggestionsScreen from "@/Pages/Viewer/Watch/Partials/SuggestionsScreen.vue";
+import SuggestionsScreen from "@/Pages/Viewer/Watch/Partials/SuggestionsScreen/SuggestionsScreen.vue";
 import EndScreen from "@/Pages/Viewer/Watch/Partials/EndScreen.vue";
 
 const playerStore = usePlayerStore();
