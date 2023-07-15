@@ -14,6 +14,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             viewRecordTimer: null, // the timer that is running to record the view
             viewRecordDuration: 0, // this is the total time spent watching the video
             currentTimePosition: 0, // i.e. 0 seconds into the video or 45 seconds into the video, this is the current time position of the video this helps when switching between watch page and mini player
+            endScreen: false
         }
     },
     getters: {
@@ -61,6 +62,22 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 //    scroll to next video
                 //
                 // });
+            } else {
+                // if we are on the watch page
+                this.endScreen = true;
+
+                // check if queue has an item after this one
+                let queueStore = useQueueStore();
+
+                // wait 1 - as if we are deleting the item from the queue it will take a second to update
+                if (queueStore.items.length > queueStore.index + 1) {
+                    queueStore.changeIndex(queueStore.index + 1);
+                    // this.debugMessage('STOPVIEWRECORD mini player next item');
+                } else {
+                    const player = this.findPlayer(external_id);
+                    this.destroyItem(player);
+                }
+                return;
             }
 
 
@@ -79,7 +96,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 this.viewRecordTimer = setInterval(async () => {
                     try {
                         const isPlaying = await this.isPlayerPlaying(player);
-                        if (isPlaying) {
+                        if (isPlaying && this.players.length > 0) {
                             this.viewRecordDuration += interval;
                             this.debugMessage('STARTVIEWRECORD: View Record Duration: ' + this.viewRecordDuration);
 
@@ -256,6 +273,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
 
         async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false, checkViewHistoryStartTime = true) {
+            this.endScreen = false;
             playerDivHolderID = playerDivHolderID || 'miniplayer_div_holder';
             this.debugMessage('HERE '+ playerDivHolderID);
             // run this.loadScripts() but wait for it to finish the scripts to actually load

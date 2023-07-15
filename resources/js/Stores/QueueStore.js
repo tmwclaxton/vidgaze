@@ -7,6 +7,7 @@ export const useQueueStore = defineStore('QueueStore', {
             items: [] ,
             index: 0,
             playlist: null,
+            autoplay: false,
         }
     },
     getters: {
@@ -103,7 +104,7 @@ export const useQueueStore = defineStore('QueueStore', {
             return false;
         },
 
-        changeIndex(index) {
+        changeIndex(index, playerDivHolderID = null) {
 
             let playerModalStore = usePlayerStore();
 
@@ -115,7 +116,11 @@ export const useQueueStore = defineStore('QueueStore', {
             // set player modal store to this item
             if (this.items.length > 0) {
                 playerModalStore.destroyPlayers();
-                playerModalStore.buildPlayer(null, this.items[this.index]['object'], 0, true);
+                if (playerDivHolderID !== null) {
+                    playerModalStore.buildPlayer(playerDivHolderID, this.items[this.index]['object'], 0, true);
+                } else {
+                    playerModalStore.buildPlayer(null, this.items[this.index]['object'], 0, true);
+                }
             }
         }
     }
