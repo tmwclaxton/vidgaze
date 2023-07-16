@@ -51,10 +51,10 @@ export default {
 name: "CreatorSearchCard",
 components: {Badge, ConsistentContentHolder, SubscribeButton},
 props: {
-creator: {
-    type: Object,
-    default: null
-}
+    creator: {
+        type: Object,
+        default: null
+    }
 }
 }
 </script>

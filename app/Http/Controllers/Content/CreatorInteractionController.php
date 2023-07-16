@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CreatorCollection;
 use App\Http\Resources\StreamCollection;
 use App\Http\Resources\VideoCollection;
 use App\Models\CreatorModels\Creator;
@@ -39,11 +40,7 @@ class CreatorInteractionController extends Controller
 
         $streams = Stream::whereIn('creator_id', $creator_ids)->orderBy('viewers')->take(5)->get();
 
-
-
-
-
-
+        $subscriptions = new CreatorCollection($subscriptions);
         $videos = new VideoCollection($videos);
         $streams = new StreamCollection($streams);
 
@@ -52,6 +49,18 @@ class CreatorInteractionController extends Controller
             'videos' => $videos,
             'streams' => $streams,
             'podcasts' => [],
+        ];
+    }
+
+
+    public function getSubscriptions()
+    {
+        $subscriptions = Auth::user()->creator->subscriptions;
+
+        $subscriptions = new CreatorCollection($subscriptions);
+
+        return [
+            'subscriptions' => $subscriptions,
         ];
     }
 
