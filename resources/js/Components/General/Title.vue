@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-row gap-2 my-4 mb-8">
-        <slot name="icon" class="w-6 h-6 my-auto"></slot>
+        <slot  class="w-6 h-6 my-auto"></slot>
 
         <p class="font-bold text-2xl select-none">{{ text }}</p>
     </div>

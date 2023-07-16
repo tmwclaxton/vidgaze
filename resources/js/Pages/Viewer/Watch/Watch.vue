@@ -21,15 +21,15 @@ import TheatreIcon from '~/images/icons/expand.svg';
 import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
 import {useContentModalStore} from "@/Stores/ContentModalStore";
-import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
-import SecondaryButton from "@/Components/Buttons/SecondaryButton.vue";
+
 import TertiaryButton from "@/Components/Buttons/TertiaryButton.vue";
 import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
 import CommentSection from "@/Components/CommentSection/CommentSection.vue";
-import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import FeatureCreatorButton from "@/Components/Buttons/FeatureCreatorButton.vue";
 import {useNavStore} from "@/Stores/NavStore";
 import QueueItem from "@/Components/Modals/MiniPlayers/Partials/QueueItem.vue";
+
+import EndScreen from "@/Pages/Viewer/Watch/Partials/EndScreen.vue";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -55,8 +55,6 @@ const props = defineProps({
     item: {
         type: Object,
         required: true
-
-
     },
     type: {
         type: String,
@@ -203,9 +201,12 @@ onUnmounted(() => {
                 <div :class="[theatre ? '   ' : ' rounded-lg ']" class="bg-black max-h-[calc(100vh-10rem)] overflow-hidden">
                     <div :class="[ theatre ? 'aspect-video  h-full w-full' : 'w-full aspect-video max-h-screen']">
                         <!--video player-->
-                        <div id="watch_player" class="w-full h-full  without-ring flex relative ">
+                        <div id="watch_player" :class="playerStore.players.length > 0 ? 'w-full h-full bg-black without-ring flex relative ' : 'opacity-0'">
 
                         </div>
+
+                        <!--end screen-->
+                        <EndScreen v-if="playerStore.players.length === 0" :item="props.item.data" class="h-full w-full"/>
 
 
                     </div>

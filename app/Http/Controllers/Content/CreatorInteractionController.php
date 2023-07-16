@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\StreamCollection;
+use App\Http\Resources\VideoCollection;
 use App\Models\CreatorModels\Creator;
 use App\Models\CreatorModels\CreatorInteraction;
 use App\Models\StreamModels\Stream;
@@ -13,9 +15,13 @@ use Inertia\Inertia;
 
 class CreatorInteractionController extends Controller
 {
-    public function index()
+    public function subscriptions_index()
     {
         return Inertia::render('Viewer/Feed/Subscriptions/SubscriptionsIndex');
+    }
+    public function channels_index()
+    {
+        return Inertia::render('Viewer/Feed/Subscriptions/ChannelsIndex');
     }
 
     public function getSubscriptionFeed()
@@ -26,13 +32,26 @@ class CreatorInteractionController extends Controller
             return collect($subscription)->only(['id']);
         });
 
+        $videos = Video::whereIn('creator_id', $creator_ids)
+            ->whereDate('time_published', '>=', now()->subDays(28)->setTime(0, 0, 0)->toDateTimeString())
+            ->orderBy('time_published','DESC')
+            ->get();
+
+        $streams = Stream::whereIn('creator_id', $creator_ids)->orderBy('viewers')->take(5)->get();
+
+
+
+
+
+
+        $videos = new VideoCollection($videos);
+        $streams = new StreamCollection($streams);
+
         return [
             'subscriptions' => $subscriptions,
-            'videos' => Video::whereIn('creator_id', $creator_ids)
-                ->whereDate('time_published', '>=', now()->subDays(5)->setTime(0, 0, 0)->toDateTimeString())
-                ->orderBy('time_published','DESC')
-                ->get(),
-            'streams' => Stream::whereIn('creator_id', $creator_ids)->orderBy('viewers')->take(5)->get(),
+            'videos' => $videos,
+            'streams' => $streams,
+            'podcasts' => [],
         ];
     }
 

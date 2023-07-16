@@ -1,6 +1,7 @@
 <?php
 
 //user feed routes
+use App\Http\Controllers\Content\CreatorController;
 use App\Http\Controllers\Content\CreatorInteractionController;
 use App\Http\Controllers\Content\PlaylistController;
 use App\Http\Controllers\Content\PlaylistVideoController;
@@ -11,7 +12,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/feed/watch_later', [PlaylistController::class, 'later'])->name("feed.watch-later");
     Route::get('/feed/liked_videos', [PlaylistController::class, 'liked'])->name("feed.liked-videos");
     Route::get('/feed/history', [PlaylistController::class, 'history'])->name("feed.history");
-    Route::get('/feed/subscriptions', [CreatorInteractionController::class, 'index'])->name("feed.subscriptions");
+
+    Route::get('/feed/subscriptions', [CreatorInteractionController::class, 'subscriptions_index'])->name("feed.subscriptions");
+    Route::get('feed/channels', [CreatorInteractionController::class, 'channels_index'])->name("feed.channels");
 
 });
 Route::get('/playlist/{playlist:slug}', [PlaylistController::class, 'show'])->name("playlist");
@@ -32,6 +35,14 @@ Route::middleware(['throttle:60,1','auth'])->group(function () {
     Route::post('/playlists/{playlistId}/videos/', [PlaylistVideoController::class, 'create'])
         ->name('playlist.video.create');
 
+
+
+
+    // grab subscription data
+    Route::get('/feed/subscriptions/data', [CreatorInteractionController::class, 'getSubscriptionFeed'])->name("feed.subscriptions.data");
+
+    // grab channels subscribd to
+    Route::get('/feed/channels/data', [CreatorInteractionController::class, 'getSubscriptions'])->name("feed.channels.data");
 
 
 });
