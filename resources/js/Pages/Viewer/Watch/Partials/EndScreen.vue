@@ -10,6 +10,10 @@ const name = "EndScreen";
 const readyForNextVideo = ref(false);
 const timer = ref(8);
 
+const props = defineProps({
+    item: Object,
+})
+
 
 const nextUpScreen = computed(() => {
     return (queueStore.items.length > queueStore.index + 1);
@@ -22,14 +26,11 @@ const playNext = () => {
 }
 
 const resetPlayer = () => {
-    // playerStore.resetPlayer();
+    playerStore.buildPlayer('watch_player', props.item, 0, true);
     // nextUpScreen.value = true;
     // readyForNextVideo.value = false;
 }
 
-const props = defineProps({
-    item: Object,
-})
 
 
 // mode if no players, check if queue has a next video if so then show play next screen else show suggestions screen

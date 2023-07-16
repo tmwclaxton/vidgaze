@@ -15,12 +15,14 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
     },
     actions: {
         // get videos
-        async getVideos(category = "popular", perPage = 20, videoIds = [], shorts = false) {
+        async getVideos(category = "popular", perPage = 20, videoIds = [], shorts = false, first_video_slug = null) {
             const response = await axios.get(route('videos.infinite'), {
                 params: {
                     category: category,
                     perPage: perPage,
-                    videoIds
+                    videoIds,
+                    shorts,
+                    first_video_slug
                 }
             }).catch(error => {
                     console.log(error);
