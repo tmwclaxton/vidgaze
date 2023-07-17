@@ -66,13 +66,13 @@ class CreatorInteractionController extends Controller
         } elseif ($category === 'az') {
             $subscriptions = $subscriptions->sortBy('name');
         } elseif ($category === 'za') {
-            $subscriptions = $subscriptions->sortByDesc('name')->values();
+            $subscriptions = $subscriptions->sortByDesc('name');
         } elseif ($category === 'newest') {
             $subscriptions = $subscriptions->sortByDesc('created_at');
         } elseif ($category === 'oldest') {
-            $subscriptions = $subscriptions->sortBy('created_at')->values();
+            $subscriptions = $subscriptions->sortBy('created_at');
         }
-        $subscriptions = new CreatorCollection($subscriptions);
+        $subscriptions = new CreatorCollection($subscriptions->values());
 
         return [
             'subscriptions' => $subscriptions,
