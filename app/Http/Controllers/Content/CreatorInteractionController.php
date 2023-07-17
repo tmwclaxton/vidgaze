@@ -53,10 +53,25 @@ class CreatorInteractionController extends Controller
     }
 
 
-    public function getSubscriptions()
+    public function getSubscriptions(Request $request)
     {
+        // grab category from request
+        $category = $request->input('category');
+
         $subscriptions = Auth::user()->creator->subscriptions;
 
+
+        if ($category === 'default') {
+            $subscriptions = $subscriptions->sortBy('name');
+        } elseif ($category === 'az') {
+            $subscriptions = $subscriptions->sortBy('name');
+        } elseif ($category === 'za') {
+            $subscriptions = $subscriptions->sortByDesc('name')->values();
+        } elseif ($category === 'newest') {
+            $subscriptions = $subscriptions->sortByDesc('created_at');
+        } elseif ($category === 'oldest') {
+            $subscriptions = $subscriptions->sortBy('created_at')->values();
+        }
         $subscriptions = new CreatorCollection($subscriptions);
 
         return [

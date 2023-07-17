@@ -10,7 +10,7 @@ export default {
 <script setup>
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import CreatorSearchCard from "@/Components/Cards/CreatorSearchCard/CreatorSearchCard.vue";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import SelectInput from "@/Components/Inputs/SelectInput.vue";
 
 const name = 'List of subscriptions page';
@@ -18,17 +18,29 @@ const channels = ref([]);
 
 // on mounted grab subscriptions using axios and ziggy
 onMounted(() => {
-    axios.get(route('feed.channels.data')).then((response) => {
+    axios.get(route('feed.channels.data', {category: category.value}
+    )).then((response) => {
         channels.value = response.data.subscriptions.data;
     });
 });
 
 const categoryOptions = [
     {value: 'default', label: 'Default'},
+    {value: 'az', label: 'A-Z'},
+    {value: 'za', label: 'Z-A'},
     {value: 'newest', label: 'Newest'},
     {value: 'oldest', label: 'Oldest'},
 ];
 const category = ref('default');
+
+// watch category and sort channels
+watch(category, (value) => {
+    axios.get(route('feed.channels.data', {category: value}
+    )).then((response) => {
+        channels.value = response.data.subscriptions.data;
+    });
+});
+
 </script>
 
 
