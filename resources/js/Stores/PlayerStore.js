@@ -14,6 +14,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             viewRecordTimer: null, // the timer that is running to record the view
             viewRecordDuration: 0, // this is the total time spent watching the video
             currentTimePosition: 0, // i.e. 0 seconds into the video or 45 seconds into the video, this is the current time position of the video this helps when switching between watch page and mini player
+            endScreen: false
         }
     },
     getters: {
@@ -61,6 +62,22 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 //    scroll to next video
                 //
                 // });
+            } else {
+                // if we are on the watch page
+                this.endScreen = true;
+
+                // check if queue has an item after this one
+                let queueStore = useQueueStore();
+
+                // wait 1 - as if we are deleting the item from the queue it will take a second to update
+                if (queueStore.items.length > queueStore.index + 1) {
+                    queueStore.changeIndex(queueStore.index + 1);
+                    // this.debugMessage('STOPVIEWRECORD mini player next item');
+                } else {
+                    const player = this.findPlayer(external_id);
+                    this.destroyItem(player);
+                }
+                return;
             }
 
 
@@ -79,7 +96,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 this.viewRecordTimer = setInterval(async () => {
                     try {
                         const isPlaying = await this.isPlayerPlaying(player);
-                        if (isPlaying) {
+                        if (isPlaying && this.players.length > 0) {
                             this.viewRecordDuration += interval;
                             this.debugMessage('STARTVIEWRECORD: View Record Duration: ' + this.viewRecordDuration);
 
@@ -256,6 +273,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
 
         async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false, checkViewHistoryStartTime = true) {
+            this.endScreen = false;
             playerDivHolderID = playerDivHolderID || 'miniplayer_div_holder';
             this.debugMessage('HERE '+ playerDivHolderID);
             // run this.loadScripts() but wait for it to finish the scripts to actually load
@@ -377,6 +395,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
                             // this.debugMessage('BUILDYouTube: YouTube video buffering')
                             this.pauseViewRecord(external_id);
                         }
+                    },
+                    onReady: (event) => {
+                        // find the player by external_id and change ready to true
+                        this.debugMessage('BUILDYouTube: YouTube player ready')
+                        this.setPlayerReady(external_id);
                     }
                 }
             });
@@ -397,6 +420,9 @@ export const usePlayerStore = defineStore('PlayerStore', {
             player.on('loaded', () => {
                 // wait for player to load then set start time
                 player.ready().then(function () {
+                    // find the player by external_id and change ready to true
+                    this.setPlayerReady(external_id);
+                    this.debugMessage('BUILDVimeo: Vimeo player ready')
 
                     // set up
                     if (autoplay) {
@@ -480,6 +506,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     this.endVideo(external_id);
                 });
 
+                player.on(dailymotion.events.PLAYER_READY, () => {
+                    // this.debugMessage('BUILDDailymotion: Dailymotion player ready')
+                    this.setPlayerReady(external_id);
+                });
+
                 this.pushPlayer(player, object);
             });
         },
@@ -511,6 +542,12 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 this.endVideo(external_id);
             });
 
+            player.addEventListener(Twitch.Player.READY, () => {
+                // find the player by external_id and change ready to true
+                this.setPlayerReady(external_id);
+                this.debugMessage('BUILDTwitch: Twitch player ready');
+            });
+
             this.pushPlayer(player, object);
         },
 
@@ -529,7 +566,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
             this.players.push(
                 {
                     'object': object,
-                    'player': player
+                    'player': player,
+                    'ready': false,
                 }
             )
 
@@ -557,6 +595,20 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 this.debugMessage('PLAY: player not found');
                 return;
             }
+
+            // check if player is ready to play else wait and refire
+
+            // until scriptsLoaded is true wait 1 second and try again
+            if (player.ready === false) {
+                setTimeout(() => {
+                    this.debugMessage('PLAY: player not ready, waiting 1 second');
+                    console.log(player);
+                    this.play(external_id);
+                }, 1000);
+                return;
+            }
+
+
             // console.log(player);
 
             // pause all other players
@@ -590,6 +642,16 @@ export const usePlayerStore = defineStore('PlayerStore', {
             }
             console.log([player.object.preferred_source, player]);
 
+            // until scriptsLoaded is true wait 1 second and try again
+            if (player.ready === false) {
+                setTimeout(() => {
+                    this.debugMessage('PLAY: player not ready, waiting 1 second');
+                    console.log(player);
+                    this.pause(external_id);
+                }, 1000);
+                return;
+            }
+
             // check object preferred source
             if (["Vimeo", "Twitch"].includes(player.object.preferred_source)) {
                 await toRaw(player.player).pause();
@@ -604,7 +666,13 @@ export const usePlayerStore = defineStore('PlayerStore', {
             }
         },
 
-
+        setPlayerReady(external_id) {
+            // find the player by external_id and change ready to true
+            let player = this.findPlayer(external_id);
+            if (player !== null) {
+                player.ready = true;
+            }
+        },
 
         async loadScript(src, id)  {
             if (!document.getElementById(id)) {

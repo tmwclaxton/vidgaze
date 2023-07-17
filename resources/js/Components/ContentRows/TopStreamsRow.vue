@@ -6,18 +6,17 @@ import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCards/VideoStream
 
 import StreamIcon from '~/images/icons/livestreams.svg';
 import RowDivider from "@/Components/General/RowDivider.vue";
+import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 const streams = ref([]);
 const name = 'PopularStreams';
+const contentRoutesStore = useContentRoutesStore();
 const fetchStreams = async () => {
-    axios.get(route('streams.top'))
+    await contentRoutesStore.getTopStreams()
         .then(response => {
             setTimeout(() => {
                 streams.value = response.data.data;
             }, 300); // 500ms delay
         })
-        .catch(error => {
-            console.log(error);
-        });
 }
 
 onMounted(() => {

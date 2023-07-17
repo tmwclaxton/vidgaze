@@ -6,22 +6,22 @@ import {debounce} from "lodash";
 import ShortsSkeleton from "@/Components/Cards/ShortsCard/ShortsSkeleton.vue";
 import ShortsCard from "@/Components/Cards/ShortsCard/ShortsCard.vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
+import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 
 const name = 'TopShortsRow';
 const shorts = ref([]);
 const category = ref('popular');
+const contentRoutesStore = useContentRoutesStore();
 const fetchShorts = async () => {
-    axios.get(route('videos.infinite'),  { params: { category: category.value, shorts: true, perPage: 8  } } )
+    contentRoutesStore.getVideos(category.value, 8, [], true)
         .then(response => {
             setTimeout(() => {
-                shorts.value = response.data.videos.data;
+                shorts.value = response;
                 // when shorts are fetched, we need to compute the number of shorts to show based on screen size
                 computedShorts.value = shorts.value.slice(0, shortsPerPage[getScreenSize()]);
             }, 500); // 500ms delay
         })
-        .catch(error => {
-            console.log(error);
-        });
+
 };
 const shortsPerPage = {
     'xs': 2,

@@ -72,9 +72,9 @@ const dotsIconShow = computed(() => {
                     <div class=" flex flex-col overflow-hidden  ">
 
                     <span
-                        class="pt-1 line-clamp-2 overflow-hidden leading-5 font-bold  text-base  inline-flex">
+                        class="pt-1  overflow-hidden leading-5 font-bold  text-base  inline-flex">
 
-                        <a :href="route('watch.show', {slug: item.slug})" v-text="item.title" class="pr-2"></a>
+                        <a :href="route('watch.show', {slug: item.slug})" v-text="item.title" class="pr-2 line-clamp-3"></a>
 
 
                     </span>

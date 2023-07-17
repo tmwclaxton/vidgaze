@@ -16,12 +16,14 @@ import { useInfiniteScroll, useVirtualList, useIntersectionObserver } from '@vue
 import {usePlayerStore} from "@/Stores/PlayerStore";
 import {debounce} from "lodash";
 import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
+import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 const playerStore = usePlayerStore();
 const commentSectionStore = useCommentSectionStore();
 const name = 'Shorts'
 const shorts = ref([]);
 // this is the index of the short that is fully visible
 const fullyVisibleIndex = ref(0);
+const contentRoutesStore = useContentRoutesStore();
 
 const { list, containerProps, wrapperProps } = useVirtualList(shorts, {
     itemHeight: window.innerHeight - 64,
@@ -38,24 +40,14 @@ const fetchShorts = async (first_video_slug = null) => {
     } else {
         shortsIds = [];
     }
-    axios.get(route('videos.infinite'),  {
-        params: {
-            category: category.value,
-            shorts: true,
-            perPage: 8,
-            videoIds: shortsIds,
-            first_video_slug: first_video_slug,
-        }
-    }).then(response => {
-            if (response.data.videos.data === undefined || response.data.videos.data.length === 0) {
+    await contentRoutesStore.getVideos(category.value, 8,shortsIds, true, first_video_slug)
+        .then(response => {
+            if (response === undefined || response.length === 0) {
                 return;
             }
             console.log("FETCHING SHORTS");
-            shorts.value = shorts.value.concat(response.data.videos.data);
+            shorts.value = shorts.value.concat(response);
         })
-        .catch(error => {
-            console.log(error);
-        });
 };
 
 useInfiniteScroll(
@@ -228,18 +220,21 @@ onMounted(async () => {
 </script>
 <!--rerender everytime page reloads-->
 <template >
-    <Head title="VidGaze Shorts" />
+    <div>
+        <Head title="VidGaze Shorts" />
 
-    <div v-bind="containerProps" class="max-h-[calc(100vh-4rem)] duration-75  overflow-y-scroll snap snap-y snap-mandatory ease-in-out" v>
-        <div v-bind="wrapperProps">
-            <div id="shortsScrollArea" class=" w-full ">
-                <template v-if="list.length > 0" v-for="{index, data} in list" :key="index" >
-                    <ShortsPlayer :video="data" :index="index" v-if="data !== undefined" @UpdateFullyVisibleIndex="UpdateFullyVisibleIndex(index)" :key="index"/>
-                </template>
-                <template v-else>
-                    <ShortsPlayerSkeleton />
-                </template>
+        <div v-bind="containerProps" class="max-h-[calc(100vh-4rem)] duration-75  overflow-y-scroll snap snap-y snap-mandatory ease-in-out" v>
+            <div v-bind="wrapperProps">
+                <div id="shortsScrollArea" class=" w-full ">
+                    <template v-if="list.length > 0" v-for="{index, data} in list" :key="index" >
+                        <ShortsPlayer :video="data" :index="index" v-if="data !== undefined" @UpdateFullyVisibleIndex="UpdateFullyVisibleIndex(index)" :key="index"/>
+                    </template>
+                    <template v-else>
+                        <ShortsPlayerSkeleton />
+                    </template>
+                </div>
             </div>
         </div>
+
     </div>
 </template>

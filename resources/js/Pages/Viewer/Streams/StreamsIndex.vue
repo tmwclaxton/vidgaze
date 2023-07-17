@@ -10,37 +10,26 @@ import {debounce} from "lodash";
 import RowDivider from "@/Components/General/RowDivider.vue";
 import VideoStreamCard from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamCard.vue";
 import InfiniteCategoriesWithStreams from "@/Components/ContentRows/InfiniteCategoriesWithStreams.vue";
+import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 const name = "StreamsIndex";
 const categories = ref([]);
-const fetchCategories = () =>  {
-    axios.get(route('categories.index'),  {
-        params: {
-            perPage: 8,
-        } } )
+const contentRoutesStore = useContentRoutesStore();
+const fetchCategories = async () => {
+    await contentRoutesStore.getCategories(8)
         .then(response => {
             setTimeout(() => {
                 categories.value = response.data.data;
             }, 500); // 500ms delay
         })
-        .catch(error => {
-            console.log(error);
-        });
 };
 
 const categoriesWithStreams = ref([]);
-const fetchCategoriesWithStreams = () =>  {
-    axios.get(route('categories.infinite'),  {
-        params: {
-            perPage: 8,
-            categoryIds: categoriesWithStreams.value.map(item => item.category.id).join(',')
-        } } )
+const fetchCategoriesWithStreams = async () => {
+    await contentRoutesStore.getCategoriesWithStreams(8, categoriesWithStreams.value.map(item => item.category.id).join(','))
         .then(response => {
             setTimeout(() => {
                 categoriesWithStreams.value = categoriesWithStreams.value.concat(response.data);
             }, 100); // 500ms delay
-        })
-        .catch(error => {
-            console.log(error);
         });
 
 };
@@ -80,16 +69,18 @@ export default {
 </script>
 <template>
 
-    <Head title="Popular Streams" />
+    <div>
+        <Head title="Popular Streams"/>
 
-    <PaddingLayout class="-mt-4">
+        <PaddingLayout class="-mt-4">
 
-        <TopStreamsRow/>
+            <TopStreamsRow/>
 
-        <CategoriesRow :categories="categories" />
+            <CategoriesRow :categories="categories"/>
 
-        <InfiniteCategoriesWithStreams :categoriesWithStreams="categoriesWithStreams" />
+            <InfiniteCategoriesWithStreams :categoriesWithStreams="categoriesWithStreams"/>
 
-    </PaddingLayout>
+        </PaddingLayout>
+    </div>
 
 </template>

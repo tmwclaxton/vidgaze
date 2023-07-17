@@ -181,7 +181,15 @@ const closeMiniPlayer = () => {
         <div class="flex justify-between   select-none">
                 <div class="player w-full aspect-21/12 overflow-hidden">
                     <!--this is where the embed gets build inside-->
-                    <div id="miniplayer_div_holder" class="w-full h-full bg-black"></div>
+                    <div id="miniplayer_div_holder" :class="playerStore.players.length > 0 ? 'w-full h-full bg-black' : 'opacity-0'"/>
+                    <div v-if="playerStore.players.length === 0"
+                        class="w-full h-full bg-black flex flex-row">
+                        <div class="flex flex-col space-y-1 mx-auto my-auto cursor-pointer select-none"
+                             @click="queueStore.changeIndex(queueStore.index)">
+                            <font-awesome-icon icon="rotate-right" class="text-white h-5"/>
+                            <p class="text-sm font-bold">Restart Video</p>
+                        </div>
+                    </div>
                 </div>
         </div>
 

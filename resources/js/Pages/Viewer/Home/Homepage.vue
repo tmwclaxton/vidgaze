@@ -18,7 +18,8 @@ import TopShortsRow from "@/Components/ContentRows/TopShortsRow.vue";
 
 import TrendingVideosRow from "@/Components/ContentRows/TrendingVideosRow.vue";
 import InfiniteVideos from "@/Components/ContentRows/InfiniteVideos.vue";
-
+import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
+const contentRoutesStore = useContentRoutesStore();
 
 const trending_videos = ref([]);
 const videos = ref([]);
@@ -63,50 +64,28 @@ const debouncedFetchVideos = debounce(() => {
 }, 500);
 
 const fetchTrendingVideos = async () => {
-    axios.get(route('videos.infinite'),  { params: { category: 'trending', perPage: 6  } } )
+    trending_videos.value = [];
+    await contentRoutesStore.getVideos('trending', 6)
         .then(response => {
             setTimeout(() => {
-                trending_videos.value = response.data.videos.data
+                trending_videos.value = response
             }, 200); // 500ms delay
         })
-        .catch(error => {
-            console.log(error);
-        });
+
 };
 const fetchVideos = async (videoArray) => {
-    try {
-        const videoIds = videoArray.map(video => video.id).join(',');
-        const response = await axios.get(route('videos.infinite'), {
-            params: {
-                category: 'popular',
-                perPage: 40,
-                videoIds
-            }
-        }).then(
-            response => {
-                return response;
-            }
-            ).catch(error => {
-                console.log(error);
-            }
-        )
 
-        setTimeout(() => {
-            // console.log(response.data.data);
-            if (!response.data.error) {
-                if (response.data.videos.data === undefined) {
-                    window.removeEventListener('scroll', handleScroll);
-                } else {
-                    videos.value = videos.value.concat(response.data.videos.data);
+    const videoIds = videoArray.map(video => video.id).join(',');
+    const response = await contentRoutesStore.getVideos('popular', 40, videoIds)
 
-                }
-            } else {
-                console.log(response.data.error);
-            }
-        }, 200); // 200ms delay
-    } catch (error) {
-        console.log(error);
-    }
+    setTimeout(() => {
+        if (response === undefined) {
+            window.removeEventListener('scroll', handleScroll);
+        } else {
+            videos.value = videos.value.concat(response);
+        }
+    }, 200); // 200ms delay
+
 };
 
 
