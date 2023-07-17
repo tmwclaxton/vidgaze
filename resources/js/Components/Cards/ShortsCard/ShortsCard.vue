@@ -46,7 +46,7 @@ const dotsIconShow = computed(() => {
         </div>
         <div  v-if="!hideItem">
             <div class="relative aspect-[10/16] overflow-hidden rounded-xl">
-                <a :href="route('watch.show', {slug: item.slug})">
+                <a :href="'shorts?short=' + item.slug">
                     <img class="object-none w-full  h-full bg-zinc-900" v-bind:src="item.thumbnail_url"   alt=""/>
                 </a>
 
@@ -74,7 +74,7 @@ const dotsIconShow = computed(() => {
                     <span
                         class="pt-1  overflow-hidden leading-5 font-bold  text-base  inline-flex">
 
-                        <a :href="route('watch.show', {slug: item.slug})" v-text="item.title" class="pr-2 line-clamp-3"></a>
+                        <a :href="'shorts?short=' + item.slug" v-text="item.title" class="pr-2 line-clamp-3"></a>
 
 
                     </span>
