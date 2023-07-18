@@ -68,7 +68,7 @@ export default {
         <!-- Page header -->
         <div class="relative h-screen w-screen     flex flex-col py-auto justify-center align-middle   px-4 sm:px-6 lg:px-8">
 
-            <div ref="welcomeMessageDiv" class=" transition duration-900 opacity-0 translate-y-52">
+            <div ref="welcomeMessageDiv" class=" transition duration-900 opacity-0 translate-y-52 select-none">
                 <div class="target max-w-7xl mx-auto text-center pb-12 md:pb-6 flex flex-col gap-y-3  ">
                     <h1 class="text-4xl lg:text-5xl text-white font-bold">Welcome to VidGaze</h1>
                     <p class="text-2xl text-gray-300"> The ultimate video-streaming platform for both creators and
@@ -78,7 +78,7 @@ export default {
 
                 <div class="target cursor-pointer w-max mx-auto px-10 transition duration-300 ease-in-out">
                     <Link :href="route('home')" >
-                        <div class="bg-transparent shine text-white font-semibold  py-2 px-20 border border-white  rounded ">
+                        <div class="bg-transparent shine text-white font-semibold select-none  py-2 px-20 border border-white  rounded ">
                             Get Started
                         </div>
                     </Link>

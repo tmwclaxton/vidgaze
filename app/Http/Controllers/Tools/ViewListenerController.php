@@ -65,13 +65,11 @@ class ViewListenerController extends Controller
 
         if($liveClient->type === "video") {
 
-            // we only need to find the video model if we haven't already counted the view or live viewer count
-            if ($liveClient->live_viewer_counted === false || $liveClient->view_counted === false) {
-                $this->video = Video::find($liveClient->item_id);
-                // Check if the video exists
-                if (!$this->video) {
-                    return response()->json(['error' => 'Video not found'], 404);
-                }
+
+            $this->video = Video::find($liveClient->item_id);
+            // Check if the video exists
+            if (!$this->video) {
+                return response()->json(['error' => 'Video not found'], 404);
             }
 
             // Record the view model
