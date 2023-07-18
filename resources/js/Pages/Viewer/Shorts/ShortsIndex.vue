@@ -10,7 +10,7 @@ export default {
 import { Head } from '@inertiajs/vue3';
 import ShortsPlayer from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayer.vue";
 import ShortsPlayerSkeleton from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayerSkeleton.vue";
-import {onMounted, ref, toRaw, watch} from "vue";
+import {onMounted, onUnmounted, ref, toRaw, watch} from "vue";
 import { useInfiniteScroll, useVirtualList, useIntersectionObserver } from '@vueuse/core';
 
 import {usePlayerStore} from "@/Stores/PlayerStore";
@@ -46,27 +46,29 @@ const fetchShorts = async (first_video_slug = null) => {
                 return;
             }
             console.log("FETCHING SHORTS");
-            shorts.value = shorts.value.concat(response);
+            shorts.value = shorts.value.concat(response)
+            console.log(shorts.value);
         })
 };
 
 useInfiniteScroll(
     containerProps.ref,
     async () => {
-        await fetchShorts();
+        // await fetchShorts();
     },
     {
-        distance: 3 * (window.innerHeight - 64), // load more when scrolled to within 2 shorts from the bottom
+        distance: 2 * (window.innerHeight - 64), // load more when scrolled to within 2 shorts from the bottom
     }
 )
-
-
 
 const UpdateFullyVisibleIndex = (index) => {
     fullyVisibleIndex.value = index;
 };
 
 watch(fullyVisibleIndex, (index) => {
+    if (shorts.value.length === 0) {
+        return;
+    }
     console.log(['current short: ', index])
     buildPlayers();
 
@@ -81,11 +83,38 @@ watch(fullyVisibleIndex, (index) => {
 
 });
 
+onMounted(async () => {
+
+    setTimeout(async () => {
+        shorts.value = [];
+        fullyVisibleIndex.value = 0;
+        await playerStore.destroyPlayers();
+        console.log('shorts index mounted');
+
+        // if short slug is in url, play that short
+        const urlParams = new URLSearchParams(window.location.search);
+        const firstShort = urlParams.get('short');
+
+        await fetchShorts(firstShort).then(() => {
+
+
+        }).then(() => {
+            // if short slug is in url, play that short
+
+            playFullyVisiblePlayer(0);
+        } );
+    }, 500); // 1s delay
+
+
+
+});
+
+
 function createVisibleIndices() {
 
     let index = fullyVisibleIndex.value;
-    let visibleIndices = [];
-    if (index < 1) {
+    let visibleIndices = [index];
+    if (index === 0) {
         // if at start
         visibleIndices = [index, index + 1, index + 2, index + 3, index + 4];
     } else if (index >= shorts.value.length - 1) {
@@ -175,9 +204,9 @@ function buildPlayers() {
 
 };
 
-function playFullyVisiblePlayer(i) {
+function playFullyVisiblePlayer(i, count = 0) {
     //
-    console.log(i + ' comapared to ' + fullyVisibleIndex.value)
+    // console.log(i + ' comapared to ' + fullyVisibleIndex.value)
     if (i === fullyVisibleIndex.value) {
         console.log('PLAYING VISIBLE PLAYER ' + shorts.value[fullyVisibleIndex.value].external_id);
         // console.log('playing player ' + shorts.value[fullyVisibleIndex.value].external_id);
@@ -189,33 +218,25 @@ function playFullyVisiblePlayer(i) {
         } else {
             console.log('player not built yet');
             setTimeout(() => {
-                playFullyVisiblePlayer(i);
+
+                if (count % 3 === 0) {
+                    console.log("rebuild attempt")
+                     // build player if it hasn't been built after 10 seconds
+                    playerStore.buildPlayer('player_div_holder_' + shorts.value[fullyVisibleIndex.value].external_id, shorts.value[fullyVisibleIndex.value], 0, false).then(() => {
+                        playerStore.play(shorts.value[fullyVisibleIndex.value].external_id);
+                    });
+                }
+                playFullyVisiblePlayer(i, count + 1);
             }, 2000);
         }
     }
 }
 
-onMounted(async () => {
-    shorts.value = [];
-    fullyVisibleIndex.value = 0;
-    await playerStore.destroyPlayers();
-
-    // if short slug is in url, play that short
-    const urlParams = new URLSearchParams(window.location.search);
-    const firstShort = urlParams.get('short');
-
-    await fetchShorts(firstShort).then(() => {
-        // watch shorts for changes // debounce the function so it only runs once every 100s
-        watch(shorts, (shorts) => debounce(() => {
-            // console.log(shorts);
-            // build the first 3 players as soon as shorts is not empty, wait until shorts is not empty
-            if (shorts.length > 0) {
-                buildPlayers(0);
-            }
-        } , 100)());
-
-    });
+onUnmounted(() => {
+    // destroy all players
+    playerStore.destroyPlayers();
 });
+
 
 </script>
 <!--rerender everytime page reloads-->
