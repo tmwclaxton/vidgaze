@@ -1,6 +1,7 @@
 
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+
 export default {
     layout: AuthenticatedLayout
 };
@@ -42,10 +43,11 @@ const fetchShorts = async (first_video_slug = null) => {
     }
     await contentRoutesStore.getVideos(category.value, 8,shortsIds, true, first_video_slug)
         .then(response => {
+            console.log("FETCHING SHORTS");
             if (response === undefined || response.length === 0) {
+                console.log('no more shorts');
                 return;
             }
-            console.log("FETCHING SHORTS");
             shorts.value = shorts.value.concat(response)
             console.log(shorts.value);
         })
@@ -54,7 +56,7 @@ const fetchShorts = async (first_video_slug = null) => {
 useInfiniteScroll(
     containerProps.ref,
     async () => {
-        // await fetchShorts();
+        await fetchShorts();
     },
     {
         distance: 2 * (window.innerHeight - 64), // load more when scrolled to within 2 shorts from the bottom
@@ -93,17 +95,15 @@ onMounted(async () => {
 
         // if short slug is in url, play that short
         const urlParams = new URLSearchParams(window.location.search);
-        const firstShort = urlParams.get('short');
+        const firstShort = urlParams.get('short') || null;
 
-        await fetchShorts(firstShort).then(() => {
-
-
-        }).then(() => {
-            // if short slug is in url, play that short
-
-            playFullyVisiblePlayer(0);
-        } );
-    }, 500); // 1s delay
+        if ( shorts.value.length === 0 ) {
+            await fetchShorts(firstShort).then(() => {
+                // if short slug is in url, play that short
+                    playFullyVisiblePlayer(0);
+            });
+        }
+    }, 1000); // 1s delay
 
 
 
@@ -112,26 +112,27 @@ onMounted(async () => {
 
 function createVisibleIndices() {
 
-    let index = fullyVisibleIndex.value;
-    let visibleIndices = [index];
-    if (index === 0) {
-        // if at start
-        visibleIndices = [index, index + 1, index + 2, index + 3, index + 4];
-    } else if (index >= shorts.value.length - 1) {
-        // if at end
-        visibleIndices = [index - 2, index - 1, index , index + 1];
-    } else {
-        // if in middle
-        visibleIndices =  [index - 1, index, index + 1, index + 2];
-    }
+    // let index = fullyVisibleIndex.value;
+    // let visibleIndices = [index];
+    // if (index === 0) {
+    //     // if at start
+    //     visibleIndices = [index, index + 1, index + 2, index + 3, index + 4];
+    // } else if (index >= shorts.value.length - 1) {
+    //     // if at end
+    //     visibleIndices = [index - 2, index - 1, index , index + 1];
+    // } else {
+    //     // if in middle
+    //     visibleIndices =  [index - 1, index, index + 1, index + 2];
+    // }
+    //
+    // // check visible indices are within bounds of shorts
+    // // if return what ever is within bounds
+    // visibleIndices = visibleIndices.filter(index => index >= 0 && index < shorts.value.length);
+    //
+    // // get external ids of shorts that should be visible
+    // console.log(['These shorts should be loaded',  visibleIndices.map(index => shorts.value[index].external_id)]);
 
-    // check visible indices are within bounds of shorts
-    // if return what ever is within bounds
-    visibleIndices = visibleIndices.filter(index => index >= 0 && index < shorts.value.length);
-
-    // get external ids of shorts that should be visible
-    console.log(['These shorts should be loaded',  visibleIndices.map(index => shorts.value[index].external_id)]);
-    return visibleIndices;
+    return shorts.value.map((short, index) => index);
 }
 
 function buildPlayers() {
@@ -205,11 +206,8 @@ function buildPlayers() {
 };
 
 function playFullyVisiblePlayer(i, count = 0) {
-    //
-    // console.log(i + ' comapared to ' + fullyVisibleIndex.value)
     if (i === fullyVisibleIndex.value) {
         console.log('PLAYING VISIBLE PLAYER ' + shorts.value[fullyVisibleIndex.value].external_id);
-        // console.log('playing player ' + shorts.value[fullyVisibleIndex.value].external_id);
 
         // check every 1 second fi player has been built in the playerStore once it has been built, play it and stop checking
 

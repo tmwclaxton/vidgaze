@@ -294,9 +294,15 @@ export const usePlayerStore = defineStore('PlayerStore', {
             if (!this.scriptsLoaded && document.getElementById(playerDivHolderID)) {
                 await this.loadScripts(); // don't worry about this running multiple times, it checks if the script by id exists before trying to add it again
                 setTimeout(() => {
-                    this.debugMessage('scripts not loaded yet, trying again in 1 second')
+                    this.debugMessage('scripts not loaded yet, trying again in 2 second')
                     this.buildPlayer(playerDivHolderID, object, startTime, autoplay, checkViewHistoryStartTime);
-                }, 1000);
+                }, 2000);
+                return;
+            }
+
+            // check if player already exists
+            if (this.findPlayer(object.external_id)) {
+                this.debugMessage('player already exists');
                 return;
             }
 
