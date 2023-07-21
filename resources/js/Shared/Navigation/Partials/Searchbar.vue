@@ -150,7 +150,7 @@ searchInput.value = query.get('q') || '';
                        @keydown.enter="goToSelectedResult"
                        class="bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white font-bold text-sm"
                        :class="{'w-full': navStore.getExpandedSearchBar(),'w-0 sm:w-full': !navStore.getExpandedSearchBar(),' placeholder-zinc-400': navStore.getExpandedSearchResults()}"
-                       placeholder="Josh Bumhole Young Search YouTube, Twitch, Odysee and more...">
+                       placeholder="Toby Punani Claxton Search YouTube, Twitch, Odysee and more...">
                 <SearchIcon @click="searchEntered" class="w-5 h-5 flex-shrink-0"/>
 
                 <!--Search dropdown-->
