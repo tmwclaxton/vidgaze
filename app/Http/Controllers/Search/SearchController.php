@@ -36,7 +36,7 @@ class SearchController extends Controller
         $query = new SearchQueryDTO($searchQuery, 5);
 
         $start = microtime(true);
-        $results = Search::search($query, );
+        $results = Search::search($query);
 
         // return the creators, videos, streams, playlists, podcasts in a collection
         //$creators = if $results['creators'] is not null then new CreatorCollection($results['creators']) otherwise []

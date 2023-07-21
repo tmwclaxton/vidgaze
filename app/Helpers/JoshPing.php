@@ -21,11 +21,17 @@ class JoshPing
 
     public static function ping()
     {
-        $podcast = Spotify::search(new SearchQueryDTO(
-            request('search'),
-            1,
-        ))[0]->content;
-        return Spotify::exampleEmbed($podcast->id);
+        $query = new SearchQueryDTO("jordan peterson", 5);
+        $results = Search::search($query);
+
+        dd($results);
+
+//
+//        $podcast = Spotify::search(new SearchQueryDTO(
+//            request('search'),
+//            1,
+//        ))[0]->content;
+//        return Spotify::exampleEmbed($podcast->id);
 
 
 
