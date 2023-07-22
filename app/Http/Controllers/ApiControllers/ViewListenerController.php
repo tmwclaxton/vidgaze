@@ -18,7 +18,6 @@ class ViewListenerController extends Controller
     private Video $video;
     private Stream $stream;
     private PodcastEpisode $podcast;
-    private string $error_message = '';
 
 
     public function message(Request $request)
@@ -39,7 +38,7 @@ class ViewListenerController extends Controller
         // get session id
         $session_id = $request->session()->getId();
 
-        // Check if a client with the same data exists
+        // Check if a record with the same data exists
         $liveClient = LiveClient::where(
             [
                 'viewer_id' => $viewer_id,
@@ -48,7 +47,7 @@ class ViewListenerController extends Controller
                 'type' => $type,
             ])->first();
 
-        // If no client with the same token exists, create a new client
+        // If no record with the same token exists, create a new record
         if (!$liveClient) {
 
             $liveClient = new LiveClient();
@@ -58,7 +57,7 @@ class ViewListenerController extends Controller
             $liveClient->type = $type;
             $liveClient->save();
 
-            return response()->json(['success' => 'New client created'], 200);
+            return response()->json(['success' => 'New record created'], 200);
         }
 
         $liveClient->touch();
@@ -124,8 +123,6 @@ class ViewListenerController extends Controller
 
             return response()->json([
                 'success' => 'View recorded',
-                'message' => $this->error_message,
-
             ], 200);
 
         }
@@ -142,7 +139,9 @@ class ViewListenerController extends Controller
                 $stream->increment('live_viewer_count', 1);
                 $stream->save();
 
-                return response()->json(['success' => 'Stream live viewer count incremented'], 200);
+                return response()->json([
+                    'success' => 'Stream live viewer count incremented'
+                ], 200);
 
 
             }
@@ -160,11 +159,13 @@ class ViewListenerController extends Controller
                 $podcast_episode->increment('live_viewer_count', 1);
                 $podcast_episode->save();
 
-                return response()->json(['success' => 'Podcast live viewer count incremented'], 200);
+                return response()->json([
+                    'success' => 'Podcast live viewer count incremented'
+                ], 200);
         }
     }
 
-        return response()->json(['error' => 'Invalid type'], 400);
+        return response()->json(['error' => 'Invalid type'], 500);
     }
 
     private function recordVideoViewPoint(mixed $viewer_id, string $item_id, int $viewPoint): void
@@ -188,7 +189,6 @@ class ViewListenerController extends Controller
             'video_id' => $item_id,
         ])->where('created_at', '>=', Carbon::now()->subMinutes(5))->get()->first();
 
-        //$this->error_message = "item_id: $item_id, viewer_id: $viewer_id, session_id: $session_id, watch_duration: $watch_duration";
 
 
         // If the view does not exist, create a new view if the duration is under 2 minutes

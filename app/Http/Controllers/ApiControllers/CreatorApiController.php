@@ -75,7 +75,7 @@ class CreatorApiController extends Controller
         if(!$creator){
             return response()->json([
                 'toastType' => 'warning',
-                'message' => 'Creator not found'
+                'toastMessage' => 'Creator not found'
             ]);
         }
 
@@ -85,7 +85,7 @@ class CreatorApiController extends Controller
 
         return response()->json([
             'toastType' => $creator->featured ? 'success' : 'warning',
-            'message' => $message
+            'toastMessage' => $message
         ]);
     }
 }

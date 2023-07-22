@@ -23,7 +23,8 @@ class CommentInteractionApiController extends Controller
     private function formatLikeAndDislikeResponse(Comment $comment, $liked, $message)
     {
         return response()->json([
-            'message' => $message,
+            //'toastType' => 'success', // 'success', 'info', 'warning'
+            'toastMessage' => $message,
             'result' => $liked,
             'like_count' => $comment->like_count,
             'dislike_count' => $comment->dislike_count,
@@ -137,8 +138,8 @@ class CommentInteractionApiController extends Controller
 
         if (!$commentInteractions) {
             return response()->json([
-                'message' => 'No comment interactions found',
-            ], 200);
+                'error' => 'No comment interactions found',
+            ], 404);
         }
 
         return response()->json([

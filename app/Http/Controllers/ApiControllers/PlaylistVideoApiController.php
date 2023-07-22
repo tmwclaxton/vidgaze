@@ -45,22 +45,21 @@ class PlaylistVideoApiController extends Controller
         $successCount = 0;
         foreach ($videoIds as $videoId) {
 
-
             $playlist->addVideo($videoId);
-
             $successCount++;
-
 
         }
 
         if ($successCount == 0) {
             return response()->json([
-                'error' => 'No videos added to playlist'
+                'toastType' => 'warning',
+                'toastMessage' => 'No videos added to playlist'
             ], 200);
         }
 
         return response()->json([
-            'success' => "$successCount videos added to playlist"
+            'toastType' => 'success',
+            'toastMessage' => "$successCount videos added to playlist"
         ], 200);
     }
 
@@ -81,9 +80,11 @@ class PlaylistVideoApiController extends Controller
         // check if user is the owner of the playlist
         $playlist = Playlist::findOrFail($playlistId);
         if ($playlist->owner->id !== Auth::user()->creator->id) {
-            return response()->json([
-                'error' => 'You do not have permission to remove videos from the playlist'
-            ], 403);
+            return response()->json(
+                [
+                    'error' => 'You do not have permission to remove videos from the playlist'
+                ], 403);
+
         }
 
         // remove each video from the playlist
@@ -98,12 +99,14 @@ class PlaylistVideoApiController extends Controller
 
         if ($successCount == 0) {
             return response()->json([
-                'error' => 'No videos removed from playlist'
+                'toastType' => 'warning',
+                'toastMessage' => 'No videos removed from playlist'
             ], 200);
         }
 
         return response()->json([
-            'success' => "$successCount videos removed from playlist"
+            'toastType' => 'success',
+            'toastMessage' => "$successCount videos removed from playlist"
         ], 200);
     }
 

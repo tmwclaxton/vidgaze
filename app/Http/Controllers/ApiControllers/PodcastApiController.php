@@ -6,6 +6,7 @@ namespace App\Http\Controllers\ApiControllers;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PodcastCollection;
 use App\Models\PodcastModels\Podcast;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -17,7 +18,7 @@ class PodcastApiController extends Controller
 
     /** Get the podcasts for the user using the params
      * @param Request $request
-     * @return PodcastCollection
+     * @return JsonResponse
      */
     public function index(Request $request) {
         $perPage = $request->perPage ?? 20;
@@ -51,8 +52,11 @@ class PodcastApiController extends Controller
         $podcasts = $query->paginate($perPage);
 
         // Return the podcasts
-        return new PodcastCollection($podcasts);
+        $podcasts = new PodcastCollection($podcasts);
 
+        return response()->json([
+            'podcasts' => $podcasts,
+        ]);
 
     }
 

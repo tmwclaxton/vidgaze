@@ -37,7 +37,10 @@ class PlaylistApiController extends Controller
             ['creator_id', '=', Auth::user()->creator->id],
             ['name', '=', $request->name],
         ])->first()) {
-            return response()->json(['error' => 'Playlist with that name already exists.']);
+            return response()->json([
+                'toastType' => 'error',
+                'toastMessage' => 'Playlist with that name already exists.'
+            ]);
         }
 
         Playlist::create([
@@ -47,7 +50,10 @@ class PlaylistApiController extends Controller
             'server_made' => false,
             'slug' => uniqid(),
         ]);
-        return response()->json(['success' => 'Playlist created successfully.']);
+        return response()->json([
+            'toastType' => 'success',
+            'toastMessage' => 'Playlist created successfully.'
+        ]);
     }
 
 

@@ -50,10 +50,6 @@ class PodcastInteractionApiController extends Controller
     {
         [$podcast, $interaction] = $this->getPodcastAndInteraction($podcastId);
 
-        if (!isset(Auth::user()->creator)) {
-            return response()->json(['message' => 'You are not authenticated.'], 401);
-        }
-
 
         //if they change their rating from dislike to like
         $message = 'Following ' . $podcast->title . ' podcast';
@@ -74,8 +70,8 @@ class PodcastInteractionApiController extends Controller
         $interaction->save();
         $podcast->save();
         return response()->json([
-            'message' => $message,
-            'type' => $type,
+            'toastMessage' => $message,
+            'toastType' => $type,
             'result' => $interaction->liked,
         ], 200);
     }
@@ -89,7 +85,7 @@ class PodcastInteractionApiController extends Controller
         [$podcast, $interaction] = $this->getPodcastAndInteraction($podcastId);
 
         if (!isset(Auth::user()->creator)) {
-            return response()->json(['message' => 'You are not authenticated.'], 401);
+            return response()->json(['error' => 'You are not authenticated.'], 401);
         }
 
         return response()->json([

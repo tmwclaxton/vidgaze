@@ -18,6 +18,38 @@ use Inertia\Inertia;
 class CreatorInteractionApiController extends Controller
 {
 
+    /** get the creator and interaction for a channel
+     * @param int $channelId
+     * @return array | JsonResponse
+     */
+    private function getChannelAndInteraction($channelId)
+    {
+        $channel = Creator::findOrFail($channelId);
+
+        if (!$channel) {
+            return response()->json([
+                'error' => 'Channel not found'
+            ], 404);
+        }
+
+        $creatorId = Auth::user()->creator->id;
+
+        $interaction = CreatorInteraction::where([
+            'viewer_id' => $creatorId,
+            'creator_id' => $channel->id,
+        ])->first();
+
+        if (!$interaction) {
+            $interaction = new CreatorInteraction();
+            $interaction->viewer_id = $creatorId;
+            $interaction->creator_id = $channel->id;
+            $interaction->save();
+        }
+
+        return [$channel, $interaction];
+    }
+
+
     /** get user's subscription feed
      * @return JsonResponse
      */
@@ -79,36 +111,6 @@ class CreatorInteractionApiController extends Controller
     }
 
 
-    /** get the creators that the user is subscribed to
-     * @param int $channelId
-     * @return JsonResponse
-     */
-    private function getChannelAndInteraction($channelId)
-    {
-        $channel = Creator::findOrFail($channelId);
-
-        if (!$channel) {
-            return response()->json([
-                'error' => 'Channel not found'
-            ], 404);
-        }
-
-        $creatorId = Auth::user()->creator->id;
-
-        $interaction = CreatorInteraction::where([
-            'viewer_id' => $creatorId,
-            'creator_id' => $channel->id,
-        ])->first();
-
-        if (!$interaction) {
-            $interaction = new CreatorInteraction();
-            $interaction->viewer_id = $creatorId;
-            $interaction->creator_id = $channel->id;
-            $interaction->save();
-        }
-
-        return response()->json([$channel, $interaction]);
-    }
 
     /** toggle subscription to a creator
      * @param int $channelId
@@ -120,7 +122,10 @@ class CreatorInteractionApiController extends Controller
         [$creator, $interaction] = $this->getChannelAndInteraction($channelId);
 
         if(Auth::user()->creator->slug === $creator->slug) { //check your not subscribing to yourself
-            return response()->json(['error', 'You cannot subscribe to yourself']);
+            return response()->json([
+                'toastMessage' => 'You cannot subscribe to yourself',
+                'toastType' => 'warning',
+            ]);
         }
 
         $interaction->subscribed = !$interaction->subscribed;
@@ -137,8 +142,8 @@ class CreatorInteractionApiController extends Controller
         $interaction->save();
 
         return response()->json([
-            'message' => $message,
-            'type' => $type,
+            'toastMessage' => $message,
+            'toastType' => $type,
             'subscribed' => (bool) $interaction->subscribed,
         ]);
     }
@@ -150,7 +155,10 @@ class CreatorInteractionApiController extends Controller
     public function toggleDisinterest($channelId) {
         [$creator, $interaction] = $this->getChannelAndInteraction($channelId);
         if(Auth::user()->creator->slug === $creator->slug) { //check your not disinterest yourself
-            return response()->json(['error', 'You cannot disinterest yourself']);
+            return response()->json([
+                'toastMessage', 'You cannot disinterest yourself',
+                'toastType', 'warning',
+            ]);
         }
 
         $interaction->disinterested = !$interaction->disinterested;
@@ -166,8 +174,8 @@ class CreatorInteractionApiController extends Controller
         $creator->save();
         $interaction->save();
         return response()->json([
-            'message' => $message,
-            'type' => $type,
+            'toastMessage' => $message,
+            'toastType' => $type,
         ]);
 
     }
@@ -179,7 +187,10 @@ class CreatorInteractionApiController extends Controller
     public function toggleReport($channelId) {
         [$creator, $interaction] = $this->getChannelAndInteraction($channelId);
         if(Auth::user()->creator->slug === $creator->slug) { //check your not reporting yourself
-            return response()->json(['error', 'You cannot report yourself']);
+            return response()->json([
+                'toastType', 'warning',
+                'toastMessage', 'You cannot report yourself'
+            ]);
         }
         $interaction->reported = !$interaction->reported;
         if ($interaction->reported) { //check your not reporting twice
@@ -194,8 +205,8 @@ class CreatorInteractionApiController extends Controller
         $creator->save();
         $interaction->save();
         return response()->json([
-            'message' => $message,
-            'type' => $type,
+            'toastMessage' => $message,
+            'toastType' => $type,
         ]);
     }
 }

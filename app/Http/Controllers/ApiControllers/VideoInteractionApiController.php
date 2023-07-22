@@ -97,8 +97,8 @@ class VideoInteractionApiController extends Controller
             $message =  'Got it, we will show you more videos like this';
         }
         return response()->json([
-            'type' => $type,
-            'message' => $message,
+            'toastType' => $type,
+            'toastMessage' => $message,
         ]);
     }
 
@@ -122,8 +122,8 @@ class VideoInteractionApiController extends Controller
         $interaction->save();
 
         return response()->json([
-            'message' => $message,
-            'type' => $type,
+            'toastType' => $type,
+            'toastMessage' => $message,
         ]);
     }
 
@@ -164,8 +164,8 @@ class VideoInteractionApiController extends Controller
         $interaction->save();
         $video->save();
         return response()->json([
-            'message' => $message,
-            'type' => $type,
+            'toastType' => $type,
+            'toastMessage' => $message,
             'result' => $interaction->liked,
         ]);
     }
@@ -205,8 +205,8 @@ class VideoInteractionApiController extends Controller
         $interaction->save();
         $video->save();
         return response()->json([
-            'message' => $message,
-            'type' => $type,
+            'toastType' => $type,
+            'toastMessage' => $message,
             'result' => $interaction->liked,
         ], 200);
     }
