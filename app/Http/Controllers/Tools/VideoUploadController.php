@@ -24,17 +24,9 @@ class VideoUploadController extends Controller
 
     public function upload() {
         $creator = auth()->user()->creator()->first();
-        $source = $creator->sources()->where('source_name', Platform::YouTube)->first();
-        $source->refreshAccessToken();
-        $yt = new YouTube(null, $source->access_token);
 
-        $video_file = request()->file('video');
-        $thumbnail_file = request()->file('thumbnail');
-        $video_path = $video_file->store('videos');
-        $thumbnail_path = $thumbnail_file->store('thumbnails');
-
-//        $video_path = 'videos/A7rKlw33YPcz9nYGDjKsxMwNcHaXqResJbo8MWgm.mp4';
-//        $thumbnail_path = 'thumbnails/bScptdBTBHlghhbLV1JNVGO1wVvsNw8hPDIuDHgX.jpg';
+        $video_path = request()->file('video')->store('videos');
+        $thumbnail_path = request()->file('thumbnail')->store('thumbnails');
 
         $tags = explode(',', request()->tags);
 
