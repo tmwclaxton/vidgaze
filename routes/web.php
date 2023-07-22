@@ -1,16 +1,8 @@
 <?php
 
-use App\Helpers\JoshPing;
-use App\Http\Controllers\Content\CategoryController;
-use App\Http\Controllers\Content\MusicController;
-use App\Http\Controllers\Content\PodcastController;
-use App\Http\Controllers\Content\ShareController;
-use App\Http\Controllers\Content\SupportController;
-use App\Http\Controllers\Search\SearchBarController;
-use App\Http\Controllers\Search\SearchController;
-use App\Http\Controllers\Tools\ViewListenerController;
+
+use App\Http\Controllers\WebControllers\SupportWebController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,12 +40,12 @@ Route::get('/', function () {
 })->name('landing');
 
 //home route
-Route::get('/home', [SupportController::class,'home'])->name('home');
+Route::get('/home', [SupportWebController::class,'home'])->name('home');
 //landing route
-Route::get('/about', [SupportController::class, 'about'])->name('about');
+Route::get('/about', [SupportWebController::class, 'about'])->name('about');
 //policy and terms
-Route::get('/terms_of_service', [SupportController::class, 'terms'])->name('terms');
-Route::get('/privacy_policy', [SupportController::class,'privacy'])->name('privacy');
+Route::get('/terms_of_service', [SupportWebController::class, 'terms'])->name('terms');
+Route::get('/privacy_policy', [SupportWebController::class,'privacy'])->name('privacy');
 
 //Route::get('/support', [SupportController::class,'support'])->name('support');
 // support email route

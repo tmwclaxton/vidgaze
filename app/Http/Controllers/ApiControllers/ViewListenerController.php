@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Tools;
+namespace App\Http\Controllers\ApiControllers;
 use App\Helpers\Tokens\TokenHelper;
 use App\Http\Controllers\Controller;
 use App\Models\LiveClient;

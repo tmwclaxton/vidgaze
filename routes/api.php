@@ -1,8 +1,8 @@
 <?php
 
 use App\Helpers\JoshPing;
+use App\Http\Controllers\ApiControllers\ViewListenerController;
 use App\Http\Controllers\Content\ShareController;
-use App\Http\Controllers\Tools\ViewListenerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

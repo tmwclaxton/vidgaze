@@ -2,9 +2,10 @@
 
 
 //podcast routes
-use App\Http\Controllers\Content\PodcastController;
-use App\Http\Controllers\Content\PodcastInteractionController;
 
-Route::get('/podcasts', [PodCastController::class,'index_page'])->name("podcasts.index.page");
-Route::get('/podcast/', [PodCastController::class,'show'])->name("podcast.show");
-Route::get('/podcast/episode/', [PodCastController::class,'episode'])->name("podcast.episode");
+use App\Http\Controllers\WebControllers\PodcastWebController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/podcasts', [PodCastWebController::class,'index_page'])->name("podcasts.index.page");
+Route::get('/podcast/', [PodCastWebController::class,'show'])->name("podcast.show");
+Route::get('/podcast/episode/', [PodCastWebController::class,'episode'])->name("podcast.episode");
