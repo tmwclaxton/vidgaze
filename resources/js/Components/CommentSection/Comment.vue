@@ -192,7 +192,7 @@ const noRepliesText = computed(() => {
 
                                 </div>
                                 <div class="w-full flex flex-col cursor-pointer w-max"
-                                     v-if="!simple && comment.reply_count > 0" @click="isCollapsed = !isCollapsed">
+                                     v-if="comment.reply_count > 0" @click="isCollapsed = !isCollapsed">
                                     <span v-if="isCollapsed"
                                           @click="CommentSectionStore.fetchComments('new', comment.id, null, true)"
                                           class="select-none w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">

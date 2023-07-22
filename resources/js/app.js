@@ -8,6 +8,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { Link } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
+import Layout from './Layouts/AuthenticatedLayout.vue';
 import VueClickAway from "vue3-click-away";
 import VueHoneypot from 'vue-honeypot'
 /* import the fontawesome core - utility functions*/
@@ -24,7 +25,25 @@ const appName = window.document.getElementsByTagName('title')[0]?.innerText || '
 
 createInertiaApp({
     title: (title) => `${title ? `${title} - ` : ''}${appName ?? 'Laravel'}`,
-    resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
+    resolve: (name) => {
+        const page = resolvePageComponent(
+            `./Pages/${name}.vue`,
+            import.meta.glob("./Pages/**/*.vue")
+        );
+        page.then((module) => {
+            const page = module.default;
+            let layout = page.layout;
+
+            if (layout === undefined) {
+                layout = Layout;
+            }
+            page.layout = layout;
+        });
+        return page;
+    },
+    // resolve: (name) => resolvePageComponent(
+    //     `./Pages/${name}.vue`,
+    //     import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(createPinia())

@@ -23,24 +23,18 @@ use Inertia\Inertia;
 |
 */
 
-require __DIR__ . '/ContentRoutes/videos.php';
-require __DIR__ . '/ContentRoutes/comments.php';
-require __DIR__ . '/ContentRoutes/podcasts.php';
-require __DIR__ . '/ContentRoutes/streams.php';
-require __DIR__ . '/ContentRoutes/channels.php';
-require __DIR__ . '/ContentRoutes/studio.php';
-require __DIR__ . '/ContentRoutes/feed.php';
-require __DIR__ . '/ContentRoutes/categories.php';
-require __DIR__ . '/ContentRoutes/search.php';
-require __DIR__ . '/ContentRoutes/music.php';
+require __DIR__ . '/WebsiteRoutes/videos.php';
+require __DIR__ . '/WebsiteRoutes/comments.php';
+require __DIR__ . '/WebsiteRoutes/podcasts.php';
+require __DIR__ . '/WebsiteRoutes/streams.php';
+require __DIR__ . '/WebsiteRoutes/channels.php';
+require __DIR__ . '/WebsiteRoutes/studio.php';
+require __DIR__ . '/WebsiteRoutes/feed.php';
+require __DIR__ . '/WebsiteRoutes/categories.php';
+require __DIR__ . '/WebsiteRoutes/search.php';
+require __DIR__ . '/WebsiteRoutes/music.php';
 require __DIR__.'/auth.php';
 
-//this is the route for creating share links
-Route::get('/shares', [ShareController::class, 'index'])->name('share.index');
-
-// view listener route
-Route::post('/view-listener', [ViewListenerController::class,'message'])->name('view.listener');
-//Route::get('/view-listener', [ViewListenerController::class,'
 
 
 
@@ -68,8 +62,5 @@ Route::get('/privacy_policy', [SupportController::class,'privacy'])->name('priva
 
 
 
-Route::get('/ping', function(){
-    return JoshPing::ping();
-});
 
 

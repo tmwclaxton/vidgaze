@@ -1,3 +1,9 @@
+<script>
+export default {
+    layout: null,
+}
+</script>
+
 <script setup>
 import Checkbox from '@/Components/Inputs/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';

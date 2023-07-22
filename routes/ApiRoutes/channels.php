@@ -1,0 +1,30 @@
+<?php
+
+// modal routes //throttle to 20 requests per minute
+use App\Http\Controllers\Content\CreatorController;
+use App\Http\Controllers\Content\CreatorInteractionController;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware(['throttle:60,1','auth'])->group(function () {
+
+    // this allows users to toggle a channel disinterest on a creatorinteraction record
+    Route::post('/channels/{channelId}/disinterest', [CreatorInteractionController::class, 'toggleDisinterest'])
+        ->name('channel.disinterest.toggle');
+
+    //this lets users subscribe and unsubscribe from a channel
+    Route::post('/channels/{channelId}/subscribe', [CreatorInteractionController::class, 'toggleSubscription'])
+        ->name('channel.subscription.toggle');
+
+    Route::post('/channels/{channelId}/report', [CreatorInteractionController::class, 'toggleReport'])
+        ->name('channel.subscription.report');
+
+});
+
+//creator routes
+Route::get('creator/index', [CreatorController::class,'index'])->name("creator.index");
+
+// toggle featured creator
+Route::middleware(['auth','admin'])->group(function () {
+    Route::post('/creator/featured', [CreatorController::class, 'toggleFeatured'])
+        ->name('creator.featured.toggle');
+});

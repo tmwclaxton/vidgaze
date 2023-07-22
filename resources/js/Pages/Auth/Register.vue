@@ -1,3 +1,9 @@
+<script>
+export default {
+    layout: null,
+}
+</script>
+
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/Inputs/InputError.vue';
