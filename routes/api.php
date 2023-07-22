@@ -1,8 +1,8 @@
 <?php
 
 use App\Helpers\JoshPing;
+use App\Http\Controllers\ApiControllers\ShareApiController;
 use App\Http\Controllers\ApiControllers\ViewListenerController;
-use App\Http\Controllers\Content\ShareController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,7 +40,7 @@ Route::get('/ping', function(){
 
 
 //this is the route for creating share links
-Route::get('/shares', [ShareController::class, 'index'])->name('share.index');
+Route::get('/shares', [ShareApiController::class, 'index'])->name('share.index');
 
 // view listener route
 Route::post('/view-listener', [ViewListenerController::class,'message'])->name('view.listener');

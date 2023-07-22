@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Content;
+namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Jorenvh\Share\ShareFacade as Share;
 
 
-class ShareController extends Controller
+class ShareApiController extends Controller
 {
     //the 7 restful routes
     // index - show all
