@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\Audience;
-use App\Enums\PrivacyStatus;
+use App\Enums\Visibility;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->timestamp('started_at')->useCurrent();
             $table->boolean('is_live')->default(false)->nullable();
             $table->enum('audience', array_map(fn($audience) => $audience->value, Audience::getAll()))->default('all');
-            $table->enum('visibility', array_map(fn($audience) => $audience->value, PrivacyStatus::getAll()))->default('public');
+            $table->enum('visibility', array_map(fn($audience) => $audience->value, Visibility::getAll()))->default('public');
             $table->integer('report_count')->default('0')->unsigned();
             $table->string('language', 5)->nullable()->index(); //ISO 639-3:2007
             $table->string('region', 3)->nullable()->index();

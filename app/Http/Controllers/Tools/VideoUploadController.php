@@ -2,19 +2,75 @@
 
 namespace App\Http\Controllers\Tools;
 
+use App\Enums\Audience;
+use App\Enums\Platform;
+use App\Enums\Visibility;
+use App\Helpers\PlatformAPIs\YouTube;
+use App\Helpers\Upload;
+use App\Helpers\UploadDTO;
 use App\Http\Controllers\Controller;
+use App\Jobs\UploadPlatform;
+use App\Models\Category;
 use App\Models\VideoModels\VideoUpload;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Bus;
+use Inertia\Inertia;
 
 class VideoUploadController extends Controller
 {
     public function show() {
-        return view('studio/upload', [
-            'video_upload'=> Auth::user()->creator->video_upload,
-        ]);
+        return Inertia::render('Studio/Upload');
     }
 
     public function upload() {
+        $creator = auth()->user()->creator()->first();
+        $source = $creator->sources()->where('source_name', Platform::YouTube)->first();
+        $source->refreshAccessToken();
+        $yt = new YouTube(null, $source->access_token);
+
+        $video_file = request()->file('video');
+        $thumbnail_file = request()->file('thumbnail');
+        $video_path = $video_file->store('videos');
+        $thumbnail_path = $thumbnail_file->store('thumbnails');
+
+//        $video_path = 'videos/A7rKlw33YPcz9nYGDjKsxMwNcHaXqResJbo8MWgm.mp4';
+//        $thumbnail_path = 'thumbnails/bScptdBTBHlghhbLV1JNVGO1wVvsNw8hPDIuDHgX.jpg';
+
+        $tags = explode(',', request()->tags);
+
+        $cat = new Category();
+        $cat->youtube_category_id = 22;
+        $uploadDTO = new UploadDTO(
+            $video_path,
+            request()->title,
+            request()->description,
+            $creator->id,
+            [Platform::YouTube, Platform::Dailymotion, Platform::Vimeo],
+            $thumbnail_path,
+            $tags,
+            $cat,
+            Visibility::PRIVATE,
+            Audience::KIDS
+        );
+
+
+        UploadPlatform::dispatchSync( $creator->id, $uploadDTO, Platform::YouTube);
+        dd("done");
+
+        $batch_id = Upload::upload($creator->id, $uploadDTO);
+//        $status = $yt->upload($uploadDTO);
+
+        $batch = Bus::findBatch($batch_id);
+
+        while(!$batch->finished()) {
+            sleep(1);
+            $batch = Bus::findBatch($batch_id);
+        }
+
+        dd("done");
+
+        ddd($status);
+        dd(request()->all());
         //validate video
         $attribute = request()->validate([
 
@@ -63,10 +119,10 @@ class VideoUploadController extends Controller
 //            'tags' => ['array','nullable'],
 //            'category_id' => ['required', Rule::exists('categories', 'id')],
 //            //'thumbnail' => 'required|image',
-//            'privacy_Status' => ['required',new Enum(PrivacyStatus::class)],
+//            'privacy_Status' => ['required',new Enum(Visibility::class)],
 //            'publish_At' => ['required'],
 //            'platforms' => ['required'],
-//            //'time_zone' =>  [Rule::requiredIf('privacy_Status' == PrivacyStatus::scheduled->name)],
+//            //'time_zone' =>  [Rule::requiredIf('privacy_Status' == Visibility::scheduled->name)],
 //        ]);
 //
 //        //$attributes['user_id'] = auth()->id();

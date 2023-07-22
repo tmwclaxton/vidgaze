@@ -2,7 +2,7 @@
 
 use App\Enums\Audience;
 use App\Enums\Platform;
-use App\Enums\PrivacyStatus;
+use App\Enums\Visibility;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->json('tags')->nullable();
             $table->timestampTz('time_uploaded')->useCurrent()->nullable();
             $table->timestampTz('time_published')->nullable();
-            $table->enum('visibility', array_map(fn($audience) => $audience->value, PrivacyStatus::getAll()))->default('public');
+            $table->enum('visibility', array_map(fn($audience) => $audience->value, Visibility::getAll()))->default('public');
 
             $table->json('most_relevant_comments')->nullable();//json format
             $table->json('most_recent_comments')->nullable();//json format

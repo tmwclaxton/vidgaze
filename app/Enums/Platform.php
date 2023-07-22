@@ -3,6 +3,7 @@
 namespace App\Enums;
 
 use App\Helpers\PlatformAPIs\Dailymotion;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\iCanUpload;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\PlatformAPIs\Vimeo;
@@ -99,11 +100,11 @@ enum Platform: string
         return $supported->map(fn($platform) => $platform->value);
     }
 
-    function getPlatformClass(): iIsPlatform
+    function getPlatformClass($accessToken = null): iIsPlatform | iCanUpload
     {
         return match ($this){
 //            Platform::VidGaze => 'vg',
-            Platform::YouTube => new YouTube,
+            Platform::YouTube => new YouTube(null, $accessToken),
             Platform::Dailymotion => new Dailymotion,
             Platform::Vimeo => new Vimeo,
             Platform::Twitch => new Twitch,
@@ -114,5 +115,21 @@ enum Platform: string
 //            Platform::Spotify => 'sp',
 //            Platform::Instagram => 'ig',
         };
+    }
+
+    public static function getUploadablePlatforms(bool $asEnum = true, bool $asPrefix = false): \Illuminate\Support\Collection
+    {
+        $uploadable = collect([
+            Platform::YouTube,
+//            Platform::Dailymotion,
+//            Platform::Vimeo,
+        ]);
+        if($asEnum){
+            return $uploadable;
+        }
+        if($asPrefix){
+            return $uploadable->map(fn($platform) => $platform->getPrefix());
+        }
+        return $uploadable->map(fn($platform) => $platform->value);
     }
 }

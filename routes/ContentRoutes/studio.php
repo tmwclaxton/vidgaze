@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name("studio.dashboard");
 
-    Route::get('studio/upload',  [VideoUploadController::class, 'edit'])->name("studio.upload");
+    Route::get('studio/upload',  [VideoUploadController::class, 'show'])->name("studio.upload");
     Route::post('studio/upload', [VideoUploadController::class, 'upload'])->name("studio.upload");
 
     Route::get('studio/video/{video:slug}', [VideoController::class,'edit'])->name("studio.video.edit");

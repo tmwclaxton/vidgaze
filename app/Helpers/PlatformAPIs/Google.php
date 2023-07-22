@@ -8,7 +8,7 @@ use Google_Service_YouTube;
 
 class Google
 {
-    public $client;
+    public Client $client;
 
     public function __construct(array $scopes = null, string $redirect_url_path = null)
     {

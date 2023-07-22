@@ -2,24 +2,30 @@
 
 namespace App\Helpers\PlatformAPIs;
 
+use App\Enums\Audience;
 use App\Enums\Kind;
 use App\Enums\Platform;
 use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\iCanUpload;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iCanLogin;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
 use App\Helpers\Tools;
+use App\Helpers\UploadDTO;
 use Carbon\Carbon;
+use Google\Client;
+use Google\Service\YouTube\ThumbnailDetails;
 use Google_Service_YouTube;
 use Laravel\Octane\Facades\Octane;
 
-class YouTube implements iSearchable, iIsPlatform, iCanLogin
+class YouTube implements iSearchable, iIsPlatform, iCanLogin, iCanUpload
 {
 
     public Google_Service_YouTube $client;
+    public Client $google_client;
 
     public function __construct($code = null, $access_token = null, array $scopes = null, string $redirect_url_path = null)
     {
@@ -31,6 +37,7 @@ class YouTube implements iSearchable, iIsPlatform, iCanLogin
         if (isset($access_token)) {
             $google->client->setAccessToken($access_token);
         }
+        $this->google_client = $google->client;
         $this->client = new Google_Service_YouTube($google->client);
     }
 
@@ -41,6 +48,80 @@ class YouTube implements iSearchable, iIsPlatform, iCanLogin
         ])->getItems()[0];
 
         return self::extractCreatorToDTO($data);
+    }
+
+    public function upload(UploadDTO $uploadDTO){
+        $uploadDTO->video_path = storage_path('app/'.$uploadDTO->video_path);
+
+        $snippet = new \Google_Service_YouTube_VideoSnippet();
+        $snippet->setTitle($uploadDTO->title);
+        $snippet->setDescription($uploadDTO->description);
+        $snippet->setTags($uploadDTO->tags);
+        $snippet->setCategoryId($uploadDTO->category->youtube_id);
+        $snippet->setCategoryId(22);
+
+
+        $status = new \Google_Service_YouTube_VideoStatus();
+        $status->setEmbeddable(true);
+        $status->setPrivacyStatus($uploadDTO->visibility->value);
+
+
+        $ageGating = new \Google_Service_YouTube_VideoAgeGating();
+//        $ageGating->setRestricted($uploadDTO->audience != Audience::ALL);
+        $ageGating->setRestricted(false);
+
+        $status->setMadeForKids($uploadDTO->audience == Audience::KIDS);
+
+        $video = new \Google_Service_YouTube_Video();
+        $video->setSnippet($snippet);
+        $video->setStatus($status);
+//        $video->setAgeGating($ageGating);
+
+
+        $chunkSizeBytes = 1 * 1024 * 1024;
+        $this->google_client->setDefer(true);
+
+        $insertRequest = $this->client->videos->insert(
+            ["status", "snippet"/*, "ageGating"*/],
+            $video,
+//            [
+//                'data' => file_get_contents($uploadDTO->file_path),
+//                'uploadType' => 'multipart',
+//                'mimeType' => 'application/octet-stream',
+//            ]
+        );
+
+        $media = new \Google_Http_MediaFileUpload(
+            $this->google_client,
+            $insertRequest,
+            'video/*',
+            null,
+            true,
+            $chunkSizeBytes
+        );
+        $media->setFileSize(filesize($uploadDTO->video_path));
+
+        $status = false;
+        $handle = fopen($uploadDTO->video_path, "rb");
+        while (!$status && !feof($handle)) {
+            $chunk = fread($handle, $chunkSizeBytes);
+            $status = $media->nextChunk($chunk);
+        }
+        fclose($handle);
+        $this->google_client->setDefer(false);
+        $this->setThumbnail($status['id'], $uploadDTO->thumbnail_path);
+        return $status;
+    }
+
+    public function setThumbnail(string $video_id, string $thumbnail_path){
+        return $this->client->thumbnails->set(
+            $video_id,
+            array(
+                'data' => file_get_contents(storage_path('app/'.$thumbnail_path)),
+                'mimeType' => 'application/octet-stream',
+                'uploadType' => 'multipart'
+            )
+        );
     }
 
 
@@ -218,6 +299,8 @@ class YouTube implements iSearchable, iIsPlatform, iCanLogin
         $creatorDTO->language = $data->snippet->defaultLanguage ?? null;
         return $creatorDTO;
     }
+
+
 
 
 }

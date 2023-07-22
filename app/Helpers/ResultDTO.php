@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 use App\Enums\Kind;
 use App\Enums\Platform;
-use App\Jobs\searchPlatform;
+use App\Jobs\SearchPlatform;
 use App\Models\CreatorModels\Creator;
 use App\Models\StreamModels\Stream;
 use App\Models\VideoModels\Video;
