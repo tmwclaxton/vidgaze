@@ -45,20 +45,15 @@ class VideoUploadController extends Controller
             request()->title,
             request()->description,
             $creator->id,
-            [Platform::YouTube, Platform::Dailymotion, Platform::Vimeo],
+            [Platform::YouTube],
             $thumbnail_path,
             $tags,
             $cat,
-            Visibility::PRIVATE,
-            Audience::KIDS
+            Visibility::UNLISTED,
+            Audience::ALL
         );
 
-
-        UploadPlatform::dispatchSync( $creator->id, $uploadDTO, Platform::YouTube);
-        dd("done");
-
         $batch_id = Upload::upload($creator->id, $uploadDTO);
-//        $status = $yt->upload($uploadDTO);
 
         $batch = Bus::findBatch($batch_id);
 
@@ -69,8 +64,6 @@ class VideoUploadController extends Controller
 
         dd("done");
 
-        ddd($status);
-        dd(request()->all());
         //validate video
         $attribute = request()->validate([
 
