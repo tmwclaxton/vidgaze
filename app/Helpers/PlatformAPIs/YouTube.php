@@ -50,8 +50,8 @@ class YouTube implements iSearchable, iIsPlatform, iCanLogin, iCanUpload
         return self::extractCreatorToDTO($data);
     }
 
-    public function upload(UploadDTO $uploadDTO){
-        $uploadDTO->video_path = storage_path('app/'.$uploadDTO->video_path);
+    public function upload(UploadDTO $uploadDTO): string{
+        $video_storage_path = storage_path('app/'.$uploadDTO->video_path);
 
         $snippet = new \Google_Service_YouTube_VideoSnippet();
         $snippet->setTitle($uploadDTO->title);
@@ -99,10 +99,10 @@ class YouTube implements iSearchable, iIsPlatform, iCanLogin, iCanUpload
             true,
             $chunkSizeBytes
         );
-        $media->setFileSize(filesize($uploadDTO->video_path));
+        $media->setFileSize(filesize($video_storage_path));
 
         $status = false;
-        $handle = fopen($uploadDTO->video_path, "rb");
+        $handle = fopen($video_storage_path, "rb");
         while (!$status && !feof($handle)) {
             $chunk = fread($handle, $chunkSizeBytes);
             $status = $media->nextChunk($chunk);
@@ -110,7 +110,7 @@ class YouTube implements iSearchable, iIsPlatform, iCanLogin, iCanUpload
         fclose($handle);
         $this->google_client->setDefer(false);
         $this->setThumbnail($status['id'], $uploadDTO->thumbnail_path);
-        return $status;
+        return $status['id'];
     }
 
     public function setThumbnail(string $video_id, string $thumbnail_path){

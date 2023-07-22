@@ -11,6 +11,7 @@ use App\Helpers\UploadDTO;
 use App\Http\Controllers\Controller;
 use App\Jobs\UploadPlatform;
 use App\Models\Category;
+use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoUpload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Bus;
@@ -23,6 +24,8 @@ class VideoUploadController extends Controller
     }
 
     public function upload() {
+//        unlink(storage_path('app/videos/' . 'lJiSICRVeU2gjiQza83r2Uh89pP4yWdFGUXtqJCZ.mp4'));
+//        dd("done");
         $creator = auth()->user()->creator()->first();
 
         $video_path = request()->file('video')->store('videos');
@@ -45,7 +48,15 @@ class VideoUploadController extends Controller
             Audience::ALL
         );
 
-        $batch_id = Upload::upload($creator->id, $uploadDTO);
+        $video = Video::create([
+            'slug' => generateRandomString(16),
+            'creator_id' => $creator->id,
+            'preferred_source' => Platform::YouTube,
+            'title' => request()->title,
+            'description' => request()->description,
+            'thumbnail_url' => '$thumbnail_path',
+        ]);
+        $batch_id = Upload::upload($creator->id, $video->id, $uploadDTO);
 
         $batch = Bus::findBatch($batch_id);
 

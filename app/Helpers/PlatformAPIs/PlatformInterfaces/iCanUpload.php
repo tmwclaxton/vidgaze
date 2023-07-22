@@ -6,6 +6,6 @@ use App\Helpers\UploadDTO;
 
 interface iCanUpload
 {
-    public function upload(UploadDTO $uploadDTO);
+    public function upload(UploadDTO $uploadDTO): string;
 
 }

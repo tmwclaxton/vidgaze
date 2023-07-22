@@ -6,6 +6,8 @@ use App\Enums\Platform;
 use App\Helpers\UploadDTO;
 use App\Models\CreatorModels\Creator;
 use App\Models\CreatorModels\CreatorSource;
+use App\Models\VideoModels\Video;
+use App\Models\VideoModels\VideoSource;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -23,6 +25,7 @@ class UploadPlatform implements ShouldQueue
      */
     public function __construct(
         public int $creator_id,
+        public int $video_id,
         public UploadDTO $uploadDTO,
         public Platform $platform
     ){}
@@ -32,13 +35,19 @@ class UploadPlatform implements ShouldQueue
      */
     public function handle(): void
     {
-
         $source = Creator::find($this->creator_id)->sources()->where('source_name', $this->platform->value)->first();
         $source->refreshAccessToken();
+        $external_video_id = $this->platform->getPlatformClass($source->access_token)->upload($this->uploadDTO);
 
-        $class = $this->platform->getPlatformClass($source->access_token);
-        $class->upload($this->uploadDTO);
-        // check if all uploads are done
-        // if so delete video and thumbnail
+        $video = Video::find($this->video_id);
+        $video->sources()->create([
+            'source_name' => $this->platform->value,
+            'external_id' => $external_video_id
+        ]);
+
+        if($video->sources()->count() === sizeof($this->uploadDTO->platforms)) {
+            unlink(storage_path('app/' . $this->uploadDTO->video_path));
+            unlink(storage_path('app/' . $this->uploadDTO->thumbnail_path));
+        }
     }
 }
