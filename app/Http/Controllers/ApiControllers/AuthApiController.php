@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 
 use App\Http\Resources\UserResource;
 use App\Models\PlaylistModels\Playlist;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Password;
@@ -19,8 +21,8 @@ class AuthApiController extends Controller
 {
 
     /*
- * Generate sanctum token
-*/
+     * Generate sanctum token
+    */
     private function createToken($user, $remember_me = false) {
         if ($remember_me) {
             $expires = now()->addYear();
@@ -41,6 +43,7 @@ class AuthApiController extends Controller
 
         return $token;
     }
+
 
     /*
      * Register new user
@@ -90,14 +93,14 @@ class AuthApiController extends Controller
         //if created successfully, return user and token
         if ($user && $user->creator) {
             return response()->json([
-                'user' => new UserResource($user),
                 'access_token' => $token,
+                'valid_for' => "30 days",
+                'user' => new UserResource($user),
             ], 201);
         }
 
         return response()->json(null, 404);
     }
-
 
 
 
@@ -149,6 +152,9 @@ class AuthApiController extends Controller
     }
 
 
+    /*
+     * Send password reset link
+    */
     public function sendPasswordResetLinkEmail(Request $request) {
         $request->validate(['email' => 'required|email']);
 
@@ -164,11 +170,16 @@ class AuthApiController extends Controller
             ]);
         }
     }
+
+
+    /*
+     * Reset password
+    */
     public function resetPassword(Request $request) {
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
+            'password' => 'required|Password::defaults()|confirmed',
         ]);
 
         $status = Password::reset(
@@ -191,5 +202,93 @@ class AuthApiController extends Controller
                 'email' => __($status)
             ]);
         }
+    }
+
+    /*
+     * Confirm password
+    */
+    public function confirmPassword(Request $request) {
+        $request->validate([
+            'password' => 'required',
+        ]);
+
+        $user = $request->user();
+
+        if (! Hash::check($request->password, $user->password)) {
+            return response()->json(['message' => 'Password incorrect'], 401);
+        }
+
+        return response()->json(['message' => 'Password confirmed'], 200);
+    }
+
+    /*
+     * Update password
+    */
+    public function updatePassword(Request $request) {
+        $request->validate([
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $user = $request->user();
+
+        $user->forceFill([
+            'password' => Hash::make($request->password)
+        ])->setRememberToken(Str::random(60));
+
+        $user->save();
+
+        return response()->json([
+            'toastType' => 'success',
+            'toastMessage' => 'Password updated'
+        ], 200);
+    }
+
+    /*
+     * Send email verification link
+    */
+    public function sendEmailVerificationLink(Request $request) {
+        $request->validate(['email' => 'required|email']);
+
+        if ($request->user()->hasVerifiedEmail()) {
+            return response()->json([
+                'toastType' => 'normal',
+                'toastMessage' => 'Email already verified'
+            ], 200);
+        }
+
+        $request->user()->sendEmailVerificationNotification();
+
+        return response()->json([
+            'toastType' => 'success',
+            'toastMessage' => 'Email verification link sent'
+        ], 200);
+    }
+
+    /*
+     * Verify email
+    */
+    public function verifyEmail(Request $request)
+    {
+        $request->validate(['id' => 'required|integer', 'hash' => 'required|string']);
+
+        $user = User::find($request->id);
+
+        if ($user->hasVerifiedEmail()) {
+            //return response()->json(['message' => 'Email already verified'], 200);
+            return redirect()->intended(RouteServiceProvider::HOME)->with('status', 'Email already verified');
+        }
+
+        if (!hash_equals((string)$request->hash, sha1($user->getEmailForVerification()))) {
+            //return response()->json(['message' => 'Invalid verification link'], 400);
+            return redirect()->intended(RouteServiceProvider::HOME)->with('status', 'Invalid verification link');
+        }
+
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($user));
+        }
+
+        return redirect()->intended(RouteServiceProvider::HOME)->with('status', 'Email verified');
+
+
     }
 }

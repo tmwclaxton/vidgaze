@@ -4,9 +4,11 @@ use App\Helpers\JoshPing;
 use App\Http\Controllers\ApiControllers\AuthApiController;
 use App\Http\Controllers\ApiControllers\ShareApiController;
 use App\Http\Controllers\ApiControllers\ViewListenerController;
+use App\Http\Controllers\Auth\ProfileApiController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,19 +31,15 @@ require __DIR__ . '/ApiRoutes/feed.php';
 require __DIR__ . '/ApiRoutes/categories.php';
 require __DIR__ . '/ApiRoutes/search.php';
 require __DIR__ . '/ApiRoutes/music.php';
-//require __DIR__.'/auth.php';
+require __DIR__ . '/ApiRoutes/auth.php';
 
-// Auth
-Route::prefix('auth')->group(function () {
-    Route::post('signup', [AuthApiController::class, 'signup'])->name('auth.signup');
-    Route::post('login', [AuthApiController::class, 'login'])->name('auth.login');
-    Route::post('logout', [AuthApiController::class, 'logout'])->middleware('auth:sanctum')->name('auth.logout');
-    Route::get('user', [AuthApiController::class, 'getAuthenticatedUser'])->middleware('auth:sanctum')->name('auth.user');
-
-    Route::post('/password/email', [AuthApiController::class, 'sendPasswordResetLinkEmail'])->middleware('throttle:5,1')->name('password.email');
-    Route::post('/password/reset', [AuthApiController::class, 'resetPassword'])->name('password.reset');
+//admin routes
+Route::middleware([ 'auth:sanctum', 'admin' ])->group(function () {
+    //testing routes
+    if (App::environment('local')) {
+        Route::post('/test', function() { return redirect()->back()->with('toast', 'Toast endpoint!'); });
+    }
 });
-
 
 
 Route::get('test', function(){

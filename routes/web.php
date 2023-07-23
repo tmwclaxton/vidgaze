@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\WebControllers\SupportWebController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,11 @@ require __DIR__ . '/WebsiteRoutes/search.php';
 require __DIR__ . '/WebsiteRoutes/music.php';
 
 
+//admin routes
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::get('/admin', function () { return Inertia::render('Admin/AdminDashboard'); })->name('admin.dashboard');
+    Route::get('/component-testing', function () { return Inertia::render('Admin/TestComponents'); })->name('component-testing');
+});
 
 
 

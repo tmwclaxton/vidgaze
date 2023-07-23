@@ -65,19 +65,3 @@ Route::middleware('auth')->group(function () {
                 ->name('logout');
 });
 
-//admin routes
-Route::middleware('admin')->group(function () {
-    Route::get('/admin', function () { return Inertia::render('Admin/AdminDashboard'); })->name('admin.dashboard');
-    Route::get('/component-testing', function () { return Inertia::render('Admin/TestComponents'); })->name('component-testing');
-
-    //testing routes
-    if (App::environment('local')) {
-        Route::post('/test', function() { return redirect()->back()->with('toast', 'Toast endpoint!'); });
-    }
-});
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileApiController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileApiController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileApiController::class, 'destroy'])->name('profile.destroy');
-});
