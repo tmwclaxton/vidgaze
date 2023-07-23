@@ -25,7 +25,7 @@ require __DIR__ . '/WebsiteRoutes/feed.php';
 require __DIR__ . '/WebsiteRoutes/categories.php';
 require __DIR__ . '/WebsiteRoutes/search.php';
 require __DIR__ . '/WebsiteRoutes/music.php';
-require __DIR__.'/auth.php';
+
 
 
 

@@ -1,8 +1,11 @@
 <?php
 
 
+use App\Http\Controllers\ApiControllers\StreamApiController;
 use App\Http\Controllers\ApiControllers\StreamInteractionApiController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/streams/top', [StreamApiController::class,'topStreams'])->name("streams.top");
 
 Route::middleware(['throttle:30,1','auth'])->group(function () {
     Route::post('/stream/{streamId}/report', [StreamInteractionApiController::class, 'toggleReport'])

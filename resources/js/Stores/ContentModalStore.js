@@ -233,7 +233,6 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             return true;
         },
         async toggleWatchLater(id, toggle) {
-            const url = '/playlists/watch_later/videos';
             let playlistModalStore = usePlaylistModalStore();
             // set the video id in the playlist modal store
             playlistModalStore.videoIds = [id];

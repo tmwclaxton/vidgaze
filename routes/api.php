@@ -1,8 +1,10 @@
 <?php
 
 use App\Helpers\JoshPing;
+use App\Http\Controllers\ApiControllers\AuthApiController;
 use App\Http\Controllers\ApiControllers\ShareApiController;
 use App\Http\Controllers\ApiControllers\ViewListenerController;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,11 +29,24 @@ require __DIR__ . '/ApiRoutes/feed.php';
 require __DIR__ . '/ApiRoutes/categories.php';
 require __DIR__ . '/ApiRoutes/search.php';
 require __DIR__ . '/ApiRoutes/music.php';
+//require __DIR__.'/auth.php';
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Auth
+Route::prefix('auth')->group(function () {
+    Route::post('signup', [AuthApiController::class, 'signup'])->name('auth.signup');
+    Route::post('login', [AuthApiController::class, 'login'])->name('auth.login');
+    Route::post('logout', [AuthApiController::class, 'logout'])->middleware('auth:sanctum')->name('auth.logout');
+    Route::get('user', [AuthApiController::class, 'getAuthenticatedUser'])->middleware('auth:sanctum')->name('auth.user');
+
+    Route::post('/password/email', [AuthApiController::class, 'sendPasswordResetLinkEmail'])->middleware('throttle:5,1')->name('password.email');
+    Route::post('/password/reset', [AuthApiController::class, 'resetPassword'])->name('password.reset');
 });
 
+
+
+Route::get('test', function(){
+    return response()->json(['message' => 'Hello World!'], 200);
+} );
 
 
 Route::get('/ping', function(){

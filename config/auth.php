@@ -69,6 +69,11 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+        'api' => [
+            'driver' => 'token',
+            'provider' => 'users',
+            'hash' => false, // <-- change this to false
+        ],
     ],
 
     /*

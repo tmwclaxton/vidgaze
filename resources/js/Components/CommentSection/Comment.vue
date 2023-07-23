@@ -29,7 +29,7 @@ const editable = computed(() => {
     // checked logged in and is owner of comment OR is admin
     const user = usePage().props.auth.user;
 
-    return (user && (user.data.creator.id === props.comment.owner.id || usePage().props.auth.admin));
+    return (user && (user.creator.id === props.comment.owner.id || usePage().props.auth.admin));
 
 });
 
