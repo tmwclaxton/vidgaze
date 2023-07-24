@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PlaylistCollection;
 use App\Http\Resources\PlaylistResource;
 use App\Models\PlaylistModels\Playlist;
 use App\Models\PlaylistModels\PlaylistVideo;
@@ -169,7 +170,9 @@ class PlaylistApiController extends Controller
             ['name', '!=', 'History'],
 
         ])->orderByDesc('updated_at')
+            //->with('owner')
             ->get();
+
 
         $video_ids = explode(',', $request->video_ids);
 
@@ -188,6 +191,7 @@ class PlaylistApiController extends Controller
                 }
             }
         }
+
 
         //order playlists by server_made then videos_present_in_playlist then updated_at
         // can't cause computed order doesn't work or something

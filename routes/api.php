@@ -28,25 +28,16 @@ require __DIR__ . '/ApiRoutes/search.php';
 require __DIR__ . '/ApiRoutes/music.php';
 require __DIR__ . '/ApiRoutes/auth.php';
 require __DIR__ . '/ApiRoutes/user.php';
+require __DIR__ . '/ApiRoutes/playlists.php';
 
-//admin routes
-Route::middleware([ 'auth:sanctum', 'admin' ])->group(function () {
-    //testing routes
-    if (App::environment('local')) {
-        Route::post('/test', function() { return redirect()->back()->with('toast', 'Toast endpoint!'); });
-    }
-});
-
-
+//this is a test route
 Route::get('test', function(){
     return response()->json(['message' => 'Hello World!'], 200);
 } );
 
-
 Route::get('/ping', function(){
     return JoshPing::ping();
 });
-
 
 //this is the route for creating share links
 Route::get('/shares', [ShareApiController::class, 'index'])->name('share.index');

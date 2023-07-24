@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -26,6 +27,13 @@ class PlaylistResource extends JsonResource
             'description' => $this->description,
             'video_count' => $this->video_count ,
             'recent_video_image' => $this->recent_video_image,
+            'created_at' => Carbon::parse($this->created_at)->toDateTimeString(),
+            'updated_at' => Carbon::parse($this->updated_at)->diffForHumans(),
         ];
+    }
+
+    public function setVideoInPlaylistBool($value) {
+        $this->videos_present_in_playlist = $value;
+        return $this;
     }
 }
