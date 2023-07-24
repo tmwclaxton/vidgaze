@@ -1,35 +1,24 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ProfileApiController extends Controller
+class UserApiController extends Controller
 {
 
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): Response
-    {
-        return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => session('status'),
-        ]);
-    }
 
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request): \Illuminate\Http\JsonResponse
     {
         //$request->user()->fill($request->validated());
         // do everything manually to avoid mass assignment
@@ -44,13 +33,17 @@ class ProfileApiController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit');
+        return response()->json([
+            'toastType' => 'success',
+            'message' => 'Profile updated successfully.',
+            'user' => new UserResource($request->user()),
+        ]);
     }
 
     /**
      * Delete the user's account.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'password' => ['required', 'current-password'],
@@ -58,14 +51,15 @@ class ProfileApiController extends Controller
 
         $user = $request->user();
 
-        Auth::logout();
+        // destroy all users tokens
+        $user->tokens()->delete();
 
         $user->delete();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        return response()->json([
+            'toastType' => 'success',
+            'message' => 'Account deleted successfully.',
+        ]);
     }
 
 

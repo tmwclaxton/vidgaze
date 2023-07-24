@@ -6,7 +6,7 @@ Route::prefix('auth')->group(function () {
     Route::post('register', [AuthApiController::class, 'signup'])->name('auth.register');
     Route::post('login', [AuthApiController::class, 'login'])->name('auth.login');
     Route::post('logout', [AuthApiController::class, 'logout'])->middleware('auth:sanctum')->name('auth.logout');
-    //Route::get('user', [AuthApiController::class, 'getAuthenticatedUser'])->middleware('auth:sanctum')->name('auth.user');
+    Route::get('user', [AuthApiController::class, 'getAuthenticatedUser'])->middleware('auth:sanctum')->name('auth.user');
 
     Route::post('/password/email', [AuthApiController::class, 'sendPasswordResetLinkEmail'])->middleware('throttle:5,1')->name('password.email');
 

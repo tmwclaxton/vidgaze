@@ -70,7 +70,7 @@ class PodcastInteractionApiController extends Controller
         $interaction->save();
         $podcast->save();
         return response()->json([
-            'toastMessage' => $message,
+            'message' => $message,
             'toastType' => $type,
             'result' => $interaction->liked,
         ], 200);

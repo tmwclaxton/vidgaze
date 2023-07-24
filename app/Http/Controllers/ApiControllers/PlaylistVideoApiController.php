@@ -11,6 +11,27 @@ use Illuminate\Support\Facades\Auth;
 class PlaylistVideoApiController extends Controller
 {
 
+    private function checkForReservedPlaylist($playlistId)
+    {
+
+        switch ($playlistId) {
+            case "watch_later":
+                $playlistId = Auth::user()->creator->getServerMadePlaylist('Watch Later')->id;
+                break;
+            case "liked_videos":
+                $playlistId = Auth::user()->creator->getServerMadePlaylist('Liked Videos')->id;
+                break;
+            case "history":
+                $playlistId = Auth::user()->creator->getServerMadePlaylist('History')->id;
+                break;
+            case "disliked_videos":
+                $playlistId = Auth::user()->creator->getServerMadePlaylist('Disliked Videos')->id;
+                break;
+        }
+
+        return $playlistId;
+    }
+
     /** this creates a new playlist
      * @param Request $request
      * @return JsonResponse
@@ -19,10 +40,7 @@ class PlaylistVideoApiController extends Controller
     {
         $playlistId = $request->playlist_id;
         $videoIds = explode(',', $request->video_ids);
-
-        if ($playlistId === "watch_later") {
-            $playlistId = Auth::user()->creator->getServerMadePlaylist('Watch Later')->id;
-        }
+        $playlistId = $this->checkForReservedPlaylist($playlistId);
 
         // get playlist
         $playlist = Playlist::findOrFail($playlistId);
@@ -53,13 +71,13 @@ class PlaylistVideoApiController extends Controller
         if ($successCount == 0) {
             return response()->json([
                 'toastType' => 'warning',
-                'toastMessage' => 'No videos added to playlist'
+                'message' => 'No videos added to playlist'
             ], 200);
         }
 
         return response()->json([
             'toastType' => 'success',
-            'toastMessage' => "$successCount videos added to playlist"
+            'message' => "$successCount videos added to playlist"
         ], 200);
     }
 
@@ -73,9 +91,7 @@ class PlaylistVideoApiController extends Controller
         $playlistId = $request->playlist_id;
         $videoIds = explode(',', $request->video_ids);
 
-        if ($playlistId === "watch_later") {
-            $playlistId = Auth::user()->creator->getServerMadePlaylist('Watch Later')->id;
-        }
+        $playlistId = $this->checkForReservedPlaylist($playlistId);
 
         // check if user is the owner of the playlist
         $playlist = Playlist::findOrFail($playlistId);
@@ -100,13 +116,13 @@ class PlaylistVideoApiController extends Controller
         if ($successCount == 0) {
             return response()->json([
                 'toastType' => 'warning',
-                'toastMessage' => 'No videos removed from playlist'
+                'message' => 'No videos removed from playlist'
             ], 200);
         }
 
         return response()->json([
             'toastType' => 'success',
-            'toastMessage' => "$successCount videos removed from playlist"
+            'message' => "$successCount videos removed from playlist"
         ], 200);
     }
 

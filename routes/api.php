@@ -1,14 +1,9 @@
 <?php
 
 use App\Helpers\JoshPing;
-use App\Http\Controllers\ApiControllers\AuthApiController;
 use App\Http\Controllers\ApiControllers\ShareApiController;
 use App\Http\Controllers\ApiControllers\ViewListenerController;
-use App\Http\Controllers\Auth\ProfileApiController;
-use App\Http\Resources\UserResource;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,13 +20,14 @@ require __DIR__ . '/ApiRoutes/videos.php';
 require __DIR__ . '/ApiRoutes/comments.php';
 require __DIR__ . '/ApiRoutes/podcasts.php';
 require __DIR__ . '/ApiRoutes/streams.php';
-require __DIR__ . '/ApiRoutes/channels.php';
+require __DIR__ . '/ApiRoutes/creators.php';
 require __DIR__ . '/ApiRoutes/studio.php';
 require __DIR__ . '/ApiRoutes/feed.php';
 require __DIR__ . '/ApiRoutes/categories.php';
 require __DIR__ . '/ApiRoutes/search.php';
 require __DIR__ . '/ApiRoutes/music.php';
 require __DIR__ . '/ApiRoutes/auth.php';
+require __DIR__ . '/ApiRoutes/user.php';
 
 //admin routes
 Route::middleware([ 'auth:sanctum', 'admin' ])->group(function () {

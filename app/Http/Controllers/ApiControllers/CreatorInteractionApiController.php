@@ -76,7 +76,7 @@ class CreatorInteractionApiController extends Controller
             'subscriptions' => $subscriptions,
             'videos' => $videos,
             'streams' => $streams,
-            'podcasts' => [],
+            //'podcasts' => [],
         ]);
     }
 

@@ -1,9 +1,8 @@
 <?php
 
-use App\Http\Controllers\Auth\ProfileApiController;
+use App\Http\Controllers\ApiControllers\UserApiController;
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileApiController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileApiController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileApiController::class, 'destroy'])->name('profile.destroy');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::patch('/profile', [UserApiController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [UserApiController::class, 'destroy'])->name('profile.destroy');
 });

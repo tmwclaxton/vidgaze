@@ -83,7 +83,7 @@ class StreamInteractionApiController extends Controller
         $interaction->save();
 
         return response()->json([
-            'toastMessage' => $message,
+            'message' => $message,
             'toastType' => $type,
         ]);
     }
@@ -108,7 +108,7 @@ class StreamInteractionApiController extends Controller
         }
         return response()->json([
             'toastType' => $type,
-            'toastMessage' => $message,
+            'message' => $message,
         ]);
     }
 

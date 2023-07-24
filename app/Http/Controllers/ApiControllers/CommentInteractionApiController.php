@@ -24,7 +24,7 @@ class CommentInteractionApiController extends Controller
     {
         return response()->json([
             //'toastType' => 'success', // 'success', 'info', 'warning'
-            'toastMessage' => $message,
+            'message' => $message,
             'result' => $liked,
             'like_count' => $comment->like_count,
             'dislike_count' => $comment->dislike_count,

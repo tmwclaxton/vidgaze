@@ -17,15 +17,15 @@ use Inertia\Inertia;
 */
 
 require __DIR__ . '/WebsiteRoutes/videos.php';
-require __DIR__ . '/WebsiteRoutes/comments.php';
 require __DIR__ . '/WebsiteRoutes/podcasts.php';
 require __DIR__ . '/WebsiteRoutes/streams.php';
-require __DIR__ . '/WebsiteRoutes/channels.php';
+require __DIR__ . '/WebsiteRoutes/creators.php';
 require __DIR__ . '/WebsiteRoutes/studio.php';
 require __DIR__ . '/WebsiteRoutes/feed.php';
 require __DIR__ . '/WebsiteRoutes/categories.php';
 require __DIR__ . '/WebsiteRoutes/search.php';
 require __DIR__ . '/WebsiteRoutes/music.php';
+require __DIR__ . '/WebsiteRoutes/user.php';
 
 
 //admin routes

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PlaylistResource;
 use App\Models\PlaylistModels\Playlist;
 use App\Models\PlaylistModels\PlaylistVideo;
 use Illuminate\Http\JsonResponse;
@@ -22,6 +23,46 @@ class PlaylistApiController extends Controller
     // update - when form submitted save the edits
     // destroy - delete one item
 
+    /** get playlist by slug
+     * @return JsonResponse
+     */
+    public function show($slug) {
+
+        // if not logged in and playlist is private or hidden
+        $extraWheres = [];
+        if (!Auth::check()) {
+            $extraWheres = [
+                ['visibility', '=', 'public']
+            ];
+        } else {
+            $extraWheres = [
+                ['visibility', '!=', 'hidden'],
+                ['creator_id', '=', Auth::user()->creator->id]
+            ];
+        }
+
+        $where = [
+            ['slug', '=', $slug],
+        ];
+
+        $where = array_merge($where, $extraWheres);
+
+        $playlist = Playlist::where(
+            $where
+        )->first();
+
+        if (!$playlist) {
+            return response()->json([
+                'toastType' => 'error',
+                'message' => 'Playlist not found.'
+            ]);
+        }
+
+        return response()->json([
+            'playlist' => new PlaylistResource($playlist),
+        ]);
+    }
+
     /** create a playlist
      * @param Request $request
      * @return JsonResponse
@@ -30,29 +71,87 @@ class PlaylistApiController extends Controller
     {
         $request->validate([
             'name' => 'required|max:100|min:3',
-            'visibility' => 'required'
+            'visibility' => 'required|in:public,private,unlisted'
         ]);
 
-        if (Playlist::where([
-            ['creator_id', '=', Auth::user()->creator->id],
-            ['name', '=', $request->name],
-        ])->first()) {
-            return response()->json([
-                'toastType' => 'error',
-                'toastMessage' => 'Playlist with that name already exists.'
-            ]);
-        }
-
-        Playlist::create([
+        $playlist = Playlist::create([
             'name' => $request->name,
             'visibility' => $request->visibility,
             'creator_id' => Auth::user()->creator->id,
             'server_made' => false,
-            'slug' => uniqid(),
+            'slug' => uniqid()
         ]);
+
         return response()->json([
             'toastType' => 'success',
-            'toastMessage' => 'Playlist created successfully.'
+            'message' => 'Playlist created successfully.',
+            'playlist' => new PlaylistResource($playlist),
+        ]);
+    }
+
+    /** update a playlist
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function update(Request $request) {
+        $request->validate([
+            'name' => 'required|max:100|min:3',
+            'visibility' => 'required|in:public,private,unlisted',
+            'playlist_id' => 'required|exists:playlists,id|integer'
+        ]);
+
+        $playlist = Playlist::where([
+            ['creator_id', '=', Auth::user()->creator->id],
+            ['id', '=', $request->playlist_id],
+            ['server_made', '=', '0']
+        ])->first();
+
+        if (!$playlist) {
+            return response()->json([
+                'toastType' => 'error',
+                'message' => 'Playlist not found.'
+            ]);
+        }
+
+        $playlist->name = $request->name;
+        $playlist->visibility = $request->visibility;
+        $playlist->save();
+
+        return response()->json([
+            'toastType' => 'success',
+            'message' => 'Playlist updated successfully.',
+            'playlist' => new PlaylistResource($playlist),
+        ]);
+    }
+
+    /** delete a playlist
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function delete(Request $request) {
+        $request->validate([
+            'playlist_id' => 'required|exists:playlists,id|integer'
+        ]);
+
+        $playlist = Playlist::where([
+            ['creator_id', '=', Auth::user()->creator->id],
+            ['id', '=', $request->playlist_id],
+            ['server_made', '=', '0']
+        ])->first();
+
+
+        if (!$playlist) {
+            return response()->json([
+                'toastType' => 'error',
+                'message' => 'Playlist not found.'
+            ]);
+        }
+
+        $playlist->delete();
+
+        return response()->json([
+            'toastType' => 'success',
+            'message' => 'Playlist deleted successfully.',
         ]);
     }
 

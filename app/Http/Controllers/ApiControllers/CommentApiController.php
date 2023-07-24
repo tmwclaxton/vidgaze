@@ -72,7 +72,7 @@ class CommentApiController extends Controller
             default:
                 return response()->json([
                     'toastType' => 'warning',
-                    'toastMessage' => 'Unsupported item type'
+                    'message' => 'Unsupported item type'
                 ], 400);
         }
 
@@ -139,7 +139,7 @@ class CommentApiController extends Controller
         if (!(isset(Auth::user()->creator->id) && $this->validate($request, $this->rules))) {
             return response()->json([
                 'toastType' => 'warning',
-                'toastMessage' => 'Comment could not be created',
+                'message' => 'Comment could not be created',
             ]);
         }
 
@@ -151,7 +151,7 @@ class CommentApiController extends Controller
                 if ($video === null) {
                     return response()->json([
                         'toastType' => 'warning',
-                        'toastMessage' => 'Video could not be found',
+                        'message' => 'Video could not be found',
                     ]);
                 }
 
@@ -177,14 +177,14 @@ class CommentApiController extends Controller
         if ($comment === null) {
             return response()->json([
                 'toastType' => 'warning',
-                'toastMessage' => 'Comment could not be created',
+                'message' => 'Comment could not be created',
             ]);
         }
 
 
         return response()->json([
             'toastType' => 'success',
-            'toastMessage' => 'Comment created successfully',
+            'message' => 'Comment created successfully',
             'comment' => new CommentResource($comment),
         ]);
 
@@ -204,7 +204,7 @@ class CommentApiController extends Controller
         if ( !$this->validate( request(), $this->rules ) ) {
             return response()->json([
                 'toastType' => "warning",
-                'toastMessage' => 'Comment could not be updated',
+                'message' => 'Comment could not be updated',
             ]);
         }
 
@@ -213,7 +213,7 @@ class CommentApiController extends Controller
 
         return response()->json([
             'toastType' => 'success',
-            'toastMessage' => 'Comment updated successfully',
+            'message' => 'Comment updated successfully',
         ]);
     }
 
@@ -233,7 +233,7 @@ class CommentApiController extends Controller
         if ($comment === null) {
             return response()->json([
                 'toastType' => 'warning',
-                'toastMessage' => 'Comment could not be found',
+                'message' => 'Comment could not be found',
             ]);
         }
 
@@ -259,7 +259,7 @@ class CommentApiController extends Controller
 
         return response()->json([
             'toastType' => $success ? 'success' : 'warning',
-            'toastMessage' => $message,
+            'message' => $message,
         ]);
     }
 

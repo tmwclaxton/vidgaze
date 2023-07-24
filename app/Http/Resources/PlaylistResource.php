@@ -3,10 +3,11 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Str;
 
-class PlaylistResource extends ResourceCollection
+class PlaylistResource extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -18,6 +19,7 @@ class PlaylistResource extends ResourceCollection
         return [
             'id' => $this->id,
             'slug' => $this->slug,
+            'creator' => new CreatorResource($this->owner),
             'name' => $this->name,
             'server_made' => $this->server_made,
             'visibility' => $this->visibility,

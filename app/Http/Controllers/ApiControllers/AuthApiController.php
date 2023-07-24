@@ -56,9 +56,6 @@ class AuthApiController extends Controller
             'terms' => 'required|accepted'
         ]);
 
-
-        $validatedData['password'] = Hash::make($validatedData['password']);
-
         $user = User::create([
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -215,7 +212,9 @@ class AuthApiController extends Controller
         $user = $request->user();
 
         if (! Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Password incorrect'], 401);
+            throw ValidationException::withMessages([
+                'password' => ['The provided password is incorrect.'],
+            ]);
         }
 
         return response()->json(['message' => 'Password confirmed'], 200);
@@ -239,7 +238,7 @@ class AuthApiController extends Controller
 
         return response()->json([
             'toastType' => 'success',
-            'toastMessage' => 'Password updated'
+            'message' => 'Password updated'
         ], 200);
     }
 
@@ -252,7 +251,7 @@ class AuthApiController extends Controller
         if ($request->user()->hasVerifiedEmail()) {
             return response()->json([
                 'toastType' => 'normal',
-                'toastMessage' => 'Email already verified'
+                'message' => 'Email already verified'
             ], 200);
         }
 
@@ -260,7 +259,7 @@ class AuthApiController extends Controller
 
         return response()->json([
             'toastType' => 'success',
-            'toastMessage' => 'Email verification link sent'
+            'message' => 'Email verification link sent'
         ], 200);
     }
 
@@ -274,7 +273,6 @@ class AuthApiController extends Controller
         $user = User::find($request->id);
 
         if ($user->hasVerifiedEmail()) {
-            //return response()->json(['message' => 'Email already verified'], 200);
             return redirect()->intended(RouteServiceProvider::HOME)->with('status', 'Email already verified');
         }
 
