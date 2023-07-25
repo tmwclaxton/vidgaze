@@ -28,24 +28,32 @@ class VideoApiController extends Controller
      */
     public function index(Request $request)
     {
-
-        $perPage = $request->perPage ?? 20;
+        $request->validate([
+            'per_page' => 'integer',
+            'video_ids' => 'array',
+            'category' => 'string',
+            'shorts' => 'boolean',
+            'first_video_slug' => 'string',
+        ]);
+        // max no is 100, default is 20
+        $per_page = $request->per_page ?? 20;
+        $per_page = $per_page > 50 ? 50 : $per_page;
         //get ids from params
-        $videoIds = $request->videoIds ?? [];
+        $video_ids = $request->video_ids ?? [];
         // Get the selected category
-        $selectedCategory = $request->input('category') ?? 'popular';
-        $shorts = $request->input('shorts') ?? false;
-        $first_video_slug = $request->input('first_video_slug') ?? null;
+        $selectedCategory = $request->category ?? 'popular';
+        $shorts = $request->shorts ?? false;
+        $first_video_slug = $request->first_video_slug ?? null;
 
 
-        if (!is_array($videoIds) ) {
+        if (!is_array($video_ids) ) {
             //explode the ids into an array
-            $videoIds = explode(',', $videoIds);
+            $video_ids = explode(',', $video_ids);
         }
 
         // if first_video_id is set add it to videoIds to be ignored
         if ($first_video_slug) {
-            $videoIds[] = $first_video_slug;
+            $video_ids[] = $first_video_slug;
         }
 
         $query = Video::query();
@@ -128,24 +136,24 @@ class VideoApiController extends Controller
         }
 
         // Don't retrieve the same videos
-        if ( $videoIds != [] ) {
-            $query->whereNotIn('id', $videoIds);
-            //return ($videoIds);
+        if ( $video_ids != [] ) {
+            $query->whereNotIn('id', $video_ids);
+            //return ($video_ids);
         }
 
 
-        $videos = $query->take($perPage)->get();
+        $videos = $query->take($per_page)->get();
 
 
         // If there are not enough videos, get random public videos
-        if (!isset($videos) || $videos->count() < $perPage) {
+        if (!isset($videos) || $videos->count() < $per_page) {
             // get random public videos that are not in the videoIds array and get the amt to make up the difference if there are some videos already
             if (isset($videos)) {
-                $amt = $perPage - $videos->count();
+                $amt = $per_page - $videos->count();
             } else {
-                $amt = $perPage;
+                $amt = $per_page;
             }
-            $randomVideos = new VideoCollection(Video::where('visibility', 'public')->whereNotIn('id', $videoIds)->inRandomOrder()->take($amt)->get());
+            $randomVideos = new VideoCollection(Video::where('visibility', 'public')->whereNotIn('id', $video_ids)->inRandomOrder()->take($amt)->get());
             if (isset($videos)) {
                 $videos = $videos->merge($randomVideos);
             } else {
@@ -169,9 +177,23 @@ class VideoApiController extends Controller
 
 
         return response()->json([
+            'results' => $videos->count(),
             'videos' => $videos
         ]);
     }
 
+    public function show(string $slug) {
+        $video = Video::where('slug', $slug)->firstOrFail();
+
+        // if the stream is private and the user is not the owner
+        if ($video->visibility === 'private' && $video->creator->id !== Auth::id()) {
+            // return forbidden
+            abort(403);
+        }
+
+        return response()->json([
+            'video' => new VideoResource($video)
+        ]);
+    }
 
 }

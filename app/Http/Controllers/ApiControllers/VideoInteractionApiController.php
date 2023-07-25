@@ -15,18 +15,18 @@ use Illuminate\Support\Facades\Auth;
 class VideoInteractionApiController extends Controller
 {
     /** get the video interaction and the liked playlist
-     * @param $id
+     * @param $video_id
      * @return array
      */
-    private function fetchVideoInteractionAndLikedPlaylist($id)
+    private function fetchVideoInteractionAndLikedPlaylist($video_id)
     {
-        $interaction = VideoInteraction::where('video_id', $id)
+        $interaction = VideoInteraction::where('video_id', $video_id)
             ->where('viewer_id', Auth::user()->creator->id)
             ->first();
 
         if (!$interaction) {
             $interaction = new VideoInteraction();
-            $interaction->video_id = $id;
+            $interaction->video_id = $video_id;
             $interaction->viewer_id = Auth::user()->creator->id;
             $interaction->save();
         }
@@ -40,12 +40,12 @@ class VideoInteractionApiController extends Controller
 
 
     /** get the video model and the interaction model
-     * @param $videoId
+     * @param $video_id
      * @return array
      */
-    private function getVideoAndInteraction($videoId)
+    private function getVideoAndInteraction($video_id)
     {
-        $video = Video::findOrFail($videoId);
+        $video = Video::findOrFail($video_id);
 
         $creatorId = Auth::user()->creator->id;
 
@@ -65,13 +65,13 @@ class VideoInteractionApiController extends Controller
     }
 
     /** get the video interaction
-     * @param $videoId
+     * @param $video_id
      * @return JsonResponse
      */
-    public function getVideoInteraction($videoId) {
+    public function getVideoInteractions($video_id) {
         $creatorId = Auth::user()->creator->id;
         // check if user has liked video
-        $VideoViewInfo = VideoInteraction::where('viewer_id', $creatorId)->where('video_id', $videoId)->first() ?? null;
+        $VideoViewInfo = VideoInteraction::where('viewer_id', $creatorId)->where('video_id', $video_id)->first() ?? null;
         return response()->json([
             'liked' => $VideoViewInfo['liked'] ?? null,
             'reported' => $VideoViewInfo['reported'] ?? null,
@@ -81,12 +81,12 @@ class VideoInteractionApiController extends Controller
     }
 
     /** toggled disinterested
-     * @param $videoId
+     * @param $video_id
      * @return JsonResponse
      */
-    public function toggleDisinterest($videoId)
+    public function toggleDisinterest($video_id)
     {
-        [$video, $interaction] = $this->getVideoAndInteraction($videoId);
+        [$video, $interaction] = $this->getVideoAndInteraction($video_id);
         $interaction->disinterested = !$interaction->disinterested;
         $interaction->save();
         if ($interaction->disinterested) {
@@ -103,12 +103,12 @@ class VideoInteractionApiController extends Controller
     }
 
     /** toggle video report
-     * @param $videoId
+     * @param $video_id
      * @return JsonResponse
      */
-    public function toggleReport($videoId)
+    public function toggleReport($video_id)
     {
-        [$video, $interaction] = $this->getVideoAndInteraction($videoId);
+        [$video, $interaction] = $this->getVideoAndInteraction($video_id);
         $interaction->reported = !$interaction->reported;
         if ($interaction->reported) {
             $video->increment('report_count');
@@ -130,15 +130,15 @@ class VideoInteractionApiController extends Controller
 
 
     /** toggle like
-     * @param $videoId
+     * @param $video_id
      * @return JsonResponse
      */
-    public function toggleLike($videoId)
+    public function toggleLike($video_id)
     {
-        //return $videoId;
-        $video = Video::findOrFail($videoId);
+        //return $video_id;
+        $video = Video::findOrFail($video_id);
 
-        [$interaction, $likedPlaylist] = $this->fetchVideoInteractionAndLikedPlaylist($videoId);
+        [$interaction, $likedPlaylist] = $this->fetchVideoInteractionAndLikedPlaylist($video_id);
 
         //if they change their rating from dislike to like
         $likedPlaylist->addVideo($video->id);
@@ -171,16 +171,16 @@ class VideoInteractionApiController extends Controller
     }
 
     /** toggle dislike
-     * @param $videoId
+     * @param $video_id
      * @return JsonResponse
      */
-    public function toggleDislike($videoId)
+    public function toggleDislike($video_id)
     {
-        $video = Video::findOrFail($videoId);
+        $video = Video::findOrFail($video_id);
 
         $message = 'Disliked successfully';
 
-        [$interaction, $likedPlaylist] = $this->fetchVideoInteractionAndLikedPlaylist($videoId);
+        [$interaction, $likedPlaylist] = $this->fetchVideoInteractionAndLikedPlaylist($video_id);
 
         //if they change their rating from like to dislike
         if ($interaction->liked == 'like') {
@@ -214,12 +214,12 @@ class VideoInteractionApiController extends Controller
 
 
     /** this is for the video modal
-     * @param $videoId
+     * @param $video_id
      * @return JsonResponse
      */
-    public function modalDetails($videoId)
+    public function modalDetails($video_id)
     {
-        [$video, $interaction] = $this->getVideoAndInteraction($videoId);
+        [$video, $interaction] = $this->getVideoAndInteraction($video_id);
 
         // check if video exists
         if (!$video) {
@@ -234,7 +234,7 @@ class VideoInteractionApiController extends Controller
         // check if video is in watch later playlist
         $inWatchLater = false;
         if ($watchLaterPlaylist = Playlist::where('name', 'Watch Later')->where('creator_id', $creatorId)->first()) {
-            if (PlaylistVideo::where('playlist_id', $watchLaterPlaylist->id)->where('video_id', $videoId)->first()) {
+            if (PlaylistVideo::where('playlist_id', $watchLaterPlaylist->id)->where('video_id', $video_id)->first()) {
                 $inWatchLater = true;
             }
         }

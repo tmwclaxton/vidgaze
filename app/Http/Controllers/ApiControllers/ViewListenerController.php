@@ -75,21 +75,7 @@ class ViewListenerController extends Controller
         }
 
         if ($liveClient->type === "podcast") {
-            //define stream //if you don't define it every time the shorts web socket doesn't work
-            if ($liveClient->live_viewer_counted === false) {
-                $liveClient->live_viewer_counted = true;
-                $liveClient->save();
-
-                $podcast_episode = PodcastEpisode::find($item_id);
-
-                // Increment the live viewer count
-                $podcast_episode->increment('live_viewer_count', 1);
-                $podcast_episode->save();
-
-                return response()->json([
-                    'success' => 'Podcast live viewer count incremented'
-                ], 200);
-            }
+            return $this->podcastLiveClient($liveClient, $item_id, $watch_duration, $view_point);
         }
 
         return response()->json(['error' => 'Invalid type'], 500);
@@ -182,6 +168,24 @@ class ViewListenerController extends Controller
             ], 200);
 
 
+        }
+    }
+
+    private function podcastLiveClient(LiveClient $liveClient, string $item_id, int $watch_duration, int $view_point): JsonResponse
+    {
+        if ($liveClient->live_viewer_counted === false) {
+            $liveClient->live_viewer_counted = true;
+            $liveClient->save();
+
+            $podcast_episode = PodcastEpisode::find($item_id);
+
+            // Increment the live viewer count
+            $podcast_episode->increment('live_viewer_count', 1);
+            $podcast_episode->save();
+
+            return response()->json([
+                'success' => 'Podcast live viewer count incremented'
+            ], 200);
         }
     }
 

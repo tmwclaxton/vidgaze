@@ -55,7 +55,7 @@ class PlaylistVideoApiController extends Controller
         // check if user is the owner of the playlist
         if ($playlist->owner->id !== Auth::user()->creator->id) {
             return response()->json([
-                'error' => 'You do not have permission to add videos to the playlist'
+                'error' => 'You do not have permission to add videos to this playlist'
             ], 403);
         }
 
@@ -63,21 +63,22 @@ class PlaylistVideoApiController extends Controller
         $successCount = 0;
         foreach ($videoIds as $videoId) {
 
-            $playlist->addVideo($videoId);
-            $successCount++;
+            if ($playlist->addVideo($videoId)) {
+                $successCount++;
+            }
 
         }
 
         if ($successCount == 0) {
             return response()->json([
                 'toastType' => 'warning',
-                'message' => 'No videos added to playlist'
+                'message' => 'No videos added to ' . $playlist->name
             ], 200);
         }
 
         return response()->json([
             'toastType' => 'success',
-            'message' => "$successCount videos added to playlist"
+            'message' => "$successCount videos added to " . $playlist->name
         ], 200);
     }
 
@@ -98,7 +99,7 @@ class PlaylistVideoApiController extends Controller
         if ($playlist->owner->id !== Auth::user()->creator->id) {
             return response()->json(
                 [
-                    'error' => 'You do not have permission to remove videos from the playlist'
+                    'error' => 'You do not have permission to remove videos from this playlist'
                 ], 403);
 
         }
@@ -108,21 +109,21 @@ class PlaylistVideoApiController extends Controller
         foreach ($videoIds as $videoId) {
 
             // delete record
-            $playlist->removeVideo($videoId);
-
-            $successCount++;
+            if ($playlist->removeVideo($videoId)) {
+                $successCount++;
+            }
         }
 
         if ($successCount == 0) {
             return response()->json([
                 'toastType' => 'warning',
-                'message' => 'No videos removed from playlist'
+                'message' => 'No videos removed from ' . $playlist->name
             ], 200);
         }
 
         return response()->json([
             'toastType' => 'success',
-            'message' => "$successCount videos removed from playlist"
+            'message' => "$successCount videos removed from " . $playlist->name
         ], 200);
     }
 

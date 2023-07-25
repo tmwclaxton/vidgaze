@@ -10,9 +10,9 @@ use App\Http\Resources\StreamResource;
 use App\Models\Category;
 use App\Models\StreamModels\Stream;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use Request;
 
 class StreamApiController extends Controller
 {
@@ -21,17 +21,57 @@ class StreamApiController extends Controller
     /** get top streams
      * @return JsonResponse
      */
-    public function topStreams()
+    public function index(Request $request)
     {
-        $streams = new StreamCollection(
-            Stream::orderBy('viewers', 'DESC')
+        // validate the request ie per_page
+        $request->validate([
+            'per_page' => 'integer',
+            'skip' => 'integer',
+        ]);
+        // max no is 100, default is 20
+        $per_page = $request->per_page ?? 20;
+        $per_page = $per_page > 50 ? 50 : $per_page;
+        $skip = $request->skip ?? 0;
+
+        // grab streams
+        $streams = Stream::with('creator')
                 ->where('visibility', '=','public')
                 ->where('streams.is_live', '=',true)
-                ->take(6)->get() );
-        return response()->json($streams);
+            ->orderBy('viewers', 'desc')
+            ->skip($skip)
+            ->take($per_page)
+            ->get();
+
+        // return the streams
+        $streams = new StreamCollection($streams);
+
+        return response()->json([
+            'results' => $streams->count(),
+            'streams' => $streams,
+        ]);
+
+
+
     }
 
 
+    public function show(string $slug) {
+        // grab the stream
+        $stream = Stream::with('creator')
+            ->where('slug', '=', $slug)
+            ->firstOrFail();
+
+        // if the stream is private and the user is not the owner
+        if ($stream->visibility === 'private' && $stream->creator->id !== Auth::id()) {
+            // return forbidden
+            abort(403);
+        }
+
+        // return the stream
+        $stream = new StreamResource($stream);
+
+        return response()->json($stream);
+    }
 
 
 

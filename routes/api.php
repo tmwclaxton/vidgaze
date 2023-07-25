@@ -18,11 +18,11 @@ use Illuminate\Support\Facades\Route;
 
 // wrap all routes in v1
 
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->name('v1')->group(function () {
 
     //this is a test route to make sure the api is working
     Route::get('health', function () {
-        return response()->json(['message' => 'API v1 is working!'], 200);
+        return response()->json(['message' => 'VidGaze API v1 is working!'], 200);
     });
 
     require __DIR__ . '/ApiRoutes/videos.php';

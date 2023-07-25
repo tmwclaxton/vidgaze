@@ -5,18 +5,23 @@ use App\Http\Controllers\ApiControllers\StreamApiController;
 use App\Http\Controllers\ApiControllers\StreamInteractionApiController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/streams/top', [StreamApiController::class,'topStreams'])->name("streams.top");
+Route::prefix('/stream')->name('stream')->group(function () {
 
-Route::middleware(['throttle:30,1','auth'])->group(function () {
-    Route::post('/stream/{streamId}/report', [StreamInteractionApiController::class, 'toggleReport'])
-        ->name('stream.report.toggle');
+    Route::get('/index', [StreamApiController::class, 'index'])->name("index");
+    Route::get('{slug}', [StreamApiController::class, 'show'])->middleware('auth.sanctum.switch')->name('show');
 
-    Route::post('/stream/{streamId}/disinterest', [StreamInteractionApiController::class, 'toggleDisinterest'])
-        ->name('stream.disinterest.toggle');
 
-    Route::get('/stream/{streamId}/details', [StreamInteractionApiController::class,"modalDetails"])->name('stream.details');
+    Route::middleware(['throttle:30,1', 'auth:sanctum'])->group(function () {
+        Route::post('/{streamId}/report', [StreamInteractionApiController::class, 'toggleReport'])
+            ->name('report.toggle');
 
-    // if we need to get the interaction details for a stream down the road
-    //Route::get('/stream/{streamId}/interaction', [StreamInteractionController::class,"getStreamInteraction"])->name('stream.view.interaction');
+        Route::post('/{streamId}/disinterest', [StreamInteractionApiController::class, 'toggleDisinterest'])
+            ->name('disinterest.toggle');
 
+        Route::get('/{streamId}/details', [StreamInteractionApiController::class, "modalDetails"])->name('details');
+
+        // if we need to get the interaction details for a stream down the road
+        //Route::get('/{streamId}/interaction', [StreamInteractionController::class,"getStreamInteraction"])->name('interactions');
+
+    });
 });
