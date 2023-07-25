@@ -176,6 +176,8 @@ class PlaylistApiController extends Controller
 
         $video_ids = explode(',', $request->video_ids);
 
+        $playlists = new PlaylistCollection($playlists);
+
         foreach ($playlists as $playlist) {
             $playlist->videos_present_in_playlist = false; // default value
 

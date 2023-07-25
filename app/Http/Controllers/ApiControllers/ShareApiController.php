@@ -24,8 +24,13 @@ class ShareApiController extends Controller
      * @return JsonResponse
      */
     public function index(Request $request) {
-        $link = $request->input('link');
-        $title = $request->input('title');
+        $request->validate([
+            'link' => 'required',
+            'title' => 'required'
+        ]);
+
+        $link = $request->link;
+        $title = $request->title;
         //return each link as a string in an array with the key being the name of the social media
         $links = ['links' => Share::page($link,$title)
             ->facebook()

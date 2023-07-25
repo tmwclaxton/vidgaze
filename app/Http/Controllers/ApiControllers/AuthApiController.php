@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use App\Models\PlaylistModels\Playlist;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Password;
@@ -30,18 +31,88 @@ class AuthApiController extends Controller
             $expires = now()->addDay(30);
         }
 
+        $privileges = $this->getTokenAbilitiesForUser($user);
 
+        $token = $user->createToken($user->email, $privileges, $expires)->plainTextToken;
 
-        //check if user is admin
-        $adminEmails = config('admins.emails');
-        // if user's email is in the admin list and the user has verified their email, give them admin privileges
-        if (in_array($user->email, $adminEmails) && $user->email_verified_at) {
-            $token = $user->createToken($user->email, ['user', 'admin'], $expires)->plainTextToken;
-        } else {
-            $token = $user->createToken($user->email, ['user'], $expires)->plainTextToken;
+        return $token;
+    }
+
+    /*
+     * Get token model from db using bearer token
+    */
+    private function getToken($request) {
+        $token = $request->bearerToken();
+
+        // grab id at start of token but ensure it is the user's token
+        $tokenID = explode('|', $token)[0];
+
+        // grab that token from the database
+        $token = $request->user()->tokens()->where('id', $tokenID)->first();
+
+        // if token is not found or is not the user's token
+        if (!$token || $token->tokenable_id != $request->user()->id) {
+            throw ValidationException::withMessages([
+                'token' => ['Invalid token.']
+            ]);
         }
 
         return $token;
+    }
+
+    /*
+     * Token privileges decider
+    */
+    private function getTokenAbilitiesForUser($user) {
+        //check if user is admin
+        $adminEmails = config('admins.emails');
+
+        $privileges = ['user']; //default privileges
+
+        // if user's email is in the admin list and the user has verified their email, give them admin privileges
+        if ($user->email !== null && in_array($user->email, $adminEmails) && $user->email_verified_at) {
+            $privileges = array_merge($privileges, ['admin']);
+        }
+        // just check on user model for now
+        //if ($user->email_verified_at) {
+        //    $privileges = array_merge($privileges, ['email_verified']);
+        //}
+        return $privileges;
+    }
+
+    /*
+     * Get Refreshed Token
+    */
+    public function refreshToken(Request $request) {
+        $token = $this->getToken($request);
+        $user = $request->user();
+        // update token expiration by an extra 30 days if expiration is less than 30 days away
+        $expires = Carbon::parse($token->expires_at);
+        if ($expires->diffInDays(now()) < 30) {
+            $token->expires_at = $expires->addDay(30);
+        }
+        $token->update([
+            'expires_at' => $token->expires_at,
+            'abilities' => $this->getTokenAbilitiesForUser($user)
+        ]);
+
+        return response()->json([
+            'expires_at' => Carbon::parse($token->expires_at)->toDateTimeString(),
+            'abilities' => $token->abilities
+        ]);
+
+
+    }
+
+    /*
+     * Get Token privileges
+    */
+    public function checkTokenPrivileges(Request $request) {
+        $token = $this->getToken($request);
+        $privileges = $token->abilities;
+        return response()->json([
+            'privileges' => $privileges
+        ]);
     }
 
 
@@ -87,11 +158,11 @@ class AuthApiController extends Controller
 
         $token = $this->createToken($user, false);
 
-        //if created successfully, return user and token
+        //if created successfully, return user and token and valid for in seconds
         if ($user && $user->creator) {
             return response()->json([
                 'access_token' => $token,
-                'valid_for' => "30 days",
+                'valid_for' => 3600 * 2,
                 'user' => new UserResource($user),
             ], 201);
         }
@@ -121,9 +192,10 @@ class AuthApiController extends Controller
 
         $token = $this->createToken($user, $request->remember_me);
 
+        // return valid for in seconds 6 months if remember me, 2 hours if not
         return response()->json([
             'access_token' => $token,
-            'valid_for' => $request->remember_me ? "1 year" : "30 days",
+            'valid_for' => $request->remember_me ? (60 * 60 * 24 * 30 * 6) : (3600 * 2),
             'user' => new UserResource($user),
         ], 200);
     }
@@ -176,7 +248,8 @@ class AuthApiController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|Password::defaults()|confirmed',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+
         ]);
 
         $status = Password::reset(

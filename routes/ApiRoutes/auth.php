@@ -18,4 +18,10 @@ Route::prefix('auth')->group(function () {
 
     Route::post('/email/verify/', [AuthApiController::class, 'sendEmailVerificationLink'])->middleware(['auth:sanctum', 'throttle:12,1'])->name('verification.verify');
     Route::get('/email/verify/', [AuthApiController::class, 'verifyEmail'])->name('verification.verify');
+
+    // check token privileges
+    Route::get('/token/privileges', [AuthApiController::class, 'checkTokenPrivileges'])->middleware('auth:sanctum')->name('token.privileges');
+    // get updated token
+    Route::get('/token/refresh', [AuthApiController::class, 'refreshToken'])->middleware('auth:sanctum')->name('token.refresh');
+
 });

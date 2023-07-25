@@ -16,32 +16,38 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-require __DIR__ . '/ApiRoutes/videos.php';
-require __DIR__ . '/ApiRoutes/comments.php';
-require __DIR__ . '/ApiRoutes/podcasts.php';
-require __DIR__ . '/ApiRoutes/streams.php';
-require __DIR__ . '/ApiRoutes/creators.php';
-require __DIR__ . '/ApiRoutes/studio.php';
-require __DIR__ . '/ApiRoutes/feed.php';
-require __DIR__ . '/ApiRoutes/categories.php';
-require __DIR__ . '/ApiRoutes/search.php';
-require __DIR__ . '/ApiRoutes/music.php';
-require __DIR__ . '/ApiRoutes/auth.php';
-require __DIR__ . '/ApiRoutes/user.php';
-require __DIR__ . '/ApiRoutes/playlists.php';
+// wrap all routes in v1
 
-//this is a test route
-Route::get('test', function(){
-    return response()->json(['message' => 'Hello World!'], 200);
-} );
+Route::prefix('v1')->group(function () {
 
-Route::get('/ping', function(){
-    return JoshPing::ping();
+    //this is a test route to make sure the api is working
+    Route::get('health', function () {
+        return response()->json(['message' => 'API v1 is working!'], 200);
+    });
+
+    require __DIR__ . '/ApiRoutes/videos.php';
+    require __DIR__ . '/ApiRoutes/comments.php';
+    require __DIR__ . '/ApiRoutes/podcasts.php';
+    require __DIR__ . '/ApiRoutes/streams.php';
+    require __DIR__ . '/ApiRoutes/creators.php';
+    require __DIR__ . '/ApiRoutes/studio.php';
+    require __DIR__ . '/ApiRoutes/feed.php';
+    require __DIR__ . '/ApiRoutes/categories.php';
+    require __DIR__ . '/ApiRoutes/search.php';
+    require __DIR__ . '/ApiRoutes/music.php';
+    require __DIR__ . '/ApiRoutes/auth.php';
+    require __DIR__ . '/ApiRoutes/user.php';
+    require __DIR__ . '/ApiRoutes/playlists.php';
+
+    Route::get('/ping', function () {
+        return JoshPing::ping();
+    });
+
+    //this is the route for creating share links
+        Route::get('/shares', [ShareApiController::class, 'index'])->name('share.index');
+
+    // view listener route
+        Route::post('/view-listener', [ViewListenerController::class, 'message'])->middleware('auth.sanctum.switch')->name('view.listener');
+    //Route::get('/view-listener', [ViewListenerController::class,'
+
 });
-
-//this is the route for creating share links
-Route::get('/shares', [ShareApiController::class, 'index'])->name('share.index');
-
-// view listener route
-Route::post('/view-listener', [ViewListenerController::class,'message'])->name('view.listener');
-//Route::get('/view-listener', [ViewListenerController::class,'
