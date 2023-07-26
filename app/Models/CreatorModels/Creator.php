@@ -86,9 +86,10 @@ class Creator extends Model
     {
         return $this->belongsTo(Category::class);
     }
-    public function comments(): HasMany
+    public function comments(): HasManyThrough
     {
-        return $this->hasMany(Comment::class);
+        // creator -> creator_comments -> comments
+        return $this->hasManyThrough(Comment::class, CreatorComment::class, 'creator_id', 'id', 'id', 'comment_id');
     }
     public function creator_interactions(): HasMany
     {

@@ -3,6 +3,7 @@
 namespace App\Models\StreamModels;
 
 use App\Models\Category;
+use App\Models\CommentModels\Comment;
 use App\Models\CreatorModels\Creator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,11 @@ class Stream extends Model
     }
     public function sources() {
         return $this->hasMany(StreamSource::class, 'stream_id');
+    }
+
+    public function comments() {
+        // stream -> stream_comment -> comments
+        return $this->hasManyThrough(Comment::class, StreamComment::class, 'stream_id', 'id', 'id', 'comment_id');
     }
 
     public function getPreferredSourceID() {

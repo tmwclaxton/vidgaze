@@ -21,6 +21,34 @@ use Illuminate\Support\Facades\Redis;
 
 Route::prefix('v1')->name('v1')->group(function () {
 
+
+    require __DIR__ . '/ApiV1Routes/videos.php';
+    require __DIR__ . '/ApiV1Routes/comments.php';
+    require __DIR__ . '/ApiV1Routes/podcasts.php';
+    require __DIR__ . '/ApiV1Routes/streams.php';
+    require __DIR__ . '/ApiV1Routes/creators.php';
+    require __DIR__ . '/ApiV1Routes/studio.php';
+    require __DIR__ . '/ApiV1Routes/feed.php';
+    require __DIR__ . '/ApiV1Routes/categories.php';
+    require __DIR__ . '/ApiV1Routes/search.php';
+    require __DIR__ . '/ApiV1Routes/music.php';
+    require __DIR__ . '/ApiV1Routes/auth.php';
+    require __DIR__ . '/ApiV1Routes/user.php';
+    require __DIR__ . '/ApiV1Routes/playlists.php';
+
+    // if in local environment add the ping route
+    if (config('app.env') == 'local') {
+        Route::get('/ping', function () {
+            return JoshPing::ping();
+        });
+    }
+
+    //this is the route for creating share links
+    Route::get('/shares', [ShareApiController::class, 'index'])->name('share.index');
+
+    // view listener route
+    Route::post('/view-listener', [ViewListenerController::class, 'message'])->middleware('auth.sanctum.switch')->name('view.listener');
+
     //this is a test route to make sure the api is working
     Route::get('health', function () {
         // check if the database is connected
@@ -45,29 +73,5 @@ Route::prefix('v1')->name('v1')->group(function () {
             'filesystem' => $storage,
         ]);
     })->name('health');
-
-    require __DIR__ . '/ApiV1Routes/videos.php';
-    require __DIR__ . '/ApiV1Routes/comments.php';
-    require __DIR__ . '/ApiV1Routes/podcasts.php';
-    require __DIR__ . '/ApiV1Routes/streams.php';
-    require __DIR__ . '/ApiV1Routes/creators.php';
-    require __DIR__ . '/ApiV1Routes/studio.php';
-    require __DIR__ . '/ApiV1Routes/feed.php';
-    require __DIR__ . '/ApiV1Routes/categories.php';
-    require __DIR__ . '/ApiV1Routes/search.php';
-    require __DIR__ . '/ApiV1Routes/music.php';
-    require __DIR__ . '/ApiV1Routes/auth.php';
-    require __DIR__ . '/ApiV1Routes/user.php';
-    require __DIR__ . '/ApiV1Routes/playlists.php';
-
-    Route::get('/ping', function () {
-        return JoshPing::ping();
-    });
-
-    //this is the route for creating share links
-    Route::get('/shares', [ShareApiController::class, 'index'])->name('share.index');
-
-    // view listener route
-    Route::post('/view-listener', [ViewListenerController::class, 'message'])->middleware('auth.sanctum.switch')->name('view.listener');
 
 });

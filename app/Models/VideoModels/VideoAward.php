@@ -17,9 +17,6 @@ class VideoAward extends Model
     protected $with = ['award'];
 
 
-
-    //Alphabetical order
-
     public function award() {
         return $this->hasOne(Award::class, 'id','award_id');
     }
