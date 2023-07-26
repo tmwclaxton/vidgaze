@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class VideoAward extends Model
 {
-    use HasFactory;
 
     //no mass assignment!
     protected $guarded = [];

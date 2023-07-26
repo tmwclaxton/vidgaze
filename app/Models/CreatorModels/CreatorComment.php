@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class CreatorComment extends Model
 {
+    protected $guarded = [];
+
+    protected $with = ['comment'];
     public function comment() {
         return $this->hasOne(Comment::class, 'id','comment_id');
     }

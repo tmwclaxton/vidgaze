@@ -8,7 +8,14 @@ use App\Http\Resources\CommentCollection;
 use App\Http\Resources\CommentResource;
 use App\Models\CommentInteraction;
 use App\Models\CommentModels\Comment;
+use App\Models\CreatorModels\Creator;
+use App\Models\CreatorModels\CreatorComment;
+use App\Models\PodcastEpisodeModels\PodcastEpisode;
+use App\Models\PodcastEpisodeModels\PodcastEpisodeComment;
+use App\Models\StreamModels\Stream;
+use App\Models\StreamModels\StreamComment;
 use App\Models\VideoModels\Video;
+use App\Models\VideoModels\VideoComment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +27,7 @@ class CommentApiController extends Controller
         'body' => 'required|regex:/^[A-Za-z0-9\-! ,\'\"\/@\.:\(\)]+$/|max:10000|min:1',
         'parent_comment_id' => 'nullable|exists:comments,id',
         'item_id' => 'required|integer',
-        'item_type' => 'required|in:video,podcast,stream',
+        'item_type' => 'required|in:video,podcast_episode,stream,creator',
    ];
 
 
@@ -67,17 +74,23 @@ class CommentApiController extends Controller
         if (!is_array($comment_ids) ) {
             $comment_ids = explode(',', $comment_ids);
         }
+
+        // get the comments for item by using the manythrough relationship
+        $comments = null;
+        $query = null;
         switch ($item_type) {
             case 'video':
-                // get the query
-                $query = Comment::query()
-                    ->where([['parent_comment_id', '=', $parent_comment_id], ['video_id', '=', $item_id]]);
-            break;
-            default:
-                return response()->json([
-                    'toastType' => 'warning',
-                    'message' => 'Unsupported item type'
-                ], 400);
+                $query = Video::find($item_id)->comments();
+                break;
+            case 'podcast_episode':
+                $query = PodcastEpisode::find($item_id)->comments();
+                break;
+            case 'stream':
+                $query = Stream::find($item_id)->comments();
+                break;
+            case 'creator':
+                $query = Creator::find($item_id)->comments();
+                break;
         }
 
         // if firstCommentId is not null, add where clause to query
@@ -139,45 +152,41 @@ class CommentApiController extends Controller
         $parent_comment_id = $request->parent_comment_id ?? null;
         $body = $request->body;
 
-
-
-        if (!(isset(Auth::user()->creator->id) )) {
-            return response()->json([
-                'toastType' => 'warning',
-                'message' => 'Comment could not be created',
-            ]);
-        }
-
+        // validate item type exists
         switch ($item_type) {
             case 'video':
-                // grab video
-                $video = Video::find($item_id);
-
-                if ($video === null) {
-                    return response()->json([
-                        'toastType' => 'warning',
-                        'message' => 'Video could not be found',
-                    ]);
-                }
-
-                $comment = Comment::create([
-                    'creator_id' => Auth::user()->creator->id,
-                    'video_id' => $item_id,
-                    'parent_comment_id' => $parent_comment_id,
-                    'body' => $body
-                ]);
-
-                $video->comment_count++;
-                $video->save();
-
+                $item_model = VideoComment::class;
+                $collumn = 'video_id';
+                $item = Video::find($item_id);
                 break;
+            case 'stream':
+                $item_model = StreamComment::class;
+                $collumn = 'stream_id';
+                $item = Stream::find($item_id);
+                break;
+            case 'podcast_episode':
+                $item_model = PodcastEpisodeComment::class;
+                $collumn = 'podcast_episode_id';
+                $item = PodcastEpisode::find($item_id);
+                break;
+            case 'creator':
+                $item_model = CreatorComment::class;
+                $collumn = 'creator_id';
+                $item = Creator::find($item_id);
+                break;
+            default:
+                return response()->json([
+                    'toastType' => 'warning',
+                    'message' => 'Unsupported item type'
+                ], 400);
         }
 
-        if ($parent_comment_id !== null) {
-            $parent_comment = Comment::find($parent_comment_id);
-            $parent_comment->reply_count++;
-            $parent_comment->save();
-        }
+        $comment = Comment::create([
+            'creator_id' => Auth::user()->creator->id,
+            'parent_comment_id' => $parent_comment_id,
+            'body' => $body
+        ]);
+
 
         if ($comment === null) {
             return response()->json([
@@ -186,6 +195,19 @@ class CommentApiController extends Controller
             ]);
         }
 
+        $item_model::create([
+            $collumn => $item_id,
+            'comment_id' => $comment->id,
+        ]);
+
+        $item->comment_count++;
+        $item->save();
+
+        if ($parent_comment_id !== null) {
+            $parent_comment = Comment::find($parent_comment_id);
+            $parent_comment->reply_count++;
+            $parent_comment->save();
+        }
 
         return response()->json([
             'toastType' => 'success',
@@ -202,9 +224,12 @@ class CommentApiController extends Controller
      * @return JsonResponse
      */
     public function update(Request $request) {
-        $request->validate($this->rules);
+        $request->validate([
+            'comment_id' => 'required|integer',
+            'body' => 'required|string',
+        ]);
 
-        $comment = Comment::find($request->item_id);
+        $comment = Comment::find($request->comment_id);
 
         if ($comment === null) {
             return response()->json([
@@ -234,17 +259,16 @@ class CommentApiController extends Controller
     public function destroy(Request $request)
     {
         $request->validate([
-            'item_id' => 'required|integer',
-            'item_type' => 'required|in:video,podcast,stream',
             'comment_id' => 'required|integer',
         ]);
-        $item_type = $request->input('item_type'); // for future use
-        $item_id = $request->input('item_id');
+
         $comment_id = $request->input('comment_id');
 
+        // get comment
         $comment = Comment::find($comment_id);
 
-        $video = Video::find($item_id);
+        //grab the comment's item from either the video, stream, or podcast_episode comment table
+        //$item = $comment->video_comment ?? $comment->stream_comment ?? $comment->podcast_episode_comment ?? $comment->creator_comment ?? null;
 
 
         if ($comment === null) {
@@ -270,8 +294,8 @@ class CommentApiController extends Controller
                 $parent_comment->save();
             }
 
-            $video->comment_count--;
-            $video->save();
+            //$video->comment_count--;
+            //$video->save();
         }
 
         return response()->json([
