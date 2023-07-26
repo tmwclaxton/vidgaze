@@ -8,28 +8,22 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('video_awards', function (Blueprint $table) {
+        Schema::create('video_comments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('video_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('award_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('giver_id')->nullable()->references('id')->on('creators')->constrained()->cascadeOnDelete();
-
+            $table->foreignId('comment_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('video_awards');
+        Schema::dropIfExists('video_comments');
     }
 };
