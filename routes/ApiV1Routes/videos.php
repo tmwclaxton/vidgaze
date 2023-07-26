@@ -29,7 +29,7 @@ Route::prefix('/video')->name('video')->group(function () {
         // this get the details of a video for the content modal or viewing the video or short
         Route::get('/{video_id}/details', [VideoInteractionApiController::class, "modalDetails"])->name('details');
         // used for like and dislike button
-        Route::get('/{video_id}/interactions', [VideoInteractionApiController::class, "getVideoInteractions"])->name('interactions');
+        Route::get('/{video_id}/interaction', [VideoInteractionApiController::class, "getVideoInteraction"])->name('interaction');
 
 
     });

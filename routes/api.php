@@ -24,13 +24,15 @@ Route::prefix('v1')->name('v1')->group(function () {
     //this is a test route to make sure the api is working
     Route::get('health', function () {
         // check if the database is connected
-        $database = (bool)DB::connection()->getPdo();
+        $database = DB::connection()->getPdo() ? 'CONNECTED' : 'NOT CONNECTED';
         // check if redis is connected
-        $redis = (bool)Redis::connection()->ping();
-        // check storage
-        $s3 = "Not in use";
+        $redis = Redis::connection()->ping() ? 'CONNECTED' : 'NOT CONNECTED';
+        // check what storage driver is being used
+        $storage = config('filesystems.default');
 
-        if ($database && $redis) {
+
+        // if local storage check this is not a production server assuming we are using s3 in production
+        if ($database == 'CONNECTED' && $redis == 'CONNECTED' && ($storage == 'local' && config('app.env') != 'production') ) {
             $message = 'VidGaze API v1 is working!';
         } else {
             $message = 'VidGaze API v1 is not working!';
@@ -40,33 +42,32 @@ Route::prefix('v1')->name('v1')->group(function () {
             'message' => $message,
             'database' => $database,
             'redis' => $redis,
-            's3' => $s3,
+            'filesystem' => $storage,
         ]);
     })->name('health');
 
-    require __DIR__ . '/ApiRoutes/videos.php';
-    require __DIR__ . '/ApiRoutes/comments.php';
-    require __DIR__ . '/ApiRoutes/podcasts.php';
-    require __DIR__ . '/ApiRoutes/streams.php';
-    require __DIR__ . '/ApiRoutes/creators.php';
-    require __DIR__ . '/ApiRoutes/studio.php';
-    require __DIR__ . '/ApiRoutes/feed.php';
-    require __DIR__ . '/ApiRoutes/categories.php';
-    require __DIR__ . '/ApiRoutes/search.php';
-    require __DIR__ . '/ApiRoutes/music.php';
-    require __DIR__ . '/ApiRoutes/auth.php';
-    require __DIR__ . '/ApiRoutes/user.php';
-    require __DIR__ . '/ApiRoutes/playlists.php';
+    require __DIR__ . '/ApiV1Routes/videos.php';
+    require __DIR__ . '/ApiV1Routes/comments.php';
+    require __DIR__ . '/ApiV1Routes/podcasts.php';
+    require __DIR__ . '/ApiV1Routes/streams.php';
+    require __DIR__ . '/ApiV1Routes/creators.php';
+    require __DIR__ . '/ApiV1Routes/studio.php';
+    require __DIR__ . '/ApiV1Routes/feed.php';
+    require __DIR__ . '/ApiV1Routes/categories.php';
+    require __DIR__ . '/ApiV1Routes/search.php';
+    require __DIR__ . '/ApiV1Routes/music.php';
+    require __DIR__ . '/ApiV1Routes/auth.php';
+    require __DIR__ . '/ApiV1Routes/user.php';
+    require __DIR__ . '/ApiV1Routes/playlists.php';
 
     Route::get('/ping', function () {
         return JoshPing::ping();
     });
 
     //this is the route for creating share links
-        Route::get('/shares', [ShareApiController::class, 'index'])->name('share.index');
+    Route::get('/shares', [ShareApiController::class, 'index'])->name('share.index');
 
     // view listener route
-        Route::post('/view-listener', [ViewListenerController::class, 'message'])->middleware('auth.sanctum.switch')->name('view.listener');
-    //Route::get('/view-listener', [ViewListenerController::class,'
+    Route::post('/view-listener', [ViewListenerController::class, 'message'])->middleware('auth.sanctum.switch')->name('view.listener');
 
 });

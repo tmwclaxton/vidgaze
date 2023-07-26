@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\VideoInteractionResource;
 use App\Models\CreatorModels\CreatorInteraction;
 use App\Models\PlaylistModels\Playlist;
 use App\Models\PlaylistModels\PlaylistVideo;
@@ -68,15 +69,15 @@ class VideoInteractionApiController extends Controller
      * @param $video_id
      * @return JsonResponse
      */
-    public function getVideoInteractions($video_id) {
+    public function getVideoInteraction($video_id) {
         $creatorId = Auth::user()->creator->id;
         // check if user has liked video
         $VideoViewInfo = VideoInteraction::where('viewer_id', $creatorId)->where('video_id', $video_id)->first() ?? null;
+
+        $VideoViewInfo = new VideoInteractionResource($VideoViewInfo);
+
         return response()->json([
-            'liked' => $VideoViewInfo['liked'] ?? null,
-            'reported' => $VideoViewInfo['reported'] ?? null,
-            'disinterested' => $VideoViewInfo['disinterested'] ?? null,
-            'view_point' => $VideoViewInfo['view_point'] ?? null,
+            'interaction' => $VideoViewInfo,
         ]);
     }
 

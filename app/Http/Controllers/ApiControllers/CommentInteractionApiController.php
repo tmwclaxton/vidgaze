@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CommentInteractionCollection;
 use App\Models\CommentModels\Comment;
 use App\Models\CommentModels\CommentInteraction;
 use Illuminate\Http\JsonResponse;
@@ -12,7 +13,12 @@ use Illuminate\Support\Facades\Auth;
 class CommentInteractionApiController extends Controller
 {
 
-
+    // validation rules for the comment interaction
+    protected array $rules = [
+        'item_id' => 'required|integer',
+        'item_type' => 'required|in:video,podcast,stream',
+        'comment_id' => 'required|integer',
+    ];
 
     /** formats the response for the like and dislike methods
      * @param Comment $comment
@@ -22,8 +28,8 @@ class CommentInteractionApiController extends Controller
      */
     private function formatLikeAndDislikeResponse(Comment $comment, $liked, $message)
     {
-        return response()->json([
-            //'toastType' => 'success', // 'success', 'info', 'warning'
+        return response()->json([// 'success' or 'undo'
+            'toastType' => $liked ? 'success' : 'undo',
             'message' => $message,
             'result' => $liked,
             'like_count' => $comment->like_count,
@@ -47,7 +53,11 @@ class CommentInteractionApiController extends Controller
      * @param int $commentId
      * @return JsonResponse
      */
-    public function toggleLike(int $commentId) {
+    public function toggleLike(Request $request) {
+        $request->validate($this->rules);
+        $itemType = $request->input('item_type');
+        $itemId = $request->input('item_id');
+        $commentId = $request->input('comment_id');
 
         $comment = Comment::findOrFail($commentId);
 
@@ -82,7 +92,12 @@ class CommentInteractionApiController extends Controller
      * @param int $commentId
      * @return JsonResponse
      */
-    public function toggleDislike(int $commentId) {
+    public function toggleDislike(Request $request) {
+        $request->validate($this->rules);
+
+        $itemType = $request->input('item_type');
+        $itemId = $request->input('item_id');
+        $commentId = $request->input('comment_id');
 
         $comment = Comment::findOrFail($commentId);
 
@@ -116,24 +131,27 @@ class CommentInteractionApiController extends Controller
      * @return JsonResponse
      */
     public function getInteractionsByItem(Request $request) {
+        $request->validate($this->rules);
+
         $comments = null;
 
         // get type of item (video / stream / podcast) and id of item
         $itemType = $request->input('item_type');
         $itemId = $request->input('item_id');
+        $commentId = $request->input('comment_id');
 
         // get all comments for item and has user's creator id
         if ($itemType == 'video') {
-            //$comments = CommentInteraction::query()->where([['video_id', '=', $itemId],['creator_id', '=', Auth::user()->creator->id]])->get();
+            //$commentInteractions = CommentInteraction::query()->where([['comment_id', '=', $itemId],['creator_id', '=', Auth::user()->creator->id]])->get();
             $commentInteractions = Comment::query()->join('comment_interactions', 'comments.id', '=', 'comment_interactions.comment_id')->where([['comments.video_id', '=', $itemId],['comment_interactions.creator_id', '=', Auth::user()->creator->id]])->get();
             //return $commentInteractions;
             // format so it return the comment id and the interaction
-            $commentInteractions = $commentInteractions->map(function($commentInteraction) {
-                return [
-                    'comment_id' => $commentInteraction->comment_id,
-                    'liked' => $commentInteraction->liked,
-                ];
-            });
+            //$commentInteractions = $commentInteractions->map(function($commentInteraction) {
+            //    return [
+            //        'comment_id' => $commentInteraction->comment_id,
+            //        'liked' => $commentInteraction->liked,
+            //    ];
+            //});
         }
 
         if (!$commentInteractions) {
@@ -143,7 +161,7 @@ class CommentInteractionApiController extends Controller
         }
 
         return response()->json([
-            'result' => $commentInteractions,
+            'result' => new CommentInteractionCollection($commentInteractions)
         ], 200);
 
     }

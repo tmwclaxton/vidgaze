@@ -19,9 +19,7 @@ class CommentApiController extends Controller
     protected array $rules = [
         'body' => 'required|regex:/^[A-Za-z0-9\-! ,\'\"\/@\.:\(\)]+$/|max:10000|min:1',
         'parent_comment_id' => 'nullable|exists:comments,id',
-        // item id must be integer
         'item_id' => 'required|integer',
-        // item type can be video, podcast, or stream
         'item_type' => 'required|in:video,podcast,stream',
    ];
 
@@ -29,12 +27,6 @@ class CommentApiController extends Controller
 
     private function verifyUserPermissions(Comment $comment): void
     {
-        // check if user is authenticated
-        if (!Auth::user()) {
-            response()->json([
-                'error' => 'You are not authenticated'
-            ], 401);
-        }
 
         if ( (Auth::user() === null || $comment->creator_id !== Auth::user()->creator->id) && !Auth::user()->isAdmin() ) {
             response()->json(['error' => 'You do not have permission to interact with this comment'], 403);
@@ -48,9 +40,21 @@ class CommentApiController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function infinite(Request $request) {
+    public function index(Request $request) {
+
+        $request->validate([
+            'item_id' => 'required|integer',
+            'item_type' => 'required|in:video,podcast,stream',
+            'category' => 'required|in:order by,best,new,controversial,old',
+            'per_page' => 'nullable|integer',
+            'comment_ids' => 'nullable|array',
+            'first_comment_id' => 'nullable|integer',
+            'parent_comment_id' => 'nullable|integer'
+        ]);
+
         // get order by, limit, offset, and video id from request,
         $per_page = $request->input('per_page') ?? 10;
+        $per_page = $per_page > 100 ? 100 : $per_page;
         $comment_ids = $request->comment_ids ?? [];
         $category = $request->input('category') ?? 'Order By';
         $item_id = $request->input('item_id') ?? null;
@@ -127,6 +131,7 @@ class CommentApiController extends Controller
     public function store(Request $request)
     {
 
+        $request->validate($this->rules);
 
         //get info from request
         $item_type = $request->item_type;
@@ -136,7 +141,7 @@ class CommentApiController extends Controller
 
 
 
-        if (!(isset(Auth::user()->creator->id) && $this->validate($request, $this->rules))) {
+        if (!(isset(Auth::user()->creator->id) )) {
             return response()->json([
                 'toastType' => 'warning',
                 'message' => 'Comment could not be created',
@@ -197,16 +202,19 @@ class CommentApiController extends Controller
      * @return JsonResponse
      */
     public function update(Request $request) {
-        $comment = Comment::find($request->comment_id);
-        $body = $request->body ?? null;
-        $this->verifyUserPermissions($comment);
+        $request->validate($this->rules);
 
-        if ( !$this->validate( request(), $this->rules ) ) {
+        $comment = Comment::find($request->item_id);
+
+        if ($comment === null) {
             return response()->json([
-                'toastType' => "warning",
-                'message' => 'Comment could not be updated',
+                'toastType' => 'warning',
+                'message' => 'Comment could not be found',
             ]);
         }
+
+        $body = $request->body ?? null;
+        $this->verifyUserPermissions($comment);
 
         $comment->body = $body;
         $comment->save();
@@ -214,6 +222,7 @@ class CommentApiController extends Controller
         return response()->json([
             'toastType' => 'success',
             'message' => 'Comment updated successfully',
+            'comment' => new CommentResource($comment),
         ]);
     }
 
@@ -224,9 +233,17 @@ class CommentApiController extends Controller
      */
     public function destroy(Request $request)
     {
-        $comment = Comment::find($request->input('comment_id'));
+        $request->validate([
+            'item_id' => 'required|integer',
+            'item_type' => 'required|in:video,podcast,stream',
+            'comment_id' => 'required|integer',
+        ]);
         $item_type = $request->input('item_type'); // for future use
         $item_id = $request->input('item_id');
+        $comment_id = $request->input('comment_id');
+
+        $comment = Comment::find($comment_id);
+
         $video = Video::find($item_id);
 
 

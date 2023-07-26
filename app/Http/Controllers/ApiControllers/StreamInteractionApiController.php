@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\StreamInteractionResource;
 use App\Models\CreatorModels\CreatorInteraction;
 use App\Models\StreamModels\Stream;
 use App\Models\StreamModels\StreamInteraction;
@@ -54,10 +55,10 @@ class StreamInteractionApiController extends Controller
         // check if user has liked video
         $VideoViewInfo = StreamInteraction::where('viewer_id', $creatorId)->where('stream_id', $streamId)->first() ?? null;
 
+        $VideoViewInfo = new StreamInteractionResource($VideoViewInfo);
 
         return response()->json([
-            'reported' => $VideoViewInfo['reported'] ?? null,
-            'disinterested' => $VideoViewInfo['disinterested'] ?? null,
+            'interaction' => $VideoViewInfo,
         ]);
     }
 
