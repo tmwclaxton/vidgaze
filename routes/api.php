@@ -4,6 +4,7 @@ use App\Helpers\JoshPing;
 use App\Http\Controllers\ApiControllers\ShareApiController;
 use App\Http\Controllers\ApiControllers\ViewListenerController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Redis;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,8 +23,26 @@ Route::prefix('v1')->name('v1')->group(function () {
 
     //this is a test route to make sure the api is working
     Route::get('health', function () {
-        return response()->json(['message' => 'VidGaze API v1 is working!'], 200);
-    });
+        // check if the database is connected
+        $database = (bool)DB::connection()->getPdo();
+        // check if redis is connected
+        $redis = (bool)Redis::connection()->ping();
+        // check storage
+        $s3 = "Not in use";
+
+        if ($database && $redis) {
+            $message = 'VidGaze API v1 is working!';
+        } else {
+            $message = 'VidGaze API v1 is not working!';
+        }
+
+        return response()->json([
+            'message' => $message,
+            'database' => $database,
+            'redis' => $redis,
+            's3' => $s3,
+        ]);
+    })->name('health');
 
     require __DIR__ . '/ApiRoutes/videos.php';
     require __DIR__ . '/ApiRoutes/comments.php';
