@@ -122,10 +122,16 @@ class AuthApiController extends Controller
     public function signup(Request $request) {
         $validatedData = $request->validate([
             'username' => 'required|string|max:30',
-            'email' => 'required|email|max:255|unique:users,email',
+            'email' => 'required|email|max:255',
             'password' => ['required', 'min:6', 'confirmed', Rules\Password::defaults()],
             'terms' => 'required|accepted'
         ]);
+
+        // check if user is already registered if so log them in
+        $user = User::where('email', $request->email)->first();
+        if ($user) {
+            return $this->login($request, true);
+        }
 
         $user = User::create([
             'email' => $request->email,
@@ -175,7 +181,7 @@ class AuthApiController extends Controller
     /*
      * Generate sanctum token on successful login
     */
-    public function login(Request $request) {
+    public function login(Request $request, $register_redirect = false) {
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -185,9 +191,12 @@ class AuthApiController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+            if ($register_redirect) {
+                $message = ['email' => ['A user already exists with this email']];
+            } else {
+                $message = ['email' => ['The provided credentials are incorrect.']];
+            }
+            throw ValidationException::withMessages($message);
         }
 
         $token = $this->createToken($user, $request->remember_me);
