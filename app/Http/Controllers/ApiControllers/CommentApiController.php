@@ -23,14 +23,17 @@ use Illuminate\Support\Facades\Auth;
 class CommentApiController extends Controller
 {
 
-    protected Kind $kind;
 
     // use kind to figure out which model to use
-    protected array $allowedKinds = [
-        Kind::Video,
-        Kind::PodcastEpisode,
-        Kind::Stream,
-        Kind::Creator
+    public array $allowedKinds = [
+        //Kind::Video,
+        //Kind::PodcastEpisode,
+        //Kind::Stream,
+        //Kind::Creator
+        'video',
+        'podcast_episode',
+        'stream',
+        'creator'
     ];
 
     protected array $allowedCategories = [
@@ -41,6 +44,8 @@ class CommentApiController extends Controller
         'old',
         'random'
     ];
+
+
 
     private function verifyUserPermissions(Comment $comment): void
     {
