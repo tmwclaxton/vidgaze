@@ -27,17 +27,25 @@ class StreamApiController extends Controller
         $request->validate([
             'per_page' => 'integer',
             'skip' => 'integer',
+            'category_id' => 'integer|exists:categories,id',
         ]);
         // max no is 100, default is 20
         $per_page = $request->per_page ?? 20;
         $per_page = $per_page > 50 ? 50 : $per_page;
+        $category_id = $request->category_id ?? null;
         $skip = $request->skip ?? 0;
 
         // grab streams
-        $streams = Stream::with('creator')
+        $streamQuery = Stream::with('creator')
                 ->where('visibility', '=','public')
                 ->where('streams.is_live', '=',true)
-            ->orderBy('viewers', 'desc')
+            ->orderBy('viewers', 'desc');
+
+        if ($category_id) {
+            $streamQuery->where('category_id', '=', $category_id);
+        }
+
+        $streams = $streamQuery
             ->skip($skip)
             ->take($per_page)
             ->get();

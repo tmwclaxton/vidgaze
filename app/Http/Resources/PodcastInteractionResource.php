@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 
-class CategoryResource extends JsonResource
+class PodcastInteractionResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,12 +17,10 @@ class CategoryResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'slug' => $this->slug,
-            'name' => $this->name,
-            'description' => $this->description,
-            'tags' => json_decode($this->tags_json) ?? [],
-            'thumbnail_url' => $this->thumbnail_url,
-
+            'creator_id' => $this->creator_id,
+            'liked' => boolval($this->liked),
+            'reported' => boolval($this->reported),
+            'disinterested' => boolval($this->disinterested),
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(),
             'updated_at' => Carbon::parse($this->updated_at)->diffForHumans(),
         ];

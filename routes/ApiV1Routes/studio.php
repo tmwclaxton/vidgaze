@@ -4,7 +4,7 @@ use App\Http\Controllers\Tools\ImportingController;
 use App\Http\Controllers\Tools\LinkingController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     //    Route::get('import/login/{platform}', [ImportingController::class,'logIn'])->name('studio.logIn');
     Route::get('studio/link/{platform}', [LinkingController::class,'link'])->name('studio.link');
     Route::get('studio/login/{platform}', [LinkingController::class,'logIn'])->name('studio.logIn');

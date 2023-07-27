@@ -5,14 +5,14 @@ namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryCollection;
-use App\Http\Resources\StreamCollection;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
-use App\Models\StreamModels\Stream;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CategoryApiController extends Controller
 {
+
 
     /** returns categories for the home page
      * @param Request $request
@@ -20,6 +20,9 @@ class CategoryApiController extends Controller
      */
     public function index(Request $request)
     {
+        $request->validate([
+            'perPage' => 'integer|min:1|max:100',
+        ]);
         $perPage = $request->perPage ?? 20;
         $categories = new CategoryCollection(Category::query()
             ->where('thumbnail_url', '!=', null)
@@ -31,43 +34,23 @@ class CategoryApiController extends Controller
         return response()->json($categories);
     }
 
-    /** returns categories along with streams for the infinite scroll
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function getCategoriesWithStreams(Request $request)
-    {
-        $perPage = $request->perPage ?? 20;
-        $categoryIds = $request->categoryIds ?? [];
+    public function show($slug) {
+        // grab the stream
+        $category = Category::query()->where('slug', '=', $slug)->firstOrFail();
 
-        if (!is_array($categoryIds)) {
-            $categoryIds = explode(',', $categoryIds);
+        if (!$category) {
+            return response()->json([
+                'message' => 'Category not found',
+            ], 404);
         }
 
-        //return $categoryIds;
-        $categories = new CategoryCollection(Category::query()->inRandomOrder()
-            ->whereNotIn('id', $categoryIds)
-            ->take($perPage)
-            ->get());
 
-        $result = [];
+        // return the category
+        return response()->json([
+            'category' => new CategoryResource($category),
+        ]);
 
-        foreach ($categories as $category) {
-            $streams = new StreamCollection(Stream::query()
-                ->where('category_id', $category->id)
-                ->orderByDesc('viewers')
-                ->take(6)
-                ->get());
-
-            $result[] = [
-                'category' => $category,
-                'streams' => $streams,
-            ];
-        }
-
-        return response()->json($result);
     }
-
 
 
 

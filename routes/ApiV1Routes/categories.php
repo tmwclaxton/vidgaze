@@ -3,4 +3,10 @@
 use App\Http\Controllers\ApiControllers\CategoryApiController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('categories/infinite', [CategoryApiController::class, 'infinite'])->name('categories.infinite');
+Route::prefix('/category')->name('category')->group(function () {
+
+
+    Route::get('/index', [CategoryApiController::class, 'index'])->name('index');
+    Route::get('/{slug}', [CategoryApiController::class, 'show'])->name('show');
+
+});

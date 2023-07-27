@@ -204,6 +204,13 @@ class CommentApiController extends Controller
                 ], 400);
         }
 
+        if ($item === null) {
+            return response()->json([
+                'toastType' => 'warning',
+                'message' => 'Item does not exist'
+            ], 400);
+        }
+
         $comment = Comment::create([
             'creator_id' => Auth::user()->creator->id,
             'parent_comment_id' => $parent_comment_id,
@@ -291,7 +298,7 @@ class CommentApiController extends Controller
         if ($item === null) {
             return response()->json([
                 'toastType' => 'warning',
-                'message' => 'Item could not be found',
+                'message' => 'item could not be found',
             ]);
         }
 

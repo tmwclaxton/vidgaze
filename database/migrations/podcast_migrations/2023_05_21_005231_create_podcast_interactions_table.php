@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('podcast_interactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('viewer_id')->references('id')->on('creators')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('creator_id')->references('id')->on('creators')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('podcast_id')->references('id')->on('podcasts')->constrained()->cascadeOnDelete();
             //1 = yes , 0 = disliked, null = neither
             $table->enum('liked',['like','dislike'])->nullable(); //use enum

@@ -19,6 +19,22 @@ use Inertia\Inertia;
 class VideoApiController extends Controller
 {
 
+    protected array $allowedCategories = [
+        'popular',
+        'new',
+        'trending',
+        'recommended',
+        'random',
+        'awarded',
+        'comments',
+    ];
+
+    protected array $allowedPlatforms = [
+        'YouTube',
+        'Dailymotion',
+        'Vimeo',
+    ];
+
 
     /**
      * Get videos with certain filters
@@ -29,25 +45,23 @@ class VideoApiController extends Controller
     public function index(Request $request)
     {
         $request->validate([
-            'per_page' => 'integer',
+            'per_page' => 'integer|min:1|max:50',
             'video_ids' => 'array',
-            'category' => 'string',
+            'category' => 'string|in:' . implode(',', $this->allowedCategories),
+            'platforms' => 'array|in:' . implode(',', $this->allowedPlatforms),
             'shorts' => 'boolean',
             'first_video_slug' => 'string',
         ]);
-        // max no is 100, default is 20
+
         $per_page = $request->per_page ?? 20;
-        $per_page = $per_page > 50 ? 50 : $per_page;
-        //get ids from params
         $video_ids = $request->video_ids ?? [];
-        // Get the selected category
         $selectedCategory = $request->category ?? 'popular';
         $shorts = $request->shorts ?? false;
         $first_video_slug = $request->first_video_slug ?? null;
+        $selectedVideoPlatforms = $request->platforms ?? ['YouTube', 'Dailymotion', 'Vimeo'];
 
 
         if (!is_array($video_ids) ) {
-            //explode the ids into an array
             $video_ids = explode(',', $video_ids);
         }
 
@@ -58,58 +72,70 @@ class VideoApiController extends Controller
 
         $query = Video::query();
 
-        $selectedVideoPlatforms = ['YouTube', 'Dailymotion', 'Vimeo'];
-
-        if ($selectedCategory == 'popular') {
-
-            $videoViews = VideoView::select(DB::raw('video_id, sum(duration) as total_duration, count(*) as total_views, (sum(duration) * (1 + (UNIX_TIMESTAMP(created_at) - UNIX_TIMESTAMP(NOW())) / (3600 * 24 * 7)) + count(*)) as score, created_at'))
-                ->where('created_at', '>=', Carbon::now()->subWeek())
-                ->groupBy('video_id', 'created_at')
-                ->orderBy('score', 'desc')
-                ->take(500)
-                ->get();
-
-            // Get the most popular video IDs
-            $mostPopularVideoIds = $videoViews->pluck('video_id');
-            // Preserve order
-            if ($mostPopularVideoIds->count() > 0) {
-                //$query->whereIn('id', $mostPopularVideoIds)->orderByRaw(DB::raw("FIELD(id, ".implode(',', $mostPopularVideoIds->toArray()).")"));
-                $query->whereIn('id', $mostPopularVideoIds)->orderByRaw("FIELD(id, ".implode(',', $mostPopularVideoIds->toArray()).")");
-
-            }
-
-        } elseif ($selectedCategory == 'trending') {
-            if (!isset($mostTrendingVideoIds)) {
-                $videoViewInfos = DB::table('video_interactions')
-                    ->select('video_id', DB::raw('SUM(CASE WHEN liked = "like" THEN 1 ELSE 0 END) as likes'), DB::raw('SUM(CASE WHEN liked = "dislike" THEN 1 ELSE 0 END) as dislikes'))
+        switch ($selectedCategory) {
+            case 'popular':
+                $videoViews = VideoView::select(DB::raw('video_id, sum(duration) as total_duration, count(*) as total_views, (sum(duration) * (1 + (UNIX_TIMESTAMP(created_at) - UNIX_TIMESTAMP(NOW())) / (3600 * 24 * 7)) + count(*)) as score, created_at'))
                     ->where('created_at', '>=', Carbon::now()->subWeek())
-                    ->groupBy('video_id')
-                    ->orderByRaw('likes - dislikes DESC')
-                    ->limit(500)
+                    ->groupBy('video_id', 'created_at')
+                    ->orderBy('score', 'desc')
+                    ->take(500)
                     ->get();
 
-                $mostTrendingVideoIds = $videoViewInfos->sortByDesc(function($videoId) {
-                    return $videoId->likes - $videoId->dislikes;
-                })->pluck('video_id');
+                // Get the most popular video IDs
+                $mostPopularVideoIds = $videoViews->pluck('video_id');
+                // Preserve order
+                if ($mostPopularVideoIds->count() > 0) {
+                    //$query->whereIn('id', $mostPopularVideoIds)->orderByRaw(DB::raw("FIELD(id, ".implode(',', $mostPopularVideoIds->toArray()).")"));
+                    $query->whereIn('id', $mostPopularVideoIds)->orderByRaw("FIELD(id, ".implode(',', $mostPopularVideoIds->toArray()).")");
 
-            }
+                }
+                break;
+            case 'new':
+                $query->where('created_at', '>=', Carbon::now()->subWeek());
+                break;
+            case 'trending':
+                if (!isset($mostTrendingVideoIds)) {
+                    $videoViewInfos = DB::table('video_interactions')
+                        ->select('video_id', DB::raw('SUM(CASE WHEN liked = "like" THEN 1 ELSE 0 END) as likes'), DB::raw('SUM(CASE WHEN liked = "dislike" THEN 1 ELSE 0 END) as dislikes'))
+                        ->where('created_at', '>=', Carbon::now()->subWeek())
+                        ->groupBy('video_id')
+                        ->orderByRaw('likes - dislikes DESC')
+                        ->limit(500)
+                        ->get();
 
-            // Preserve order
-            if ($mostTrendingVideoIds->count() > 0) {
-                //$query->whereIn('id', $mostTrendingVideoIds)->orderByRaw(DB::raw("FIELD(id, " . implode(',', $mostTrendingVideoIds->toArray()) . ")"));
-                $query->whereIn('id', $mostTrendingVideoIds)->orderByRaw("FIELD(id, " . implode(',', $mostTrendingVideoIds->toArray()) . ")");
+                    $mostTrendingVideoIds = $videoViewInfos->sortByDesc(function($videoId) {
+                        return $videoId->likes - $videoId->dislikes;
+                    })->pluck('video_id');
 
-            }
+                }
 
-        } elseif ($selectedCategory == 'new') {
-            $query->orderByDesc('time_published');
-        } elseif ($selectedCategory == 'random') {
-            $query->inRandomOrder();
-        } elseif ($selectedCategory == 'awarded') {
-            $query->has('awards');
-        } elseif ($selectedCategory == 'comments') {
-            $query->orderByDesc('comment_count');
+                // Preserve order
+                if ($mostTrendingVideoIds->count() > 0) {
+                    //$query->whereIn('id', $mostTrendingVideoIds)->orderByRaw(DB::raw("FIELD(id, " . implode(',', $mostTrendingVideoIds->toArray()) . ")"));
+                    $query->whereIn('id', $mostTrendingVideoIds)->orderByRaw("FIELD(id, " . implode(',', $mostTrendingVideoIds->toArray()) . ")");
+
+                }
+                break;
+            case 'random':
+                $query->inRandomOrder();
+                break;
+            case 'awarded':
+                $query->has('awards');
+                break;
+            case 'comments':
+                $query->orderByDesc('comment_count');
+                break;
+            case 'recommended':
+                //$query->where('views', '>', 0);
+                return response()->json(['error' => 'Not implemented'], 400);
+                break;
+            default:
+                return response()->json(['error' => 'Invalid category'], 400);
+
         }
+
+
+
 
         // Only get public videos
         $query->where('visibility', '=','public');

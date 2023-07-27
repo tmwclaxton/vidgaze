@@ -31,7 +31,7 @@ Route::prefix('v1')->name('v1')->group(function () {
     require __DIR__ . '/ApiV1Routes/feed.php';
     require __DIR__ . '/ApiV1Routes/categories.php';
     require __DIR__ . '/ApiV1Routes/search.php';
-    require __DIR__ . '/ApiV1Routes/music.php';
+    //require __DIR__ . '/ApiV1Routes/music.php';
     require __DIR__ . '/ApiV1Routes/auth.php';
     require __DIR__ . '/ApiV1Routes/user.php';
     require __DIR__ . '/ApiV1Routes/playlists.php';

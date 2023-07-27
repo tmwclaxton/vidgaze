@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PodcastInteractionResource;
 use App\Models\PodcastModels\Podcast;
 use App\Models\PodcastModels\PodcastInteraction;
 use Illuminate\Http\JsonResponse;
@@ -39,14 +40,14 @@ class PodcastInteractionApiController extends Controller
             $interaction->save();
         }
 
-        return response()->json([$podcast, $interaction]);
+        return [$podcast, $interaction];
     }
 
     /** toggle the like
      * @param $podcastId
      * @return JsonResponse
      */
-    public function toggleLike($podcastId)
+    public function toggleLove($podcastId)
     {
         [$podcast, $interaction] = $this->getPodcastAndInteraction($podcastId);
 
@@ -89,10 +90,7 @@ class PodcastInteractionApiController extends Controller
         }
 
         return response()->json([
-            'liked' => $interaction->liked,
-            'episode_id' => $podcast->id,
-            'reported' => $interaction->reported,
-            'disinterest' => $interaction->disinterest,
+            'interaction' => new PodcastInteractionResource($interaction),
         ], 200);
     }
 
