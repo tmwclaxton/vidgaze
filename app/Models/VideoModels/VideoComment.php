@@ -15,6 +15,6 @@ class VideoComment extends Model
         return $this->hasOne(Comment::class, 'id','comment_id');
     }
     public function video() {
-        return $this->belongsTo(Video::class);
+        return $this->belongsTo(Video::class, 'video_id');
     }
 }

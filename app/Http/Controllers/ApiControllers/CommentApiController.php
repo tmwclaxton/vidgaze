@@ -23,14 +23,24 @@ use Illuminate\Support\Facades\Auth;
 class CommentApiController extends Controller
 {
 
-    protected array $rules = [
-        'body' => 'required|regex:/^[A-Za-z0-9\-! ,\'\"\/@\.:\(\)]+$/|max:10000|min:1',
-        'parent_comment_id' => 'nullable|exists:comments,id',
-        'item_id' => 'required|integer',
-        'item_type' => 'required|in:video,podcast_episode,stream,creator',
-   ];
+    protected Kind $kind;
 
+    // use kind to figure out which model to use
+    protected array $allowedKinds = [
+        Kind::Video,
+        Kind::PodcastEpisode,
+        Kind::Stream,
+        Kind::Creator
+    ];
 
+    protected array $allowedCategories = [
+        'order by',
+        'best',
+        'new',
+        'controversial',
+        'old',
+        'random'
+    ];
 
     private function verifyUserPermissions(Comment $comment): void
     {
@@ -50,9 +60,10 @@ class CommentApiController extends Controller
     public function index(Request $request) {
 
         $request->validate([
-            'item_id' => 'required|integer',
-            'item_type' => 'required|in:video,podcast,stream',
-            'category' => 'required|in:order by,best,new,controversial,old',
+            'item_id' => 'integer|required',
+            'item_type' => 'in:' . implode(',', $this->allowedKinds) . '|required',
+            // default is order by
+            'category' => 'in:' . implode(',', $this->allowedCategories) . '|nullable',
             'per_page' => 'nullable|integer',
             'comment_ids' => 'nullable|array',
             'first_comment_id' => 'nullable|integer',
@@ -63,7 +74,7 @@ class CommentApiController extends Controller
         $per_page = $request->input('per_page') ?? 10;
         $per_page = $per_page > 100 ? 100 : $per_page;
         $comment_ids = $request->comment_ids ?? [];
-        $category = $request->input('category') ?? 'Order By';
+        $category = $request->input('category') ?? 'order by';
         $item_id = $request->input('item_id') ?? null;
         $item_type = $request->input('item_type') ?? null;
         $first_comment_id = $request->input('first_comment_id') ?? null;
@@ -91,6 +102,8 @@ class CommentApiController extends Controller
             case 'creator':
                 $query = Creator::find($item_id)->comments();
                 break;
+            default:
+                return response()->json(['error' => 'Invalid item type'], 400);
         }
 
         // if firstCommentId is not null, add where clause to query
@@ -105,8 +118,8 @@ class CommentApiController extends Controller
 
         // order the query by the orderByMethod passed in
         switch ($category) {
-            case 'order by':
-            case 'best':
+            // best and order by are the same
+            case 'best' || 'order by':
                 $query->orderBy('like_count', 'DESC')
                     ->orderBy('dislike_count', 'ASC')
                     ->orderBy('created_at', 'DESC');
@@ -144,7 +157,12 @@ class CommentApiController extends Controller
     public function store(Request $request)
     {
 
-        $request->validate($this->rules);
+        $request->validate([
+            'item_id' => 'integer|required',
+            'item_type' => 'in:' . implode(',', $this->allowedKinds) . '|required',
+            'parent_comment_id' => 'nullable|integer|exists:comments,id',
+            'body' => 'required|regex:/^[A-Za-z0-9\-! ,\'\"\/@\.:\(\)]+$/|max:10000|min:1',
+        ]);
 
         //get info from request
         $item_type = $request->item_type;
@@ -225,18 +243,11 @@ class CommentApiController extends Controller
      */
     public function update(Request $request) {
         $request->validate([
-            'comment_id' => 'required|integer',
-            'body' => 'required|string',
+            'comment_id' => 'required|integer|exists:comments,id',
+            'body' => 'required|regex:/^[A-Za-z0-9\-! ,\'\"\/@\.:\(\)]+$/|max:10000|min:1',
         ]);
 
         $comment = Comment::find($request->comment_id);
-
-        if ($comment === null) {
-            return response()->json([
-                'toastType' => 'warning',
-                'message' => 'Comment could not be found',
-            ]);
-        }
 
         $body = $request->body ?? null;
         $this->verifyUserPermissions($comment);
@@ -259,22 +270,23 @@ class CommentApiController extends Controller
     public function destroy(Request $request)
     {
         $request->validate([
-            'comment_id' => 'required|integer',
+            'comment_id' => 'required|integer|exists:comments,id',
+            'item_type' => 'in:' . implode(',', $this->allowedKinds) . '|required',
         ]);
 
         $comment_id = $request->input('comment_id');
+        $item_type = $request->input('item_type');
 
         // get comment
         $comment = Comment::find($comment_id);
 
         //grab the comment's item from either the video, stream, or podcast_episode comment table
-        //$item = $comment->video_comment ?? $comment->stream_comment ?? $comment->podcast_episode_comment ?? $comment->creator_comment ?? null;
+        $item = $comment->hasOneThroughObject($item_type);
 
-
-        if ($comment === null) {
+        if ($item === null) {
             return response()->json([
                 'toastType' => 'warning',
-                'message' => 'Comment could not be found',
+                'message' => 'Item could not be found',
             ]);
         }
 
@@ -294,8 +306,8 @@ class CommentApiController extends Controller
                 $parent_comment->save();
             }
 
-            //$video->comment_count--;
-            //$video->save();
+            $item->comment_count--;
+            $item->save();
         }
 
         return response()->json([

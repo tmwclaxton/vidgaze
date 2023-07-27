@@ -16,10 +16,13 @@ return new class extends Migration {
             $table->string('title')->nullable()->index();
             $table->text('description')->nullable();
             $table->string('thumbnail_url')->nullable();
+            $table->enum('visibility', ['public', 'unlisted', 'private'])->default('public');
+
             $table->integer('like_count')->default('0')->unsigned();
             $table->integer('view_count')->default('0')->unsigned();
             $table->integer('live_viewer_count')->unsigned()->default('0')->index();
-            $table->enum('visibility', ['public', 'unlisted', 'private'])->default('public');
+            $table->integer('impressions')->default('0')->unsigned();
+
             $table->timestamps();
         });
     }
