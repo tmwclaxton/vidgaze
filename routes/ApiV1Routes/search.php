@@ -4,7 +4,7 @@
 use App\Http\Controllers\ApiControllers\SearchApiController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('search')->name('search')->group(function () {
+Route::prefix('search')->name('search.')->group(function () {
 
     Route::get('/query', [SearchApiController::class, 'getSearchResults'])->name('query');
 

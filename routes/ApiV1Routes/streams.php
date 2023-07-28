@@ -3,9 +3,9 @@
 
 use App\Http\Controllers\ApiControllers\StreamApiController;
 use App\Http\Controllers\ApiControllers\StreamInteractionApiController;
-use Illuminate\Support\Facades\Route;
 
-Route::prefix('/stream')->name('stream')->group(function () {
+
+Route::prefix('/stream')->name('stream.')->group(function () {
 
     Route::get('/index', [StreamApiController::class, 'index'])->name("index");
     Route::get('{slug}', [StreamApiController::class, 'show'])->middleware('auth.sanctum.switch')->name('show');

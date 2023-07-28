@@ -3,9 +3,9 @@
 use App\Helpers\JoshPing;
 use App\Http\Controllers\ApiControllers\ShareApiController;
 use App\Http\Controllers\ApiControllers\ViewListenerController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Redis;
 
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,8 +19,7 @@ use Illuminate\Support\Facades\Redis;
 
 // wrap all routes in v1
 
-Route::prefix('v1')->name('v1')->group(function () {
-
+Route::prefix('v1')->name('v1.')->group(function () {
 
     require __DIR__ . '/ApiV1Routes/videos.php';
     require __DIR__ . '/ApiV1Routes/comments.php';

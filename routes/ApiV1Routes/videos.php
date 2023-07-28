@@ -5,7 +5,7 @@ use App\Http\Controllers\ApiControllers\VideoApiController;
 use App\Http\Controllers\ApiControllers\VideoInteractionApiController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('/video')->name('video')->group(function () {
+Route::prefix('/video')->name('video.')->group(function () {
 
     Route::get('/index', [VideoApiController::class, 'index'])->name('index');
     Route::get('{slug}', [VideoApiController::class, 'show'])->middleware('auth.sanctum.switch')->name('show');

@@ -4,7 +4,7 @@ use App\Http\Controllers\ApiControllers\CommentApiController;
 use App\Http\Controllers\ApiControllers\CommentInteractionApiController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('/comment')->name('comment')->group(function () {
+Route::prefix('/comment')->name('comment.')->group(function () {
 
     Route::get('/index', [CommentApiController::class, 'index'])->name('index');
 

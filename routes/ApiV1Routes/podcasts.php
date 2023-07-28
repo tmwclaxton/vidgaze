@@ -4,7 +4,7 @@ use App\Http\Controllers\ApiControllers\PodcastApiController;
 use App\Http\Controllers\ApiControllers\PodcastInteractionApiController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('podcast')->name('podcast')->group(function () {
+Route::prefix('podcast')->name('podcast.')->group(function () {
 
 
     Route::get('/index', [PodcastApiController::class, 'index'])->name('podcasts.index');
