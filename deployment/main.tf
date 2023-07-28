@@ -1,90 +1,3 @@
-provider "aws" {
-    // London
-    region = "eu-west-2"
-}
-
-# Create a VPC
-resource "aws_vpc" "my_vpc" {
-    cidr_block = "10.0.0.0/16"  # Replace this with your desired IP range for the VPC
-}
-
-# Create public and private subnets within the VPC
-resource "aws_subnet" "public_subnet" {
-    vpc_id            = aws_vpc.my_vpc.id
-    cidr_block        = "10.0.1.0/24"  # Replace this with a unique CIDR block for the public subnet
-    map_public_ip_on_launch = true
-}
-
-resource "aws_subnet" "private_subnet" {
-    vpc_id            = aws_vpc.my_vpc.id
-    cidr_block        = "10.0.2.0/24"  # Replace this with a unique CIDR block for the private subnet
-}
-
-# Create a security group for the AppRunner service (public)
-resource "aws_security_group" "app_runner_sg" {
-    name_prefix = "my-laravel-apprunner-sg"
-    vpc_id      = aws_vpc.my_vpc.id
-
-    # Allow inbound HTTP traffic from the internet (GitHub Actions)
-    ingress {
-        from_port   = 80
-        to_port     = 80
-        protocol    = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-
-    # Allow outbound traffic to the internet
-    egress {
-        from_port   = 0
-        to_port     = 0
-        protocol    = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-}
-
-# Create a security group for the RDS instance (private)
-resource "aws_security_group" "rds_sg" {
-    name_prefix = "my-laravel-rds-sg"
-    vpc_id      = aws_vpc.my_vpc.id
-
-    # Allow inbound traffic from the AppRunner service
-    ingress {
-        from_port   = 3306
-        to_port     = 3306
-        protocol    = "tcp"
-        security_groups = [aws_security_group.app_runner_sg.id]
-    }
-
-    # Allow outbound traffic to the internet (for RDS updates, etc.)
-    egress {
-        from_port   = 0
-        to_port     = 0
-        protocol    = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-}
-
-# Create a security group for the Redis ElastiCache cluster (private)
-resource "aws_security_group" "redis_sg" {
-    name_prefix = "my-laravel-redis-sg"
-    vpc_id      = aws_vpc.my_vpc.id
-
-    # Allow inbound traffic from the AppRunner service
-    ingress {
-        from_port   = 6379
-        to_port     = 6379
-        protocol    = "tcp"
-        security_groups = [aws_security_group.app_runner_sg.id]
-    }
-
-    # Allow outbound traffic to the internet (for Redis updates, etc.)
-    egress {
-        from_port   = 0
-        to_port     = 0
-        protocol    = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-}
 
 # Create an ECR repository and make it public
 resource "aws_ecr_repository" "my_ecr_repository" {
@@ -116,11 +29,7 @@ resource "aws_ecr_repository" "my_ecr_repository" {
     })
 }
 
-# Create an RDS MySQL instance in the private subnet
-resource "aws_db_subnet_group" "my_db_subnet_group" {
-    name       = "my-laravel-db-subnet-group"
-    subnet_ids = [aws_subnet.private_subnet.id]
-}
+
 
 resource "aws_db_instance" "my_rds_instance" {
     identifier            = "my-laravel-db"
@@ -170,128 +79,28 @@ resource "aws_apprunner_service" "my_apprunner_service" {
         image_repository_type = "ECR"
         image_uri              = aws_ecr_repository.my_ecr_repository.repository_url
     }
-}
-
-# IAM Role for GitHub Actions (Assume this role in your GitHub Actions workflow)
-resource "aws_iam_role" "github_actions_role" {
-    name = "my-github-actions-role"
-
-    assume_role_policy = jsonencode({
-        Version = "2012-10-17"
-        Statement = [
-            {
-                Action = "sts:AssumeRole"
-                Effect = "Allow"
-                Principal = {
-                    Service = "codebuild.amazonaws.com"  # GitHub Actions uses CodeBuild service
-                }
+    service_name = "my-laravel-app"
+    source_configuration {
+        authentication_configuration {
+            access_role_arn = aws_iam_role.my_apprunner_role.arn
+        }
+        auto_deployments_enabled = true
+        code_repository {
+            repository_url = aws_codecommit_repository.my_codecommit_repository.clone_url_http
+            source_code_version {
+                type  = ""
+                value = ""
             }
-        ]
-    })
-}
-
-# IAM Policy for GitHub Actions to push to ECR
-
-# IAM Policy for GitHub Actions to push to ECR
-resource "aws_iam_policy" "github_actions_ecr_policy" {
-    name = "github-actions-ecr-policy"
-
-    policy = jsonencode({
-        Version = "2012-10-17"
-        Statement = [
-            {
-                Action   = "ecr:GetAuthorizationToken"
-                Effect   = "Allow"
-                Resource = "*"
-            },
-            {
-                Action   = "ecr:BatchCheckLayerAvailability"
-                Effect   = "Allow"
-                Resource = "*"
-            },
-            {
-                Action   = "ecr:GetDownloadUrlForLayer"
-                Effect   = "Allow"
-                Resource = "*"
-            },
-            {
-                Action   = "ecr:PutImage"
-                Effect   = "Allow"
-                Resource = aws_ecr_repository.my_ecr_repository.arn
+        }
+        image_repository {
+            image_identifier = aws_ecr_repository.my_ecr_repository.repository_url
+            image_configuration {
+                port = "80"
             }
-        ]
-    })
+            image_repository_type = ""
+        }
+    }
 }
 
-# Attach the policy to the GitHub Actions role
-resource "aws_iam_role_policy_attachment" "github_actions_ecr_attachment" {
-    policy_arn = aws_iam_policy.github_actions_ecr_policy.arn
-    role       = aws_iam_role.github_actions_role.name
-}
-
-# IAM Role for AppRunner
-resource "aws_iam_role" "apprunner_role" {
-    name = "my-apprunner-role"
-
-    assume_role_policy = jsonencode({
-        Version = "2012-10-17"
-        Statement = [
-            {
-                Action = "sts:AssumeRole"
-                Effect = "Allow"
-                Principal = {
-                    Service = "build.apprunner.amazonaws.com"
-                }
-            }
-        ]
-    })
-}
-
-# IAM Policy for AppRunner to pull from ECR
-resource "aws_iam_policy" "apprunner_ecr_policy" {
-    name = "apprunner-ecr-policy"
-
-    policy = jsonencode({
-        Version = "2012-10-17"
-        Statement = [
-            {
-                Action   = "ecr:GetAuthorizationToken"
-                Effect   = "Allow"
-                Resource = "*"
-            },
-            {
-                Action   = "ecr:BatchCheckLayerAvailability"
-                Effect   = "Allow"
-                Resource = "*"
-            },
-            {
-                Action   = "ecr:GetDownloadUrlForLayer"
-                Effect   = "Allow"
-                Resource = "*"
-            },
-            {
-                Action   = "ecr:GetRepositoryPolicy"
-                Effect   = "Allow"
-                Resource = aws_ecr_repository.my_ecr_repository.arn
-            },
-            {
-                Action   = "ecr:DescribeRepositories"
-                Effect   = "Allow"
-                Resource = "*"
-            },
-            {
-                Action   = "ecr:ListImages"
-                Effect   = "Allow"
-                Resource = aws_ecr_repository.my_ecr_repository.arn
-            }
-        ]
-    })
-}
-
-# Attach the policy to the AppRunner role
-resource "aws_iam_role_policy_attachment" "apprunner_ecr_attachment" {
-    policy_arn = aws_iam_policy.apprunner_ecr_policy.arn
-    role       = aws_iam_role.apprunner_role.name
-}
 
 
