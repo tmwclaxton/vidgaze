@@ -156,8 +156,8 @@ class CreatorInteractionApiController extends Controller
         [$creator, $interaction] = $this->getChannelAndInteraction($channelId);
         if(Auth::user()->creator->slug === $creator->slug) { //check your not disinterest yourself
             return response()->json([
-                'toastMessage', 'You cannot disinterest yourself',
-                'toastType', 'warning',
+                'toastMessage' => 'You cannot disinterest yourself',
+                'toastType' => 'warning',
             ]);
         }
 
@@ -188,8 +188,8 @@ class CreatorInteractionApiController extends Controller
         [$creator, $interaction] = $this->getChannelAndInteraction($channelId);
         if(Auth::user()->creator->slug === $creator->slug) { //check your not reporting yourself
             return response()->json([
-                'toastType', 'warning',
-                'toastMessage', 'You cannot report yourself'
+                'toastType' => 'warning',
+                'toastMessage' => 'You cannot report yourself'
             ]);
         }
         $interaction->reported = !$interaction->reported;
