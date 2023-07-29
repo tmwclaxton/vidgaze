@@ -19,8 +19,9 @@ use Illuminate\Support\Facades\Route;
 
 // wrap all routes in v1
 
-Route::prefix('v1')->name('v1.')->group(function () {
+Route::prefix('v1')->group(function () {
 
+    require __DIR__ . '/ApiV1Routes/auth.php';
     require __DIR__ . '/ApiV1Routes/videos.php';
     require __DIR__ . '/ApiV1Routes/comments.php';
     require __DIR__ . '/ApiV1Routes/podcasts.php';
@@ -31,7 +32,6 @@ Route::prefix('v1')->name('v1.')->group(function () {
     require __DIR__ . '/ApiV1Routes/categories.php';
     require __DIR__ . '/ApiV1Routes/search.php';
     //require __DIR__ . '/ApiV1Routes/music.php';
-    require __DIR__ . '/ApiV1Routes/auth.php';
     require __DIR__ . '/ApiV1Routes/user.php';
     require __DIR__ . '/ApiV1Routes/playlists.php';
 
@@ -39,7 +39,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
     if (config('app.env') == 'local') {
         Route::get('/ping', function () {
             return JoshPing::ping();
-        });
+        })->name('ping');
     }
 
     //this is the route for creating share links
@@ -73,4 +73,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
         ]);
     })->name('health');
 
+
+
 });
+

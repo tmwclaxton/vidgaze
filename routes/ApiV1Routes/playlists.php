@@ -24,5 +24,5 @@ Route::middleware(['throttle:60,1','auth:sanctum'])->prefix('playlist')->name('p
 });
 
 // get playlist, available to all and authenticated users
-Route::get('/{slug}', [PlaylistApiController::class, 'show'])->middleware('auth.sanctum.switch')->name('show');
+Route::get('playlist/{slug}', [PlaylistApiController::class, 'show'])->middleware('auth.sanctum.switch')->name('playlist.show');
 

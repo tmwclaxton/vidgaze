@@ -16,6 +16,7 @@ use Inertia\Inertia;
 |
 */
 
+require __DIR__ . '/WebsiteRoutes/auth.php';
 require __DIR__ . '/WebsiteRoutes/videos.php';
 require __DIR__ . '/WebsiteRoutes/podcasts.php';
 require __DIR__ . '/WebsiteRoutes/streams.php';

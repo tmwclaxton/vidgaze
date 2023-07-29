@@ -354,20 +354,30 @@ class AuthApiController extends Controller
 
         $user = User::find($request->id);
 
+
         if ($user->hasVerifiedEmail()) {
-            return redirect()->intended(RouteServiceProvider::HOME)->with('status', 'Email already verified');
+//            return redirect()->intended(RouteServiceProvider::HOME)->with('status', 'Email already verified');
+            return response()->json([
+                'toastType' => 'success',
+                'message' => 'Email already verified'], 200);
         }
 
         if (!hash_equals((string)$request->hash, sha1($user->getEmailForVerification()))) {
-            //return response()->json(['message' => 'Invalid verification link'], 400);
-            return redirect()->intended(RouteServiceProvider::HOME)->with('status', 'Invalid verification link');
+            return response()->json([
+                'toastType' => 'warning',
+                'message' => 'Invalid verification link'], 400);
+//            return redirect()->intended(RouteServiceProvider::HOME)->with('status', 'Invalid verification link');
         }
 
         if ($user->markEmailAsVerified()) {
             event(new Verified($user));
         }
 
-        return redirect()->intended(RouteServiceProvider::HOME)->with('status', 'Email verified');
+        return response()->json([
+            'toastType' => 'success',
+            'message' => 'Email verified'
+        ], 200);
+//        return redirect()->intended(RouteServiceProvider::HOME)->with('status', 'Email verified');
 
 
     }

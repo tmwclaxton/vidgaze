@@ -26,14 +26,10 @@ class CommentApiController extends Controller
 
     // use kind to figure out which model to use
     public array $allowedKinds = [
-        //Kind::Video,
-        //Kind::PodcastEpisode,
-        //Kind::Stream,
-        //Kind::Creator
-        'video',
-        'podcast_episode',
-        'stream',
-        'creator'
+        Kind::Video,
+        Kind::PodcastEpisode,
+        Kind::Stream,
+        Kind::Creator
     ];
 
     protected array $allowedCategories = [

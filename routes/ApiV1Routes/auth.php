@@ -1,12 +1,14 @@
 <?php
 // Auth
 use App\Http\Controllers\ApiControllers\AuthApiController;
+use Illuminate\Support\Facades\Route;
 
-Route::prefix('auth')->name('auth.')->group(function () {
-    Route::post('register', [AuthApiController::class, 'signup'])->name('auth.register');
-    Route::post('login', [AuthApiController::class, 'login'])->name('auth.login');
-    Route::post('logout', [AuthApiController::class, 'logout'])->middleware('auth:sanctum')->name('auth.logout');
-    Route::get('user', [AuthApiController::class, 'getAuthenticatedUser'])->middleware('auth:sanctum')->name('auth.user');
+
+Route::prefix('auth')->group(function () {
+    Route::post('register', [AuthApiController::class, 'signup'])->name('register');
+    Route::post('login', [AuthApiController::class, 'login'])->name('login');
+    Route::post('logout', [AuthApiController::class, 'logout'])->middleware('auth:sanctum')->name('logout');
+    Route::get('user', [AuthApiController::class, 'getAuthenticatedUser'])->middleware('auth:sanctum')->name('user');
 
     Route::post('/password/email', [AuthApiController::class, 'sendPasswordResetLinkEmail'])->middleware('throttle:5,1')->name('password.email');
 
@@ -21,8 +23,8 @@ Route::prefix('auth')->name('auth.')->group(function () {
     // get updated token
     Route::get('/token/refresh', [AuthApiController::class, 'refreshToken'])->middleware('auth:sanctum')->name('token.refresh');
 
-
     // override email verification route names like remove the prefixes
-    Route::post('/email/verify/', [AuthApiController::class, 'sendEmailVerificationLink'])->middleware(['auth:sanctum', 'throttle:12,1'])->name('verification.verify');
-    Route::get('/email/verify/', [AuthApiController::class, 'verifyEmail'])->name('verification.verify');
+    Route::post('/email/verify/', [AuthApiController::class, 'sendEmailVerificationLink'])->middleware(['auth:sanctum', 'throttle:12,1'])->name('verification.send');
+    Route::get('/email/verify/', [AuthApiController::class, 'verifyEmail'])->name('verification.email.confirm');
+
 });

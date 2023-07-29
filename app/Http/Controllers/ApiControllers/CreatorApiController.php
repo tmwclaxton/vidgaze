@@ -3,17 +3,11 @@
 namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreCreatorRequest;
-use App\Http\Requests\UpdateCreatorRequest;
 use App\Http\Resources\CreatorCollection;
 use App\Models\CreatorModels\Creator;
 use App\Models\PodcastModels\Podcast;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
 class CreatorApiController extends Controller
@@ -63,12 +57,45 @@ class CreatorApiController extends Controller
 
     }
 
+
+    /* show one creator by slug
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function show($slug) {
+
+        $creator = Creator::where('slug','=',$slug)->first();
+
+        if(!$creator){
+            return response()->json([
+                'toastType' => 'warning',
+                'message' => 'Creator not found'
+            ]);
+        }
+
+        return response()->json([
+            'creator' => $creator,
+        ]);
+    }
+
     /** Toggle the featured status of a creator
      * @param Request $request
      * @return JsonResponse
      */
     public function toggleFeatured(Request $request)
     {
+
+        // check token can admin
+        if (!Auth::user()->tokenCan('admin')) {
+            return response()->json([
+                'toastType' => 'warning',
+                'message' => 'You do need to be an admin to do that'
+            ]);
+        }
+
+        $request->validate([
+            'creator_id' => 'required|integer'
+        ]);
 
         $creator = Creator::find($request->creator_id);
 
