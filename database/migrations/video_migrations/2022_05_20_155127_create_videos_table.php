@@ -31,19 +31,17 @@ return new class extends Migration
             $table->timestampTz('time_uploaded')->useCurrent()->nullable();
             $table->timestampTz('time_published')->nullable();
             $table->enum('visibility', array_map(fn($audience) => $audience->value, PrivacyStatus::getAll()))->default('public');
-
-            $table->json('most_relevant_comments')->nullable();//json format
-            $table->json('most_recent_comments')->nullable();//json format
+            $table->string('thumbnail_url');
+            $table->string('language', 5)->nullable()->index(); //ISO 639-3:2007
+            $table->string('region', 3)->nullable()->index();
+            $table->enum('audience', array_map(fn($audience) => $audience->value, Audience::getAll()))->default('all');
             $table->integer('like_count')->default('0')->unsigned();
             $table->integer('dislike_count')->default('0')->unsigned();
             $table->integer('comment_count')->default('0')->unsigned();
             $table->integer('report_count')->default('0')->unsigned();
             $table->integer('view_count')->default('0')->unsigned();
             $table->integer('live_viewer_count')->unsigned()->default('0')->index();
-            $table->string('thumbnail_url');
-            $table->string('language', 5)->nullable()->index(); //ISO 639-3:2007
-            $table->string('region', 3)->nullable()->index();
-            $table->enum('audience', array_map(fn($audience) => $audience->value, Audience::getAll()))->default('all');
+            $table->integer('impressions')->default('0')->unsigned();
 
 
             $table->timestamps();

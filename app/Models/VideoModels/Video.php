@@ -46,9 +46,10 @@ class Video extends Model
     {
         return $this->belongsTo(Category::class);
     }
-    public function comments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function comments(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
     {
-        return $this->hasMany(Comment::class);
+        // video -> video_comment -> comments
+        return $this->hasManyThrough(Comment::class, VideoComment::class, 'video_id', 'id', 'id', 'comment_id');
     }
     public function sources(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

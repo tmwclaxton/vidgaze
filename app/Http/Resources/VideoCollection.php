@@ -18,4 +18,6 @@ class VideoCollection extends ResourceCollection
             'data' => $this->collection
         ];
     }
+
+
 }

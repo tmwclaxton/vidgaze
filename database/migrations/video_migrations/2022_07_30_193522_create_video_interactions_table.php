@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('video_id')->references('id')->on('videos')->constrained()->cascadeOnDelete();
              //1 = yes , 0 = disliked, null = neither
             $table->enum('liked',['like','dislike'])->nullable(); //use enum
-            $table->mediumInteger('view_point')->unsigned()->nullable();
+            $table->mediumInteger('view_point')->unsigned()->default(0);
             $table->boolean('reported')->default(false);
             $table->boolean('disinterested')->default(false);
 

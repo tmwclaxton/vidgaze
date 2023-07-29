@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('creator_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('video_id')->constrained()->cascadeOnDelete();
             $table->integer('like_count')->default('0')->unsigned();
             $table->integer('dislike_count')->default('0')->unsigned();
             $table->integer('reply_count')->default('0')->unsigned();

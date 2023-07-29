@@ -26,8 +26,6 @@ class VideoResource extends JsonResource
             'duration' => convertDuration($this->duration),
             'view_count' =>  number_format_short($this->view_count) . " " . Str::plural('View', $this->view_count) ,
             'live_viewer_count' => number_format_short($this->live_viewer_count),
-            'time_uploaded' => Carbon::parse($this->time_uploaded)->toDateTimeString(),
-            'time_published' => Carbon::parse($this->time_published)->diffForHumans(),
             'thumbnail_url' => $this->thumbnail_url,
             'like_count' => $this->like_count,
             'dislike_count' => $this->dislike_count,
@@ -37,6 +35,10 @@ class VideoResource extends JsonResource
             'preferred_source' => capitalisePlatformName($this->preferred_source),
             'external_id' => $this->getPreferredSourceID(),
             'type' => 'video',
+            'time_uploaded' => Carbon::parse($this->time_uploaded)->toDateTimeString(),
+            'time_published' => Carbon::parse($this->time_published)->diffForHumans(),
+            'created_at' => Carbon::parse($this->created_at)->diffForHumans(),
+            'updated_at' => Carbon::parse($this->updated_at)->diffForHumans(),
         ];
     }
 }

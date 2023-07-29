@@ -26,13 +26,13 @@ class Playlist extends Model
         return $this->hasManyThrough(Video::class, PlaylistVideo::class, 'playlist_id', 'id', 'id', 'video_id');
     }
 
-    public function addVideo(int $videoId)
+    public function addVideo(int $videoId): bool
     {
         $video = Video::find($videoId);
 
         // check if video exists
         if (!$video) {
-            return;
+            return false;
         }
 
         // check if video is already in the playlist
@@ -41,7 +41,7 @@ class Playlist extends Model
             ->first();
 
         if ($existingPlaylistVideo) {
-            return;
+            return false;
         }
 
         // add video to playlist
@@ -53,7 +53,7 @@ class Playlist extends Model
         $this->video_count++;
         $this->recent_video_image = $video->thumbnail_url;
         $this->save();
-
+        return true;
     }
 
     public function removeVideo(int $videoId)
@@ -65,7 +65,7 @@ class Playlist extends Model
 
         // check if record exists
         if (!$playlistVideo) {
-            return;
+            return false;
         }
 
         // delete record
@@ -79,6 +79,7 @@ class Playlist extends Model
             $this->recent_video_image = null;
         }
         $this->save();
+        return true;
 
 
     }

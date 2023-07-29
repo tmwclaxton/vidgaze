@@ -1,3 +1,5 @@
+
+
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/Inputs/InputError.vue';
@@ -24,13 +26,7 @@ const submit = () => {
     });
 };
 </script>
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-export default {
-    layout: AuthenticatedLayout,
 
-};
-</script>
 <template>
     <GuestLayout>
         <Head title="Register" />

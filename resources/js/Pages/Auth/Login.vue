@@ -1,3 +1,5 @@
+
+
 <script setup>
 import Checkbox from '@/Components/Inputs/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
@@ -27,14 +29,7 @@ const submit = () => {
         onFinish: () => form.reset('password'),
     });
 };
-</script>
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-export default {
-    layout: AuthenticatedLayout,
-
-};
-</script>
+</script> 
 <template>
     <GuestLayout>
         <Head title="Log in" />

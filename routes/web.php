@@ -1,14 +1,7 @@
 <?php
 
-use App\Helpers\JoshPing;
-use App\Http\Controllers\Content\CategoryController;
-use App\Http\Controllers\Content\MusicController;
-use App\Http\Controllers\Content\PodcastController;
-use App\Http\Controllers\Content\ShareController;
-use App\Http\Controllers\Content\SupportController;
-use App\Http\Controllers\Search\SearchBarController;
-use App\Http\Controllers\Search\SearchController;
-use App\Http\Controllers\Tools\ViewListenerController;
+
+use App\Http\Controllers\WebControllers\SupportWebController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -23,24 +16,24 @@ use Inertia\Inertia;
 |
 */
 
-require __DIR__ . '/ContentRoutes/videos.php';
-require __DIR__ . '/ContentRoutes/comments.php';
-require __DIR__ . '/ContentRoutes/podcasts.php';
-require __DIR__ . '/ContentRoutes/streams.php';
-require __DIR__ . '/ContentRoutes/channels.php';
-require __DIR__ . '/ContentRoutes/studio.php';
-require __DIR__ . '/ContentRoutes/feed.php';
-require __DIR__ . '/ContentRoutes/categories.php';
-require __DIR__ . '/ContentRoutes/search.php';
-require __DIR__ . '/ContentRoutes/music.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/WebsiteRoutes/auth.php';
+require __DIR__ . '/WebsiteRoutes/videos.php';
+require __DIR__ . '/WebsiteRoutes/podcasts.php';
+require __DIR__ . '/WebsiteRoutes/streams.php';
+require __DIR__ . '/WebsiteRoutes/creators.php';
+require __DIR__ . '/WebsiteRoutes/studio.php';
+require __DIR__ . '/WebsiteRoutes/feed.php';
+require __DIR__ . '/WebsiteRoutes/categories.php';
+require __DIR__ . '/WebsiteRoutes/search.php';
+require __DIR__ . '/WebsiteRoutes/music.php';
+require __DIR__ . '/WebsiteRoutes/user.php';
 
-//this is the route for creating share links
-Route::get('/shares', [ShareController::class, 'index'])->name('share.index');
 
-// view listener route
-Route::post('/view-listener', [ViewListenerController::class,'message'])->name('view.listener');
-//Route::get('/view-listener', [ViewListenerController::class,'
+//admin routes
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::get('/admin', function () { return Inertia::render('Admin/AdminDashboard'); })->name('admin.dashboard');
+    Route::get('/component-testing', function () { return Inertia::render('Admin/TestComponents'); })->name('component-testing');
+});
 
 
 
@@ -54,12 +47,12 @@ Route::get('/', function () {
 })->name('landing');
 
 //home route
-Route::get('/home', [SupportController::class,'home'])->name('home');
+Route::get('/home', [SupportWebController::class,'home'])->name('home');
 //landing route
-Route::get('/about', [SupportController::class, 'about'])->name('about');
+Route::get('/about', [SupportWebController::class, 'about'])->name('about');
 //policy and terms
-Route::get('/terms_of_service', [SupportController::class, 'terms'])->name('terms');
-Route::get('/privacy_policy', [SupportController::class,'privacy'])->name('privacy');
+Route::get('/terms_of_service', [SupportWebController::class, 'terms'])->name('terms');
+Route::get('/privacy_policy', [SupportWebController::class,'privacy'])->name('privacy');
 
 //Route::get('/support', [SupportController::class,'support'])->name('support');
 // support email route
@@ -68,8 +61,5 @@ Route::get('/privacy_policy', [SupportController::class,'privacy'])->name('priva
 
 
 
-Route::get('/ping', function(){
-    return JoshPing::ping();
-});
 
 

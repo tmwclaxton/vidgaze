@@ -22,10 +22,11 @@ return new class extends Migration
             $table->string('banner_url')->nullable();
             $table->integer('karma')->default('0')->index();
             $table->integer('subscriber_count')->default('0')->index();
-            $table->json('bio')->nullable(); //in json format
+            $table->integer('comment_count')->default('0')->unsigned();
+
+            $table->json('bio')->nullable();
             $table->string('region',2)->nullable();  //ISO 3166-1 alpha-2 code
             $table->bigInteger('coins')->default('0');
-//            $table->json('subscriptions')->nullable(); //in json format
             $table->string('language', 5)->nullable()->index(); //ISO 639-3:2007
             $table->foreignId('category_id')->nullable()->constrained();
             $table->string('contact_email')->nullable();
