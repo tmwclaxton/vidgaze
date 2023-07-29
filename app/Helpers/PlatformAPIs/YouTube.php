@@ -84,11 +84,6 @@ class YouTube implements iSearchable, iIsPlatform, iCanLogin, iCanUpload
         $insertRequest = $this->client->videos->insert(
             ["status", "snippet"/*, "ageGating"*/],
             $video,
-//            [
-//                'data' => file_get_contents($uploadDTO->file_path),
-//                'uploadType' => 'multipart',
-//                'mimeType' => 'application/octet-stream',
-//            ]
         );
 
         $media = new \Google_Http_MediaFileUpload(
