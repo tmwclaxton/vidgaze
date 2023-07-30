@@ -226,7 +226,12 @@ class AuthApiController extends Controller
      * Get authenticated user details
     */
     public function getAuthenticatedUser(Request $request) {
-        return new UserResource($request->user());
+        return response()->json([
+            'user' => new UserResource($request->user()),
+            'subscription_ids' => $request->user()->creator->subscriptions->pluck('id')->toArray(),
+            'admin' => $request->user()->isAdmin()
+
+        ]);
     }
 
 

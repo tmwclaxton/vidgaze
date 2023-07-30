@@ -21,9 +21,10 @@ import {fab } from '@fortawesome/free-brands-svg-icons'
 import { dom } from '@fortawesome/fontawesome-svg-core'
 library.add(fas, far, fab);
 
+
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
-createInertiaApp({
+const app = createInertiaApp({
     title: (title) => `${title ? `${title} - ` : ''}${appName ?? 'Laravel'}`,
     resolve: (name) => {
         const page = resolvePageComponent(
@@ -39,11 +40,9 @@ createInertiaApp({
             }
             page.layout = layout;
         });
+
         return page;
     },
-    // resolve: (name) => resolvePageComponent(
-    //     `./Pages/${name}.vue`,
-    //     import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(createPinia())
@@ -60,3 +59,4 @@ createInertiaApp({
         color: '#4b93ff',
     },
 });
+

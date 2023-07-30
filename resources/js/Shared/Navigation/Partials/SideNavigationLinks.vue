@@ -18,7 +18,9 @@ import SubscriptionsIcon from '~/images/icons/subscriptions.svg';
 import LibraryIcon from '~/images/icons/library.svg';
 import {useNavStore} from "@/Stores/NavStore";
 import {watch} from "vue";
+import {useAuthStore} from "@/Stores/AuthStore";
 const navStore = useNavStore();
+const authStore = useAuthStore();
 
 //name of the component
 const name = 'ExpandableNavigationLinks';
@@ -71,7 +73,7 @@ const name = 'ExpandableNavigationLinks';
 
         <!--subscriptions-->
 
-        <div v-if="$page.props.auth.user != null" class="lg:hid den">
+        <div v-if="authStore.user != null" class="lg:hid den">
             <ResponsiveNavLink :href="route('feed.subscriptions')" :active="route().current('feed.subscriptions')">
                     <SubscriptionsIcon class="w-5 h-5 flex-shrink-0"/>
                     <span>Subscriptions</span>
@@ -79,7 +81,7 @@ const name = 'ExpandableNavigationLinks';
         </div>
 
         <!--library-->
-        <div v-if="$page.props.auth.user != null" class="xl:hid den">
+        <div v-if="authStore.user != null" class="xl:hid den">
             <ResponsiveNavLink :href="route('feed.library')" :active="route().current('feed.library')">
                     <LibraryIcon class="w-5 h-5 flex-shrink-0"/>
                     <span>Library</span>
@@ -91,42 +93,42 @@ const name = 'ExpandableNavigationLinks';
     <!--studio links-->
     <div  v-if="navStore.showingStudioLinks" class="  space-y-1 ">
         <!--dashboard-->
-        <div v-if="$page.props.auth.user != null" class="md:hid den">
+        <div v-if="authStore.user != null" class="md:hid den">
             <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                     <ProfileIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Dashboard</span>
             </ResponsiveNavLink>
         </div>
         <!--content page-->
-        <div v-if="$page.props.auth.user != null" class="md:hid den">
+        <div v-if="authStore.user != null" class="md:hid den">
             <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                     <ContentIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Content</span>
             </ResponsiveNavLink>
         </div>
         <!--upload page-->
-        <div v-if="$page.props.auth.user != null" class="ld:hid den">
+        <div v-if="authStore.user != null" class="ld:hid den">
             <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                     <UploadIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Upload</span>
             </ResponsiveNavLink>
         </div>
         <!--creator streams-->
-        <div v-if="$page.props.auth.user != null" class="xl:hid den">
+        <div v-if="authStore.user != null" class="xl:hid den">
             <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                     <LivestreamIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Stream</span>
             </ResponsiveNavLink>
         </div>
         <!--dashboard-->
-        <div v-if="$page.props.auth.user != null" class="xl:hid den">
+        <div v-if="authStore.user != null" class="xl:hid den">
             <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                     <UnionIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Unions</span>
             </ResponsiveNavLink>
         </div>
         <!--Customise-->
-        <div v-if="$page.props.auth.user != null" class="md:hid den">
+        <div v-if="authStore.user != null" class="md:hid den">
             <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                     <CustomiseIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Customise</span>

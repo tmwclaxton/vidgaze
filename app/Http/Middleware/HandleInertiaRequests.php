@@ -50,13 +50,13 @@ class HandleInertiaRequests extends Middleware
 
         return array_merge(parent::share($request), [
             'layoutDisplay' => $layoutDisplay,
-            'auth' => [
-                'user' => $request->user() ? new UserResource( $request->user() ) : null ,
-                'subscriptions' => $request->user()
-                    ? $request->user()->creator->subscriptions->pluck('id')->toArray()
-                    : null,
-                'admin' => $request->user() ? $request->user()->isAdmin() : false
-            ],
+            //'auth' => [
+            //    'user' => $request->user() ? new UserResource( $request->user() ) : null ,
+            //    'subscriptions' => $request->user()
+            //        ? $request->user()->creator->subscriptions->pluck('id')->toArray()
+            //        : null,
+            //    'admin' => $request->user() ? $request->user()->isAdmin() : false
+            //],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
                     'location' => $request->url(),

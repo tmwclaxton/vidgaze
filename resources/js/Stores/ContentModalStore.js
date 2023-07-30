@@ -4,6 +4,8 @@ import {usePage} from "@inertiajs/vue3";
 import {useToastStore} from "@/Stores/ToastStore";
 import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
+import {useAuthStore} from "@/Stores/AuthStore";
+
 
 export const useContentModalStore = defineStore('ContentModalStore', {
 
@@ -18,8 +20,18 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             reportedContent: false,
             x: 0,
             y: 0,
-            widthOfMenu: usePage().props.auth.user !== null ? 250 : 120,
+            // widthOfMenu: usePage().props.auth.user !== null ? 250 : 120,
             heightOfMenu: 0,
+        }
+    },
+    getters: {
+        widthOfMenu() {
+            const authStore = useAuthStore();
+            if (authStore.user !== null) {
+                return 250;
+            } else {
+                return 120;
+            }
         }
     },
     actions: {

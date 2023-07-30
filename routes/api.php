@@ -17,11 +17,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+// I think we should only ever have 1 version of the auth stuff for security
+// also you can't put group name in front of the auth routes because it will break the auth routes
+// unless you want to fix that
+require __DIR__ . '/ApiV1Routes/auth.php';
+
+
 // wrap all routes in v1
+Route::prefix('v1')->name('v1')->group(function () {
 
-Route::prefix('v1')->group(function () {
 
-    require __DIR__ . '/ApiV1Routes/auth.php';
     require __DIR__ . '/ApiV1Routes/videos.php';
     require __DIR__ . '/ApiV1Routes/comments.php';
     require __DIR__ . '/ApiV1Routes/podcasts.php';
