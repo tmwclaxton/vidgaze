@@ -122,7 +122,7 @@ class VideoDraftController extends Controller
             'tags' => ['nullable', 'array'],
             'visibility' => ['required', 'string'],
             'language' => ['nullable', 'string'],
-            'region' => ['nullable', 'string'
+            'region' => ['nullable', 'string'],
             'audience' => ['required', 'string'],
             'category' => ['required', 'integer'],
         ]);
