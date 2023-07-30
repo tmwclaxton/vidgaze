@@ -20,6 +20,7 @@ use App\Models\User;
 use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoAward;
 use App\Models\VideoModels\VideoDisinterest;
+use App\Models\VideoModels\VideoDraft;
 use App\Models\VideoModels\VideoUpload;
 use App\Models\VideoModels\VideoInteraction;
 use App\Models\VideoModels\VideoView;
@@ -168,10 +169,9 @@ class Creator extends Model
         return $this->hasMany(VideoView::class, 'viewer_id');
     }
 
-
-
-
-
-
+    public function video_drafts(): HasMany
+    {
+        return $this->hasMany(VideoDraft::class);
+    }
 
 }

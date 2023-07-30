@@ -26,6 +26,8 @@ class VideoUploadController extends Controller
     public function upload() {
 //        unlink(storage_path('app/videos/' . 'lJiSICRVeU2gjiQza83r2Uh89pP4yWdFGUXtqJCZ.mp4'));
 //        dd("done");
+
+
         $creator = auth()->user()->creator()->first();
 
         $video_path = request()->file('video')->store('videos');
@@ -56,7 +58,7 @@ class VideoUploadController extends Controller
             'description' => request()->description,
             'thumbnail_url' => '$thumbnail_path',
         ]);
-        $batch_id = Upload::upload($creator->id, $video->id, $uploadDTO);
+        $batch_id = Upload::platformUpload($creator->id, $video->id, $uploadDTO);
 
         $batch = Bus::findBatch($batch_id);
 

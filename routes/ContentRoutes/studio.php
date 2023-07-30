@@ -8,6 +8,8 @@ use App\Http\Controllers\Tools\ImportingController;
 use App\Http\Controllers\Tools\LinkingController;
 use App\Http\Controllers\Tools\UnionController;
 use App\Http\Controllers\Tools\VideoUploadController;
+use App\Http\Controllers\VideoDraftController;
+use App\Models\VideoModels\VideoDraft;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 
@@ -30,9 +32,16 @@ Route::middleware('auth')->group(function () {
     })->name("studio.dashboard");
 
     Route::get('studio/upload',  [VideoUploadController::class, 'show'])->name("studio.upload");
-    Route::post('studio/upload', [VideoUploadController::class, 'upload'])->name("studio.upload");
+    Route::post('studio/video/{slug}/upload', [VideoDraftController::class, 'upload'])->name("studio.video.upload");
+    Route::post('studio/video/prime', [VideoDraftController::class, 'primeNewVideoDraft'])->name("studio.video.prime");
+    Route::get('studio/video/{slug}/edit',  [VideoDraftController::class, 'edit'])->name("studio.video.edit");
+    Route::put('studio/video/{slug}',  [VideoDraftController::class, 'update'])->name("studio.video.update");
+    Route::post('studio/video/{slug}/publish',  [VideoDraftController::class, 'publish'])->name("studio.video.publish");
 
-    Route::get('studio/video/{video:slug}', [VideoController::class,'edit'])->name("studio.video.edit");
+
+
+
+//    Route::get('studio/video/{video:slug}', [VideoController::class,'edit'])->name("studio.video.edit");
     Route::get('studio/stream/{stream:slug}', [StreamController::class,'edit'])->name("studio.stream.edit");
     Route::get('studio/unionise', [UnionController::class,'index'])->name("studio.unionise");
     Route::get('import', [ImportingController::class,'index'])->name('studio.importing.index');

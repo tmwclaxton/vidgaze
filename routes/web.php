@@ -68,6 +68,7 @@ Route::get('/privacy_policy', [SupportController::class,'privacy'])->name('priva
 
 
 
+
 Route::get('/ping', function(){
     return JoshPing::ping();
 });

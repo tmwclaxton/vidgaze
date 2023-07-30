@@ -20,7 +20,7 @@ class Video extends Model
     use HasFactory;
 
     //no mass assignment!
-    protected $guarded = [];
+    protected $guarded = ['id'];
     protected $with = ['creator'];
     protected $dates = [
         'time_uploaded',
