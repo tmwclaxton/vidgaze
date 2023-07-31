@@ -13,6 +13,7 @@ use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoDraft;
 use Illuminate\Support\Facades\Bus;
 use Inertia\Inertia;
+use function GuzzleHttp\json_encode;
 
 class VideoDraftController extends Controller
 {
@@ -77,38 +78,56 @@ class VideoDraftController extends Controller
                'slug' => $video->slug,
                'title' => $video->title,
                'description' => $video->description,
-               'tags' => $video->tags,
+               'tags' => json_decode($video->tags),
                'visibility' => $video->visibility,
                'language' => $video->language,
                'region' => $video->region,
                'audience' => $video->audience,
-               'category' => $video->category_id,
+               'category_id' => $video->category_id,
                'platforms' => ['youtube', 'dailymotion', 'vimeo'],
-               'usePublishTime'=> false,
+               'use_publish_time'=> false,
                'thumbnail' => $video->thumbnail_url,
-           ]
+           ],
+            'categories' => Category::orderBy('name')->get(['id', 'name']),
         ]);
     }
 
     public function update(string $slug){
-        ddd(request()->all());
+//        ddd(request()->all());
 
         $videoDraft = auth()->user()->creator()->first()->video_drafts()->where('slug', $slug)->firstOrFail();
         $validated = request()->validate([
-            'video_url' => ['nullable'],
-            'thumbnail' => ['nullable'],
-            'title' => ['nullable'],
-            'description' => ['nullable'],
-            'tags' => ['nullable'],
-            'visibility' => ['nullable'],
-            'language' => ['nullable'],
-            'region' => ['nullable'],
-            'audience' => ['nullable'],
-            'category_id' => ['nullable', 'integer'],
-            'creator_id' => ['required', 'integer'],
+            'thumbnail' => ['file', 'nullable'],
+            'title' => ['max:255', 'nullable', 'string', 'min:1'],
+            'description' => ['nullable', 'string'],
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['required', 'string'],
+            'visibility' => ['nullable', 'string'],
+            'language' => ['nullable', 'string'],
+            'region' => ['nullable', 'string'],
+            'audience' => ['nullable', 'string'],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'publish_time' => ['nullable', 'date'],
+            'use_publish_time' => ['required', 'boolean']
         ]);
-        $videoDraft->update($validated);
-        return response()->json();
+
+
+        $thumbnail_path = null;
+        if(request()->file('thumbnail')) $thumbnail_path = request()->file('thumbnail')->store('thumbnails');
+        $videoDraft->update([
+            'thumbnail_url' => $thumbnail_path,
+            'title' => request()->title,
+            'description' => request()->description,
+            'tags' => json_encode(request()->tags),
+            'visibility' => request()->visibility,
+            'language' => request()->language,
+            'region' => request()->region,
+            'audience' => request()->audience,
+            'category_id' => request()->category_id,
+            'publish_time' => request()->publish_time,
+            'use_publish_time' => request()->use_publish_time
+        ]);
+        return redirect(route('studio.dashboard'))->with('success', 'Video draft updated');
     }
 
     public function publish(string $slug){
@@ -124,13 +143,11 @@ class VideoDraftController extends Controller
             'language' => ['nullable', 'string'],
             'region' => ['nullable', 'string'],
             'audience' => ['required', 'string'],
-            'category' => ['required', 'integer'],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
         ]);
 
         $thumbnail_path = request()->file('thumbnail')->store('thumbnails');
 
-        $cat = new Category();
-        $cat->youtube_category_id = 22;
         $uploadDTO = new UploadDTO(
             $video_path,
             request()->title,
@@ -139,10 +156,10 @@ class VideoDraftController extends Controller
             [Platform::YouTube],
             $thumbnail_path,
             request()->tags,
-            $cat,
+            Category::find(request()->category_id),
             Visibility::fromValue(request()->visibility),
             Audience::fromValue(request()->audience)
-            );
+        );
 
         $video = Video::create([
             'slug' => $slug,

@@ -20,11 +20,14 @@ return new class extends Migration {
             $table->string('title')->default('Untitled Video');
             $table->text('description')->nullable();
             $table->text('tags')->nullable();
-            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('category_id')->default(10)->constrained()->nullOnDelete();
             $table->string('language', 5)->nullable();
             $table->string('region', 3)->nullable();
             $table->enum('audience', array_map(fn($audience) => $audience->value, Audience::getAll()))->default(Audience::ALL->value);
             $table->enum('visibility', array_map(fn($visibility) => $visibility->value, Visibility::getAll()))->default(Visibility::PUBLIC->value);
+            $table->timestamp('publish_time')->nullable();
+            $table->boolean('use_publish_time')->default(false);
+
             $table->timestamps();
         });
     }

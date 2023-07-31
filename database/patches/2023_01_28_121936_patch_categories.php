@@ -59,7 +59,7 @@ return new class extends Migration {
             'slug' => 'people_and_blogs',
             'youtube_category_id' => '22',
             'dailymotion_category_id' => 'people',
-            // 'twitch_category_id' => '509658' created below so if you uncomment, bear in mind just chatting category
+            'twitch_category_id' => '509658' // created below so if you uncomment, bear in mind just chatting category
         ]);
         Category::updateOrCreate(['id' => 9],[
             'name' => 'Comedy',
@@ -104,7 +104,8 @@ return new class extends Migration {
             'dailymotion_category_id' => 'news',
         ]);
 
-        $categories = [
+
+        /*$categories = [
             [
                 'slug' => 'league_of_legends',
                 'name' => 'League of Legends',
@@ -209,7 +210,7 @@ return new class extends Migration {
                     ]
                 );
             }
-        }
+        }*/
 
 
 

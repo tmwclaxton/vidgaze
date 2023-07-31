@@ -24,12 +24,7 @@
             </div>
             <div>
                 <InputLabel for="tags" value="Tags"/>
-                <TextArea
-                    id="tags"
-                    v-model="form.tags"
-                    rows="4"
-                    required
-                ></TextArea>
+                <TagInput class="mt-2" v-model="form.tags"/>
                 <InputError :message="form.errors.tags"/>
             </div>
             <div class="max-w-md">
@@ -59,10 +54,19 @@
                 <InputError class="mt-2" :message="form.errors.visibility"/>
             </div>
             <div>
-                <InputLabel for="publishTime" value="Publish Time"/>
-                <input type="checkbox" id="publishTimeCheckbox" v-model="form.usePublishTime" class="mr-2">
-                <input type="datetime-local" name="publishTime" id="publishTime" v-model="form.publishTime" class="border-gray-300 focus:focus-pantone rounded-md shadow-sm w-full focus:focus-pantone focus:border-pantone focus:ring-pantone">
-                <InputError class="mt-2" :message="form.errors.publishTime"/>
+                <InputLabel for="collection" value="Category"/>
+                <select required v-model="form.category_id" name="category_id" id="category_id" class="border-gray-300 focus:focus-pantone rounded-md shadow-sm w-full focus:focus-pantone focus:border-pantone focus:ring-pantone">
+                    <option v-for="category in categories" :value="category.id">{{ category.name }}</option>
+                </select>
+                <InputError class="mt-2" :message="form.errors.visibility"/>
+            </div>
+            <div>
+                <InputLabel for="publish_time" value="Publish Time"/>
+                <input type="checkbox" id="use_publish_time" v-model="usePublishTime" class="mr-2" >
+                <InputError class="mt-2" :message="form.errors.use_publish_time"/>
+
+                <input type="datetime-local" name="publish_time" id="publish_time" v-model="form.publish_time" class="border-gray-300 focus:focus-pantone rounded-md shadow-sm w-full focus:focus-pantone focus:border-pantone focus:ring-pantone">
+                <InputError class="mt-2" :message="form.errors.publish_time"/>
             </div>
             <!--            list of checkboxes for what platforms to upload to-->
             <div>
@@ -103,12 +107,11 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 export default {
     layout: AuthenticatedLayout,
-
 };
 </script>
 <script setup>
 
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {Head, useForm} from "@inertiajs/vue3";
 import InputLabel from "@/Components/Inputs/InputLabel.vue";
 import TextInput from "@/Components/Inputs/TextInput.vue";
@@ -117,13 +120,14 @@ import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
 import Title from "@/Components/General/Title.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import TextArea from "@/Components/Inputs/TextArea.vue";
-import FileUpload from "@/Components/Inputs/FileUpload.vue";
+import TagInput from "@/Components/Inputs/TagInput.vue";
 
 
 let props = defineProps({
     video: Object,
     categories: Object,
 });
+
 
 const platforms = [
     { value: 'youtube', label: 'YouTube' },
@@ -148,20 +152,46 @@ let form = useForm({
     description: props.video.description,
     tags: props.video.tags,
     thumbnail: '',
-    // category: '',
+    category_id: props.video.category_id,
     visibility: props.video.visibility,
-    publishTime: props.video.publishTime,
+    publish_time: props.video.publish_time,
     audience: props.video.audience,
     platforms: props.video.platforms,
-    usePublishTime: props.video.usePublishTime,
+    use_publish_time: props.video.use_publish_time,
 });
 
-// const submit = () => {
-//     form.put(route('studio.video.update', [props.video.slug]));
-// };
+// set computed for use_publish_time
+const usePublishTime = computed({
+    get: () => {
+        return form.use_publish_time;
+    },
+    set: (value) => {
+        form.use_publish_time = value;
+    }
+});
+
 
 const handleSaveDraft = () => {
     form.put(route('studio.video.update', [props.video.slug]));
+
+    // const formData = new FormData();
+    // formData.append('title', form.title);
+    // formData.append('description', form.description);
+    // formData.append('tags', form.tags);
+    // formData.append('thumbnail', form.thumbnail);
+    // formData.append('visibility', form.visibility);
+    // formData.append('publish_time', form.publish_time);
+    // formData.append('audience', form.audience);
+    // formData.append('platforms', form.platforms);
+    // formData.append('use_publish_time', form.use_publish_time);
+    // formData.append('category_id', form.category_id);
+    //
+    //
+    // axios.put(route('studio.video.update', [props.video.slug]), formData).then(
+    //     () => { router.get(route('studio.dashboard')) }
+    // ).catch((error) => {
+    //     console.log(error);
+    // })
 };
 
 const handlePublish = () => {
@@ -175,11 +205,6 @@ const selectedFileThumbnail = () =>{
     form.thumbnail = thumbnailValue.value;
 }
 
-let videoValue = ref("");
-const selectedFileVideo = () =>{
-    videoValue.value = document.querySelector('#video').files[0];
-    form.video = videoValue.value;
-}
 
 // function getImageURL(image) {
 //     return URL.createObjectURL(image);
