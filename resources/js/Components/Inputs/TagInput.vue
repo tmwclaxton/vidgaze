@@ -11,7 +11,7 @@
         <input
             type="text"
             placeholder="Add a tag"
-            class="border-1 focus:outline-0 outline-red-500 outline-2 leading-[50px] bg-transparent h-[30px] focus:ring-2 border-zinc-300 dark:border-zinc-600 focus:border-0 rounded-lg"
+            class="border-1 focus:outline-0 outline-red-500 outline-2 leading-[50px] bg-transparent h-[30px] focus:ring-2 border-zinc-300 dark:border-zinc-600 focus:!border-blue-600 rounded-lg"
             @keydown="addTag"
             @keydown.delete="removeLastTag"
         />
