@@ -34,31 +34,47 @@
             </div>
             <div>
                 <InputLabel for="audience" value="Audience"/>
-                <select required v-model="form.audience" name="audience" id="audience" class="border-gray-300 focus:focus-pantone rounded-md shadow-sm w-full focus:focus-pantone focus:border-pantone focus:ring-pantone">
-                    <option v-for="audience in audiences" :value="audience.value">{{ audience.label }}</option>
-                </select>
+                <Dropdown
+                    v-model="form.audience"
+                    name="audience"
+                    id="audience"
+                    :items="audiences"
+                    required/>
                 <InputError class="mt-2" :message="form.errors.audience"/>
             </div>
             <div>
                 <InputLabel for="visibility" value="Visibility"/>
-                <select required v-model="form.visibility" name="visibility" id="visibility" class="border-gray-300 focus:focus-pantone rounded-md shadow-sm w-full focus:focus-pantone focus:border-pantone focus:ring-pantone">
-                    <option v-for="visibility in visibilities" :value="visibility.value">{{ visibility.label }}</option>
-                </select>
+<!--                <<select required v-model="form.visibility" name="visibility" id="visibility" class="border-gray-300 focus:focus-pantone rounded-md shadow-sm w-full focus:focus-pantone focus:border-pantone focus:ring-pantone">-->
+<!--                    <option v-for="visibility in visibilities" :value="visibility.value">{{ visibility.name }}</option>-->
+<!--                </select>>-->
+                <Dropdown
+                    v-model="form.visibility"
+                    name="visibility"
+                    id="visibility"
+                    :items="visibilities"
+                    required/>
                 <InputError class="mt-2" :message="form.errors.visibility"/>
             </div>
             <div>
                 <InputLabel for="collection" value="Category"/>
-                <select required v-model="form.category_id" name="category_id" id="category_id" class="border-gray-300 focus:focus-pantone rounded-md shadow-sm w-full focus:focus-pantone focus:border-pantone focus:ring-pantone">
-                    <option v-for="category in categories" :value="category.id">{{ category.name }}</option>
-                </select>
+                <Dropdown
+                    v-model="form.category_id"
+                    name="category_id"
+                    id="category_id"
+                    :items="categories"
+                    required
+                />
                 <InputError class="mt-2" :message="form.errors.visibility"/>
             </div>
             <div>
-                <InputLabel for="publish_time" value="Publish Time"/>
-                <input type="checkbox" id="use_publish_time" v-model="usePublishTime" class="mr-2" >
+                <InputLabel for="publish_time" value="Schedule Publish Time"/>
+<!--                checkbox use publish_time-->
+                <div class="h-12 flex space-x-4 items-center">
+                    <input type="checkbox" name="use_publish_time" id="use_publish_time" v-model="form.use_publish_time" class="mr-2">
+                    <DateInput v-if="form.use_publish_time" v-model="form.publish_time"/>
+                </div>
                 <InputError class="mt-2" :message="form.errors.use_publish_time"/>
 
-                <input type="datetime-local" name="publish_time" id="publish_time" v-model="form.publish_time" class="border-gray-300 focus:focus-pantone rounded-md shadow-sm w-full focus:focus-pantone focus:border-pantone focus:ring-pantone">
                 <InputError class="mt-2" :message="form.errors.publish_time"/>
             </div>
             <!--            list of checkboxes for what platforms to upload to-->
@@ -67,7 +83,7 @@
                 <div class="">
                     <div v-for="platform in platforms" :key="platform.value" class="flex items-center">
                         <input type="checkbox" :id="platform.value" :value="platform.value" v-model="form.platforms" class="mr-2">
-                        <label :for="platform.value">{{ platform.label }}</label>
+                        <name :for="platform.value">{{ platform.name }}</name>
                     </div>
                 </div>
                 <InputError class="mt-2" :message="form.errors.platforms"/>
@@ -114,6 +130,8 @@ import Title from "@/Components/General/Title.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import TextArea from "@/Components/Inputs/TextArea.vue";
 import TagInput from "@/Components/Inputs/TagInput.vue";
+import Dropdown from "@/Components/Inputs/Dropdown.vue";
+import DateInput from "@/Components/Inputs/DateInput.vue";
 
 
 let props = defineProps({
@@ -123,21 +141,21 @@ let props = defineProps({
 
 
 const platforms = [
-    { value: 'youtube', label: 'YouTube' },
-    { value: 'dailymotion', label: 'Dailymotion' },
-    { value: 'vimeo', label: 'Vimeo' },
+    { value: 'youtube', name: 'YouTube' },
+    { value: 'dailymotion', name: 'Dailymotion' },
+    { value: 'vimeo', name: 'Vimeo' },
 ];
 
 const audiences = [
-    { value: 'all', label: 'Everyone' },
-    { value: 'kids', label: 'Kids' },
-    { value: 'mature', label: 'Mature' },
+    { value: 'all', name: 'Everyone' },
+    { value: 'kids', name: 'Kids' },
+    { value: 'mature', name: 'Mature' },
 ];
 
 const visibilities = [
-    { value: 'public', label: 'Public' },
-    { value: 'private', label: 'Private' },
-    { value: 'unlisted', label: 'Unlisted' },
+    { value: 'public', name: 'Public' },
+    { value: 'private', name: 'Private' },
+    { value: 'unlisted', name: 'Unlisted' },
 ];
 
 let form = useForm({
