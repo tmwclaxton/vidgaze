@@ -22,6 +22,13 @@ import { dom } from '@fortawesome/fontawesome-svg-core'
 library.add(fas, far, fab);
 
 
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+// set bearer token if token in local storage
+if (localStorage.getItem('token')) {
+    window.axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+}
+
+
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
 const app = createInertiaApp({

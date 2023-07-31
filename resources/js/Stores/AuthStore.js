@@ -16,9 +16,11 @@ export const useAuthStore = defineStore('AuthStore', {
                 axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.$cookies.get('token')
                 // get the user
                 axios.get('/api/user').then(response => {
-                    this.user = response.data.user
-                    this.admin = response.data.admin
-                    this.subscription_ids = response.data.subscription_ids
+
+                    // set the page props
+                    this.$page.props.auth.user = response.data.user
+                    this.$page.props.auth.admin = response.data.admin
+                    this.$page.props.auth.subscription_ids = response.data.subscription_ids
                 } ).catch(error => {
                     console.log(error)
                 });

@@ -12,24 +12,59 @@ import AppleButton from '@/Components/Buttons/AppleButton.vue';
 import TextInput from '@/Components/Inputs/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
+import {useToastStore} from "@/Stores/ToastStore";
+import {reactive, ref} from "vue";
+const toastStore = useToastStore();
 
-defineProps({
-    canResetPassword: Boolean,
-    status: String,
-});
-
-const form = useForm({
-    email: '',
-    password: '',
-    remember: false,
+const form = reactive({
+    data: {
+        email: ref(''),
+        password: ref(''),
+        remember: ref(false),
+        errors: {},
+        processing: false,
+    },
+    errors: {},
 });
 
 const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
+
+    axios.post(route('api.login'), {
+        email: form.data.email,
+        password: form.data.password,
+        remember: form.data.remember,
+    })
+        .then(function (response) {
+            console.log(response);
+            if (response.data.status === 'success') {
+
+                localStorage.setItem('token', response.data.data.token);
+                axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+
+
+
+            } else {
+                toastStore.add({
+                    message: response.data.message,
+                    type: 'warning',
+                });
+            }
+        })
+        .catch(function (error) {
+            // set form errors
+            const errors = (error.response.data.errors);
+
+            form.errors.email = errors.email ? errors.email[0] : null;
+            form.errors.password = errors.password ? errors.password[0] : null;
+
+            toastStore.add({
+                message: error.response.data.message,
+                type: 'warning',
+            });
+
+        });
 };
-</script> 
+</script>
 <template>
     <GuestLayout>
         <Head title="Log in" />
@@ -59,7 +94,7 @@ const submit = () => {
                     id="email"
                     type="email"
                     class="mt-1 block w-full"
-                    v-model="form.email"
+                    v-model="form.data.email"
                     required
                     autofocus
                     autocomplete="username"
@@ -75,7 +110,7 @@ const submit = () => {
                     id="password"
                     type="password"
                     class="mt-1 block w-full"
-                    v-model="form.password"
+                    v-model="form.data.password"
                     required
                     autocomplete="current-password"
                 />
@@ -85,11 +120,10 @@ const submit = () => {
 
             <div class="flex flex-row justify-between mt-4">
                 <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
+                    <Checkbox name="remember" v-model:checked="form.data.remember" />
                     <span class="ml-2 text-sm text-zinc-600 dark:text-zinc-400">Remember me</span>
                 </label>
                 <Link
-                    v-if="canResetPassword"
                     :href="route('password.request')"
                     class="font-semibold text-sm text-blue-600 dark:text-blue-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-zinc-800"
                 >
