@@ -3,7 +3,7 @@
         <div
             v-for="(tag, index) in tags"
             :key="tag"
-            class="h-[30px] float-left mr-[10px] bg-gray-300 rounded-[5px] px-[5px] leading-[30px] mb-[10px]"
+            class="h-[30px] float-left mr-[10px] bg-gray-300 rounded-[5px] px-[5px] leading-[30px] mb-[10px] dark:bg-gray-900 dark:text-gray-300"
         >
             <span class="cursor-pointer opacity-75" @click="removeTag(index)">x</span>
             {{ tag }}
@@ -11,7 +11,7 @@
         <input
             type="text"
             placeholder="Add a tag"
-            class="border-0 focus:outline-0 outline-red-500 outline-2 leading-[50px] bg-transparent h-[30px]"
+            class="border-1 focus:outline-0 outline-red-500 outline-2 leading-[50px] bg-transparent h-[30px] focus:ring-2 border-zinc-300 dark:border-zinc-600 focus:border-0 rounded-lg"
             @keydown="addTag"
             @keydown.delete="removeLastTag"
         />
@@ -31,7 +31,7 @@ function addTag(e) {
         e.preventDefault();
         var val = e.target.value.trim();
 
-        if (val.length > 0) {
+        if (val.length > 0 && tags.value.indexOf(val) === -1) {
             tags.value.push(val);
             emit('update:modelValue', tags.value); // Emit the updated tags array to the parent
             e.target.value = '';

@@ -32,13 +32,6 @@
                 <input type="file" name="thumbnail" id="thumbnail" @input="selectedFileThumbnail">
                 <InputError class="mt-1" :message="form.errors.thumbnail"/>
             </div>
-<!--            <div>-->
-<!--                <InputLabel for="category" value="Category"/>-->
-<!--                <select required v-model="form.category" name="category" id="category" class="border-gray-300 focus:focus-pantone rounded-md shadow-sm w-full focus:focus-pantone focus:border-pantone focus:ring-pantone">-->
-<!--                    <option v-for="category in categories" :value="category.value">{{ category.label }}</option>-->
-<!--                </select>-->
-<!--                <InputError class="mt-2" :message="form.errors.category"/>-->
-<!--            </div>-->
             <div>
                 <InputLabel for="audience" value="Audience"/>
                 <select required v-model="form.audience" name="audience" id="audience" class="border-gray-300 focus:focus-pantone rounded-md shadow-sm w-full focus:focus-pantone focus:border-pantone focus:ring-pantone">
@@ -47,7 +40,7 @@
                 <InputError class="mt-2" :message="form.errors.audience"/>
             </div>
             <div>
-                <InputLabel for="collection" value="Visibility"/>
+                <InputLabel for="visibility" value="Visibility"/>
                 <select required v-model="form.visibility" name="visibility" id="visibility" class="border-gray-300 focus:focus-pantone rounded-md shadow-sm w-full focus:focus-pantone focus:border-pantone focus:ring-pantone">
                     <option v-for="visibility in visibilities" :value="visibility.value">{{ visibility.label }}</option>
                 </select>
