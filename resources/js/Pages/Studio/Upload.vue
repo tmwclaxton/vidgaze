@@ -65,6 +65,8 @@ const submit = () => {
 
         // redirect to studio.video.edit with slug given in response
         router.get(route('studio.video.edit', {slug: response.data.slug}));
+    }).catch((error) => {
+        console.log(error);
     });
 };
 

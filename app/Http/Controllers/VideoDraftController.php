@@ -7,10 +7,10 @@ use App\Enums\Platform;
 use App\Enums\Visibility;
 use App\Helpers\Upload;
 use App\Helpers\UploadDTO;
-use App\Http\Controllers\Upload\UploadController;
 use App\Models\Category;
 use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoDraft;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Inertia\Inertia;
 use function GuzzleHttp\json_encode;
@@ -65,67 +65,88 @@ class VideoDraftController extends Controller
     }
 
     public function upload(string $slug){
-        $path = \request()->file('video')->store('videos');
-        VideoDraft::where('slug', $slug)->update(['video_url' => $path]);
-        return response()->json();
+        try {
+            $path = \request()->file('video')->store('videos');
+            VideoDraft::where('slug', $slug)->update(['video_url' => $path]);
+            return response()->json();
+        }
+        catch (\Exception $e){
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 
     public function edit(string $slug)
     {
         $video = auth()->user()->creator()->first()->video_drafts()->where('slug', $slug)->firstOrFail();
         return Inertia::render('Studio/EditVideoDraft', [
-           'video' => [
-               'slug' => $video->slug,
-               'title' => $video->title,
-               'description' => $video->description,
-               'tags' => json_decode($video->tags),
-               'visibility' => $video->visibility,
-               'language' => $video->language,
-               'region' => $video->region,
-               'audience' => $video->audience,
-               'category_id' => $video->category_id,
-               'platforms' => ['youtube', 'dailymotion', 'vimeo'],
-               'use_publish_time'=> false,
-               'thumbnail' => $video->thumbnail_url,
-           ],
-            'categories' => Category::orderBy('name')->get(['id', 'name']),
+            'video' => [
+                'slug' => $video->slug,
+                'title' => $video->title,
+                'description' => $video->description,
+                'tags' => json_decode($video->tags)?? [],
+                'visibility' => $video->visibility,
+                'language' => $video->language,
+                'region' => $video->region,
+                'audience' => $video->audience,
+                'category_id' => $video->category_id,
+                'platforms' => json_decode($video->platforms)?? [],
+                'use_publish_time'=> $video->use_publish_time == 1,
+                'publish_time' => $video->publish_time ? Carbon::create($video->publish_time)->timestamp: null,
+                'thumbnail' => $video->thumbnail_url,
+            ],
+            'categories' => Category::orderBy('name')->get(['id', 'name'])->map(fn($category)=>
+            [
+                'value' => $category->id,
+                'name' => $category->name
+            ]),
         ]);
     }
 
     public function update(string $slug){
-//        ddd(request()->all());
 
         $videoDraft = auth()->user()->creator()->first()->video_drafts()->where('slug', $slug)->firstOrFail();
-        $validated = request()->validate([
+        request()->validate([
             'thumbnail' => ['file', 'nullable'],
-            'title' => ['max:255', 'nullable', 'string', 'min:1'],
+            'title' => ['max:255', 'required', 'string', 'min:1'],
             'description' => ['nullable', 'string'],
             'tags' => ['nullable', 'array'],
-            'tags.*' => ['required', 'string'],
+            'tags.*' => ['string'],
             'visibility' => ['nullable', 'string'],
             'language' => ['nullable', 'string'],
             'region' => ['nullable', 'string'],
             'audience' => ['nullable', 'string'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
-            'publish_time' => ['nullable', 'date'],
-            'use_publish_time' => ['required', 'boolean']
+            'publish_time' => ['nullable', 'int'],
+            'use_publish_time' => ['required', 'boolean'],
+            'platforms' => ['nullable', 'array'],
         ]);
 
 
+        $publish_time = null;
+        if(request()->use_publish_time){
+            request()->validate([
+                'publish_time' => ['required', 'int']
+            ]);
+            $publish_time = Carbon::createFromTimestamp(request()->publish_time);
+            if($publish_time->isPast()) return back()->withErrors(['publish_time' => 'Publish time must be in the future']);
+        }
+
+//        ddd(json_encode(request()->platforms ? request()->platforms : []));
         $thumbnail_path = null;
         if(request()->file('thumbnail')) $thumbnail_path = request()->file('thumbnail')->store('thumbnails');
         $videoDraft->update([
             'thumbnail_url' => $thumbnail_path,
             'title' => request()->title,
             'description' => request()->description,
-            'tags' => json_encode(request()->tags),
+            'tags' => request()->tags ? json_encode(request()->tags) : null,
             'visibility' => request()->visibility,
             'language' => request()->language,
             'region' => request()->region,
             'audience' => request()->audience,
             'category_id' => request()->category_id,
-            'publish_time' => request()->publish_time,
-            'use_publish_time' => request()->use_publish_time
+            'publish_time' => $publish_time ?? null,
+            'use_publish_time' => request()->use_publish_time,
+            'platforms' =>request()->platforms ?  json_encode(request()->platforms) : null
         ]);
         return redirect(route('studio.dashboard'))->with('success', 'Video draft updated');
     }
@@ -138,7 +159,8 @@ class VideoDraftController extends Controller
             'thumbnail' => ['file', 'required'],
             'title' => ['max:255', 'required', 'string', 'min:1'],
             'description' => ['nullable', 'string'],
-            'tags' => ['nullable', 'array'],
+            'tags' => ['required', 'array'],
+            'tags.*' => ['string'],
             'visibility' => ['required', 'string'],
             'language' => ['nullable', 'string'],
             'region' => ['nullable', 'string'],

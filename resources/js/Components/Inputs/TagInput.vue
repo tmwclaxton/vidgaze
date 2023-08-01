@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full border-1 border-gray-300 font-lg border-box">
+    <div class="w-full border-1 border-gray-300 border-box">
         <div
             v-for="(tag, index) in tags"
             :key="tag"

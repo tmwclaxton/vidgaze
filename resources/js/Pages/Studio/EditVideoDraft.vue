@@ -2,38 +2,37 @@
 
         <Head title="Upload Video" />
 
-        <ConsistentPadding class="-mt-4">
+        <ConsistentPadding class="mt-4">
             <Title text="Upload Video">
 <!--                <StreamIcon class="w-6 h-6 my-auto"/>-->
             </Title>
-        <form @submit.prevent="" class="space-y-4 sm:min-w-[20rem] w-screen sm:w-full px-6 sm:px-0">
+        <form @submit.prevent="" class="space-y-4 sm:min-w-[20rem] w-full sm:px-6">
             <div>
-                <InputLabel for="title" value="Title"/>
+                <InputLabel class="mb-1" for="title" value="Title"/>
                 <TextInput type="text" title="title" id="title" placeholder="Title" v-model="form.title" class="w-full" required/>
                 <InputError class="mt-2" :message="form.errors.title"/>
             </div>
             <div>
-                <InputLabel for="description" value="Description"/>
+                <InputLabel class="mb-1" for="description" value="Description"/>
                 <TextArea
                     id="description"
                     v-model="form.description"
                     rows="4"
-                    required
                 />
                 <InputError :message="form.errors.description"/>
             </div>
             <div>
-                <InputLabel for="tags" value="Tags"/>
-                <TagInput class="mt-2" v-model="form.tags"/>
+                <InputLabel class="mb-1" for="tags" value="Tags"/>
+                <TagInput v-model="form.tags"/>
                 <InputError :message="form.errors.tags"/>
             </div>
             <div class="max-w-md">
-                <InputLabel for="thumbnail" value="Thumbnail" class="mb-1"/>
+                <InputLabel class="mb-1" for="thumbnail" value="Thumbnail"/>
                 <input type="file" name="thumbnail" id="thumbnail" @input="selectedFileThumbnail">
                 <InputError class="mt-1" :message="form.errors.thumbnail"/>
             </div>
             <div>
-                <InputLabel for="audience" value="Audience"/>
+                <InputLabel class="mb-1" for="audience" value="Audience"/>
                 <Dropdown
                     v-model="form.audience"
                     name="audience"
@@ -43,10 +42,7 @@
                 <InputError class="mt-2" :message="form.errors.audience"/>
             </div>
             <div>
-                <InputLabel for="visibility" value="Visibility"/>
-<!--                <<select required v-model="form.visibility" name="visibility" id="visibility" class="border-gray-300 focus:focus-pantone rounded-md shadow-sm w-full focus:focus-pantone focus:border-pantone focus:ring-pantone">-->
-<!--                    <option v-for="visibility in visibilities" :value="visibility.value">{{ visibility.name }}</option>-->
-<!--                </select>>-->
+                <InputLabel class="mb-1" for="visibility" value="Visibility"/>
                 <Dropdown
                     v-model="form.visibility"
                     name="visibility"
@@ -56,7 +52,7 @@
                 <InputError class="mt-2" :message="form.errors.visibility"/>
             </div>
             <div>
-                <InputLabel for="collection" value="Category"/>
+                <InputLabel class="mb-1" for="collection" value="Category"/>
                 <Dropdown
                     v-model="form.category_id"
                     name="category_id"
@@ -64,26 +60,34 @@
                     :items="categories"
                     required
                 />
-                <InputError class="mt-2" :message="form.errors.visibility"/>
+                <InputError class="mt-2" :message="form.errors.category_id"/>
             </div>
             <div>
-                <InputLabel for="publish_time" value="Schedule Publish Time"/>
-<!--                checkbox use publish_time-->
-                <div class="h-12 flex space-x-4 items-center">
+                <div class="h-12 flex space-x-2 items-center">
+                    <InputLabel for="publish_time" value="Schedule Publish Time"/>
                     <input type="checkbox" name="use_publish_time" id="use_publish_time" v-model="form.use_publish_time" class="mr-2">
-                    <DateInput v-if="form.use_publish_time" v-model="form.publish_time"/>
                 </div>
+                <DateInput v-if="form.use_publish_time" v-model="form.publish_time"/>
                 <InputError class="mt-2" :message="form.errors.use_publish_time"/>
-
                 <InputError class="mt-2" :message="form.errors.publish_time"/>
             </div>
-            <!--            list of checkboxes for what platforms to upload to-->
             <div>
-                <InputLabel for="platforms" value="Platforms"/>
-                <div class="">
-                    <div v-for="platform in platforms" :key="platform.value" class="flex items-center">
-                        <input type="checkbox" :id="platform.value" :value="platform.value" v-model="form.platforms" class="mr-2">
-                        <name :for="platform.value">{{ platform.name }}</name>
+                <InputLabel class="mb-1" for="platforms" value="Platforms"/>
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="youtube" value="youtube" v-model="form.platforms" class="mr-2">
+                        <YouTubeIcon class="w-6 h-6 mr-2"/>
+                        <label for="youtube">YouTube</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="dailymotion" value="dailymotion" v-model="form.platforms" class="mr-2">
+                        <DailyMotionIcon class="w-6 h-6 mr-2"/>
+                        <label for="dailymotion">Dailymotion</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="vimeo" value="vimeo" v-model="form.platforms" class="mr-2">
+                        <VimeoIcon class="w-6 h-6 mr-2"/>
+                        <label for="vimeo">Vimeo</label>
                     </div>
                 </div>
                 <InputError class="mt-2" :message="form.errors.platforms"/>
@@ -132,6 +136,9 @@ import TextArea from "@/Components/Inputs/TextArea.vue";
 import TagInput from "@/Components/Inputs/TagInput.vue";
 import Dropdown from "@/Components/Inputs/Dropdown.vue";
 import DateInput from "@/Components/Inputs/DateInput.vue";
+import YouTubeIcon from '#icons/youtube.svg';
+import DailyMotionIcon from '#icons/dailymotion.svg';
+import VimeoIcon from '#icons/vimeo.svg';
 
 
 let props = defineProps({
@@ -139,12 +146,6 @@ let props = defineProps({
     categories: Object,
 });
 
-
-const platforms = [
-    { value: 'youtube', name: 'YouTube' },
-    { value: 'dailymotion', name: 'Dailymotion' },
-    { value: 'vimeo', name: 'Vimeo' },
-];
 
 const audiences = [
     { value: 'all', name: 'Everyone' },
@@ -171,7 +172,6 @@ let form = useForm({
     use_publish_time: props.video.use_publish_time,
 });
 
-// set computed for use_publish_time
 const usePublishTime = computed({
     get: () => {
         return form.use_publish_time;
@@ -183,7 +183,9 @@ const usePublishTime = computed({
 
 
 const handleSaveDraft = () => {
-    form.put(route('studio.video.update', [props.video.slug]));
+    form.put(route('studio.video.update', [props.video.slug]), {
+        preserveScroll: true,
+    });
 
     // const formData = new FormData();
     // formData.append('title', form.title);
