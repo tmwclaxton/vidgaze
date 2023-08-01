@@ -1,4 +1,8 @@
-import { defineStore } from 'pinia'
+import {defineStore} from 'pinia'
+import {useToastStore} from "@/Stores/ToastStore";
+import {usePage} from "@inertiajs/inertia-vue3";
+import {router} from "@inertiajs/vue3";
+
 export const useAuthStore = defineStore('AuthStore', {
     state: () => {
         return {
@@ -9,25 +13,81 @@ export const useAuthStore = defineStore('AuthStore', {
     },
 
     actions: {
-        // check cookie for a bearer token and if it exists then get the user
         getUser() {
-            if (document.cookie.includes('token')) {
-                // set the bearer token in the axios header
-                axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.$cookies.get('token')
-                // get the user
-                axios.get('/api/user').then(response => {
-
-                    // set the page props
-                    this.$page.props.auth.user = response.data.user
-                    this.$page.props.auth.admin = response.data.admin
-                    this.$page.props.auth.subscription_ids = response.data.subscription_ids
+            const toastStore = useToastStore();
+            if (localStorage.getItem('token')) {
+                // we need to set the token in the axios header as this might be a page refresh
+                axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+                axios.get(route('api.user')).then(response => {
+                    this.user = response.data.user
+                    this.admin = response.data.admin
+                    this.subscription_ids = response.data.subscription_ids
+                    toastStore.add({
+                        message: 'You are now logged in.',
+                        type: 'success',
+                    });
                 } ).catch(error => {
-                    console.log(error)
+                    this.handleErrors(error);
+                });
+            } else {
+                this.clearBrowserStorage();
+                toastStore.add({
+                    message: 'Authentication failed.  Please login again.',
+                    type: 'warning',
+                });
+            }
+        },
+
+        async login(form) {
+            const thisRef = this;
+            return axios.post(route('api.login'), {
+                email: form.email,
+                password: form.password,
+                remember: form.remember,
+            })
+                .then(function (response) {
+                    localStorage.setItem('token', response.data.access_token);
+                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+                    thisRef.getUser();
+                }).catch(error => {
+                    thisRef.handleErrors(error);
+                })
+        },
+
+        logout() {
+            const toastStore = useToastStore();
+            const thisRef = this;
+            axios.post(route('api.logout')).then(response => {
+                thisRef.clearBrowserStorage();
+                toastStore.add({
+                    message: 'Logout successful.',
+                    type: 'success',
+                });
+            }) .catch(error => {
+                thisRef.handleErrors(error);
+            } );
+        },
+
+        clearBrowserStorage() {
+            this.user = null;
+            this.admin = false;
+            this.subscription_ids = [];
+            delete axios.defaults.headers.common['Authorization'];
+            localStorage.removeItem('token');
+        },
+
+        handleErrors(error) {
+            // console.log(error);
+            if (error.response !== undefined) {
+                const toastStore = useToastStore();
+                toastStore.add({
+                    message: error.response.data.message,
+                    type: 'warning',
                 });
             }
         }
 
+    },
 
 
-    }
 })

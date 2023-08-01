@@ -1,16 +1,9 @@
 
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import PaddingLayout from "@/Layouts/Partials/ConsistentPadding.vue";
-export default {
-    components: {PaddingLayout},
-    layout: AuthenticatedLayout,
 
-};
-</script>
 <script setup>
 import {onMounted, onUnmounted, ref} from "vue";
 import CreatorCarousel from "@/Pages/Viewer/Home/CreatorCarousel.vue";
+import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import {debounce} from "lodash";
 
 import TopStreamsRow from "@/Components/ContentRows/TopStreamsRow.vue";
@@ -95,6 +88,7 @@ const fetchVideos = async (videoArray) => {
 
 </script>
 <template>
+    <div>
         <Head title="Home" />
 
             <!--show 12 videos, hide videos if they don't fill the row completely-->
@@ -102,7 +96,7 @@ const fetchVideos = async (videoArray) => {
                 <CreatorCarousel />
             </div>
 
-        <PaddingLayout class="-mt-4">
+        <ConsistentPadding class="-mt-4">
 
             <TrendingVideosRow :trending_videos="trending_videos"/>
 
@@ -112,6 +106,6 @@ const fetchVideos = async (videoArray) => {
 
             <InfiniteVideos :videos="videos" />
 
-        </PaddingLayout>
-
+        </ConsistentPadding>
+    </div>
 </template>

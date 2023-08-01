@@ -37,8 +37,8 @@ const loadScripts = async () => {
 onMounted(() => {
 
     loadScripts();
-    // use authStore to get user
-    if (authStore.user === null) {
+    // use authStore to get user if token is set in local storage
+    if (authStore.user === null && localStorage.getItem('token') !== null) {
         authStore.getUser();
     }
 

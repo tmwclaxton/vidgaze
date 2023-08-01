@@ -169,7 +169,6 @@ class AuthApiController extends Controller
             return response()->json([
                 'access_token' => $token,
                 'valid_for' => 3600 * 2,
-                'user' => new UserResource($user),
             ], 201);
         }
 
@@ -205,7 +204,6 @@ class AuthApiController extends Controller
         return response()->json([
             'access_token' => $token,
             'valid_for' => $request->remember_me ? (60 * 60 * 24 * 30 * 6) : (3600 * 2),
-            'user' => new UserResource($user),
         ], 200);
     }
 
@@ -230,7 +228,6 @@ class AuthApiController extends Controller
             'user' => new UserResource($request->user()),
             'subscription_ids' => $request->user()->creator->subscriptions->pluck('id')->toArray(),
             'admin' => $request->user()->isAdmin()
-
         ]);
     }
 

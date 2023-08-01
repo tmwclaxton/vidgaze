@@ -80,7 +80,7 @@ const name = 'SideBar';
 
                             <div class="mt-1 space-y-1 hidden">
 
-                                <ResponsiveNavLink :href="route('logout')" method="post" as="button">
+                                <ResponsiveNavLink  @click="authStore.logout()" method="post" as="button">
                                         <LogoutIcon class="w-5 h-5 flex-shrink-0"/>
                                         <span>Log Out</span>
                                 </ResponsiveNavLink>

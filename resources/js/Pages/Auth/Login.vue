@@ -10,11 +10,11 @@ import GoogleButton from '@/Components/Buttons/GoogleButton.vue';
 import AppleButton from '@/Components/Buttons/AppleButton.vue';
 
 import TextInput from '@/Components/Inputs/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import {Head, Link, router, useForm} from '@inertiajs/vue3';
 import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
-import {useToastStore} from "@/Stores/ToastStore";
-import {reactive, ref} from "vue";
-const toastStore = useToastStore();
+import { useAuthStore } from "@/Stores/AuthStore";
+const authStore = useAuthStore();
+import {reactive, ref, watch} from "vue";
 
 const form = reactive({
     data: {
@@ -27,52 +27,29 @@ const form = reactive({
     errors: {},
 });
 
-const submit = () => {
-
-    axios.post(route('api.login'), {
-        email: form.data.email,
-        password: form.data.password,
-        remember: form.data.remember,
-    })
-        .then(function (response) {
-            console.log(response);
-            if (response.data.status === 'success') {
-
-                localStorage.setItem('token', response.data.data.token);
-                axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
-
-
-
-            } else {
-                toastStore.add({
-                    message: response.data.message,
-                    type: 'warning',
-                });
-            }
-        })
-        .catch(function (error) {
-            // set form errors
+const submit = async () => {
+    authStore.login(form.data).then(() => {
+        if (localStorage.getItem('intended')) {
+            router.visit(localStorage.getItem('intended'));
+            localStorage.removeItem('intended');
+        }
+        if (localStorage.getItem('token')) {
+            router.visit(route('home'));
+        }
+    }).catch(function (error) {
             const errors = (error.response.data.errors);
-
             form.errors.email = errors.email ? errors.email[0] : null;
             form.errors.password = errors.password ? errors.password[0] : null;
-
-            toastStore.add({
-                message: error.response.data.message,
-                type: 'warning',
-            });
-
         });
 };
+
+
 </script>
 <template>
     <GuestLayout>
         <Head title="Log in" />
 
 
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-            {{ status }}
-        </div>
 
         <p class="font-bold text-xl text dark:textDark mb-6">Welcome back to VidGaze</p>
 
