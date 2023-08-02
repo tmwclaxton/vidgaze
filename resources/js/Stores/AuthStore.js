@@ -13,7 +13,7 @@ export const useAuthStore = defineStore('AuthStore', {
     },
 
     actions: {
-        getUser() {
+        getUser(toast = false) {
             const toastStore = useToastStore();
             if (localStorage.getItem('token')) {
                 // we need to set the token in the axios header as this might be a page refresh
@@ -22,10 +22,12 @@ export const useAuthStore = defineStore('AuthStore', {
                     this.user = response.data.user
                     this.admin = response.data.admin
                     this.subscription_ids = response.data.subscription_ids
-                    toastStore.add({
-                        message: 'You are now logged in.',
-                        type: 'success',
-                    });
+                    if (toast) {
+                        toastStore.add({
+                            message: 'Login successful.',
+                            type: 'success',
+                        });
+                    }
                 } ).catch(error => {
                     this.handleErrors(error);
                 });
@@ -39,6 +41,7 @@ export const useAuthStore = defineStore('AuthStore', {
         },
 
         async login(form) {
+            const toastStore = useToastStore();
             const thisRef = this;
             return axios.post(route('api.login'), {
                 email: form.email,
@@ -48,8 +51,28 @@ export const useAuthStore = defineStore('AuthStore', {
                 .then(function (response) {
                     localStorage.setItem('token', response.data.access_token);
                     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
-                    thisRef.getUser();
+                    thisRef.getUser(true);
                 }).catch(error => {
+                    thisRef.handleErrors(error);
+                })
+        },
+
+        async register(form) {
+            const toastStore = useToastStore();
+            const thisRef = this;
+            return axios.post(route('api.register'), {
+                username: form.username,
+                email: form.email,
+                password: form.password,
+                password_confirmation: form.password_confirmation,
+                terms: form.terms,
+            })
+                .then(function (response) {
+                    localStorage.setItem('token', response.data.access_token);
+                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+                    thisRef.getUser(true);
+                }).catch(error => {
+                    console.log(error);
                     thisRef.handleErrors(error);
                 })
         },

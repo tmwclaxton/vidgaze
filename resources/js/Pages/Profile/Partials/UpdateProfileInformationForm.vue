@@ -5,6 +5,7 @@ import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
 import TextInput from '@/Components/Inputs/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 
+
 const props = defineProps({
     mustVerifyEmail: Boolean,
     status: String,

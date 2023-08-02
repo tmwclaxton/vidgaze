@@ -1,5 +1,5 @@
 <script setup>
-import DropdownLink from '@/Components/Dropdown/DropdownLink.vue';
+import DropdownLink from '@/Components/Links/DropdownLink.vue';
 import Dropdown from '@/Components/Dropdown/Dropdown.vue';
 import {Link} from '@inertiajs/vue3';
 
@@ -66,10 +66,12 @@ const authStore = useAuthStore();
                         <CoinsIcon class="w-5 h-5 flex-shrink-0"/>
                         <span class="font-bold">Buy VidCoins</span>
                     </DropdownLink>
-                    <div class="flex flex-row gap-x-2" as="button" @click="authStore.logout()" >
+                    <DropdownLink
+                        :span="true"
+                        class="flex flex-row gap-x-2" as="button" @click="authStore.logout()" >
                         <LogoutIcon class="w-5 h-5 flex-shrink-0"/>
                         <span class="font-bold">Log Out</span>
-                    </div>
+                    </DropdownLink>
                 </div>
 
             </template>

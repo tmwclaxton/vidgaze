@@ -1,5 +1,5 @@
 <script setup>
-import DropdownLink from '@/Components/Dropdown/DropdownLink.vue';
+import DropdownLink from '@/Components/Links/DropdownLink.vue';
 import Dropdown from '@/Components/Dropdown/Dropdown.vue';
 import {Link} from '@inertiajs/vue3';
 
