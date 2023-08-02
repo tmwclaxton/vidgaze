@@ -47,7 +47,7 @@ class UploadPlatform implements ShouldQueue
 
         if($video->sources()->count() === sizeof($this->uploadDTO->platforms)) {
             unlink(storage_path('app/' . $this->uploadDTO->video_path));
-            unlink(storage_path('app/public/' . $this->uploadDTO->thumbnail_path));
+//            unlink(storage_path('app/public/' . $this->uploadDTO->thumbnail_path));
         }
     }
 }

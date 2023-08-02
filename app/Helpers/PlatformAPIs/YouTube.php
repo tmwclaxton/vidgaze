@@ -23,7 +23,6 @@ use Laravel\Octane\Facades\Octane;
 
 class YouTube implements iSearchable, iIsPlatform
 {
-
     public Google_Service_YouTube $client;
     public Client $google_client;
 
@@ -44,7 +43,6 @@ class YouTube implements iSearchable, iIsPlatform
     {
         $yt = new self();
         if (!$ids) return [];
-        // validate ids
         if (count($ids) > 50) {
             throw new \Exception('Too many ids, max 100');
         }
@@ -72,7 +70,6 @@ class YouTube implements iSearchable, iIsPlatform
         ]);
 
         $items = $response->getItems();
-//        dd($items);
         $separate_items = [
             'creator_ids' => [], //if result is a creator
             'video_and_stream_ids' => [],
@@ -132,7 +129,6 @@ class YouTube implements iSearchable, iIsPlatform
                 $video->id
             );
 
-
             $contentDTO->creator_id = $video->snippet->channelId;
             $contentDTO->name = $video->snippet->title;
             $contentDTO->description = $video->snippet->description;
@@ -158,8 +154,6 @@ class YouTube implements iSearchable, iIsPlatform
         },$videos->getItems());
     }
 
-
-
     public static function extractCreatorToDTO(\Google\Service\YouTube\Channel $data): CreatorDTO
     {
         $creatorDTO = new CreatorDTO(Platform::YouTube, $data->id);
@@ -171,8 +165,4 @@ class YouTube implements iSearchable, iIsPlatform
         $creatorDTO->language = $data->snippet->defaultLanguage ?? null;
         return $creatorDTO;
     }
-
-
-
-
 }

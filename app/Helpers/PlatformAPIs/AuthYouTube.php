@@ -66,23 +66,20 @@ class AuthYouTube extends YouTube implements iCanLogin, iCanUpload
         $snippet->setTitle($uploadDTO->title);
         $snippet->setDescription($uploadDTO->description);
         $snippet->setTags($uploadDTO->tags);
-        $snippet->setCategoryId($uploadDTO->category->youtube_id);
-        $snippet->setCategoryId(22);
-
+        $snippet->setCategoryId($uploadDTO->category->youtube_category_id);
 
         $status = new \Google_Service_YouTube_VideoStatus();
         $status->setEmbeddable(true);
         $status->setPrivacyStatus($uploadDTO->visibility->value);
+        $status->setSelfDeclaredMadeForKids($uploadDTO->audience == Audience::KIDS);
 
+//        $ageGating = new \Google_Service_YouTube_VideoAgeGating();
+//        $ageGating->setRestricted($uploadDTO->audience == Audience::MATURE);
 
-        $ageGating = new \Google_Service_YouTube_VideoAgeGating();
-        $ageGating->setRestricted($uploadDTO->audience == Audience::MATURE);
-
-        $status->setMadeForKids($uploadDTO->audience == Audience::KIDS);
 
         $video = new \Google_Service_YouTube_Video();
-        $video->setSnippet($snippet);
         $video->setStatus($status);
+        $video->setSnippet($snippet);
 //        $video->setAgeGating($ageGating);
 
 
