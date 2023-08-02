@@ -1,0 +1,27 @@
+<template>
+  <textarea
+      class="w-full dark:bg-gray-900 dark:text-gray-300 focus:outline-none focus:shadow-outline-blue focus:border-blue-500 dark:focus:border-blue-600
+    border focus:ring-2 border-zinc-300 dark:border-zinc-600 rounded-lg shadow-sm"
+      :value="modelValue"
+      @input="$emit('update:modelValue', $event.target.value)"
+      ref="input"
+  ></textarea>
+</template>
+
+<script setup>
+import { onMounted, ref } from 'vue';
+
+defineProps(['modelValue']);
+
+defineEmits(['update:modelValue']);
+
+const input = ref(null);
+
+onMounted(() => {
+    if (input.value.hasAttribute('autofocus')) {
+        input.value.focus();
+    }
+});
+
+defineExpose({ focus: () => input.value.focus() });
+</script>

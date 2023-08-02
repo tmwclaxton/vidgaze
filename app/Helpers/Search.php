@@ -3,7 +3,7 @@
 namespace App\Helpers;
 
 use App\Enums\Platform;
-use App\Jobs\searchPlatform;
+use App\Jobs\SearchPlatform;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Redis;
@@ -39,7 +39,7 @@ class Search
             // add a job for each platform that is not in the cache
             $search_jobs =[];
             foreach ($platforms_to_search as $platform) {
-                $search_jobs[] = new searchPlatform($searchQuery, $platform);
+                $search_jobs[] = new SearchPlatform($searchQuery, $platform);
             }
 
             // dispatch batch

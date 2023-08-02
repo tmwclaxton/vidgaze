@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tools;
 
 use App\Enums\Platform;
+use App\Helpers\PlatformAPIs\AuthYouTube;
 use App\Helpers\PlatformAPIs\Dailymotion;
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\PlatformAPIs\Vimeo;
@@ -23,8 +24,8 @@ class LinkingController extends Controller
 
         switch ($platform) {
             case Platform::YouTube->value:
-                try {
-                    $yt = new YouTube($code);
+//                try {
+                    $yt = new AuthYouTube(AuthYouTube::getAccessTokenWithCode($code));
                     $yt_channel_id = $yt->getMyCreator()->id;
 
                     self::breakIfChannelClaimed($yt_channel_id, Platform::YouTube);
@@ -38,12 +39,12 @@ class LinkingController extends Controller
                     ]);
 
                     return redirect()->route('studio.dashboard');
-                } catch (Exception $e) {
-                    if($e->getCode() == 403) {
-                        abort('403', $e->getMessage());
-                    }
-                    abort('401',$e->getMessage());
-                }
+//                } catch (Exception $e) {
+//                    if($e->getCode() == 403) {
+//                        abort('403', $e->getMessage());
+//                    }
+//                    abort('401',$e->getMessage());
+//                }
 
             case Platform::Dailymotion->value:
                 try {
@@ -167,7 +168,7 @@ class LinkingController extends Controller
 
     public function logIn(string $platform)
     {
-        $platform = Platform::fromValue($platform)->getPlatformClass();
+        $platform = Platform::fromValue($platform)->getPlatformAuthClass();
         // if $platform has a logIn method, call it
         if (method_exists($platform, 'getLoginUrl')) {
             $auth_url = $platform::getLoginUrl();

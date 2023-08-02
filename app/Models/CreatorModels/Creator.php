@@ -20,6 +20,7 @@ use App\Models\User;
 use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoAward;
 use App\Models\VideoModels\VideoDisinterest;
+use App\Models\VideoModels\VideoDraft;
 use App\Models\VideoModels\VideoUpload;
 use App\Models\VideoModels\VideoInteraction;
 use App\Models\VideoModels\VideoView;
@@ -40,6 +41,12 @@ class Creator extends Model
 
     //    protected $with = ['sources']; //eager load creator sources | usually not needed, i.e when getting creator from video
 
+
+    public function getUploadablePlatforms(): array
+    {
+        $uploadablePlatforms = Platform::getUploadablePlatforms(false)->toArray();
+        return array_intersect($uploadablePlatforms, $this->sources()->pluck('source_name')->toArray());
+    }
     public function updateAllContentByApi() : void
     {
         foreach ($this->sources()->get() as $source){
@@ -169,10 +176,9 @@ class Creator extends Model
         return $this->hasMany(VideoView::class, 'viewer_id');
     }
 
-
-
-
-
-
+    public function video_drafts(): HasMany
+    {
+        return $this->hasMany(VideoDraft::class);
+    }
 
 }

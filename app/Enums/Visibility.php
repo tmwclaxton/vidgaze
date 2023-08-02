@@ -4,21 +4,21 @@ namespace App\Enums;
 
 use InvalidArgumentException;
 
-enum PrivacyStatus: string
+enum Visibility: string
 {
     case PUBLIC = 'public';
     case PRIVATE = 'private';
     case UNLISTED = 'unlisted';
     case SCHEDULED = 'scheduled';
 
-    public static function fromValue(string $value) : PrivacyStatus
+    public static function fromValue(string $value) : Visibility
     {
         return match ($value) {
             'public' => self::PUBLIC,
             'private' => self::PRIVATE,
             'unlisted' => self::UNLISTED,
             'scheduled' => self::SCHEDULED,
-            default => throw new InvalidArgumentException('Invalid value for PrivacyStatus'),
+            default => throw new InvalidArgumentException('Invalid value for Visibility'),
         };
     }
 

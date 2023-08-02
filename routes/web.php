@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Helpers\JoshPing;
 use App\Http\Controllers\WebControllers\SupportWebController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -61,5 +62,9 @@ Route::get('/privacy_policy', [SupportWebController::class,'privacy'])->name('pr
 
 
 
+
+Route::get('/ping', function(){
+    return JoshPing::ping();
+});
 
 

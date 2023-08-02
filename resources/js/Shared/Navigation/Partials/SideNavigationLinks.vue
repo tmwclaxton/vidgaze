@@ -92,44 +92,44 @@ const name = 'ExpandableNavigationLinks';
     <div  v-if="navStore.showingStudioLinks" class="  space-y-1 ">
         <!--dashboard-->
         <div v-if="$page.props.auth.user != null" class="md:hid den">
-            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
-                <ProfileIcon class=" w-5 h-5 flex-shrink-0"/>
-                <span>Dashboard</span>
+            <ResponsiveNavLink :href="route('studio.dashboard')" :active="route().current('studio.dashboard')">
+                    <ProfileIcon class=" w-5 h-5 flex-shrink-0"/>
+                    <span>Dashboard</span>
             </ResponsiveNavLink>
         </div>
         <!--content page-->
         <div v-if="$page.props.auth.user != null" class="md:hid den">
-            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
-                <ContentIcon class=" w-5 h-5 flex-shrink-0"/>
-                <span>Content</span>
+            <ResponsiveNavLink :href="route('studio.dashboard')" :active="route().current('studio.dashboard')">
+                    <ContentIcon class=" w-5 h-5 flex-shrink-0"/>
+                    <span>Content</span>
             </ResponsiveNavLink>
         </div>
         <!--upload page-->
         <div v-if="$page.props.auth.user != null" class="ld:hid den">
-            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
-                <UploadIcon class=" w-5 h-5 flex-shrink-0"/>
-                <span>Upload</span>
+            <ResponsiveNavLink :href="route('studio.upload')" :active="route().current('studio.upload')">
+                    <UploadIcon class=" w-5 h-5 flex-shrink-0"/>
+                    <span>Upload</span>
             </ResponsiveNavLink>
         </div>
         <!--creator streams-->
         <div v-if="$page.props.auth.user != null" class="xl:hid den">
-            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
-                <LivestreamIcon class=" w-5 h-5 flex-shrink-0"/>
-                <span>Stream</span>
+            <ResponsiveNavLink :href="route('studio.dashboard')" :active="route().current('studio.dashboard')">
+                    <LivestreamIcon class=" w-5 h-5 flex-shrink-0"/>
+                    <span>Stream</span>
             </ResponsiveNavLink>
         </div>
         <!--dashboard-->
         <div v-if="$page.props.auth.user != null" class="xl:hid den">
-            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
-                <UnionIcon class=" w-5 h-5 flex-shrink-0"/>
-                <span>Unions</span>
+            <ResponsiveNavLink :href="route('studio.dashboard')" :active="route().current('studio.dashboard')">
+                    <UnionIcon class=" w-5 h-5 flex-shrink-0"/>
+                    <span>Unions</span>
             </ResponsiveNavLink>
         </div>
         <!--Customise-->
         <div v-if="$page.props.auth.user != null" class="md:hid den">
-            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
-                <CustomiseIcon class=" w-5 h-5 flex-shrink-0"/>
-                <span>Customise</span>
+            <ResponsiveNavLink :href="route('studio.dashboard')" :active="route().current('studio.dashboard')">
+                    <CustomiseIcon class=" w-5 h-5 flex-shrink-0"/>
+                    <span>Customise</span>
             </ResponsiveNavLink>
         </div>
     </div>

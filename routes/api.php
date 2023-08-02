@@ -5,6 +5,8 @@ use App\Http\Controllers\ApiControllers\ShareApiController;
 use App\Http\Controllers\ApiControllers\ViewListenerController;
 
 use Illuminate\Support\Facades\Redis;
+use App\Http\Controllers\Upload\UploadController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -79,4 +81,11 @@ use Illuminate\Support\Facades\Route;
         })->name('health');
 
     });
+
+//Route::any('/tus/{any?}', function () {
+//    return app('tus-server')->serve();
+//})->where('any', '.*');
+
+
+Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
 
