@@ -37,7 +37,7 @@ class UploadPlatform implements ShouldQueue
     {
         $source = Creator::find($this->creator_id)->sources()->where('source_name', $this->platform->value)->first();
         $source->refreshAccessToken();
-        $external_video_id = $this->platform->getPlatformClass($source->access_token)->upload($this->uploadDTO);
+        $external_video_id = $this->platform->getPlatformAuthObject($source->access_token)->upload($this->uploadDTO);
 
         $video = Video::find($this->video_id);
         $video->sources()->create([
@@ -47,7 +47,7 @@ class UploadPlatform implements ShouldQueue
 
         if($video->sources()->count() === sizeof($this->uploadDTO->platforms)) {
             unlink(storage_path('app/' . $this->uploadDTO->video_path));
-            unlink(storage_path('app/' . $this->uploadDTO->thumbnail_path));
+            unlink(storage_path('app/public/' . $this->uploadDTO->thumbnail_path));
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models\CreatorModels;
 
 use App\Enums\Platform;
+use App\Helpers\PlatformAPIs\AuthYouTube;
 use App\Helpers\PlatformAPIs\YouTube;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,7 +35,7 @@ class CreatorSource extends Model
     public function refreshAccessToken(){
         switch ($this->source_name) {
             case Platform::YouTube->value:
-                $tokens = YouTube::getRefreshAccessToken($this->refresh_token);
+                $tokens = AuthYouTube::getRefreshAccessToken($this->refresh_token);
                 $this->access_token = $tokens['access_token'];
                 $this->refresh_token = $tokens['refresh_token'];
                 $this->save();

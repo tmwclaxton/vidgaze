@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Enums\Audience;
 use App\Enums\Platform;
 use App\Enums\Visibility;
+use App\Helpers\PlatformAPIs\AuthYouTube;
 use App\Helpers\PlatformAPIs\Dailymotion;
 use App\Helpers\PlatformAPIs\Google;
 use App\Helpers\PlatformAPIs\Podcasts;
@@ -23,7 +24,11 @@ class JoshPing
     public static function ping()
     {
 
-        dd(auth()->user()->creator()->first()->getUploadablePlatforms());
+//        dd("hi");
+        dd(\Storage::get('public/thumbnails/m55NepKM9JDBsn7pQos1azpZXZIMGvolGvfAgBLn.jpg'));
+        $creator = auth()->user()->creator()->first();
+        $ayt = new AuthYouTube($creator->sources()->where('source_name', Platform::YouTube)->first()->refreshAccessToken());
+        ddd($ayt->getMyCreator());
         dd(Visibility::PUBLIC->value);
 
 //        $creator = auth()->user()->creator()->first();

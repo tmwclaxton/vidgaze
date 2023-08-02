@@ -2,12 +2,14 @@
 
 namespace App\Enums;
 
+use App\Helpers\PlatformAPIs\AuthYouTube;
 use App\Helpers\PlatformAPIs\Dailymotion;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iCanUpload;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\PlatformAPIs\Vimeo;
 use App\Helpers\PlatformAPIs\YouTube;
+use Google\Service\ShoppingContent\TransitTableTransitTimeRowTransitTimeValue;
 use InvalidArgumentException;
 
 enum Platform: string
@@ -100,11 +102,11 @@ enum Platform: string
         return $supported->map(fn($platform) => $platform->value);
     }
 
-    function getPlatformClass($accessToken = null): iIsPlatform | iCanUpload
+    function getPlatformClass(): iIsPlatform
     {
         return match ($this){
 //            Platform::VidGaze => 'vg',
-            Platform::YouTube => new YouTube(null, $accessToken),
+            Platform::YouTube => new YouTube(),
             Platform::Dailymotion => new Dailymotion,
             Platform::Vimeo => new Vimeo,
             Platform::Twitch => new Twitch,
@@ -114,6 +116,20 @@ enum Platform: string
 //            Platform::SoundCloud => 'sc',
 //            Platform::Spotify => 'sp',
 //            Platform::Instagram => 'ig',
+        };
+    }
+
+    function getPlatformAuthObject($accessToken): iIsPlatform | iCanUpload
+    {
+        return match ($this){
+            Platform::YouTube => new AuthYouTube($accessToken),
+        };
+    }
+
+    function getPlatformAuthClass(): string
+    {
+        return match ($this){
+            Platform::YouTube => AuthYouTube::class,
         };
     }
 
