@@ -1,10 +1,10 @@
 <template>
     <ConsistentContentHolder class="p-5 h-full">
         <div class="flex flex-col items-center justify-center">
-            <img v-bind:src="$page.props.auth.user.creator.avatar_url"
+            <img v-bind:src="useAuthStore().user.creator.avatar_url"
                  class="w-24 aspect-square rounded-full mb-3 shadow">
             <p class="font-bold text-lg" >Your Channel</p>
-            <p class="font-light text-xl" v-text="$page.props.auth.user.creator.name"></p>
+            <p class="font-light text-xl" v-text="useAuthStore().user.creator.name"></p>
         </div>
 
         <div class="border-t border-zinc-200 dark:border-zinc-600 my-2"></div>
@@ -14,7 +14,7 @@
 
             <div class=" flex flex-row flex-wrap gap-2 w-full">
                 <ConsistentContentHolder class="flex flex-row align-middle justify-center w-max px-5">
-                    <p class="text-sm" v-text="$page.props.auth.user.creator.subscriber_count "/>
+                    <p class="text-sm" v-text="useAuthStore().user.creator.subscriber_count "/>
                 </ConsistentContentHolder>
                 <ConsistentContentHolder class="flex flex-row align-middle justify-center w-max px-5">
                     <p class="text-sm" v-text="'3:53 Avg View Duration '"/>
@@ -29,6 +29,7 @@
 
 <script setup>
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
+import {useAuthStore} from "@/Stores/AuthStore";
 const name = 'ChannelOverview';
 </script>
 

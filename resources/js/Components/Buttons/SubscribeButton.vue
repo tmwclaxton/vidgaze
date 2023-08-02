@@ -8,6 +8,7 @@
 import {computed, onMounted, ref} from "vue";
 import { useToastStore } from "@/Stores/ToastStore";
 import {usePage} from "@inertiajs/vue3";
+import {useAuthStore} from "@/Stores/AuthStore";
 const toastStore = useToastStore();
 const name = 'SubscribeButton'
 const subscribed = ref(false);
@@ -21,7 +22,7 @@ const props = defineProps({
 
 const subscribe = () => {
     // if not logged in, redirect to login page using ziggy
-    if ( usePage().props.auth.user === null) {
+    if ( useAuthStore().user === null) {
         window.location.href = route('login');
         return;
     }
@@ -37,10 +38,10 @@ const subscribe = () => {
             // Add channel to subscriptions
             if (response.data.subscribed) {
                 // Add channel to subscriptions
-                usePage().props.auth.subscriptions.push(props.channel.id);
+                useAuthStore().subscriptions.push(props.channel.id);
             } else {
                 // Remove channel from subscriptions
-                usePage().props.auth.subscriptions = usePage().props.auth.subscriptions.filter(subscription => subscription !== props.channel.id);
+                useAuthStore().subscriptions = useAuthStore().subscriptions.filter(subscription => subscription !== props.channel.id);
             }
             subscribed.value = !subscribed.value;
         })
@@ -56,8 +57,8 @@ const subscribe = () => {
 
 onMounted(() => {
     // Check if user is subscribed to channel by checking in auth subscriptions
-    if (usePage().props.auth.user !== null) {
-        subscribed.value = usePage().props.auth.subscriptions.some(subscription => subscription === props.channel.id);
+    if (useAuthStore().user !== null) {
+        subscribed.value = useAuthStore().subscriptions.some(subscription => subscription === props.channel.id);
     }
 });
 

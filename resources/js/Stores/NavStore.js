@@ -62,7 +62,7 @@ export const useNavStore = defineStore('NavStore', {
         },
 
         checkBottomNavLinks() {
-            if (window.innerHeight > 850 || this.showingNavigationDropdown || (usePage().props.auth.user === null && window.innerHeight > 665)) {
+            if (window.innerHeight > 850 || this.showingNavigationDropdown || (useAuthStore().user === null && window.innerHeight > 665)) {
                 this.showingBottomNavLinks = true
             } else {
                 this.showingBottomNavLinks = false

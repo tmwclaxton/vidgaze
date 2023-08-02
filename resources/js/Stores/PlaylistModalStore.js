@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import {useToastStore} from "@/Stores/ToastStore";
 import {usePage} from "@inertiajs/vue3";
+import {useAuthStore} from "@/Stores/AuthStore";
 export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
     state: () => {
         return {
@@ -12,7 +13,7 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
     },
     actions: {
         async getPlaylists() {
-            if (usePage().props.auth.user !== null) {
+            if (useAuthStore().user !== null) {
                 axios.get(route('playlists.modal.refresh', {video_ids:  this.videoIds.join()}))
                     .then(response => {
                         this.playlists = response.data['playlists'];
@@ -25,7 +26,7 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
 
         },
         async addVideosToPlaylist(playlistId) {
-            if (usePage().props.auth.user !== null) {
+            if (useAuthStore().user !== null) {
                 let toastStore = useToastStore();
                 axios.post('/playlists/' + playlistId + '/videos', { video_ids: this.videoIds.join() })
                     .then(response => {
@@ -42,7 +43,7 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
         },
         async removeVideosFromPlaylist(playlistId) {
 
-            if (usePage().props.auth.user !== null) {
+            if (useAuthStore().user !== null) {
                 let toastStore = useToastStore();
 
 
@@ -75,7 +76,7 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
         },
         async createPlaylist(name, visibility) {
 
-            if (usePage().props.auth.user !== null) {
+            if (useAuthStore().user !== null) {
                 let toastStore = useToastStore();
                 axios.post('/playlist/create', { name: name, visibility: visibility })
                     .then(response => {

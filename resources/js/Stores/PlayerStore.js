@@ -308,7 +308,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
 
 
-            if (checkViewHistoryStartTime && usePage().props.auth.user !== null) {
+            if (checkViewHistoryStartTime && useAuthStore().user !== null) {
                 this.debugMessage('checking view history start time')
                 // get the view history for this video and set the start time to the last time they watched it
                 const videoId = object.id;

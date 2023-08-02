@@ -1,10 +1,4 @@
 
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-export default {
-    layout: AuthenticatedLayout
-};
-</script>
 
 <script setup>
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
@@ -31,6 +25,7 @@ import QueueItem from "@/Components/Modals/MiniPlayers/Partials/QueueItem.vue";
 import SuggestionsScreen from "@/Pages/Viewer/Watch/Partials/SuggestionsScreen/SuggestionsScreen.vue";
 
 import EndScreen from "@/Pages/Viewer/Watch/Partials/EndScreen.vue";
+import {useAuthStore} from "@/Stores/AuthStore";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -38,6 +33,7 @@ const playlistModalStore = usePlaylistModalStore();
 const shareModalStore = useShareModalStore();
 const contentModalStore = useContentModalStore();
 const NavStore = useNavStore();
+const authStore = useAuthStore();
 const name = 'Watch';
 
 const theatre = ref(false);
@@ -46,31 +42,31 @@ const theatre = ref(false);
 
 const layout = AuthenticatedLayout;
 
-const video = ref(null);
+const item = ref(null);
 const comments = ref(null)
 const isDescriptionCollapsed = ref(true);
 const showCommentSection = ref(false);
 
 
 const props = defineProps({
-    item: {
-        type: Object,
-        required: true
-    },
     type: {
         type: String,
         required: true
-    }
+    },
+    slug: {
+        type: String,
+        required: true
+    },
 });
 
 const playlistToggled = ref(false); // can't seem to get it work directly with the store
 const showShare = ref(false);
 const showMoreDescriptionButton = ref(false);
 function togglePlaylistModal()  {
-    if (props.item.data.type !== 'video') {
+    if (props.type !== 'video') {
         return;
     }
-    playlistModalStore.videoIds = [props.item.data.id];
+    playlistModalStore.videoIds = [props.item.id];
 
 
     if (!playlistToggled.value) {
@@ -86,8 +82,8 @@ const share = () => {
     if (showShare.value) {
         shareModalStore.showMenu = false;
     } else {
-        contentModalStore.itemType = props.item.data.type;
-        contentModalStore.item = props.item.data;
+        contentModalStore.itemType = props.type;
+        contentModalStore.item = props.item;
         contentModalStore.shareContent();
     }
     showShare.value = !showShare.value;
@@ -105,80 +101,109 @@ onMounted( () => {
     NavStore.showingNavigationDropdown = false;
 
 
-    // should description show more button be shown?
-    showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
 
 
+    // get video / stream details
+    if (props.type === 'video') {
+        // get
+        axios.get(route('api.video.show', {slug: props.slug})).then((response) => {
+            console.log(response);
+            item.value = response.data.video;
+            // should description show more button be shown?
+            showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
+        }).catch((error) => {
+            console.log(error);
+        });
 
-
-    playerStore.destroyPlayers().then(() => {
-        console.log("players destroyed");
-
-
-        // if video/stream was already playing by accessing the queueStore's index and is same as props.item.external_id, resume from where it left off
-        const queueStoreItem = queueStore.items[queueStore.index];
-        const queueStoreExternalId = queueStoreItem !== undefined ? queueStoreItem.object.external_id : null;
-
-
-
-        // check if video was on queue or not
-        if (queueStoreExternalId === null || queueStoreExternalId !== props.item.data.external_id) {
-
-            console.log("start from beginning");
-            playerStore.currentTimePosition = 0;
-            playerStore.buildPlayer('watch_player', props.item.data, 0, true);
-        } else {
-
-            console.log("resume from where it left off");
-            const currentTime = round(playerStore.currentTimePosition);
-            playerStore.buildPlayer('watch_player', props.item.data, currentTime, true);
-
-
-        }
-
-
-    });
-
-
-    // get video details
+    } else {
+    }
 
 
     // get video suggestions
 
     // get video comments
 
+    watch(() => props.item, (newVal, oldVal) => {
+        if (newVal !== null) {
+            // // should description show more button be shown?
+            // showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
+            //
+            // get video suggestions
+            // axios.get(`/api/videos/${props.item.id}/suggestions`).then((response) => {
+            //     props.suggestions = response.data.data;
+            // }).catch((error) => {
+            //     console.log(error);
+            // });
+            //
+            // // get video comments
+            // axios.get(`/api/videos/${props.item.id}/comments`).then((response) => {
+            //     props.comments = response.data.data;
+            // }).catch((error) => {
+            //     console.log(error);
+            // });
+            //
+            // playerStore.destroyPlayers().then(() => {
+            //     console.log("players destroyed");
+            //
+            //
+            //     // if video/stream was already playing by accessing the queueStore's index and is same as props.item.external_id, resume from where it left off
+            //     const queueStoreItem = queueStore.items[queueStore.index];
+            //     const queueStoreExternalId = queueStoreItem !== undefined ? queueStoreItem.object.external_id : null;
+            //
+            //
+            //
+            //     // check if video was on queue or not
+            //     if (queueStoreExternalId === null || queueStoreExternalId !== props.item.external_id) {
+            //
+            //         console.log("start from beginning");
+            //         playerStore.currentTimePosition = 0;
+            //         playerStore.buildPlayer('watch_player', props.item, 0, true);
+            //     } else {
+            //
+            //         console.log("resume from where it left off");
+            //         const currentTime = round(playerStore.currentTimePosition);
+            //         playerStore.buildPlayer('watch_player', props.item, currentTime, true);
+            //
+            //
+            //     }
+            //
+            //
+            // });
+
+        }
+    });
 
 });
 
 onUnmounted(() => {
-    // stop view record
-    playerStore.stopViewRecord();
-    // destroy players
-    playerStore.destroyPlayers().then(() => {
-        console.log("players destroyed");
-
-        // watch showMiniPlayer if it is changed to true check if queueStore has any items if so then build the player
-        if (queueStore.items.length > 0) {
-
-
-            const queueStoreItem = queueStore.items[queueStore.index];
-            const queueStoreExternalId = queueStoreItem !== undefined ? queueStoreItem.object.external_id : null;
-
-            let currentTime = 0;
-
-            // if the video that was playing was in the queue get time and rebuild player with time in mini player
-            if (queueStoreExternalId !== null && queueStoreExternalId === props.item.data.external_id) {
-                // get the current time from the playerStore
-                currentTime = round(playerStore.currentTimePosition);
-
-            } else {
-                // get time by checking the server's view history time
-
-            }
-
-            playerStore.buildPlayer('miniplayer_div_holder', queueStoreItem.object, currentTime, true, true);
-        }
-    });
+    // // stop view record
+    // playerStore.stopViewRecord();
+    // // destroy players
+    // playerStore.destroyPlayers().then(() => {
+    //     console.log("players destroyed");
+    //
+    //     // watch showMiniPlayer if it is changed to true check if queueStore has any items if so then build the player
+    //     if (queueStore.items.length > 0) {
+    //
+    //
+    //         const queueStoreItem = queueStore.items[queueStore.index];
+    //         const queueStoreExternalId = queueStoreItem !== undefined ? queueStoreItem.object.external_id : null;
+    //
+    //         let currentTime = 0;
+    //
+    //         // if the video that was playing was in the queue get time and rebuild player with time in mini player
+    //         if (queueStoreExternalId !== null && queueStoreExternalId === props.item.external_id) {
+    //             // get the current time from the playerStore
+    //             currentTime = round(playerStore.currentTimePosition);
+    //
+    //         } else {
+    //             // get time by checking the server's view history time
+    //
+    //         }
+    //
+    //         playerStore.buildPlayer('miniplayer_div_holder', queueStoreItem.object, currentTime, true, true);
+    //     }
+    // });
 });
 
 
@@ -190,10 +215,10 @@ onUnmounted(() => {
 
 <template>
 
-        <Head :title="props.item.data.title"  />
+        <Head v-if="item != null" :title="item.title"  />
 
 
-        <div class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4 md:mx-24']">
+        <div v-if="item != null" class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4 md:mx-24']">
 
 
             <!--player with theatre mode-->
@@ -207,7 +232,7 @@ onUnmounted(() => {
                         </div>
 
                         <!--end screen-->
-                        <EndScreen v-if="playerStore.players.length === 0" :item="props.item.data" class="h-full w-full"/>
+                        <EndScreen v-if="playerStore.players.length === 0 && item != null" :item="item" class="h-full w-full"/>
 
 
                     </div>
@@ -220,22 +245,22 @@ onUnmounted(() => {
                     <div class="bg-re d-500 w-full  " :class="[theatre ? ' ' : ' ']">
                         <div class=" w-full  ">
 
-                            <p class="text-lg font-bold leading-6 line-clamp-2 text dark:textDark" v-text="props.item.data.title"/>
+                            <p class="text-lg font-bold leading-6 line-clamp-2 text dark:textDark" v-text="item.title"/>
                             <div class="px-3 sm:px-0 flex pt-2 -mb-2 justify-between text dark:textDark flex flex-row flex-wrap gap-8 ">
 
                                 <div class="flex flex-col">
-                                    <p class=" pr-3 " v-text="props.item.data.view_count + ' · ' + props.item.data.time_published"/>
+                                    <p class=" pr-3 " v-text="item.view_count + ' · ' + item.time_published"/>
                                     <span class="pr-3  pt-0.5 font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
-                                            v-text="props.item.data.live_viewer_count + ' Watching'"/>
+                                            v-text="item.live_viewer_count + ' Watching'"/>
                                 </div>
                                 <div class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
 
 
-                                    <FeatureCreatorButton v-if="$page.props.auth.admin" :creator_id="props.item.data.creator.id"/>
+                                    <FeatureCreatorButton v-if="authStore.admin" :creator_id="item.creator.id"/>
 
 
                                     <TertiaryButton>
-                                        <LikeDislikeButtons :video="props.item.data" :orientationVertical="false"/>
+                                        <LikeDislikeButtons :video="item" :orientationVertical="false"/>
                                     </TertiaryButton>
 
 
@@ -245,7 +270,7 @@ onUnmounted(() => {
                                         <p class="pl-2  ">Share</p>
                                     </div>
 
-                                    <div v-if="$page.props.auth.user" @click="togglePlaylistModal()" class="flex flex-row cursor-pointer align-middle items-center" >
+                                    <div v-if="authStore.user" @click="togglePlaylistModal()" class="flex flex-row cursor-pointer align-middle items-center" >
                                         <LibraryIcon class="h-5"/>
                                         <p class="pl-2">Save</p>
                                     </div>
@@ -275,21 +300,21 @@ onUnmounted(() => {
                             <div class=" py-6 ">
                                 <div class="flex justify-between">
                                     <span class="flex flex-row   w-full overflow-hidden">
-                                        <a v-if="props.item.data.creator != null" href="/channel/" class="flex-shrink-0">
+                                        <a v-if="item.creator != null" href="/channel/" class="flex-shrink-0">
                                             <img class="hover:cursor-pointer my-auto object-cover w-11 h-11 mr-2 rounded-full flex-shrink-0"
-                                                v-bind:src="props.item.data.creator.avatar_url" alt="Profile image"/>
+                                                v-bind:src="item.creator.avatar_url" alt="Profile image"/>
                                         </a>
                                         <div class="pl-1 flex flex-col my-auto">
                                             <a href="/channel/"
                                                class="text-sm font-bold hover:cursor-pointer text dark:textDark w-44 xs:w-full break-words">
-                                                <span v-text="props.item.data.creator.name"></span>
+                                                <span v-text="item.creator.name"></span>
                                             </a>
-                                            <p class="text-xs text dark:textDark leading-4" v-text="props.item.data.creator.subscriber_count"/>
+                                            <p class="text-xs text dark:textDark leading-4" v-text="item.creator.subscriber_count"/>
                                         </div>
 
                                         <div class="ml-auto sm:ml-5 my-auto">
 
-                                           <SubscribeButton :channel="props.item.data.creator"  />
+                                           <SubscribeButton :channel="item.creator"  />
                                         </div>
                                     </span>
 
@@ -300,7 +325,7 @@ onUnmounted(() => {
                                 <div
                                      style="" class=" ml-14   pt-3   text dark:textDark text-sm">
                                     <p id="description" style="line-height: 20px;"
-                                       v-bind:class="{' line-clamp-3': isDescriptionCollapsed}" v-html="props.item.data.description"/>
+                                       v-bind:class="{' line-clamp-3': isDescriptionCollapsed}" v-html="item.description"/>
 
                                     <button v-if="showMoreDescriptionButton" class="font-bold mt-5 text-xs uppercase"
                                             @click="isDescriptionCollapsed = !isDescriptionCollapsed"
@@ -320,7 +345,7 @@ onUnmounted(() => {
                         <p class="w-full text-center">Open Comments</p>
                     </TertiaryButton>
 
-                    <CommentSection :item="props.item.data"
+                    <CommentSection :item="item"
                                     v-bind:class="[showCommentSection ? 'flex' : 'hidden lg:flex']" />
 
                     <RowDivider class=" " :class="[theatre ? 'flex ' : 'flex lg:hidden ']"/>

@@ -12,7 +12,7 @@ import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
 import Viewers from "@/Components/Cards/VideoStreamCards/Partials/CornerInfo.vue";
 import CornerInfo from "@/Components/Cards/VideoStreamCards/Partials/CornerInfo.vue";
-
+import {useAuthStore} from "@/Stores/AuthStore";
 const contentModalStore = useContentModalStore();
 const shareModalStore = useShareModalStore();
 const playlistModalStore = usePlaylistModalStore();
@@ -85,7 +85,7 @@ const dotsIconShow = computed(() => {
                 </CornerInfo>
 
                 <div  class="flex flex-col absolute top-0 right-0 m-1.5 space-y-1 items-end opacity-0  duration-500 delay-500 group-hover:opacity-100 transition-none group-hover:transition-opacity">
-                    <WatchLater v-if="item.duration != null && $page.props.auth.user != null" :item="item" />
+                    <WatchLater v-if="item.duration != null && useAuthStore().user != null" :item="item" />
                     <Queue  :item="item" :itemType="itemType" />
                 </div>
 

@@ -19,15 +19,6 @@ let props = defineProps({
 })
 
 </script>
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-export default {
-    layout: AuthenticatedLayout,
-
-};
-
-</script>
-
 <template>
     <Head title="Studio Dashboard" />
 

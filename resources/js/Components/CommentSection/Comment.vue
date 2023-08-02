@@ -27,9 +27,9 @@ const replyComment = ref(false);
 
 const editable = computed(() => {
     // checked logged in and is owner of comment OR is admin
-    const user = usePage().props.auth.user;
+    const user = useAuthStore().user;
 
-    return (user && (user.creator.id === props.comment.owner.id || usePage().props.auth.admin));
+    return (user && (user.creator.id === props.comment.owner.id || useAuthStore().admin));
 
 });
 
@@ -147,7 +147,7 @@ const noRepliesText = computed(() => {
                                                             :setLikeValue="CommentSectionStore.getCommentInteraction(comment.id)"/>
                                     </TertiaryButton>
 
-                                    <span v-if="!simple && $page.props.auth.user !== null" @click="replyComment = !replyComment">
+                                    <span v-if="!simple && useAuthStore().user !== null" @click="replyComment = !replyComment">
                                         <!--<x-comment-button class="w-4" svgIcon="message" text="Reply"/>-->
                                         <TertiaryButton>
                                             <font-awesome-icon :icon="['fas', 'comment']" class="h-5 aspect-square"/>

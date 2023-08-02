@@ -37,7 +37,7 @@ const classes = computed(() => ({
 
 const toggleLike = () => {
     // if not logged in, redirect to login page using ziggy
-    if (usePage().props.auth.user === null) {
+    if (useAuthStore().user === null) {
         window.location.href = route('login');
         return;
     }

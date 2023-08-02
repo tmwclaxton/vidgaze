@@ -23,6 +23,7 @@ import { computed, onMounted, ref } from "vue";
 import { useToastStore } from "@/Stores/ToastStore";
 import { usePage } from "@inertiajs/vue3";
 import axios from "axios";
+import {useAuthStore} from "@/Stores/AuthStore";
 
 const toastStore = useToastStore();
 const name = 'LikeDislikeButtons';
@@ -62,7 +63,7 @@ const item = computed(() => {
 
 const toggleLike = () => {
     // if not logged in, redirect to login page using ziggy
-    if (usePage().props.auth.user === null) {
+    if (useAuthStore().user === null) {
         window.location.href = route('login');
         return;
     }
@@ -98,7 +99,7 @@ const toggleLike = () => {
 
 const toggleDislike = () => {
     // if not logged in, redirect to login page using ziggy
-    if (usePage().props.auth.user === null) {
+    if (useAuthStore().user === null) {
         window.location.href = route('login');
         return;
     }
@@ -148,7 +149,7 @@ const dislikeButtonClasses = computed(() => ({
 
 onMounted(async () => {
     // console.log(props.setLikeValue)
-    if (usePage().props.auth.user !== null && props.setLikeValue === null) {
+    if (useAuthStore().user !== null && props.setLikeValue === null) {
         // check if user has liked or disliked the video
         const videoId = props.video.id;
         try {

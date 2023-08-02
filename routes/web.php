@@ -29,14 +29,11 @@ require __DIR__ . '/WebsiteRoutes/search.php';
 require __DIR__ . '/WebsiteRoutes/music.php';
 require __DIR__ . '/WebsiteRoutes/user.php';
 
-
 //admin routes
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('/admin', function () { return Inertia::render('Admin/AdminDashboard'); })->name('admin.dashboard');
     Route::get('/component-testing', function () { return Inertia::render('Admin/TestComponents'); })->name('component-testing');
 });
-
-
 
 // landing route
 Route::get('/', function () {
@@ -49,19 +46,13 @@ Route::get('/', function () {
 
 //home route
 Route::get('/home', [SupportWebController::class,'home'])->name('home');
+
 //landing route
 Route::get('/about', [SupportWebController::class, 'about'])->name('about');
+
 //policy and terms
 Route::get('/terms_of_service', [SupportWebController::class, 'terms'])->name('terms');
 Route::get('/privacy_policy', [SupportWebController::class,'privacy'])->name('privacy');
-
-//Route::get('/support', [SupportController::class,'support'])->name('support');
-// support email route
-//Route::post('/support', [SupportController::class,'sendSupportEmail'])->name('support.email.send');
-
-
-
-
 
 Route::get('/ping', function(){
     return JoshPing::ping();

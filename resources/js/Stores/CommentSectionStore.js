@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import {useToastStore} from "@/Stores/ToastStore";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
 import {usePage} from "@inertiajs/vue3";
+import {useAuthStore} from "@/Stores/AuthStore";
 
 export const useCommentSectionStore = defineStore('CommentSectionStore', {
     state: () => {
@@ -31,7 +32,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                     this.comments = [];
                 }
 
-                const response = await axios.get(route('comments.infinite'), {
+                const response = await axios.get(route('api.comment.index'), {
                     params: {
                         item_id: this.item.id,
                         item_type: this.item.type,
@@ -75,7 +76,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
         },
 
         async getCommentInteractions() {
-            if (!usePage().props.auth.user) {
+            if (!useAuthStore().user) {
                 return;
             }
             axios.get(route('comment.interactions', {

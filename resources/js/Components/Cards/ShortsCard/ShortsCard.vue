@@ -59,7 +59,7 @@ const dotsIconShow = computed(() => {
                 </div>
 
                 <div  class="flex flex-col absolute top-0 right-0 m-1.5 space-y-1 items-end ">
-                    <!--<WatchLater v-if="item.duration != null && $page.props.auth.user != null" :item="item" />-->
+                    <!--<WatchLater v-if="item.duration != null && useAuthStore().user != null" :item="item" />-->
                     <!--<Queue v-if="item.duration != null" :item="item" />-->
                 </div>
 

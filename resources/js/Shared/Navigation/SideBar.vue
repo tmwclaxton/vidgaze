@@ -27,7 +27,7 @@ const name = 'SideBar';
 
 
 // const isScreenLess = computed(() => {
-//     return (window.innerWidth < 1200 && usePage().props.auth.user != null && !props.showingNavigationDropdown);
+//     return (window.innerWidth < 1200 && useAuthStore().user != null && !props.showingNavigationDropdown);
 // });
 // :class="{ 'hidden': authStore.user != null && !showingNavigationDropdown} "
 </script>
@@ -104,13 +104,13 @@ const name = 'SideBar';
                     <!--                dark/light mode-->
                     <div class="text-white cursor-pointer space-y-1" @click="toggleDark()">
                         <span v-if="!isDark">
-                            <ResponsiveNavLink span="true">
+                            <ResponsiveNavLink :span="true">
                                     <SunIcon class="w-5 h-5 flex-shrink-0"/>
                                     <span>Light</span>
                             </ResponsiveNavLink>
                         </span>
                         <span v-else>
-                            <ResponsiveNavLink span="true">
+                            <ResponsiveNavLink :span="true">
                                     <MoonIcon class="w-5 h-5 flex-shrink-0"/>
                                     <span class="">Dark</span>
                             </ResponsiveNavLink>

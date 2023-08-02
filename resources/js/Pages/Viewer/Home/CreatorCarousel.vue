@@ -1,6 +1,7 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import {usePage} from "@inertiajs/vue3";
+import {useAuthStore} from "@/Stores/AuthStore";
 
 const carouselItems = ref([]);
 
@@ -40,7 +41,7 @@ function handleMouseLeave() {
 
 onMounted(() => {
     // if user is logged in, don't show join vidgaze banner
-    if (!usePage().props.auth.user) {
+    if (!useAuthStore().user) {
         carouselItems.value = [
             {
                 imgSrc: '/images/banners/join_vidgaze.png',

@@ -66,7 +66,7 @@ const togglePlaylistModal = () => {
     <div id="menu" v-if="contentModalStore.showMenu" v-click-away="hideMenu"
          v-bind:style="{'top': contentModalStore.y + 'px', 'left': contentModalStore.x + 'px'}" class="z-10 absolute w-max h-max">
         <OptionHolder >
-            <div v-if=" $page.props.auth.user !== null && contentModalStore.itemType === 'video'" class="flex flex-col ">
+            <div v-if=" useAuthStore().user !== null && contentModalStore.itemType === 'video'" class="flex flex-col ">
                 <!--Watch later-->
                 <Option v-if="!contentModalStore.inWatchLater " @click="toggleWatchLater">
                     <ClockIcon class="w-5 h-5" />
@@ -88,7 +88,7 @@ const togglePlaylistModal = () => {
                 <ShareIcon class="w-5 h-5" />
                 <p>Share</p>
             </Option>
-            <div v-if=" $page.props.auth.user !== null" class="flex flex-col ">
+            <div v-if=" useAuthStore().user !== null" class="flex flex-col ">
                  <hr class="border-1 border-zinc-300 dark:border-zinc-800 my-0.5 mt-1">
                 <Option v-if="!contentModalStore.itemDisinterest " @click="toggleDisinterest">
                     <BanIcon class="w-5 h-5" />

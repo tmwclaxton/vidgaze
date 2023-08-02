@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 //add a token to these routes that says studio
 
-Route::middleware('auth')->group(function () {
+
 
     Route::get('/studio', function () {
 
@@ -33,8 +33,6 @@ Route::middleware('auth')->group(function () {
     Route::get('studio/video/{slug}/edit',  [VideoDraftWebController::class, 'edit'])->name("studio.video.edit");
     Route::put('studio/video/{slug}',  [VideoDraftWebController::class, 'update'])->name("studio.video.update");
     Route::post('studio/video/{slug}/publish',  [VideoDraftWebController::class, 'publish'])->name("studio.video.publish");
-
-});
 
 
 

@@ -3,7 +3,23 @@ import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import {useNavStore} from "@/Stores/NavStore";
 const navStore = useNavStore();
-const props = defineProps(['href', 'active','span']);
+const props = defineProps({
+    'href': {
+        type: String,
+        required: false,
+        default: '#'
+    },
+    'active': {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+    'span': {
+        type: Boolean,
+        required: false,
+        default: false
+    }
+});
 
 
 const classes = computed(() => {

@@ -18,12 +18,11 @@ use Inertia\Inertia;
 class VideoWebController extends Controller
 {
 
-    public function show(Video $video)
+    public function show(string $slug)
     {
-        $this->checkVisibilityAndOwnership($video);
         return Inertia::render('Viewer/Watch/Watch', [
-            'item' => new VideoResource($video),
-            'type' => 'video'
+            'type' => 'video',
+            'slug' => $slug,
         ]);
     }
 

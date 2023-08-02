@@ -20,7 +20,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             reportedContent: false,
             x: 0,
             y: 0,
-            // widthOfMenu: usePage().props.auth.user !== null ? 250 : 120,
+            // widthOfMenu: useAuthStore().user !== null ? 250 : 120,
             heightOfMenu: 0,
         }
     },
@@ -39,7 +39,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
 
             if (this.item !== null) {
             // if logged in, get video details like is the video in watch later playlist etc
-            if (usePage().props.auth.user !== null && value === true) {
+            if (useAuthStore().user !== null && value === true) {
 
                 if (this.itemType === 'video' || this.itemType === 'short') {
                     this.getVideoDetails().then(r => {

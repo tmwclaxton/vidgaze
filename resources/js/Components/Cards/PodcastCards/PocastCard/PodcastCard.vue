@@ -16,7 +16,7 @@ const props = defineProps({
 let checked = ref(false);
 let liked = ref(false);
 const getPodcastInfo = async () => {
-    if (usePage().props.auth.user !== null && !checked.value) {
+    if (useAuthStore().user !== null && !checked.value) {
         // check if user has liked or disliked the podcast
         try {
             const response = await axios.get(route('podcast.interaction', {podcastId: props.podcast.id}));

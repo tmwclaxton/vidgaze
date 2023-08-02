@@ -82,10 +82,4 @@ use Illuminate\Support\Facades\Route;
 
     });
 
-//Route::any('/tus/{any?}', function () {
-//    return app('tus-server')->serve();
-//})->where('any', '.*');
-
-
-Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
 

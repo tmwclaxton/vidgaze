@@ -64,13 +64,13 @@ const props = defineProps({
             </NavLink>
         </span>
 
-        <NavLink v-if="$page.props.auth.user != null" class="hidden lg:flex" :href="route('streams.index')" :active="route().current('streams.index')">
+        <NavLink v-if="useAuthStore().user != null" class="hidden lg:flex" :href="route('streams.index')" :active="route().current('streams.index')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <SubscriptionsIcon class=" w-5 h-5"/>
                 <span>Subscriptions</span>
             </div>
         </NavLink>
-        <NavLink v-if="$page.props.auth.user != null" class="hidden xl:flex" :href="route('feed.library')" :active="route().current('feed.library')">
+        <NavLink v-if="useAuthStore().user != null" class="hidden xl:flex" :href="route('feed.library')" :active="route().current('feed.library')">
             <div class="flex flex-row gap-x-2 px-1 items-center">
                 <LibraryIcon class=" w-5 h-5"/>
                 <span>Library</span>

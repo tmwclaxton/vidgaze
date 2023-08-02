@@ -6,6 +6,7 @@ import SelectInput from "@/Components/Inputs/SelectInput.vue";
 import Option from "@/Components/Modals/Partials/Option.vue";
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
+import {useAuthStore} from "@/Stores/AuthStore";
 const CommentSectionStore = useCommentSectionStore();
 
 const name = 'CommentSection';
@@ -79,7 +80,7 @@ onMounted(() => {
         <div class="mb-3 w-full col-span-2 p-1">
 
 
-            <div   v-if="$page.props.auth.user !== null">
+            <div   v-if="useAuthStore().user !== null">
                 <div  >
                     <CommentTextarea :item="item" :comment_id="null"/>
 
