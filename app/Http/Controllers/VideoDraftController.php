@@ -12,6 +12,7 @@ use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoDraft;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use function GuzzleHttp\json_encode;
@@ -67,8 +68,11 @@ class VideoDraftController extends Controller
 
     public function upload(string $slug){
         try {
+            request()->validate([
+                'video' => ['required', 'file', 'mimes:mp4,mov'],
+            ]);
             $path = \request()->file('video')->store('videos');
-            VideoDraft::where('slug', $slug)->update(['video_path' => $path]);
+            VideoDraft::where('slug', $slug)->update(['video_path' => $path ]);
             return response()->json();
         }
         catch (\Exception $e){
@@ -130,7 +134,10 @@ class VideoDraftController extends Controller
         }
 
         $thumbnail_path = null;
-        if(request()->file('thumbnail')) $thumbnail_path = request()->file('thumbnail')->store('thumbnails');
+        if(request()->file('thumbnail'))
+        {
+            $thumbnail_path = request()->file('thumbnail')->storePublicly('thumbnails', 'public');
+        }
         $videoDraft->update([
             'thumbnail_path' => $thumbnail_path,
             'title' => request()->title,
@@ -175,8 +182,11 @@ class VideoDraftController extends Controller
             if($publish_time->isPast()) return back()->withErrors(['publish_time' => 'Publish time must be in the future']);
         }
 
-        $thumbnail_path = request()->file('thumbnail')->store('thumbnails');
-
+        $thumbnail_path = null;
+        if(request()->file('thumbnail'))
+        {
+            $thumbnail_path = request()->file('thumbnail')->storePublicly('thumbnails', 'public');
+        }
         $video = Video::create([
             'slug' => $slug,
             'creator_id' => $creator->id,

@@ -67,8 +67,7 @@ class YouTube implements iSearchable, iIsPlatform, iCanLogin, iCanUpload
 
 
         $ageGating = new \Google_Service_YouTube_VideoAgeGating();
-//        $ageGating->setRestricted($uploadDTO->audience != Audience::ALL);
-        $ageGating->setRestricted(false);
+        $ageGating->setRestricted($uploadDTO->audience == Audience::MATURE);
 
         $status->setMadeForKids($uploadDTO->audience == Audience::KIDS);
 

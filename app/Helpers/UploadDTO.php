@@ -13,8 +13,8 @@ class UploadDTO
     public int $video_id;
     public string $video_path;
     public string $title;
-    public string | null $description;
-    public array | null $tags;
+    public string $description;
+    public array $tags;
     public Category $category;
     public string $language;
     public string $region;
@@ -30,11 +30,11 @@ class UploadDTO
         $this->video_id = $video_id;
         $this->video_path = $video_path;
         $this->title = $title;
-        $this->description = $description;
+        $this->description = $description === null ? '' : $description;
         $this->creator_id = $creator_id;
         $this->platforms = $this->setPlatforms($platforms);
         $this->thumbnail_path = $thumbnail_path;
-        $this->tags = $tags;
+        $this->tags = $tags === null ? [] : $tags;
         $this->category = $category;
         $this->visibility = $visibility;
         $this->audience = $audience;
