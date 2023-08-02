@@ -14,9 +14,9 @@ return new class extends Migration {
             $table->string('slug')->unique()->index();
             $table->foreignId('creator_id')->constrained()->cascadeOnDelete();
 
-            $table->string('video_url')->nullable();
+            $table->string('video_path')->nullable();
 
-            $table->string('thumbnail_url')->nullable();
+            $table->string('thumbnail_path')->nullable();
             $table->string('title')->default('Untitled Video');
             $table->text('description')->nullable();
             $table->text('tags')->nullable();

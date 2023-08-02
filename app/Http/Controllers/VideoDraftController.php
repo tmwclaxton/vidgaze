@@ -12,6 +12,7 @@ use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoDraft;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use function GuzzleHttp\json_encode;
 
@@ -67,7 +68,7 @@ class VideoDraftController extends Controller
     public function upload(string $slug){
         try {
             $path = \request()->file('video')->store('videos');
-            VideoDraft::where('slug', $slug)->update(['video_url' => $path]);
+            VideoDraft::where('slug', $slug)->update(['video_path' => $path]);
             return response()->json();
         }
         catch (\Exception $e){
@@ -90,9 +91,8 @@ class VideoDraftController extends Controller
                 'audience' => $video->audience,
                 'category_id' => $video->category_id,
                 'platforms' => json_decode($video->platforms)?? [],
-                'use_publish_time'=> $video->use_publish_time == 1,
                 'publish_time' => $video->publish_time ? Carbon::create($video->publish_time)->timestamp: null,
-                'thumbnail' => $video->thumbnail_url,
+                'thumbnail' => $video->thumbnail_path,
             ],
             'categories' => Category::orderBy('name')->get(['id', 'name'])->map(fn($category)=>
             [
@@ -111,13 +111,13 @@ class VideoDraftController extends Controller
             'description' => ['nullable', 'string'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string'],
-            'visibility' => ['nullable', 'string'],
+            'visibility' => ['nullable', 'string', 'in:public,unlisted,private,scheduled'],
             'language' => ['nullable', 'string'],
             'region' => ['nullable', 'string'],
-            'audience' => ['nullable', 'string'],
+            'audience' => ['nullable', 'string', 'in:all,kids,mature'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'publish_time' => ['nullable', 'int'],
-            'platforms' => ['nullable', 'array'],
+            'platforms' => ['nullable', 'array', 'min:1', Rule::in(Platform::getUploadablePlatforms(false))],
         ]);
 
         $publish_time = null;
@@ -132,7 +132,7 @@ class VideoDraftController extends Controller
         $thumbnail_path = null;
         if(request()->file('thumbnail')) $thumbnail_path = request()->file('thumbnail')->store('thumbnails');
         $videoDraft->update([
-            'thumbnail_url' => $thumbnail_path,
+            'thumbnail_path' => $thumbnail_path,
             'title' => request()->title,
             'description' => request()->description,
             'tags' => request()->tags ? json_encode(request()->tags) : null,
@@ -142,7 +142,6 @@ class VideoDraftController extends Controller
             'audience' => request()->audience,
             'category_id' => request()->category_id,
             'publish_time' => $publish_time ?? null,
-            'use_publish_time' => request()->use_publish_time,
             'platforms' =>request()->platforms ?  json_encode(request()->platforms) : null
         ]);
         return redirect(route('studio.dashboard'))->with('success', 'Video draft updated');
@@ -153,18 +152,18 @@ class VideoDraftController extends Controller
         $videoDraft = $creator->video_drafts()->where('slug', $slug)->firstOrFail();
 
         $validated = request()->validate([
-            'thumbnail' => ['file', 'required'],
+            'thumbnail' => ['file', 'required', 'mimes:jpeg,jpg,png', 'max:2048'],
             'title' => ['max:255', 'required', 'string', 'min:1'],
             'description' => ['nullable', 'string'],
-            'tags' => ['required', 'array'],
+            'tags' => ['nullable', 'array'],
             'tags.*' => ['string'],
-            'visibility' => ['required', 'string'],
+            'visibility' => ['required', 'string', 'in:public,unlisted,private,scheduled'],
             'language' => ['nullable', 'string'],
             'region' => ['nullable', 'string'],
-            'audience' => ['required', 'string'],
+            'audience' => ['required', 'string', 'in:all,kids,mature'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'publish_time' => ['nullable', 'int'],
-            'platforms' => ['required', 'array'],
+            'platforms' => ['required', 'array', 'min:1', Rule::in($creator->getUploadablePlatforms())],
         ]);
 
         $publish_time = null;
@@ -178,8 +177,25 @@ class VideoDraftController extends Controller
 
         $thumbnail_path = request()->file('thumbnail')->store('thumbnails');
 
+        $video = Video::create([
+            'slug' => $slug,
+            'creator_id' => $creator->id,
+            'preferred_source' => Platform::YouTube,
+            'title' => request()->title,
+            'description' => request()->description,
+            'thumbnail_url' => \Storage::url($thumbnail_path),
+            'tags' => json_encode(request()->tags),
+            'visibility' => request()->visibility,
+            'language' => request()->language,
+            'region' => request()->region,
+            'audience' => request()->audience,
+            'category_id' => request()->category_id,
+        ]);
+
+
         $uploadDTO = new UploadDTO(
-            $video_path,
+            $video->id,
+            $videoDraft->video_path,
             request()->title,
             request()->description,
             $creator->id,
@@ -191,25 +207,16 @@ class VideoDraftController extends Controller
             Audience::fromValue(request()->audience),
             $publish_time
         );
+        $videoDraft->delete();
 
-        $video = Video::create([
-            'slug' => $slug,
-            'creator_id' => $creator->id,
-            'preferred_source' => Platform::YouTube,
-            'title' => request()->title,
-            'description' => request()->description,
-            'thumbnail_url' => '$thumbnail_path',
-        ]);
         $batch_id = Upload::platformUpload($creator->id, $video->id, $uploadDTO);
 
-        $batch = Bus::findBatch($batch_id);
+//        $batch = Bus::findBatch($batch_id);
+//
+//        while(!$batch->finished()) {
+//            $batch = Bus::findBatch($batch_id);
+//        }
 
-        while(!$batch->finished()) {
-            sleep(1);
-            $batch = Bus::findBatch($batch_id);
-        }
-
-        dd("done");
-
+        return redirect(route('studio.dashboard'))->with('success', 'Video published');
     }
 }

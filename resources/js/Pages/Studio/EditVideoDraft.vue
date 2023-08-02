@@ -44,21 +44,21 @@
             <div>
                 <InputLabel class="mb-1" for="visibility" value="Visibility"/>
                 <div class="space-y-2">
-                    <div>
+                    <div class="flex items-center">
                         <input type="radio" id="private" value="private" v-model="form.visibility" class="mr-2">
                         <label for="private">Private</label>
                     </div>
-                    <div>
+                    <div class="flex items-center">
                         <input type="radio" id="unlisted" value="unlisted" v-model="form.visibility" class="mr-2">
                         <label for="unlisted">Unlisted</label>
                     </div>
-                    <div>
+                    <div class="flex items-center">
                         <input type="radio" id="public" value="public" v-model="form.visibility" class="mr-2">
                         <label for="public">Public</label>
                     </div>
                     <div>
-                        <input type="radio" id="scheduled" value="scheduled" v-model="form.visibility" class="mr-2">
-                        <label for="scheduled">Schedule</label>
+                        <div class="flex items-center"><input type="radio" id="scheduled" value="scheduled" v-model="form.visibility" class="mr-2">
+                            <label for="scheduled">Schedule</label></div>
                         <DateInput class="mt-2" v-if="form.visibility === 'scheduled'" v-model="form.publish_time"/>
                         <InputError class="mt-2" :message="form.errors.publish_time"/>
                     </div>
@@ -195,7 +195,9 @@ const handleSaveDraft = () => {
 };
 
 const handlePublish = () => {
-    form.post(route('studio.video.publish', [props.video.slug]));
+    form.post(route('studio.video.publish', [props.video.slug]), {
+        preserveScroll: true,
+    });
 };
 
 

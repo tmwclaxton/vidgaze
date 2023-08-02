@@ -41,6 +41,12 @@ class Creator extends Model
 
 //    protected $with = ['sources']; //eager load creator sources
 
+
+    public function getUploadablePlatforms(): array
+    {
+        $uploadablePlatforms = Platform::getUploadablePlatforms(false)->toArray();
+        return array_intersect($uploadablePlatforms, $this->sources()->pluck('source_name')->toArray());
+    }
     public function updateAllContentByApi() : void
     {
         foreach ($this->sources()->get() as $source){

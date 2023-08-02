@@ -10,23 +10,24 @@ use Carbon\Carbon;
 
 class UploadDTO
 {
-
+    public int $video_id;
     public string $video_path;
     public string $title;
-    public string $description;
-    public array $tags;
+    public string | null $description;
+    public array | null $tags;
     public Category $category;
     public string $language;
     public string $region;
-    public string $thumbnail_path;
+    public string | null $thumbnail_path;
     public string $creator_id;
     public array $platforms;
     public Audience $audience;
     public Visibility $visibility;
-    public Carbon $publish_time;
+    public Carbon | null $publish_time;
 
-    public function __construct(string $video_path, string $title, string $description, string $creator_id, array $platforms, string $thumbnail_path, array $tags, Category $category, Visibility $visibility, Audience $audience, Carbon $publish_time)
+    public function __construct(int $video_id, string $video_path, string $title, string | null $description, string $creator_id, array $platforms, string | null $thumbnail_path, array | null $tags, Category $category, Visibility $visibility, Audience $audience, Carbon | null $publish_time)
     {
+        $this->video_id = $video_id;
         $this->video_path = $video_path;
         $this->title = $title;
         $this->description = $description;

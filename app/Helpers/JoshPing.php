@@ -23,6 +23,7 @@ class JoshPing
     public static function ping()
     {
 
+        dd(auth()->user()->creator()->first()->getUploadablePlatforms());
         dd(Visibility::PUBLIC->value);
 
 //        $creator = auth()->user()->creator()->first();

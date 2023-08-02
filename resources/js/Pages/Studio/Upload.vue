@@ -1,28 +1,19 @@
 <template>
 
-        <Head title="Upload Video" />
+    <Head title="Upload Video" />
 
-        <ConsistentPadding class="-mt-4">
-            <Title text="Upload Video">
-<!--                <StreamIcon class="w-6 h-6 my-auto"/>-->
-            </Title>
+    <ConsistentPadding class="-mt-4">
+        <Title text="Upload Video">
+            <!--                <StreamIcon class="w-6 h-6 my-auto"/>-->
+        </Title>
         <form @submit.prevent="submit" class="space-y-4 sm:min-w-[20rem] w-screen sm:w-full px-6 sm:px-0">
+            <DropZone @drop.prevent="drop" @change="selectedFile"/>
             <div class="max-w-md">
-                <InputLabel for="video" value="Video" class="mb-1"/>
-                <input type="file" name="video" id="video" @input="selectedFileVideo">
-                <InputError class="mt-1" :message="form.errors.video"/>
-            </div>
-            <div class="flex justify-center">
-                <PrimaryButton class="h-[3rem]" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">UPLOAD</PrimaryButton>
             </div>
         </form>
         <div>
-            <!--            <div>-->
-            <!--                <div  :style="{'background-image': 'url(' + getImageURL(image) + ')'}" v-for="image in form.images" class="w-20 h-20 bg-cover bg-center"></div>-->
-            <!--                <img v-for="image in images" :src="getImageURL(image)" :key="image.name"  alt="image"/>-->
-            <!--            </div>-->
         </div>
-        </ConsistentPadding>
+    </ConsistentPadding>
 </template>
 
 <script>
@@ -43,11 +34,7 @@ import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
 import Title from "@/Components/General/Title.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import {Inertia} from "@inertiajs/inertia";
-
-
-let props = defineProps({
-    categories: Object,
-});
+import DropZone from "@/Pages/Studio/Partials/DropZone.vue";
 
 let form = useForm({
     video: ''
@@ -71,11 +58,18 @@ const submit = () => {
 };
 
 
+let dropzoneFile = ref("");
 
-let videoValue = ref("");
-const selectedFileVideo = () =>{
-    videoValue.value = document.querySelector('#video').files[0];
-    form.video = videoValue.value;
+const drop = (event) =>{
+    dropzoneFile.value = event.dataTransfer.files[0];
+    form.video = dropzoneFile.value;
+    submit();
+}
+
+const selectedFile = () =>{
+    dropzoneFile.value = document.querySelector('#file').files[0];
+    form.video = dropzoneFile.value;
+    submit();
 }
 
 </script>
