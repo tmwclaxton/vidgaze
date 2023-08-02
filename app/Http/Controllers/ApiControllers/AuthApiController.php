@@ -243,7 +243,9 @@ class AuthApiController extends Controller
         );
 
         if($status === Password::RESET_LINK_SENT) {
-            return response()->json(['message' => __($status)], 200);
+            return response()->json([
+                'message' => __($status)
+            ], 200);
         } else {
             throw ValidationException::withMessages([
                 'email' => __($status)
@@ -277,7 +279,9 @@ class AuthApiController extends Controller
         );
 
         if($status == Password::PASSWORD_RESET) {
-            return response()->json(['message' => __($status)], 200);
+            return response()->json([
+                'message' => __($status)
+            ], 200);
         } else {
             throw ValidationException::withMessages([
                 'email' => __($status)

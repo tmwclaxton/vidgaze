@@ -6,7 +6,7 @@ import TopNavigationLinks from '@/Shared/Navigation/Partials/TopNavigationLinks.
 import OpenNavSVG from '~/images/icons/3lines.svg';
 import CloseNavSVG from '~/images/icons/exit.svg';
 
-import {Link} from "@inertiajs/vue3";
+import {Link, router} from "@inertiajs/vue3";
 import Searchbar from "@/Shared/Navigation/Partials/Searchbar.vue";
 import TopNavButton from "@/Components/Buttons/QuaternaryButton.vue";
 import {useNavStore} from "@/Stores/NavStore";
@@ -18,7 +18,17 @@ const authStore = useAuthStore();
 const name = 'TopNavBar';
 
 
-
+function redirect(which) {
+    // if not on about page set intended to current page
+    if (window.location.href !== route('about')) {
+        localStorage.setItem('intended', window.location.href);
+    }
+    if (which === "login") {
+        router.visit(route('login'));
+    } else if (which === "register") {
+        router.visit(route('register'));
+    }
+}
 
 
 </script>
@@ -82,22 +92,22 @@ const name = 'TopNavBar';
                     <div v-if="authStore.user == null"
                          class="hidden sm:flex sm:items-center   flex-shrink-0">
                         <div class="flex gap-x-2 flex-row-reverse">
-                            <Link :href="route('login')" >
+                            <div @click="redirect('login')" >
 
                                 <TopNavButton>
                                     <font-awesome-icon :icon="['fas', 'right-to-bracket']" class="h-4 w-auto"/>
                                     <p>Log In</p>
                                 </TopNavButton>
 
-                            </Link>
-                            <Link :href="route('register')" >
+                            </div>
+                            <div @click="redirect('register')" >
 
                                 <TopNavButton>
                                     <font-awesome-icon :icon="['fas', 'user-plus']" class="h-4 w-auto"/>
                                     <p>Sign Up</p>
                                 </TopNavButton>
 
-                            </Link>
+                            </div>
                         </div>
                     </div>
 

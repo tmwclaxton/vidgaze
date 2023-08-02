@@ -72,23 +72,57 @@ export const useAuthStore = defineStore('AuthStore', {
                     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
                     thisRef.getUser(true);
                 }).catch(error => {
-                    console.log(error);
+                    // console.log(error);
                     thisRef.handleErrors(error);
                 })
         },
 
         logout() {
-            const toastStore = useToastStore();
             const thisRef = this;
-            axios.post(route('api.logout')).then(response => {
+            return axios.post(route('api.logout')).then(response => {
                 thisRef.clearBrowserStorage();
-                toastStore.add({
+                useToastStore().add({
                     message: 'Logout successful.',
                     type: 'success',
                 });
             }) .catch(error => {
                 thisRef.handleErrors(error);
             } );
+        },
+
+        async forgotPassword(form) {
+            const thisRef = this;
+            return axios.post(route('api.password.email'), {
+                email: form.email,
+            }).then(response => {
+                useToastStore().add({
+                    message: response.data.message,
+                    type: 'success',
+                });
+
+            }).catch(error => {
+                thisRef.handleErrors(error);
+            });
+        },
+
+        async resetPassword(form) {
+            const thisRef = this;
+            return axios.post(route('api.password.reset'), {
+                token: form.token,
+                email: form.email,
+                password: form.password,
+                password_confirmation: form.password_confirmation,
+            }).then(response => {
+                useToastStore().add({
+                    message: response.data.message,
+                    type: 'success',
+                });
+                thisRef.login(form).then(response => {
+                    router.visit(route('home'));
+                })
+            }).catch(error => {
+                thisRef.handleErrors(error);
+            });
         },
 
         clearBrowserStorage() {
@@ -103,7 +137,7 @@ export const useAuthStore = defineStore('AuthStore', {
             // console.log(error);
             if (error.response !== undefined) {
                 const toastStore = useToastStore();
-                toastStore.add({
+                useToastStore().add({
                     message: error.response.data.message,
                     type: 'warning',
                 });

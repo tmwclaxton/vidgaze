@@ -32,8 +32,7 @@ const submit = async () => {
         if (localStorage.getItem('intended')) {
             router.visit(localStorage.getItem('intended'));
             localStorage.removeItem('intended');
-        }
-        if (localStorage.getItem('token')) {
+        } else if (localStorage.getItem('token')) {
             router.visit(route('home'));
         }
     }).catch(function (error) {

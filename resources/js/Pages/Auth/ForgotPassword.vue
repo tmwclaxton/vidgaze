@@ -5,23 +5,29 @@ import InputLabel from '@/Components/Inputs/InputLabel.vue';
 import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
 import TextInput from '@/Components/Inputs/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-
+import {reactive, ref} from "vue";
+import {useAuthStore} from "@/Stores/AuthStore";
+const authStore = useAuthStore();
 defineProps({
     status: String,
 });
 
-const form = useForm({
-    email: '',
+const form = reactive({
+    email: ref(''),
+    processing: false,
 });
 
+const errors = reactive({
+    email: ref(''),
+});
 const submit = () => {
-    form.post(route('password.email'));
-};
-</script>
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-export default {
-    layout: AuthenticatedLayout,
+    form.processing = true;
+    authStore.forgotPassword(form).then(() => {
+        form.processing = false;
+    }).catch(function (error) {
+        const suppliedErrors = (error.response.data.errors);
+        errors.email = suppliedErrors.email ? suppliedErrors.email[0] : null;
+    });
 
 };
 </script>
@@ -52,7 +58,7 @@ export default {
                     autocomplete="username"
                 />
 
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError class="mt-2" :message="errors.email" />
             </div>
 
             <div class="flex items-center justify-end mt-4">

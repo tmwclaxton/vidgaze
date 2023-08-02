@@ -4,30 +4,44 @@ import InputError from '@/Components/Inputs/InputError.vue';
 import InputLabel from '@/Components/Inputs/InputLabel.vue';
 import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
 import TextInput from '@/Components/Inputs/TextInput.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import {Head, router, useForm} from '@inertiajs/vue3';
+import {reactive, ref} from "vue";
+import {useAuthStore} from "@/Stores/AuthStore";
 
 const props = defineProps({
     email: String,
     token: String,
 });
 
-const form = useForm({
+
+
+const form = reactive({
     token: props.token,
     email: props.email,
     password: '',
     password_confirmation: '',
+    remember: ref(false), // this is so we can forward this form to the login function
+    processing: false,
+});
+
+const errors = reactive({
+    email: '',
+    password: '',
+    token: '',
 });
 
 const submit = () => {
-    form.post(route('password.store'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
+    useAuthStore().resetPassword(form).then(() => {
+
+    }).catch(function (error) {
+        if (error.response === undefined) {
+            return;
+        }
+        const suppliedErrors = (error.response.data.errors);
+        errors.email = suppliedErrors.email ? suppliedErrors.email[0] : null;
+        errors.password = suppliedErrors.password ? suppliedErrors.password[0] : null;
+        errors.token = suppliedErrors.token ? suppliedErrors.token[0] : null;
     });
-};
-</script>
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-export default {
-    layout: AuthenticatedLayout,
 
 };
 </script>
@@ -49,7 +63,7 @@ export default {
                     autocomplete="username"
                 />
 
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError class="mt-2" :message="errors.email" />
             </div>
 
             <div class="mt-4">
@@ -64,7 +78,7 @@ export default {
                     autocomplete="new-password"
                 />
 
-                <InputError class="mt-2" :message="form.errors.password" />
+                <InputError class="mt-2" :message="errors.password" />
             </div>
 
             <div class="mt-4">
@@ -79,7 +93,7 @@ export default {
                     autocomplete="new-password"
                 />
 
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                <InputError class="mt-2" :message="errors.password_confirmation" />
             </div>
 
             <div class="flex items-center justify-end mt-4">
