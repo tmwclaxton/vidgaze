@@ -117,13 +117,11 @@ class VideoDraftController extends Controller
             'audience' => ['nullable', 'string'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'publish_time' => ['nullable', 'int'],
-            'use_publish_time' => ['required', 'boolean'],
             'platforms' => ['nullable', 'array'],
         ]);
 
-
         $publish_time = null;
-        if(request()->use_publish_time){
+        if(request()->visibility == Visibility::SCHEDULED->value){
             request()->validate([
                 'publish_time' => ['required', 'int']
             ]);
@@ -131,7 +129,6 @@ class VideoDraftController extends Controller
             if($publish_time->isPast()) return back()->withErrors(['publish_time' => 'Publish time must be in the future']);
         }
 
-//        ddd(json_encode(request()->platforms ? request()->platforms : []));
         $thumbnail_path = null;
         if(request()->file('thumbnail')) $thumbnail_path = request()->file('thumbnail')->store('thumbnails');
         $videoDraft->update([
@@ -166,7 +163,18 @@ class VideoDraftController extends Controller
             'region' => ['nullable', 'string'],
             'audience' => ['required', 'string'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'publish_time' => ['nullable', 'int'],
+            'platforms' => ['required', 'array'],
         ]);
+
+        $publish_time = null;
+        if(request()->visibility == Visibility::SCHEDULED->value){
+            request()->validate([
+                'publish_time' => ['required', 'int']
+            ]);
+            $publish_time = Carbon::createFromTimestamp(request()->publish_time);
+            if($publish_time->isPast()) return back()->withErrors(['publish_time' => 'Publish time must be in the future']);
+        }
 
         $thumbnail_path = request()->file('thumbnail')->store('thumbnails');
 
@@ -175,12 +183,13 @@ class VideoDraftController extends Controller
             request()->title,
             request()->description,
             $creator->id,
-            [Platform::YouTube],
+            array_map(fn($platform) => Platform::fromValue($platform), request()->platforms),
             $thumbnail_path,
             request()->tags,
             Category::find(request()->category_id),
             Visibility::fromValue(request()->visibility),
-            Audience::fromValue(request()->audience)
+            Audience::fromValue(request()->audience),
+            $publish_time
         );
 
         $video = Video::create([

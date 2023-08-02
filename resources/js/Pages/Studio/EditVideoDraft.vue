@@ -43,12 +43,26 @@
             </div>
             <div>
                 <InputLabel class="mb-1" for="visibility" value="Visibility"/>
-                <Dropdown
-                    v-model="form.visibility"
-                    name="visibility"
-                    id="visibility"
-                    :items="visibilities"
-                    required/>
+                <div class="space-y-2">
+                    <div>
+                        <input type="radio" id="private" value="private" v-model="form.visibility" class="mr-2">
+                        <label for="private">Private</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="unlisted" value="unlisted" v-model="form.visibility" class="mr-2">
+                        <label for="unlisted">Unlisted</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="public" value="public" v-model="form.visibility" class="mr-2">
+                        <label for="public">Public</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="scheduled" value="scheduled" v-model="form.visibility" class="mr-2">
+                        <label for="scheduled">Schedule</label>
+                        <DateInput class="mt-2" v-if="form.visibility === 'scheduled'" v-model="form.publish_time"/>
+                        <InputError class="mt-2" :message="form.errors.publish_time"/>
+                    </div>
+                </div>
                 <InputError class="mt-2" :message="form.errors.visibility"/>
             </div>
             <div>
@@ -61,15 +75,6 @@
                     required
                 />
                 <InputError class="mt-2" :message="form.errors.category_id"/>
-            </div>
-            <div>
-                <div class="h-12 flex space-x-2 items-center">
-                    <InputLabel for="publish_time" value="Schedule Publish Time"/>
-                    <input type="checkbox" name="use_publish_time" id="use_publish_time" v-model="form.use_publish_time" class="mr-2">
-                </div>
-                <DateInput v-if="form.use_publish_time" v-model="form.publish_time"/>
-                <InputError class="mt-2" :message="form.errors.use_publish_time"/>
-                <InputError class="mt-2" :message="form.errors.publish_time"/>
             </div>
             <div>
                 <InputLabel class="mb-1" for="platforms" value="Platforms"/>
@@ -98,12 +103,11 @@
                                    :disabled="form.processing">SAVE DRAFT
                     </PrimaryButton>
                 </div>
-
                 <div class="flex justify-center">
                     <PrimaryButton @click="handlePublish" class="h-[3rem]" :class="{ 'opacity-25': form.processing }"
-                                   :disabled="form.processing">PUBLISH
+                                   :disabled="form.processing">{{ form.visibility === 'scheduled' ? 'SCHEDULE' : 'PUBLISH'}}
                     </PrimaryButton>
-            </div>
+                </div>
             </div>
         </form>
         <div>
@@ -124,7 +128,7 @@ export default {
 </script>
 <script setup>
 
-import {computed, ref} from "vue";
+import {ref} from "vue";
 import {Head, useForm} from "@inertiajs/vue3";
 import InputLabel from "@/Components/Inputs/InputLabel.vue";
 import TextInput from "@/Components/Inputs/TextInput.vue";
@@ -146,17 +150,10 @@ let props = defineProps({
     categories: Object,
 });
 
-
 const audiences = [
     { value: 'all', name: 'Everyone' },
     { value: 'kids', name: 'Kids' },
     { value: 'mature', name: 'Mature' },
-];
-
-const visibilities = [
-    { value: 'public', name: 'Public' },
-    { value: 'private', name: 'Private' },
-    { value: 'unlisted', name: 'Unlisted' },
 ];
 
 let form = useForm({
@@ -169,16 +166,6 @@ let form = useForm({
     publish_time: props.video.publish_time,
     audience: props.video.audience,
     platforms: props.video.platforms,
-    use_publish_time: props.video.use_publish_time,
-});
-
-const usePublishTime = computed({
-    get: () => {
-        return form.use_publish_time;
-    },
-    set: (value) => {
-        form.use_publish_time = value;
-    }
 });
 
 

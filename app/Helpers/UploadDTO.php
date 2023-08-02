@@ -6,6 +6,7 @@ use App\Enums\Audience;
 use App\Enums\Platform;
 use App\Enums\Visibility;
 use App\Models\Category;
+use Carbon\Carbon;
 
 class UploadDTO
 {
@@ -22,8 +23,9 @@ class UploadDTO
     public array $platforms;
     public Audience $audience;
     public Visibility $visibility;
+    public Carbon $publish_time;
 
-    public function __construct(string $video_path, string $title, string $description, string $creator_id, array $platforms, string $thumbnail_path, array $tags, Category $category, Visibility $visibility, Audience $audience)
+    public function __construct(string $video_path, string $title, string $description, string $creator_id, array $platforms, string $thumbnail_path, array $tags, Category $category, Visibility $visibility, Audience $audience, Carbon $publish_time)
     {
         $this->video_path = $video_path;
         $this->title = $title;
@@ -35,6 +37,7 @@ class UploadDTO
         $this->category = $category;
         $this->visibility = $visibility;
         $this->audience = $audience;
+        $this->publish_time = $publish_time;
     }
 
 
