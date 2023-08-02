@@ -13,8 +13,9 @@ import ResponsiveNavBottomLink from "@/Components/Links/ResponsiveNavBottomLink.
 import {computed} from "vue";
 import {usePage} from "@inertiajs/vue3";
 import {useNavStore} from "@/Stores/NavStore";
+import {useAuthStore} from "@/Stores/AuthStore";
 const navStore = useNavStore();
-
+const authStore = useAuthStore();
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
@@ -28,7 +29,7 @@ const name = 'SideBar';
 // const isScreenLess = computed(() => {
 //     return (window.innerWidth < 1200 && usePage().props.auth.user != null && !props.showingNavigationDropdown);
 // });
-// :class="{ 'hidden': $page.props.auth.user != null && !showingNavigationDropdown} "
+// :class="{ 'hidden': authStore.user != null && !showingNavigationDropdown} "
 </script>
 
 <template>
@@ -56,7 +57,7 @@ const name = 'SideBar';
                     <div class="border-t border-zinc-600 my-1 "></div>
                     <div class="">
 
-                        <div v-if="$page.props.auth.user != null" class="space-y-1 sm:hidden hidden">
+                        <div v-if="authStore.user != null" class="space-y-1 sm:hidden hidden">
                             <ResponsiveNavLink :href="route('profile.edit')"
                             >
                                 <SettingsIcon class="w-5 h-5 flex-shrink-0"/>
@@ -74,12 +75,12 @@ const name = 'SideBar';
 
 
                         <!-- Responsive Settings Options -->
-                        <div v-if="$page.props.auth.user != null" class="lg:hidden" >
+                        <div v-if="authStore.user != null" class="lg:hidden" >
 
 
                             <div class="mt-1 space-y-1 hidden">
 
-                                <ResponsiveNavLink :href="route('logout')" method="post" as="button">
+                                <ResponsiveNavLink  @click="authStore.logout()" method="post" as="button">
                                         <LogoutIcon class="w-5 h-5 flex-shrink-0"/>
                                         <span>Log Out</span>
                                 </ResponsiveNavLink>

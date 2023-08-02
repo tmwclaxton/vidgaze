@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('video_awards', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('video_id')->constrained()->cascadeOnDelete();;
-            $table->foreignId('award_id')->constrained()->cascadeOnDelete();;
+            $table->foreignId('video_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('award_id')->constrained()->cascadeOnDelete();
             $table->foreignId('giver_id')->nullable()->references('id')->on('creators')->constrained()->cascadeOnDelete();
 
             $table->timestamps();

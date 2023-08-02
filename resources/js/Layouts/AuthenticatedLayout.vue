@@ -11,8 +11,9 @@ import ShareModel from "@/Components/Modals/ShareModel.vue";
 import ConfirmModal from "@/Components/Modals/ConfirmModal.vue";
 import {usePage} from "@inertiajs/vue3";
 import {usePlayerStore} from "@/Stores/PlayerStore";
-
+import {useAuthStore} from "@/Stores/AuthStore";
 const playerStore = usePlayerStore();
+const authStore = useAuthStore();
 const navStore = useNavStore();
 const name = 'AuthenticatedLayout';
 let showingNavigationDropdown = ref(false);
@@ -34,7 +35,14 @@ const loadScripts = async () => {
 };
 
 onMounted(() => {
+
     loadScripts();
+    // use authStore to get user if token is set in local storage
+    if (authStore.user === null && localStorage.getItem('token') !== null) {
+        authStore.getUser();
+    }
+
+
 });
 
 </script>

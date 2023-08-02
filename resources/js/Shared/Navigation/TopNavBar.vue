@@ -8,10 +8,11 @@ import CloseNavSVG from '~/images/icons/exit.svg';
 
 import {Link} from "@inertiajs/vue3";
 import Searchbar from "@/Shared/Navigation/Partials/Searchbar.vue";
-import {useNavStore} from "@/Stores/NavStore";
 import TopNavButton from "@/Components/Buttons/QuaternaryButton.vue";
+import {useNavStore} from "@/Stores/NavStore";
 const navStore = useNavStore();
-
+import {useAuthStore} from "@/Stores/AuthStore";
+const authStore = useAuthStore();
 
 //name of the component
 const name = 'TopNavBar';
@@ -78,7 +79,7 @@ const name = 'TopNavBar';
                         </Link>
                     </div>
                     <!--log in-->
-                    <div v-if="$page.props.auth.user == null"
+                    <div v-if="authStore.user == null"
                          class="hidden sm:flex sm:items-center   flex-shrink-0">
                         <div class="flex gap-x-2 flex-row-reverse">
                             <Link :href="route('login')" >
@@ -102,7 +103,7 @@ const name = 'TopNavBar';
 
                 </div>
 
-                <div v-if="$page.props.auth.user != null" @click="$emit('toggleSidenavOff')"
+                <div v-if="authStore.user != null" @click="$emit('toggleSidenavOff')"
                      class=" flex flex-row gap-x-5 items-center ml-4  flex-shrink-0  "
                      :class="{'hidden sm:flex': navStore.getExpandedSearchBar(),  '': !navStore.getExpandedSearchBar() }"
                 >

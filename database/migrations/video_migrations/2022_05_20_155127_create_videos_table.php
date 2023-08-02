@@ -31,9 +31,6 @@ return new class extends Migration
             $table->timestampTz('time_uploaded')->useCurrent()->nullable();
             $table->timestampTz('time_published')->nullable();
             $table->enum('visibility', array_map(fn($audience) => $audience->value, Visibility::getAll()))->default('public');
-
-            $table->json('most_relevant_comments')->nullable();//json format
-            $table->json('most_recent_comments')->nullable();//json format
             $table->integer('like_count')->default('0')->unsigned();
             $table->integer('dislike_count')->default('0')->unsigned();
             $table->integer('comment_count')->default('0')->unsigned();

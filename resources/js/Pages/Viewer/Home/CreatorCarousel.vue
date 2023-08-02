@@ -49,9 +49,9 @@ onMounted(() => {
         ];
     }
 
-    axios.get(route('creator.index', {featured: true}))
+    axios.get(route('api.creator.index', {featured: true}))
         .then(response => {
-            response.data.data.forEach((item) => {
+            response.data.creators.data.forEach((item) => {
                 carouselItems.value.push({
                     imgSrc: item.banner_url,
                     link: ''

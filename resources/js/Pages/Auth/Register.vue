@@ -1,3 +1,5 @@
+
+
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/Inputs/InputError.vue';
@@ -6,31 +8,57 @@ import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
 import TextInput from '@/Components/Inputs/TextInput.vue';
 import Checkbox from "@/Components/Inputs/Checkbox.vue";
 import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import {Head, Link, router, useForm} from '@inertiajs/vue3';
 import GoogleButton from "@/Components/Buttons/GoogleButton.vue";
 import AppleButton from "@/Components/Buttons/AppleButton.vue";
 
-const form = useForm({
-    username: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-    terms: false,
+import { useAuthStore } from "@/Stores/AuthStore";
+const authStore = useAuthStore();
+
+
+import {reactive, ref, watch} from "vue";
+
+const form = reactive({
+
+    username: ref(''),
+    email: ref(''),
+    password: ref(''),
+    password_confirmation: ref(''),
+    remember: ref(false),
+    terms: ref(false),
+    errors: {},
+    processing: false,
+
 });
 
-const submit = () => {
-    form.post(route('register'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
+const errors = reactive({
+    email: ref(''),
+    password: ref(''),
+    username: ref(''),
+    terms: ref(''),
+});
+
+const submit = async () => {
+    form.processing = true;
+    authStore.register(form).then(() => {
+        if (localStorage.getItem('intended')) {
+            router.visit(localStorage.getItem('intended'));
+            localStorage.removeItem('intended');
+        }
+        if (localStorage.getItem('token')) {
+            router.visit(route('home'));
+        }
+        form.processing = false;
+    }).catch(function (error) {
+        const suppliedErrors = (error.response.data.errors);
+        errors.email = suppliedErrors.email ? suppliedErrors.email[0] : null;
+        errors.password = suppliedErrors.password ? suppliedErrors.password[0] : null;
+        errors.username = suppliedErrors.username ? suppliedErrors.username[0] : null;
+        errors.terms = suppliedErrors.terms ? suppliedErrors.terms[0] : null;
     });
 };
 </script>
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-export default {
-    layout: AuthenticatedLayout,
 
-};
-</script>
 <template>
     <GuestLayout>
         <Head title="Register" />
@@ -64,7 +92,7 @@ export default {
                     autocomplete="username"
                 />
 
-                <InputError class="mt-2" :message="form.errors.username" />
+                <InputError class="mt-2" :message="errors.username" />
             </div>
 
             <div class="mt-4">
@@ -79,7 +107,7 @@ export default {
                     autocomplete="username"
                 />
 
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError class="mt-2" :message="errors.email" />
             </div>
 
             <div class="mt-4">
@@ -94,7 +122,7 @@ export default {
                     autocomplete="new-password"
                 />
 
-                <InputError class="mt-2" :message="form.errors.password" />
+                <InputError class="mt-2" :message="errors.password" />
             </div>
 
             <div class="mt-4">
@@ -109,7 +137,7 @@ export default {
                     autocomplete="new-password"
                 />
 
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                <InputError class="mt-2" :message="errors.password_confirmation" />
             </div>
 
             <div class="mt-4  text-sm ">
@@ -127,7 +155,7 @@ export default {
 
                 </div>
 
-                <InputError class="mt-2" :message="form.errors.terms" />
+                <InputError class="mt-2" :message="errors.terms" />
 
             </div>
 

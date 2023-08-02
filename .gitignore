@@ -17,6 +17,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-
+/deployment/variables.tf
 # Project exclude paths
 /storage/app/

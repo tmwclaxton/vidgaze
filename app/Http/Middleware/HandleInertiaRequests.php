@@ -40,23 +40,31 @@ class HandleInertiaRequests extends Middleware
 
         $layoutDisplay = 'default';
 
+        $listOfAuthRoutes = [
+            'register',
+            'login',
+            'password.request',
+            'password.reset',
+            'verification.notice',
+            'verification.verify',
+            'password.confirm',
+        ];
+
         if ($request->routeIs('about') || $request->routeIs('watch.*')) {
             $layoutDisplay = 'wide';
-        } elseif ($request->routeIs('login') || $request->routeIs('register') || $request->routeIs('password.request') || $request->routeIs('auth.*')) {
+        } elseif (in_array($request->route()->getName(), $listOfAuthRoutes)) {
             $layoutDisplay = 'auth';
         } elseif ($request->routeIs('studio.*')) {
             $layoutDisplay = 'studio';
         }
 
         return array_merge(parent::share($request), [
-            'layoutDisplay' => $layoutDisplay,
             'auth' => [
-                'user' => $request->user() ? new UserResource( $request->user() ) : null ,
-                'subscriptions' => $request->user()
-                    ? $request->user()->creator->subscriptions->pluck('id')->toArray()
-                    : null,
-                'admin' => $request->user() ? $request->user()->isAdmin() : false
+                'user' => null,
+                'subscriptions' => [],
+                'admin' => false,
             ],
+            'layoutDisplay' => $layoutDisplay,
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
                     'location' => $request->url(),

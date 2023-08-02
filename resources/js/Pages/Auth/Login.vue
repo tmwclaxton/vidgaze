@@ -1,3 +1,5 @@
+
+
 <script setup>
 import Checkbox from '@/Components/Inputs/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
@@ -8,41 +10,46 @@ import GoogleButton from '@/Components/Buttons/GoogleButton.vue';
 import AppleButton from '@/Components/Buttons/AppleButton.vue';
 
 import TextInput from '@/Components/Inputs/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import {Head, Link, router, useForm} from '@inertiajs/vue3';
 import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
+import { useAuthStore } from "@/Stores/AuthStore";
+const authStore = useAuthStore();
+import {reactive, ref, watch} from "vue";
 
-defineProps({
-    canResetPassword: Boolean,
-    status: String,
+const form = reactive({
+    data: {
+        email: ref(''),
+        password: ref(''),
+        remember: ref(false),
+        errors: {},
+        processing: false,
+    },
+    errors: {},
 });
 
-const form = useForm({
-    email: '',
-    password: '',
-    remember: false,
-});
-
-const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
+const submit = async () => {
+    authStore.login(form.data).then(() => {
+        if (localStorage.getItem('intended')) {
+            router.visit(localStorage.getItem('intended'));
+            localStorage.removeItem('intended');
+        }
+        if (localStorage.getItem('token')) {
+            router.visit(route('home'));
+        }
+    }).catch(function (error) {
+            const errors = (error.response.data.errors);
+            form.errors.email = errors.email ? errors.email[0] : null;
+            form.errors.password = errors.password ? errors.password[0] : null;
+        });
 };
-</script>
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-export default {
-    layout: AuthenticatedLayout,
 
-};
+
 </script>
 <template>
     <GuestLayout>
         <Head title="Log in" />
 
 
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-            {{ status }}
-        </div>
 
         <p class="font-bold text-xl text dark:textDark mb-6">Welcome back to VidGaze</p>
 
@@ -64,7 +71,7 @@ export default {
                     id="email"
                     type="email"
                     class="mt-1 block w-full"
-                    v-model="form.email"
+                    v-model="form.data.email"
                     required
                     autofocus
                     autocomplete="username"
@@ -80,7 +87,7 @@ export default {
                     id="password"
                     type="password"
                     class="mt-1 block w-full"
-                    v-model="form.password"
+                    v-model="form.data.password"
                     required
                     autocomplete="current-password"
                 />
@@ -90,11 +97,10 @@ export default {
 
             <div class="flex flex-row justify-between mt-4">
                 <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
+                    <Checkbox name="remember" v-model:checked="form.data.remember" />
                     <span class="ml-2 text-sm text-zinc-600 dark:text-zinc-400">Remember me</span>
                 </label>
                 <Link
-                    v-if="canResetPassword"
                     :href="route('password.request')"
                     class="font-semibold text-sm text-blue-600 dark:text-blue-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-zinc-800"
                 >

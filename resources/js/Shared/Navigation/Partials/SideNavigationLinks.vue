@@ -37,35 +37,35 @@ const name = 'ExpandableNavigationLinks';
         <!--<p v-text="isStudioRoute" class="text-white"></p>-->
         <div class="ld:hid den">
             <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
-                    <!--<VideoIcon class="w-5 h-5 flex-shrink-0"/>-->
-                    <HomeIcon class="w-5 h-5 flex-shrink-0"/>
-                    <span>Home</span>
+                <!--<VideoIcon class="w-5 h-5 flex-shrink-0"/>-->
+                <HomeIcon class="w-5 h-5 flex-shrink-0"/>
+                <span>Home</span>
 
             </ResponsiveNavLink>
         </div>
         <div class="ld:hid den">
             <ResponsiveNavLink :href="route('streams.index')" :active="route().current('streams.index')">
-                    <StreamIcon class="w-5 h-5 flex-shrink-0"/>
-                    <span>Streams</span>
+                <StreamIcon class="w-5 h-5 flex-shrink-0"/>
+                <span>Streams</span>
             </ResponsiveNavLink>
         </div>
         <div class="">
             <ResponsiveNavLink :href="route('videos.shorts')" :active="route().current('videos.shorts')">
-                    <ShortsIcon class="w-5 h-5 flex-shrink-0"/>
-                    <span>Shorts</span>
+                <ShortsIcon class="w-5 h-5 flex-shrink-0"/>
+                <span>Shorts</span>
             </ResponsiveNavLink>
         </div>
         <div class="2xl:hid den ">
             <ResponsiveNavLink :href="route('podcasts.index')" :active="route().current('podcasts.index')">
-                    <PodcastIcon class="w-5 h-5 flex-shrink-0"/>
-                    <span>Podcasts</span>
+                <PodcastIcon class="w-5 h-5 flex-shrink-0"/>
+                <span>Podcasts</span>
             </ResponsiveNavLink>
         </div>
 
         <div class=" ">
             <ResponsiveNavLink :href="route('music.index')" :active="route().current('music.index')">
-                    <MusicIcon class="w-5 h-5 flex-shrink-0"/>
-                    <span>Music</span>
+                <MusicIcon class="w-5 h-5 flex-shrink-0"/>
+                <span>Music</span>
             </ResponsiveNavLink>
         </div>
 
@@ -73,16 +73,16 @@ const name = 'ExpandableNavigationLinks';
 
         <div v-if="$page.props.auth.user != null" class="lg:hid den">
             <ResponsiveNavLink :href="route('feed.subscriptions')" :active="route().current('feed.subscriptions')">
-                    <SubscriptionsIcon class="w-5 h-5 flex-shrink-0"/>
-                    <span>Subscriptions</span>
+                <SubscriptionsIcon class="w-5 h-5 flex-shrink-0"/>
+                <span>Subscriptions</span>
             </ResponsiveNavLink>
         </div>
 
         <!--library-->
         <div v-if="$page.props.auth.user != null" class="xl:hid den">
             <ResponsiveNavLink :href="route('feed.library')" :active="route().current('feed.library')">
-                    <LibraryIcon class="w-5 h-5 flex-shrink-0"/>
-                    <span>Library</span>
+                <LibraryIcon class="w-5 h-5 flex-shrink-0"/>
+                <span>Library</span>
             </ResponsiveNavLink>
         </div>
     </div>

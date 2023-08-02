@@ -24,7 +24,7 @@ class StreamResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'language' => $this->language,
-            'is_live' => $this->is_live,
+            'is_live' => $this->is_live ? true : false,
             'tags' => $this->tags,
             'category' => new CategoryResource($this->category),
             'preferred_source' => capitalisePlatformName($this->preferred_source),

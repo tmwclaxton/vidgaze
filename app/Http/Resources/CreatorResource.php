@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
@@ -24,12 +25,14 @@ class CreatorResource extends JsonResource
             'banner_url' => $this->banner_url,
             'karma' => number_format_short($this->karma),
             'subscriber_count' => number_format_short($this->subscriber_count)  . " " . Str::plural('Subscriber', $this->subscriber_count) ,
-            'is_live' => $this->is_live,
+            'is_live' => $this->is_live ? true : false,
             'contact_email' => $this->contact_email,
             // get name of each source by plucking source_name and use capitalisePlatformName for each one to format it
             'sources' => $this->sources->pluck('source_name')->map(function ($source) {
                 return capitalisePlatformName($source);
             }),
+            'created_at' => Carbon::parse($this->created_at)->diffForHumans(),
+            'updated_at' => Carbon::parse($this->updated_at)->diffForHumans(),
         ];
     }
 }

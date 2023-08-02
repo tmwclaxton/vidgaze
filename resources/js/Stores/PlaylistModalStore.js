@@ -44,7 +44,9 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
 
             if (usePage().props.auth.user !== null) {
                 let toastStore = useToastStore();
-                axios.delete('/playlists/' + playlistId + '/videos', { data: { video_ids: this.videoIds.join() } })
+
+
+                axios.delete('api/playlists/' + playlistId + '/videos', { data: { video_ids: this.videoIds.join() } })
                     .then(response => {
                         this.getPlaylists();
                         toastStore.add({
@@ -55,7 +57,21 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                     .catch(error => {
                         console.log(error);
                     });
-            }
+
+            // same as above but with ziggy route helper
+            axios.delete(route('playlists.videos.delete', {playlist: playlistId, video_ids: this.videoIds.join()}))
+                .then(response => {
+                    this.getPlaylists();
+                    toastStore.add({
+                        message:"Removed from playlist",
+                        type: 'warning',
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+
+             }
         },
         async createPlaylist(name, visibility) {
 

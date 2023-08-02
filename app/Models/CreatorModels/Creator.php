@@ -39,7 +39,7 @@ class Creator extends Model
     //no mass assignment!
     protected $guarded = ['id'];
 
-//    protected $with = ['sources']; //eager load creator sources
+    //    protected $with = ['sources']; //eager load creator sources | usually not needed, i.e when getting creator from video
 
 
     public function getUploadablePlatforms(): array
@@ -93,9 +93,10 @@ class Creator extends Model
     {
         return $this->belongsTo(Category::class);
     }
-    public function comments(): HasMany
+    public function comments(): HasManyThrough
     {
-        return $this->hasMany(Comment::class);
+        // creator -> creator_comments -> comments
+        return $this->hasManyThrough(Comment::class, CreatorComment::class, 'creator_id', 'id', 'id', 'comment_id');
     }
     public function creator_interactions(): HasMany
     {

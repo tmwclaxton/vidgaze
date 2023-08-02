@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 use TusPhp\Tus\Server as TusServer;
 
@@ -32,6 +33,8 @@ class AppServiceProvider extends ServiceProvider
         $migrationsPath = database_path('migrations');
         $directories    = glob($migrationsPath.'/*', GLOB_ONLYDIR);
         $paths          = array_merge([$migrationsPath], $directories);
+
+        JsonResource::withoutWrapping(); // this is so that the json response does not have a data wrapper
 
         $this->loadMigrationsFrom($paths);
     }

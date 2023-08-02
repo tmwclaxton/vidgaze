@@ -25,8 +25,9 @@ class JoshPing
     {
 
 //        dd("hi");
-        dd(\Storage::get('public/thumbnails/m55NepKM9JDBsn7pQos1azpZXZIMGvolGvfAgBLn.jpg'));
+//        dd(\Storage::get('public/thumbnails/m55NepKM9JDBsn7pQos1azpZXZIMGvolGvfAgBLn.jpg'));
         $creator = auth()->user()->creator()->first();
+        dd($creator);
         $ayt = new AuthYouTube($creator->sources()->where('source_name', Platform::YouTube)->first()->refreshAccessToken());
         ddd($ayt->getMyCreator());
         dd(Visibility::PUBLIC->value);

@@ -3,7 +3,8 @@ import { computed } from 'vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-
+import { useAuthStore } from '@/Stores/AuthStore';
+const authStore = useAuthStore();
 const props = defineProps({
     status: String,
 });
@@ -43,8 +44,7 @@ export default {
                 </PrimaryButton>
 
                 <Link
-                    :href="route('logout')"
-                    method="post"
+                    @click="authStore.logout()"
                     as="button"
                     class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                     >Log Out</Link

@@ -15,12 +15,14 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
     },
     actions: {
         // get videos
-        async getVideos(category = "popular", perPage = 20, videoIds = [], shorts = false, first_video_slug = null) {
-            const response = await axios.get(route('videos.infinite'), {
+        async getVideos(category = "popular", per_page = 20, video_ids = [], shorts = false, first_video_slug = null) {
+            // convert shorts to 1 or 0
+            shorts = shorts ? 1 : 0;
+            const response = await axios.get(route('api.video.index'), {
                 params: {
                     category: category,
-                    perPage: perPage,
-                    videoIds,
+                    per_page: per_page,
+                    video_ids,
                     shorts,
                     first_video_slug
                 }
@@ -32,12 +34,17 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
         },
 
         // get top streams
-        async getTopStreams() {
-            const response = await axios.get(route('streams.top'))
-                .catch(error => {
-                    console.log(error);
-                })
-            return response;
+        async getStreams(per_page = 10, category_id = null, skip = 0) {
+            const response = await axios.get(route('api.stream.index'), {
+                params: {
+                    per_page: per_page,
+                    category_id: category_id,
+                    skip: skip,
+                }
+            }).catch(error => {
+                console.log(error);
+            })
+            return response.data.streams.data;
 
         },
 
