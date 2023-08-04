@@ -1,3 +1,18 @@
+<script setup>
+import CategorySkeleton from "@/Components/Cards/CategoryCard/CategorySkeleton.vue";
+import CategoryCard from "@/Components/Cards/CategoryCard/CategoryCard.vue";
+import RowDivider from "@/Components/General/RowDivider.vue";
+
+const name = 'CategoriesRow';
+const props = defineProps({
+    categories: {
+        type: Array,
+        required: false,
+        default: null
+    }
+});
+</script>
+
 <template>
     <div class="flex flex-row gap-2  my-4 mb-8 ">
         <font-awesome-icon :icon="['fas', 'fire']"  class="my-auto h-6"/>
@@ -17,18 +32,5 @@
     <RowDivider />
 </template>
 
-<script setup>
-import CategorySkeleton from "@/Components/Cards/CategoryCard/CategorySkeleton.vue";
-import CategoryCard from "@/Components/Cards/CategoryCard/CategoryCard.vue";
-import RowDivider from "@/Components/General/RowDivider.vue";
 
-const name = 'CategoriesRow';
-const props = defineProps({
-    categories: {
-        type: Array,
-        required: false,
-        default: null
-    }
-});
-</script>
 

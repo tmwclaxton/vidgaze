@@ -21,17 +21,38 @@ class CategoryApiController extends Controller
     public function index(Request $request)
     {
         $request->validate([
-            'perPage' => 'integer|min:1|max:100',
+            'per_page' => 'integer|min:1|max:100',
+            // category_ids is a comma separated list of category ids of numbers and commas
+            'category_ids' => 'string|nullable|regex:/^([0-9]+,)*[0-9]+$/',
         ]);
-        $perPage = $request->perPage ?? 20;
-        $categories = new CategoryCollection(Category::query()
+        $per_page = $request->per_page ?? 20;
+
+        $query = Category::query();
+
+        $query
             ->where('thumbnail_url', '!=', null)
             ->where('tags_json', '!=', null)
-            ->where('twitch_category_id', '!=', null)
-            ->inRandomOrder()
-            ->take($perPage)
-            ->get());
-        return response()->json($categories);
+            ->where('twitch_category_id', '!=', null);
+
+        if ($request->category_ids != null) {
+            $query->whereNotIn('id', explode(',', $request->category_ids));
+        }
+
+        $query->inRandomOrder()
+            ->take($per_page);
+
+        $categories = $query
+            ->get();
+
+        if (empty($categories)) {
+            return response()->json([
+                'message' => 'No categories found',
+            ], 404);
+        }
+
+        return response()->json([
+            'categories' => new CategoryCollection($categories),
+        ]);
     }
 
     public function show($slug) {

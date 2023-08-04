@@ -1,4 +1,20 @@
+<script setup>
+import VideoStreamCard from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamCard.vue";
+import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamSkeleton.vue";
+import RowDivider from "@/Components/General/RowDivider.vue";
+
+const name = 'InfiniteCategoriesWithStreams';
+const props = defineProps({
+    categoriesWithStreams: {
+        type: Array,
+        required: true
+    }
+});
+</script>
+
+
 <template>
+
     <div v-for="categoryWithStreams in categoriesWithStreams">
         <div v-if="categoryWithStreams.streams.data.length !== 0">
             <div class="flex flex-row gap-2  my-4 mb-8 ">
@@ -22,20 +38,3 @@
     </div>
 </template>
 
-<script setup>
-import VideoStreamCard from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamCard.vue";
-import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamSkeleton.vue";
-import RowDivider from "@/Components/General/RowDivider.vue";
-
-const name = 'InfiniteCategoriesWithStreams';
-const props = defineProps({
-    categoriesWithStreams: {
-        type: Array,
-        required: true
-    }
-});
-</script>
-
-<style scoped>
-
-</style>

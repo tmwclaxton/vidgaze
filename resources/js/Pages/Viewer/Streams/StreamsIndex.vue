@@ -5,10 +5,7 @@ import PaddingLayout from "@/Layouts/Partials/ConsistentPadding.vue";
 import {onMounted, onUnmounted, ref} from "vue";
 import TopStreamsRow from "@/Components/ContentRows/TopStreamsRow.vue";
 import CategoriesRow from "@/Components/ContentRows/CategoriesRow.vue";
-import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamSkeleton.vue";
 import {debounce} from "lodash";
-import RowDivider from "@/Components/General/RowDivider.vue";
-import VideoStreamCard from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamCard.vue";
 import InfiniteCategoriesWithStreams from "@/Components/ContentRows/InfiniteCategoriesWithStreams.vue";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 const name = "StreamsIndex";
@@ -18,28 +15,29 @@ const fetchCategories = async () => {
     await contentRoutesStore.getCategories(8)
         .then(response => {
             setTimeout(() => {
-                categories.value = response.data.data;
+                console.log(response);
+                categories.value = response.data.categories.data;
             }, 500); // 500ms delay
         })
 };
 
-const categoriesWithStreams = ref([]);
-const fetchCategoriesWithStreams = async () => {
-    await contentRoutesStore.getCategoriesWithStreams(8, categoriesWithStreams.value.map(item => item.category.id).join(','))
+const categoriesForRows = ref([]);
+const fetchCategoriesForRows = async () => {
+    await contentRoutesStore.getCategories(8, categoriesForRows.value.map(item => item.id))
         .then(response => {
             setTimeout(() => {
-                categoriesWithStreams.value = categoriesWithStreams.value.concat(response.data);
+                categoriesForRows.value = categoriesForRows.value.concat(response.data);
             }, 100); // 500ms delay
         });
 
 };
 
-const debouncedFetchCategoriesWithStreams = debounce(fetchCategoriesWithStreams, 500);
+const debouncedFetchCategoriesForRows = debounce(fetchCategoriesForRows, 500);
 
 onMounted(async () => {
     window.addEventListener('scroll', handleScroll1);
     await fetchCategories();
-    await fetchCategoriesWithStreams();
+    await fetchCategoriesForRows();
 });
 
 onUnmounted(() => {
@@ -54,7 +52,7 @@ const handleScroll1 = () => {
     // check if user has reached the bottom of the page
     if (scrollPosition >= bodyHeight - 100) {
         // console.log('bottom of page')
-        debouncedFetchCategoriesWithStreams(); // call the debounced version of fetch categories
+        debouncedFetchCategoriesForRows(); // call the debounced version of fetch categories
 
     }
 };
@@ -78,7 +76,7 @@ export default {
 
             <CategoriesRow :categories="categories"/>
 
-            <InfiniteCategoriesWithStreams :categoriesWithStreams="categoriesWithStreams"/>
+            <!--<InfiniteCategoriesWithStreams :categoriesForRows="categoriesForRows"/>-->
 
         </PaddingLayout>
     </div>

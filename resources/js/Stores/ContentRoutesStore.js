@@ -49,10 +49,15 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
         },
 
         // get categories
-        async getCategories(perPage = 10) {
-            const response = await axios.get(route('categories.index'),  {
+        async getCategories(per_page = 10, categoryIds = []) {
+            if (categoryIds.length === 0) {
+                // comma delimited string
+                categoryIds = categoryIds.join(',');
+            }
+            const response = await axios.get(route('api.category.index'),  {
                 params: {
-                    perPage: perPage
+                    per_page: per_page,
+                    categoryIds: categoryIds
                 }})
                 .catch(error => {
                     console.log(error);
@@ -60,18 +65,7 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
             return response;
         },
 
-        // get categories with streams
-        async getCategoriesWithStreams(perPage = 10, categoryIds ) {
-            const response = axios.get(route('categories.infinite'),  {
-                params: {
-                    perPage: 8,
-                    categoryIds
-                } } )
-                .catch(error => {
-                    console.log(error);
-                });
-            return response;
-        },
+
 
 
     },
