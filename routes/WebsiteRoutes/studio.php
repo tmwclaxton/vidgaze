@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Route;
 //    Route::get('studio/unionise', [UnionController::class,'index'])->name("studio.unionise");
 
     Route::get('studio/upload',  [VideoDraftWebController::class, 'upload'])->name("studio.upload");
-    Route::get('studio/video/{slug}/edit',  [VideoDraftWebController::class, 'edit'])->name("studio.video.edit");
+    Route::get('studio/video/{slug}/edit',  [VideoDraftWebController::class, 'edit'])->name("studio.video.draft.edit");
     Route::put('studio/video/{slug}',  [VideoDraftWebController::class, 'update'])->name("studio.video.update");
     Route::post('studio/video/{slug}/publish',  [VideoDraftWebController::class, 'publish'])->name("studio.video.publish");
 
