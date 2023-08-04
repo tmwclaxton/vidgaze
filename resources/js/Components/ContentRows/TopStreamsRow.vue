@@ -11,7 +11,7 @@ const streams = ref([]);
 const name = 'PopularStreams';
 const contentRoutesStore = useContentRoutesStore();
 const fetchStreams = async () => {
-    await contentRoutesStore.getStreams(8)
+    await contentRoutesStore.getStreams(6)
         .then(response => {
             setTimeout(() => {
                 streams.value = response;

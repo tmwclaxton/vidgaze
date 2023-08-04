@@ -28,7 +28,8 @@ watch(searchInput, value => {
     // reset the selected result index whenever a new search query is entered
     selectedResultIndex.value = -1;
     axios
-        .get('/search_suggestions', { params: { q: value } })
+        // .get('/search_suggestions', { params: { q: value } })
+        .get(route('api.search.suggestions', {q: value}))
         .then(response => {
             results.value = response.data;
         })
@@ -43,7 +44,8 @@ function searchEntered() {
 
     if (searchInput.value.length > 0 && (window.innerWidth > 640  || navStore.getExpandedSearchResults())) {
         // Inertia.get('/search', { q: searchInput.value }); // can't use this because it does a full page reload
-        router.visit('/search?q=' + searchInput.value);
+        // router.visit('/search?q=' + searchInput.value);
+        router.visit(route('search', {q: searchInput.value}))
         // close the search results dropdown
         navStore.toggleExpandedSearchResultsOff();
     }

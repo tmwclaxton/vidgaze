@@ -13,6 +13,7 @@ import {useShareModalStore} from "@/Stores/ShareModelStore";
 import Viewers from "@/Components/Cards/VideoStreamCards/Partials/CornerInfo.vue";
 import CornerInfo from "@/Components/Cards/VideoStreamCards/Partials/CornerInfo.vue";
 import Badge from "@/Components/General/Badge.vue";
+import {useAuthStore} from "@/Stores/AuthStore";
 
 const contentModalStore = useContentModalStore();
 const shareModalStore = useShareModalStore();
@@ -99,7 +100,7 @@ const dotsIconShow = computed(() => {
                         <div class=" flex flex-row pt-1">
                             <div class=" mt-1 flex-shrink-0">
                                 <!--profile picture-->
-                                <div v-if="!channel_page" class="flex-shrink-0 pr-2">
+                                <div v-if="!item.channel_page" class="flex-shrink-0 pr-2">
                                     <Link class="without-ring " :href="route('channel.show', {creator: {slug: item.creator.slug}})">
                                         <img v-if="item.creator.avatar_url != null"
                                              class=" pointer-events-auto w-9 aspect-square rounded-full bg-zinc-800 "
@@ -111,7 +112,7 @@ const dotsIconShow = computed(() => {
                                 <div class="  space-y-0  ">
 
                                     <!--channel name-->
-                                    <Link v-if="!channel_page" :href="route('channel.show', {creator: {slug: item.creator.slug}})"
+                                    <Link v-if="!item.channel_page" :href="route('channel.show', {creator: {slug: item.creator.slug}})"
                                        class="w-max without-ring pointer-events-auto line-clamp-1 text-hover dark:text-hover-dark mb-1 ">
                                         <p class="text-sm sm:text-lg font-bold " v-text="item.creator.name"></p>
                                     </Link>

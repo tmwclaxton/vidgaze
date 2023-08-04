@@ -9,13 +9,9 @@ export default {
 </script>
 <script setup>
 import axios from "axios";
-import {computed, ref} from 'vue';
+import {ref} from 'vue';
 import CreatorSearchCard from "@/Components/Cards/CreatorSearchCard/CreatorSearchCard.vue";
-import VideoStreamCard from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamCard.vue";
-import {shuffle} from "lodash";
-import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
-import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
 import CreatorSearchSkeleton from "@/Components/Cards/CreatorSearchCard/CreatorSearchSkeleton.vue";
 import VideoStreamSearchCard from "@/Components/Cards/VideoStreamCards/VideoStreamSearchCard/VideoStreamSearchCard.vue";
 import VideoStreamSearchSkeleton from "@/Components/Cards/VideoStreamCards/VideoStreamSearchCard/VideoStreamSearchSkeleton.vue";
@@ -37,27 +33,27 @@ const toggleVisibleCreators = () => {
     expandCreators.value = !expandCreators.value;
     // if expandCreators is true, return all creators else return the first 2 creators
     visibleCreatorsCount.value = expandCreators.value ? creators.value.length : 2;
-    console.log(visibleCreatorsCount.value);
+    // console.log(visibleCreatorsCount.value);
 };
 
 
 search(searchQuery,1);
 
 const creators = ref([]);
-const videos = ref(null);
-const playlists = ref(null);
-const podcasts = ref(null);
-const streams = ref(null);
+const videos = ref([]);
+const playlists = ref([]);
+const podcasts = ref([]);
+const streams = ref([]);
 
 function search(searchQuery,page = 1) {
 
     // make api call to get search results using ziggy search_query and query params q
-    const url = route('search_query', {q: searchQuery.value});
+    const url = route('api.search.query', {q: searchQuery.value});
 
     axios.get(url)
         .then(function (response) {
             // handle success
-            // console.log(response);
+            console.log(response);
             if (response.data.creators !== undefined) {
                 creators.value = response.data.creators.data;
             } else {

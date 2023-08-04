@@ -50,7 +50,12 @@ class SearchApiController extends Controller
         $podcasts = array_key_exists("podcasts",$results) ? new PodcastCollection($results['podcasts']) : [];
 
 
-        // hide important info from the user by using collection map
+        // hide important info from the user by using resource collections
+        $creators = new CreatorCollection($creators);
+        $videos = new VideoCollection($videos);
+        $streams = new StreamCollection($streams);
+        $playlists = new PlaylistCollection($playlists);
+        $podcasts = new PodcastCollection($podcasts);
 
         //return the creators, videos, streams, playlists, podcasts
         return response()->json([
