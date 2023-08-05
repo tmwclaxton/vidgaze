@@ -28,20 +28,20 @@ const subscribe = () => {
     }
 
 
-    axios.post(route('channel.subscription.toggle', {channelId: props.channel.id}))
+    axios.post(route('api.creator.subscription.toggle', {channelId: props.channel.id}))
         .then(response => {
             // Handle successful subscription
             toastStore.add({
                 message: response.data.message,
-                type: response.data.type
+                type: response.data.toastType
             });
             // Add channel to subscriptions
             if (response.data.subscribed) {
                 // Add channel to subscriptions
-                useAuthStore().subscriptions.push(props.channel.id);
+                useAuthStore().subscription_ids.push(props.channel.id);
             } else {
                 // Remove channel from subscriptions
-                useAuthStore().subscriptions = useAuthStore().subscriptions.filter(subscription => subscription !== props.channel.id);
+                useAuthStore().subscription_ids = useAuthStore().subscription_ids.filter(subscription => subscription !== props.channel.id);
             }
             subscribed.value = !subscribed.value;
         })
@@ -58,7 +58,7 @@ const subscribe = () => {
 onMounted(() => {
     // Check if user is subscribed to channel by checking in auth subscriptions
     if (useAuthStore().user !== null) {
-        subscribed.value = useAuthStore().subscriptions.some(subscription => subscription === props.channel.id);
+        subscribed.value = useAuthStore().subscription_ids.some(subscription => subscription === props.channel.id);
     }
 });
 

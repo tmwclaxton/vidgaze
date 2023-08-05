@@ -2,9 +2,28 @@
 
 
 
-    <ConsistentContentHolder class="flex h-48 w-full my-auto  dark:border-zinc-900 bg-zinc-50 p-5">
+    <ConsistentContentHolder class="flex flex-row gap-x-6 h-48 w-full my-auto  dark:border-zinc-900 bg-zinc-50 p-5">
 
-        <!--<skeleton-div class="w-36 rounded-md aspect-[21/12] h-full"></skeleton-div>-->
+        <div class="h-full aspect-[21/12] rounded-xl overflow-hidden">
+            <skeleton-div/>
+        </div>
+        <div class="flex flex-col gap-y-3 w-full h-full">
+            <div class="w-full rounded-xl h-6 overflow-hidden">
+                <skeleton-div/>
+            </div>
+            <div class="w-3/4 rounded-xl h-6 overflow-hidden">
+                <skeleton-div/>
+            </div>
+            <div class="flex flex-row gap-x-4">
+                <div class="w-12 rounded-full aspect-square overflow-hidden">
+                    <skeleton-div/>
+                </div>
+                <div class="w-64 rounded-xl h-8 overflow-hidden">
+                    <skeleton-div/>
+                </div>
+            </div>
+
+        </div>
 
 
     </ConsistentContentHolder>

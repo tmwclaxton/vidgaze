@@ -20,7 +20,7 @@ const props = defineProps({
     searchQuery: String,
 });
 
-const filters = ref(false);
+let filters = ref(false);
 const searchQuery = ref(props.searchQuery);
 
 // show 2 creators by default and expand to show all
@@ -38,7 +38,7 @@ const toggleVisibleCreators = () => {
 
 
 search(searchQuery,1);
-
+const loading = ref(true);
 const creators = ref([]);
 const videos = ref([]);
 const playlists = ref([]);
@@ -71,6 +71,7 @@ function search(searchQuery,page = 1) {
             if (response.data.streams !== undefined) {
                 streams.value = response.data.streams.data;
             }
+            loading.value = false;
 
 
 
@@ -79,11 +80,6 @@ function search(searchQuery,page = 1) {
             // handle error
             console.log(error);
         })
-        .then(function () {
-            // always executed
-
-
-        });
 
 }
 
@@ -168,23 +164,24 @@ function search(searchQuery,page = 1) {
 
                         <!--<RowDivider/>-->
 
-                        <div v-if="visibleCreatorsCount.value > 0"
+                        <div
                             class="flex flex-col flex-wrap gap-4 ">
                             <CreatorSearchCard v-if="creators.length > 0" v-for="creator in creators.slice(0,visibleCreatorsCount)" :creator="creator"/>
-                            <CreatorSearchSkeleton v-else v-for="i in 2"/>
+                            <CreatorSearchSkeleton v-else v-for="i in 2" v-if="loading"/>
                         </div>
 
-                        <RowDivider v-if="visibleCreatorsCount.value > 0 && creators.length > 2" class="mt-4 mb-4" @click="toggleVisibleCreators" :text="expandCreators ? 'Show less' : 'Show more'">
+                        <RowDivider v-if="creators.length > 2  && !loading" @click="toggleVisibleCreators"
+                                    class="mt-4 mb-4"  :text="expandCreators ? 'Show less' : 'Show more'">
                             <font-awesome-icon v-if="expandCreators" :icon="['fas', 'caret-up']" />
                             <font-awesome-icon v-if="!expandCreators" :icon="['fas', 'caret-down']" />
                         </RowDivider>
 
-                        <RowDivider v-else class="mt-4 mb-4" v-if="visibleCreatorsCount.value > 0" />
+                        <RowDivider v-else class="mt-4 mb-4" v-if="loading || (creators.length > 0 && creators.length < 3)"/>
 
                         <div class="px-0 relative w-full grid grid-cols-1 gap-4 ">
                             <!--<x-search-video-card :video="$video"/>-->
-                            <VideoStreamSearchCard v-if="videos" v-for="video in videos" :item="video"/>
-                            <VideoStreamSearchSkeleton v-else v-for="i in 8"/>
+                            <VideoStreamSearchCard v-if="videos.length > 0  && !loading" v-for="video in videos" :item="video"/>
+                            <VideoStreamSearchSkeleton v-else v-for="i in 8" v-if="loading"/>
 
                         </div>
 

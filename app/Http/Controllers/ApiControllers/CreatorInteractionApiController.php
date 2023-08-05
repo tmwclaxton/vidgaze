@@ -123,7 +123,7 @@ class CreatorInteractionApiController extends Controller
 
         if(Auth::user()->creator->slug === $creator->slug) { //check your not subscribing to yourself
             return response()->json([
-                'toastMessage' => 'You cannot subscribe to yourself',
+                'message' => 'You cannot subscribe to yourself',
                 'toastType' => 'warning',
             ]);
         }
@@ -142,7 +142,7 @@ class CreatorInteractionApiController extends Controller
         $interaction->save();
 
         return response()->json([
-            'toastMessage' => $message,
+            'message' => $message,
             'toastType' => $type,
             'subscribed' => (bool) $interaction->subscribed,
         ]);
@@ -156,7 +156,7 @@ class CreatorInteractionApiController extends Controller
         [$creator, $interaction] = $this->getChannelAndInteraction($channelId);
         if(Auth::user()->creator->slug === $creator->slug) { //check your not disinterest yourself
             return response()->json([
-                'toastMessage' => 'You cannot disinterest yourself',
+                'message' => 'You cannot disinterest yourself',
                 'toastType' => 'warning',
             ]);
         }
@@ -174,7 +174,7 @@ class CreatorInteractionApiController extends Controller
         $creator->save();
         $interaction->save();
         return response()->json([
-            'toastMessage' => $message,
+            'message' => $message,
             'toastType' => $type,
         ]);
 
@@ -189,7 +189,7 @@ class CreatorInteractionApiController extends Controller
         if(Auth::user()->creator->slug === $creator->slug) { //check your not reporting yourself
             return response()->json([
                 'toastType' => 'warning',
-                'toastMessage' => 'You cannot report yourself'
+                'message' => 'You cannot report yourself'
             ]);
         }
         $interaction->reported = !$interaction->reported;
@@ -205,7 +205,7 @@ class CreatorInteractionApiController extends Controller
         $creator->save();
         $interaction->save();
         return response()->json([
-            'toastMessage' => $message,
+            'message' => $message,
             'toastType' => $type,
         ]);
     }
