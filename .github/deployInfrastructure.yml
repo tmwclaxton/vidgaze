@@ -1,0 +1,40 @@
+name: Terraform Plan and Apply
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  terraform_plan_apply:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Check for Terraform Commands
+        id: check_tf_commands
+        run: echo "::set-output name=terraform_command::$(grep -oE 'tf (plan|apply)' <<< '${{ github.event.comment.body }}')"
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -out=tfplan
+        if: steps.check_tf_commands.outputs.terraform_command == 'tf plan'
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve tfplan
+        if: steps.check_tf_commands.outputs.terraform_command == 'tf apply'
+
+      - name: Save state file
+        if: steps.apply.outcome == 'success'
+        uses: actions/upload-artifact@v2
+        with:
+          name: terraform-state
+          path: terraform.tfstate
