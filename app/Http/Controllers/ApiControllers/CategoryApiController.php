@@ -24,15 +24,17 @@ class CategoryApiController extends Controller
             'per_page' => 'integer|min:1|max:100',
             // category_ids is a comma separated list of category ids of numbers and commas
             'category_ids' => 'string|nullable|regex:/^([0-9]+,)*[0-9]+$/',
+            'ensure_details' => 'boolean|nullable',
         ]);
         $per_page = $request->per_page ?? 20;
 
         $query = Category::query();
 
-        $query
-            ->where('thumbnail_url', '!=', null)
-            ->where('tags_json', '!=', null)
-            ->where('twitch_category_id', '!=', null);
+        if ($request->ensure_details) {
+            $query->where('thumbnail_url', '!=', null)
+                ->where('tags_json', '!=', null)
+                ->where('twitch_category_id', '!=', null);
+        }
 
         if ($request->category_ids != null) {
             $query->whereNotIn('id', explode(',', $request->category_ids));

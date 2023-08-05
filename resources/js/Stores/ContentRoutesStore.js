@@ -49,15 +49,14 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
         },
 
         // get categories
-        async getCategories(per_page = 10, categoryIds = []) {
-            if (categoryIds.length === 0) {
-                // comma delimited string
-                categoryIds = categoryIds.join(',');
-            }
+        async getCategories(per_page = 10, category_ids = null, ensure_details = false) {
+            // change ensure_details to 1 or 0
+            ensure_details = ensure_details ? 1 : 0;
             const response = await axios.get(route('api.category.index'),  {
                 params: {
                     per_page: per_page,
-                    categoryIds: categoryIds
+                    category_ids,
+                    ensure_details: ensure_details,
                 }})
                 .catch(error => {
                     console.log(error);

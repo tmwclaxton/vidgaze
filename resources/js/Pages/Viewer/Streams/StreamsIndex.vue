@@ -6,13 +6,14 @@ import {onMounted, onUnmounted, ref} from "vue";
 import TopStreamsRow from "@/Components/ContentRows/TopStreamsRow.vue";
 import CategoriesRow from "@/Components/ContentRows/CategoriesRow.vue";
 import {debounce} from "lodash";
-import InfiniteCategoriesWithStreams from "@/Components/ContentRows/InfiniteCategoriesWithStreams.vue";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
+import CategoryRowWithStreams from "@/Components/ContentRows/CategoryRowWithStreams.vue";
 const name = "StreamsIndex";
-const categories = ref([]);
 const contentRoutesStore = useContentRoutesStore();
+
+const categories = ref([]);
 const fetchCategories = async () => {
-    await contentRoutesStore.getCategories(8)
+    await contentRoutesStore.getCategories(8, null, true)
         .then(response => {
             setTimeout(() => {
                 console.log(response);
@@ -23,10 +24,11 @@ const fetchCategories = async () => {
 
 const categoriesForRows = ref([]);
 const fetchCategoriesForRows = async () => {
-    await contentRoutesStore.getCategories(8, categoriesForRows.value.map(item => item.id))
+    const categoryIds = categoriesForRows.value.map(category => category.id).join(',');
+    await contentRoutesStore.getCategories(8, categoryIds, false)
         .then(response => {
             setTimeout(() => {
-                categoriesForRows.value = categoriesForRows.value.concat(response.data);
+                categoriesForRows.value = categoriesForRows.value.concat(response.data.categories.data);
             }, 100); // 500ms delay
         });
 
@@ -34,17 +36,7 @@ const fetchCategoriesForRows = async () => {
 
 const debouncedFetchCategoriesForRows = debounce(fetchCategoriesForRows, 500);
 
-onMounted(async () => {
-    window.addEventListener('scroll', handleScroll1);
-    await fetchCategories();
-    await fetchCategoriesForRows();
-});
-
-onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll1);
-});
-
-const handleScroll1 = () => {
+const handleScroll = () => {
     const scrollPosition = window.innerHeight + window.scrollY;
     const bodyHeight = document.body.offsetHeight;
     // console.log(scrollPosition, bodyHeight)
@@ -57,13 +49,18 @@ const handleScroll1 = () => {
     }
 };
 
+onMounted(async () => {
+    window.addEventListener('scroll', handleScroll);
+    await fetchCategories();
+    await fetchCategoriesForRows();
+});
 
-</script>
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-export default {
-    layout: AuthenticatedLayout,
-};
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll);
+});
+
+
+
 </script>
 <template>
 
@@ -76,7 +73,7 @@ export default {
 
             <CategoriesRow :categories="categories"/>
 
-            <!--<InfiniteCategoriesWithStreams :categoriesForRows="categoriesForRows"/>-->
+            <CategoryRowWithStreams v-for="(category, index) in categoriesForRows" :key="category.id" :category="category"/>
 
         </PaddingLayout>
     </div>
