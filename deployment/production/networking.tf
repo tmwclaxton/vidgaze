@@ -1,23 +1,22 @@
 
+
+
 # Create a VPC
-resource "aws_vpc" "my_vpc" {
-  cidr_block = "10.0.0.0/16" # Replace this with your desired IP range for the VPC
+module "vpc" {
+  source             = "terraform-aws-modules/vpc/aws"
+  name               = "vidgaze-vpc"
+  cidr               = "10.0.0.0/16"
+  azs                = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+  private_subnets    = ["10.0.0.0/24", "10.0.1.0/24"] # Two private subnets with /24 CIDR
+  public_subnets     = ["10.0.2.0/24", "10.0.3.0/24"] # Two public subnets with /24 CIDR
+  enable_nat_gateway = true
+  enable_vpn_gateway = true
 }
 
-# Create public and private subnets within the VPC
-resource "aws_subnet" "public_subnet" {
-  vpc_id                  = aws_vpc.my_vpc.id
-  cidr_block              = "10.0.1.0/24" # Replace this with a unique CIDR block for the public subnet
-  map_public_ip_on_launch = true
+output "vpc_id" {
+  value = module.vpc.vpc_id
 }
 
-resource "aws_subnet" "private_subnet" {
-  vpc_id     = aws_vpc.my_vpc.id
-  cidr_block = "10.0.2.0/24" # Replace this with a unique CIDR block for the private subnet
+output "public_subnets" {
+  value = module.vpc.public_subnets
 }
-
-# Create an RDS MySQL instance in the private subnet
-#resource "aws_db_subnet_group" "my_db_subnet_group" {
-#    name       = "my-laravel-db-subnet-group"
-#    subnet_ids = [aws_subnet.private_subnet.id]
-#}

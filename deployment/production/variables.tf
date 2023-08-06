@@ -1,6 +1,6 @@
 
 variable "aws_region" {
-  default     = "eu-west-2" // London
+  default     = "eu-west-1" // Ireland
   description = "AWS Region"
   type        = string
 }
