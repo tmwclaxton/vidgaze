@@ -1,34 +1,4 @@
 
-# Create an ECR repository and make it public
-resource "aws_ecr_repository" "my_ecr_repository" {
-    name = "my-laravel-app"
-
-    # Make the repository public
-    image_tag_mutability = "MUTABLE"
-    lifecycle_policy {
-        lifecycle_policy_text = jsonencode({
-            rules = [{
-                rule_priority = 1
-                selection = {
-                    tag_status = "any"
-                }
-                action = {
-                    type = "expire"
-                }
-            }]
-        })
-    }
-    policy = jsonencode({
-        Version = "2012-10-17"
-        Statement = [{
-            Sid       = "PublicAccess"
-            Effect    = "Allow"
-            Principal = "*"
-            Action    = ["ecr:GetDownloadUrlForLayer", "ecr:BatchGetImage", "ecr:GetAuthorizationToken"]
-        }]
-    })
-}
-
 
 
 resource "aws_db_instance" "my_rds_instance" {
@@ -48,7 +18,6 @@ resource "aws_db_instance" "my_rds_instance" {
 # Create an S3 bucket
 resource "aws_s3_bucket" "my_s3_bucket" {
     bucket = "my-laravel-bucket"
-    acl    = "private"
 }
 
 # Create a Redis ElastiCache cluster in the private subnet
