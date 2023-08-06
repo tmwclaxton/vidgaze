@@ -17,8 +17,6 @@ resource "aws_iam_role" "github_actions_role" {
 }
 
 # IAM Policy for GitHub Actions to push to ECR
-
-# IAM Policy for GitHub Actions to push to ECR
 resource "aws_iam_policy" "github_actions_ecr_policy" {
     name = "github-actions-ecr-policy"
 

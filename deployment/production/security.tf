@@ -1,4 +1,3 @@
-
 # Create a security group for the AppRunner service (public)
 resource "aws_security_group" "app_runner_sg" {
     name_prefix = "my-laravel-apprunner-sg"
