@@ -76,6 +76,7 @@ resource "aws_apprunner_vpc_connector" "connector" {
 
 # Conditionally create the AppRunner service only if the image exists
 resource "aws_apprunner_service" "vidgaze_apprunner_service" {
+    count = var.create_apprunner_service ? 1 : 0
 
   service_name = "vidgaze-apprunner-service"
 
@@ -84,7 +85,7 @@ resource "aws_apprunner_service" "vidgaze_apprunner_service" {
       image_configuration {
         port = "80"
       }
-      image_identifier      = "${aws_ecr_repository.vidgaze_ecr_repository.repository_url}:latest"
+      image_identifier      = aws_ecr_repository.vidgaze_ecr_repository.repository_url
       image_repository_type = "ECR"
     }
     authentication_configuration {
