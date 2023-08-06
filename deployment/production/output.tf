@@ -8,12 +8,12 @@ output "ecr_repository_arn" {
 
 # output the app runner service arn
 output "app_runner_service_arn" {
-  value = aws_apprunner_service.vidgaze_apprunner_service[0].arn ? aws_apprunner_service.vidgaze_apprunner_service[0].arn : ""
+  value = aws_apprunner_service.vidgaze_apprunner_service != [] ? aws_apprunner_service.vidgaze_apprunner_service[0].arn : ""
 }
 
 # output the app runner service url
 output "app_runner_service_url" {
-  value = aws_apprunner_service.vidgaze_apprunner_service[0].service_url ? aws_apprunner_service.vidgaze_apprunner_service[0].service_url : ""
+  value = aws_apprunner_service.vidgaze_apprunner_service != [] ? aws_apprunner_service.vidgaze_apprunner_service[0].service_url : ""
 }
 
 # output rds instance endpoint
