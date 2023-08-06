@@ -26,3 +26,23 @@ resource "aws_db_instance" "vidgaze_db" {
 
     apply_immediately = true
 }
+
+#
+## Create a CloudWatch Alarm to monitor RDS storage space
+#resource "aws_cloudwatch_metric_alarm" "rds_storage_alarm" {
+#    comparison_operator = "LessThanOrEqualToThreshold"
+#    evaluation_periods  = "1"
+#    metric_name         = "FreeStorageSpace"
+#    namespace           = "AWS/RDS"
+#    period              = "300" # 5 minutes
+#
+#    dimensions = {
+#        DBInstanceIdentifier = aws_db_instance.vidgaze_db.identifier
+#    }
+#
+#    statistic   = "Average"
+#    threshold   = "5000000000" # 5 GB (adjust the threshold based on your needs)
+#    alarm_description = "RDS Storage Space Low"
+#    alarm_name  = "RDS_Storage_Low_Alarm"
+#    alarm_actions = [var.notification_topic_arn] # Replace with your SNS topic ARN for receiving notifications
+#}
