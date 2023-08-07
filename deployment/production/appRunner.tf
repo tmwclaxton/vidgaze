@@ -1,8 +1,6 @@
-
 # define app runner role
 resource "aws_iam_role" "vidgaze-apprunner-role" {
   name = "app-runner-role"
-
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -15,14 +13,12 @@ resource "aws_iam_role" "vidgaze-apprunner-role" {
       }
     ]
   })
-
 }
 
 # policy for app runner role
 resource "aws_iam_role_policy" "app_runner_policy" {
   name = "app-runner-policy"
   role = aws_iam_role.vidgaze-apprunner-role.id
-
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -50,12 +46,10 @@ resource "aws_iam_role_policy" "app_runner_policy" {
   })
 }
 
-
 # Create a security group for the AppRunner service (public)
 resource "aws_security_group" "vidgaze_app_runner_sg" {
   name_prefix = "vidgaze-apprunner-sg-"
   vpc_id      = module.vpc.vpc_id
-
   # Allow inbound HTTPS traffic from the internet (AppRunner)
   ingress {
     from_port   = 443
@@ -63,7 +57,13 @@ resource "aws_security_group" "vidgaze_app_runner_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
+  # Allow inbound HTTP traffic from the internet (AppRunner)
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   # Allow outbound traffic to the internet
   egress {
     from_port   = 0
@@ -82,8 +82,7 @@ resource "aws_apprunner_vpc_connector" "connector" {
 
 # Conditionally create the AppRunner service only if the image exists
 resource "aws_apprunner_service" "vidgaze_apprunner_service" {
-    count = var.create_apprunner_service ? 1 : 0
-
+  count        = var.create_apprunner_service ? 1 : 0
   service_name = "vidgaze-apprunner-service"
 
   source_configuration {
