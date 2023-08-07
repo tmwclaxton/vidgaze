@@ -37,7 +37,13 @@ resource "aws_iam_role_policy" "app_runner_policy" {
         "ecr:DescribeImages",
         "ecr:BatchGetImage",
         "logs:CreateLogStream",
-        "logs:PutLogEvents"
+        "logs:PutLogEvents",
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:ListBucket",
+        "s3:ListBucketMultipartUploads",
+        "s3:AbortMultipartUpload",
       ]
       Resource = "*"
     }]
