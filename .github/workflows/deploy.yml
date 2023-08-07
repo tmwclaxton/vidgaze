@@ -1,5 +1,5 @@
 
-name: "deployImage"
+name: "deploy"
 
 # Controls when the workflow will run
 on:
