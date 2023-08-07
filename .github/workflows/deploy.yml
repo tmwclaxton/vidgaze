@@ -25,16 +25,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
 
       - name: ConfigureAWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -43,6 +33,9 @@ jobs:
           aws-secret-access-key: ${{secrets.VIDGAZE_AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
 
+      - name: Configured AWS credentials
+        run: |
+          echo "Successfully configured AWS credentials."
 
       - name: Log into AmazonECR
         id: login-ecr
@@ -55,8 +48,9 @@ jobs:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_NAME: ${{ secrets.DB_NAME }}
           ECR_REGISTRY: ${{steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: team1-api
-          ECR_REPOSITORY: employee_demo
+          IMAGE_TAG: ${{ github.sha }}
+          ECR_REPOSITORY: vidgaze-laravel-app
         run: |
-          docker build --build-arg DB_HOST=${DB_HOST} --build-arg DB_PASSWORD=${DB_PASSWORD} --build-arg DB_NAME=${DB_NAME} --build-arg DB_USERNAME=${DB_USERNAME} -t ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} .
+          docker build -t ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} .
           docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
