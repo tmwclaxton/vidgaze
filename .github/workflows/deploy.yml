@@ -1,56 +1,39 @@
-
 name: "deploy"
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
-  pull_request:
     branches: [ "main" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-
       - name: ConfigureAWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{secrets.VIDGAZE_AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{secrets.VIDGAZE_AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{secrets.VIDGAZE_AWS_ACCESS_KEY}}
+          aws-secret-access-key: ${{secrets.VIDGAZE_AWS_SECRET_ACCESS_KEY}}
           aws-region: eu-west-1
 
-      - name: Configured AWS credentials
-        run: |
-          echo "Successfully configured AWS credentials."
 
-      - name: Log into AmazonECR
+      - name: Login to AmazonECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: docker build
         env:
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          ECR_REGISTRY: ${{steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
+          ECR_REGISTRY: ${{steps.login-ecr.outputs.registry}}
           ECR_REPOSITORY: vidgaze-laravel-app
+          IMAGE_TAG: ${{ github.sha }}
+
         run: |
-          docker build -t ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} .
+          docker build --build-arg WWWGROUP=1000 -t ${ECR_REPOSITORY}:${IMAGE_TAG} -f ./docker/8.2/Dockerfile ./docker/8.2/
+          docker tag ${ECR_REPOSITORY}:${IMAGE_TAG} ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
           docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
