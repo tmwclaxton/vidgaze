@@ -66,7 +66,7 @@ COPY . /var/www/html
 RUN touch /var/www/html/storage/logs/laravel.log
 RUN touch /var/www/html/storage/logs/swoole_http.log
 
-mkdir /var/www/html/vendor
+RUN mkdir /var/www/html/vendor
 
 ## this will
 #RUN php artisan config:clear
