@@ -62,6 +62,10 @@ COPY docker/8.2/vidgaze-workers /etc/supervisor/conf.d/vidgaze-workers
 # Copy Laravel app files
 COPY . /var/www/html
 
+
+# run composer install
+RUN composer install --no-interaction --no-plugins --no-scripts --prefer-dist --optimize-autoloader
+
 RUN chmod +x /usr/local/bin/start-container
 
 EXPOSE 8000
