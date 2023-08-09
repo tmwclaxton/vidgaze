@@ -62,14 +62,16 @@ COPY docker/8.2/vidgaze-workers /etc/supervisor/conf.d/vidgaze-workers
 # Copy Laravel app files
 COPY . /var/www/html
 
-# create laravel log file and give permission
-RUN chmod -R 775 /var/www/html/storage/logs
+# create laravel log file
 RUN touch /var/www/html/storage/logs/laravel.log
-RUN chmod 775 /var/www/html/storage/logs/laravel.log
+RUN touch /var/www/html/storage/logs/swoole_http.log
 
-# create vendor file and give permission for vendor folder recursively
-RUN mkdir /var/www/html/vendor
-RUN chmod -R 775 /var/www/html/vendor
+mkdir /var/www/html/vendor
+
+## this will
+#RUN php artisan config:clear
+#RUN php artisan cache:clear
+#RUN php artisan view:clear
 
 # run composer install
 RUN composer install --no-interaction --no-plugins --no-scripts --prefer-dist --optimize-autoloader
