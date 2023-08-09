@@ -67,7 +67,8 @@ RUN chmod -R 775 /var/www/html/storage/logs
 RUN touch /var/www/html/storage/logs/laravel.log
 RUN chmod 775 /var/www/html/storage/logs/laravel.log
 
-# give permission for vendor folder recursively
+# create vendor file and give permission for vendor folder recursively
+RUN mkdir /var/www/html/vendor
 RUN chmod -R 775 /var/www/html/vendor
 
 # run composer install
