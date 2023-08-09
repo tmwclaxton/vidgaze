@@ -76,6 +76,9 @@ RUN mkdir /var/www/html/vendor
 # run composer install
 RUN composer install --no-interaction --no-plugins --no-scripts --prefer-dist --optimize-autoloader
 
+# run npm install
+RUN npm install --no-audit --no-progress
+
 RUN chmod +x /usr/local/bin/start-container
 
 EXPOSE 8000
