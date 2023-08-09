@@ -52,6 +52,7 @@ RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
 RUN mkdir /etc/supervisor/logs
 RUN touch /etc/supervisor/logs/worker.log
 
+COPY . /var/www/html
 COPY start-container /usr/local/bin/start-container
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY vidgaze-workers /etc/supervisor/conf.d/vidgaze-workers
