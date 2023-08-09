@@ -20,7 +20,7 @@ import TwitchIcon from '~/images/icons/twitch.svg';
 import FacebookIcon from '~/images/icons/facebook.svg';
 import InstagramIcon from '~/images/icons/instagram.svg';
 import VimeoIcon from '~/images/icons/vimeo.svg';
-import TikTokIcon from '~/images/icons/tiktok.svg';
+// import TikTokIcon from '~/images/icons/tiktok.svg';
 import DailymotionIcon from '~/images/icons/dailymotion.svg';
 
 import { defineProps, computed } from 'vue';

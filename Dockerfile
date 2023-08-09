@@ -52,11 +52,16 @@ RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
 RUN mkdir /etc/supervisor/logs
 RUN touch /etc/supervisor/logs/worker.log
 
-COPY start-container /usr/local/bin/start-container
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY vidgaze-workers /etc/supervisor/conf.d/vidgaze-workers
 
-COPY php.ini /etc/php/8.2/cli/conf.d/99-sail.ini
+COPY docker/8.2/start-container /usr/local/bin/start-container
+COPY docker/8.2/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/8.2/php.ini /etc/php/8.2/cli/conf.d/99-sail.ini
+COPY docker/8.2/vidgaze-workers /etc/supervisor/conf.d/vidgaze-workers
+
+# Irrelevant in the dev environment (because of mounted volume), necessary for production
+# Copy Laravel app files
+COPY . /var/www/html
+
 RUN chmod +x /usr/local/bin/start-container
 
 EXPOSE 8000
