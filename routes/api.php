@@ -77,7 +77,7 @@ use Illuminate\Support\Facades\Route;
                 'database' => $database,
                 'redis' => $redis,
                 'filesystem' => $storage,
-            ]);
+            ], 200);
         })->name('health');
 
     });

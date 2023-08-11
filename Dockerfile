@@ -81,8 +81,6 @@ RUN npm install --no-audit --no-progress
 
 RUN chmod +x /usr/local/bin/start-container
 
-EXPOSE 8000
-
-
+EXPOSE 80
 
 ENTRYPOINT ["start-container"]
