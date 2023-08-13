@@ -56,17 +56,26 @@ use Illuminate\Support\Facades\Route;
         Route::post('/view-listener', [ViewListenerController::class, 'message'])->middleware('auth.sanctum.switch')->name('view.listener');
 
         //this is a test route to make sure the api is working
-        Route::get('health', function () {
-            // check if the database is connected
-            $database = DB::connection()->getPdo() ? 'CONNECTED' : 'NOT CONNECTED';
+        Route::get('/health', function () {
+            try {
+                $database = DB::connection()->getPdo() ? 'CONNECTED: ' . env('DB_HOST')
+                    : 'NOT CONNECTED';
+            } catch (\Exception $e) {
+                $database = 'NOT CONNECTED';
+            }
             // check if redis is connected
-            $redis = Redis::connection()->ping() ? 'CONNECTED' : 'NOT CONNECTED';
+            try {
+                $redis = Redis::connection()->ping() ? 'CONNECTED: ' . env('REDIS_HOST') . ':6379'
+                    : 'NOT CONNECTED';
+            } catch (\Exception $e) {
+                $redis = 'NOT CONNECTED';
+            }
             // check what storage driver is being used
             $storage = config('filesystems.default');
 
 
             // if local storage check this is not a production server assuming we are using s3 in production
-            if ($database == 'CONNECTED' && $redis == 'CONNECTED' && ($storage == 'local' && config('app.env') != 'production')) {
+            if ($database != 'NOT CONNECTED' && $redis != 'NOT CONNECTED') {
                 $message = 'VidGaze API v1 is working!';
             } else {
                 $message = 'VidGaze API v1 is not working!';
