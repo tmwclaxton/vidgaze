@@ -1,8 +1,11 @@
-name: "deploy"
+name: "Docker Compose Build and Push to ECR"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
