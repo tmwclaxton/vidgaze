@@ -1,0 +1,612 @@
+{
+  "_CommentSection-de14485b.js": {
+    "file": "assets/CommentSection-de14485b.js",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "_ConsistentContentHolder-2fa9797d.js": {
+    "file": "assets/ConsistentContentHolder-2fa9797d.js",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "_ConsistentPadding-9945bab2.js": {
+    "file": "assets/ConsistentPadding-9945bab2.js",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "_ContentRoutesStore-d95b345f.js": {
+    "file": "assets/ContentRoutesStore-d95b345f.js",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "_CreatorSearchCard-1a89d598.js": {
+    "file": "assets/CreatorSearchCard-1a89d598.js",
+    "imports": [
+      "resources/js/app.js",
+      "_ConsistentContentHolder-2fa9797d.js",
+      "_vimeo-43ab530a.js",
+      "_twitch-c2314a82.js"
+    ]
+  },
+  "_DangerButton-6f861758.js": {
+    "file": "assets/DangerButton-6f861758.js",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "_GuestLayout-933bcf6c.js": {
+    "file": "assets/GuestLayout-933bcf6c.js",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "_HorizontalLineText-62486974.js": {
+    "file": "assets/HorizontalLineText-62486974.js",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "_InputLabel-e9c48b67.js": {
+    "file": "assets/InputLabel-e9c48b67.js",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "_Queue-17dbe043.js": {
+    "file": "assets/Queue-17dbe043.js",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "_RowDivider-04edb2e9.js": {
+    "file": "assets/RowDivider-04edb2e9.js",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "_Title-b2225050.js": {
+    "file": "assets/Title-b2225050.js",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "_TopStreamsRow-8ac0733f.js": {
+    "file": "assets/TopStreamsRow-8ac0733f.js",
+    "imports": [
+      "_VideoStreamCard-ade6b5d4.js",
+      "resources/js/app.js",
+      "_RowDivider-04edb2e9.js",
+      "_ContentRoutesStore-d95b345f.js"
+    ]
+  },
+  "_VideoStreamCard-ade6b5d4.js": {
+    "file": "assets/VideoStreamCard-ade6b5d4.js",
+    "imports": [
+      "resources/js/app.js",
+      "_Queue-17dbe043.js"
+    ]
+  },
+  "_twitch-c2314a82.js": {
+    "file": "assets/twitch-c2314a82.js",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "_vimeo-43ab530a.js": {
+    "file": "assets/vimeo-43ab530a.js",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/Pages/Admin/AdminDashboard.vue": {
+    "file": "assets/AdminDashboard-2fb29132.js",
+    "imports": [
+      "_ConsistentPadding-9945bab2.js",
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Admin/AdminDashboard.vue"
+  },
+  "resources/js/Pages/Admin/TestComponents.vue": {
+    "file": "assets/TestComponents-417c83ff.js",
+    "imports": [
+      "resources/js/app.js",
+      "_DangerButton-6f861758.js",
+      "_InputLabel-e9c48b67.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Admin/TestComponents.vue"
+  },
+  "resources/js/Pages/Auth/ConfirmPassword.vue": {
+    "file": "assets/ConfirmPassword-76dd6477.js",
+    "imports": [
+      "resources/js/app.js",
+      "_GuestLayout-933bcf6c.js",
+      "_InputLabel-e9c48b67.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Auth/ConfirmPassword.vue"
+  },
+  "resources/js/Pages/Auth/ForgotPassword.vue": {
+    "file": "assets/ForgotPassword-844c8301.js",
+    "imports": [
+      "resources/js/app.js",
+      "_GuestLayout-933bcf6c.js",
+      "_InputLabel-e9c48b67.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Auth/ForgotPassword.vue"
+  },
+  "resources/js/Pages/Auth/Login.vue": {
+    "file": "assets/Login-1e9659e4.js",
+    "imports": [
+      "resources/js/app.js",
+      "_GuestLayout-933bcf6c.js",
+      "_InputLabel-e9c48b67.js",
+      "_HorizontalLineText-62486974.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Auth/Login.vue"
+  },
+  "resources/js/Pages/Auth/Register.vue": {
+    "file": "assets/Register-d85c6699.js",
+    "imports": [
+      "resources/js/app.js",
+      "_GuestLayout-933bcf6c.js",
+      "_InputLabel-e9c48b67.js",
+      "_HorizontalLineText-62486974.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Auth/Register.vue"
+  },
+  "resources/js/Pages/Auth/ResetPassword.vue": {
+    "file": "assets/ResetPassword-fe04b69d.js",
+    "imports": [
+      "resources/js/app.js",
+      "_GuestLayout-933bcf6c.js",
+      "_InputLabel-e9c48b67.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Auth/ResetPassword.vue"
+  },
+  "resources/js/Pages/Auth/VerifyEmail.vue": {
+    "file": "assets/VerifyEmail-0dfde81b.js",
+    "imports": [
+      "resources/js/app.js",
+      "_GuestLayout-933bcf6c.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Auth/VerifyEmail.vue"
+  },
+  "resources/js/Pages/Legal/Policy.vue": {
+    "file": "assets/Policy-c684cb05.js",
+    "imports": [
+      "_ConsistentPadding-9945bab2.js",
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Legal/Policy.vue"
+  },
+  "resources/js/Pages/Legal/Support.css": {
+    "file": "assets/Support-e3b0c442.css",
+    "src": "resources/js/Pages/Legal/Support.css"
+  },
+  "resources/js/Pages/Legal/Support.vue": {
+    "css": [
+      "assets/Support-e3b0c442.css"
+    ],
+    "file": "assets/Support-c32e7185.js",
+    "imports": [
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Legal/Support.vue"
+  },
+  "resources/js/Pages/Legal/Terms.vue": {
+    "file": "assets/Terms-b8cab1bd.js",
+    "imports": [
+      "_ConsistentPadding-9945bab2.js",
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Legal/Terms.vue"
+  },
+  "resources/js/Pages/Profile/Edit.vue": {
+    "file": "assets/Edit-5292c97a.js",
+    "imports": [
+      "resources/js/Pages/Profile/Partials/DeleteUserForm.vue",
+      "resources/js/Pages/Profile/Partials/UpdatePasswordForm.vue",
+      "resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.vue",
+      "resources/js/app.js",
+      "_DangerButton-6f861758.js",
+      "_InputLabel-e9c48b67.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Profile/Edit.vue"
+  },
+  "resources/js/Pages/Profile/Partials/DeleteUserForm.vue": {
+    "file": "assets/DeleteUserForm-f209d287.js",
+    "imports": [
+      "resources/js/app.js",
+      "_DangerButton-6f861758.js",
+      "_InputLabel-e9c48b67.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Profile/Partials/DeleteUserForm.vue"
+  },
+  "resources/js/Pages/Profile/Partials/UpdatePasswordForm.vue": {
+    "file": "assets/UpdatePasswordForm-7837fd67.js",
+    "imports": [
+      "resources/js/app.js",
+      "_InputLabel-e9c48b67.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Profile/Partials/UpdatePasswordForm.vue"
+  },
+  "resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.vue": {
+    "file": "assets/UpdateProfileInformationForm-045c055a.js",
+    "imports": [
+      "resources/js/app.js",
+      "_InputLabel-e9c48b67.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.vue"
+  },
+  "resources/js/Pages/Studio/Dashboard.vue": {
+    "file": "assets/Dashboard-72f9ac65.js",
+    "imports": [
+      "resources/js/app.js",
+      "_Title-b2225050.js",
+      "_ConsistentPadding-9945bab2.js",
+      "_ConsistentContentHolder-2fa9797d.js",
+      "resources/js/Pages/Studio/Partials/ConnectChannels.vue",
+      "resources/js/Pages/Studio/Partials/ItemPerformance.vue",
+      "resources/js/Pages/Studio/Partials/LatestComment.vue",
+      "resources/js/Pages/Studio/Partials/ChannelOverview.vue",
+      "_vimeo-43ab530a.js",
+      "_twitch-c2314a82.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Studio/Dashboard.vue"
+  },
+  "resources/js/Pages/Studio/EditVideoDraft.css": {
+    "file": "assets/EditVideoDraft-aef17381.css",
+    "src": "resources/js/Pages/Studio/EditVideoDraft.css"
+  },
+  "resources/js/Pages/Studio/EditVideoDraft.vue": {
+    "css": [
+      "assets/EditVideoDraft-aef17381.css"
+    ],
+    "file": "assets/EditVideoDraft-4b0e0720.js",
+    "imports": [
+      "resources/js/app.js",
+      "_InputLabel-e9c48b67.js",
+      "_Title-b2225050.js",
+      "_ConsistentPadding-9945bab2.js",
+      "_vimeo-43ab530a.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Studio/EditVideoDraft.vue"
+  },
+  "resources/js/Pages/Studio/Partials/ChannelOverview.vue": {
+    "file": "assets/ChannelOverview-dcbb48b9.js",
+    "imports": [
+      "_ConsistentContentHolder-2fa9797d.js",
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Studio/Partials/ChannelOverview.vue"
+  },
+  "resources/js/Pages/Studio/Partials/ConnectChannels.vue": {
+    "file": "assets/ConnectChannels-072792d9.js",
+    "imports": [
+      "resources/js/app.js",
+      "_vimeo-43ab530a.js",
+      "_twitch-c2314a82.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Studio/Partials/ConnectChannels.vue"
+  },
+  "resources/js/Pages/Studio/Partials/DropZone.vue": {
+    "file": "assets/DropZone-b9260df5.js",
+    "imports": [
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Studio/Partials/DropZone.vue"
+  },
+  "resources/js/Pages/Studio/Partials/ItemPerformance.vue": {
+    "file": "assets/ItemPerformance-0784c491.js",
+    "imports": [
+      "_ConsistentContentHolder-2fa9797d.js",
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Studio/Partials/ItemPerformance.vue"
+  },
+  "resources/js/Pages/Studio/Partials/LatestComment.vue": {
+    "file": "assets/LatestComment-e974288e.js",
+    "imports": [
+      "_ConsistentContentHolder-2fa9797d.js",
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Studio/Partials/LatestComment.vue"
+  },
+  "resources/js/Pages/Studio/Upload.vue": {
+    "file": "assets/Upload-e7764615.js",
+    "imports": [
+      "resources/js/app.js",
+      "_Title-b2225050.js",
+      "_ConsistentPadding-9945bab2.js",
+      "resources/js/Pages/Studio/Partials/DropZone.vue"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Studio/Upload.vue"
+  },
+  "resources/js/Pages/Viewer/Feed/Subscriptions/ChannelsIndex.vue": {
+    "file": "assets/ChannelsIndex-47d51cc5.js",
+    "imports": [
+      "_ConsistentPadding-9945bab2.js",
+      "_CreatorSearchCard-1a89d598.js",
+      "resources/js/app.js",
+      "_ConsistentContentHolder-2fa9797d.js",
+      "_vimeo-43ab530a.js",
+      "_twitch-c2314a82.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Feed/Subscriptions/ChannelsIndex.vue"
+  },
+  "resources/js/Pages/Viewer/Feed/Subscriptions/SubscriptionsIndex.vue": {
+    "file": "assets/SubscriptionsIndex-84cf9576.js",
+    "imports": [
+      "_ConsistentPadding-9945bab2.js",
+      "resources/js/app.js",
+      "_RowDivider-04edb2e9.js",
+      "_Title-b2225050.js",
+      "_VideoStreamCard-ade6b5d4.js",
+      "_Queue-17dbe043.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Feed/Subscriptions/SubscriptionsIndex.vue"
+  },
+  "resources/js/Pages/Viewer/Home/CreatorCarousel.vue": {
+    "file": "assets/CreatorCarousel-6f1fd0c8.js",
+    "imports": [
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Home/CreatorCarousel.vue"
+  },
+  "resources/js/Pages/Viewer/Home/Homepage.vue": {
+    "file": "assets/Homepage-c4967a4f.js",
+    "imports": [
+      "resources/js/Pages/Viewer/Home/CreatorCarousel.vue",
+      "_ConsistentPadding-9945bab2.js",
+      "resources/js/app.js",
+      "_TopStreamsRow-8ac0733f.js",
+      "_Queue-17dbe043.js",
+      "_RowDivider-04edb2e9.js",
+      "_ContentRoutesStore-d95b345f.js",
+      "_VideoStreamCard-ade6b5d4.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Home/Homepage.vue"
+  },
+  "resources/js/Pages/Viewer/Landing/Landing.css": {
+    "file": "assets/Landing-8b92530e.css",
+    "src": "resources/js/Pages/Viewer/Landing/Landing.css"
+  },
+  "resources/js/Pages/Viewer/Landing/Landing.vue": {
+    "css": [
+      "assets/Landing-8b92530e.css"
+    ],
+    "file": "assets/Landing-cd28bded.js",
+    "imports": [
+      "resources/js/Pages/Viewer/Landing/Partials/FounderCard.vue",
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Landing/Landing.vue"
+  },
+  "resources/js/Pages/Viewer/Landing/Partials/FounderCard.vue": {
+    "file": "assets/FounderCard-eff365d1.js",
+    "imports": [
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Landing/Partials/FounderCard.vue"
+  },
+  "resources/js/Pages/Viewer/Music/MusicIndex.vue": {
+    "file": "assets/MusicIndex-02cdbd8a.js",
+    "imports": [
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Music/MusicIndex.vue"
+  },
+  "resources/js/Pages/Viewer/Podcasts/PodcastsIndex.vue": {
+    "file": "assets/PodcastsIndex-0da6291c.js",
+    "imports": [
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Podcasts/PodcastsIndex.vue"
+  },
+  "resources/js/Pages/Viewer/Search/Search.vue": {
+    "file": "assets/Search-8f34c685.js",
+    "imports": [
+      "resources/js/app.js",
+      "_CreatorSearchCard-1a89d598.js",
+      "_RowDivider-04edb2e9.js",
+      "_ConsistentContentHolder-2fa9797d.js",
+      "_Queue-17dbe043.js",
+      "_ConsistentPadding-9945bab2.js",
+      "_vimeo-43ab530a.js",
+      "_twitch-c2314a82.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Search/Search.vue"
+  },
+  "resources/js/Pages/Viewer/Shorts/ShortsIndex.vue": {
+    "file": "assets/ShortsIndex-37d52729.js",
+    "imports": [
+      "resources/js/app.js",
+      "resources/js/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayer.vue",
+      "resources/js/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayerSkeleton.vue",
+      "_CommentSection-de14485b.js",
+      "_ContentRoutesStore-d95b345f.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Shorts/ShortsIndex.vue"
+  },
+  "resources/js/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayer.vue": {
+    "file": "assets/ShortsPlayer-6b8778b0.js",
+    "imports": [
+      "resources/js/app.js",
+      "_CommentSection-de14485b.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayer.vue"
+  },
+  "resources/js/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayerSkeleton.vue": {
+    "file": "assets/ShortsPlayerSkeleton-dbefc91f.js",
+    "imports": [
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayerSkeleton.vue"
+  },
+  "resources/js/Pages/Viewer/Streams/StreamsIndex.vue": {
+    "file": "assets/StreamsIndex-dc452148.js",
+    "imports": [
+      "resources/js/app.js",
+      "_ConsistentPadding-9945bab2.js",
+      "_TopStreamsRow-8ac0733f.js",
+      "_RowDivider-04edb2e9.js",
+      "_ContentRoutesStore-d95b345f.js",
+      "_VideoStreamCard-ade6b5d4.js",
+      "_Queue-17dbe043.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Streams/StreamsIndex.vue"
+  },
+  "resources/js/Pages/Viewer/Watch/Partials/EndScreen.vue": {
+    "file": "assets/EndScreen-269dc20e.js",
+    "imports": [
+      "resources/js/app.js",
+      "resources/js/Pages/Viewer/Watch/Partials/SuggestionsScreen/SuggestionsScreen.vue",
+      "resources/js/Pages/Viewer/Watch/Partials/UpNextVideo.vue",
+      "_ContentRoutesStore-d95b345f.js",
+      "resources/js/Pages/Viewer/Watch/Partials/SuggestionsScreen/EndScreenSuggestion.vue"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Watch/Partials/EndScreen.vue"
+  },
+  "resources/js/Pages/Viewer/Watch/Partials/InfiniteSuggestedVideos.vue": {
+    "file": "assets/InfiniteSuggestedVideos-27028cb9.js",
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Watch/Partials/InfiniteSuggestedVideos.vue"
+  },
+  "resources/js/Pages/Viewer/Watch/Partials/SuggestionsScreen/EndScreenSuggestion.vue": {
+    "file": "assets/EndScreenSuggestion-324efe99.js",
+    "imports": [
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Watch/Partials/SuggestionsScreen/EndScreenSuggestion.vue"
+  },
+  "resources/js/Pages/Viewer/Watch/Partials/SuggestionsScreen/SuggestionsScreen.vue": {
+    "file": "assets/SuggestionsScreen-b062fa05.js",
+    "imports": [
+      "_ContentRoutesStore-d95b345f.js",
+      "resources/js/app.js",
+      "resources/js/Pages/Viewer/Watch/Partials/SuggestionsScreen/EndScreenSuggestion.vue"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Watch/Partials/SuggestionsScreen/SuggestionsScreen.vue"
+  },
+  "resources/js/Pages/Viewer/Watch/Partials/UpNextVideo.vue": {
+    "file": "assets/UpNextVideo-d2a17ada.js",
+    "imports": [
+      "resources/js/app.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Watch/Partials/UpNextVideo.vue"
+  },
+  "resources/js/Pages/Viewer/Watch/Watch.vue": {
+    "file": "assets/Watch-cb35d253.js",
+    "imports": [
+      "_RowDivider-04edb2e9.js",
+      "resources/js/app.js",
+      "_CommentSection-de14485b.js",
+      "_ContentRoutesStore-d95b345f.js",
+      "resources/js/Pages/Viewer/Watch/Partials/EndScreen.vue",
+      "resources/js/Pages/Viewer/Watch/Partials/SuggestionsScreen/SuggestionsScreen.vue",
+      "resources/js/Pages/Viewer/Watch/Partials/SuggestionsScreen/EndScreenSuggestion.vue",
+      "resources/js/Pages/Viewer/Watch/Partials/UpNextVideo.vue"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/Pages/Viewer/Watch/Watch.vue"
+  },
+  "resources/js/app.css": {
+    "file": "assets/app-9d598319.css",
+    "src": "resources/js/app.css"
+  },
+  "resources/js/app.js": {
+    "css": [
+      "assets/app-9d598319.css"
+    ],
+    "dynamicImports": [
+      "resources/js/Pages/Admin/AdminDashboard.vue",
+      "resources/js/Pages/Admin/TestComponents.vue",
+      "resources/js/Pages/Auth/ConfirmPassword.vue",
+      "resources/js/Pages/Auth/ForgotPassword.vue",
+      "resources/js/Pages/Auth/Login.vue",
+      "resources/js/Pages/Auth/Register.vue",
+      "resources/js/Pages/Auth/ResetPassword.vue",
+      "resources/js/Pages/Auth/VerifyEmail.vue",
+      "resources/js/Pages/Legal/Policy.vue",
+      "resources/js/Pages/Legal/Support.vue",
+      "resources/js/Pages/Legal/Terms.vue",
+      "resources/js/Pages/Profile/Edit.vue",
+      "resources/js/Pages/Profile/Partials/DeleteUserForm.vue",
+      "resources/js/Pages/Profile/Partials/UpdatePasswordForm.vue",
+      "resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.vue",
+      "resources/js/Pages/Studio/Dashboard.vue",
+      "resources/js/Pages/Studio/EditVideoDraft.vue",
+      "resources/js/Pages/Studio/Partials/ChannelOverview.vue",
+      "resources/js/Pages/Studio/Partials/ConnectChannels.vue",
+      "resources/js/Pages/Studio/Partials/DropZone.vue",
+      "resources/js/Pages/Studio/Partials/ItemPerformance.vue",
+      "resources/js/Pages/Studio/Partials/LatestComment.vue",
+      "resources/js/Pages/Studio/Upload.vue",
+      "resources/js/Pages/Viewer/Feed/Subscriptions/ChannelsIndex.vue",
+      "resources/js/Pages/Viewer/Feed/Subscriptions/SubscriptionsIndex.vue",
+      "resources/js/Pages/Viewer/Home/CreatorCarousel.vue",
+      "resources/js/Pages/Viewer/Home/Homepage.vue",
+      "resources/js/Pages/Viewer/Landing/Landing.vue",
+      "resources/js/Pages/Viewer/Landing/Partials/FounderCard.vue",
+      "resources/js/Pages/Viewer/Music/MusicIndex.vue",
+      "resources/js/Pages/Viewer/Podcasts/PodcastsIndex.vue",
+      "resources/js/Pages/Viewer/Search/Search.vue",
+      "resources/js/Pages/Viewer/Shorts/ShortsIndex.vue",
+      "resources/js/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayer.vue",
+      "resources/js/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayerSkeleton.vue",
+      "resources/js/Pages/Viewer/Streams/StreamsIndex.vue",
+      "resources/js/Pages/Viewer/Watch/Partials/EndScreen.vue",
+      "resources/js/Pages/Viewer/Watch/Partials/InfiniteSuggestedVideos.vue",
+      "resources/js/Pages/Viewer/Watch/Partials/SuggestionsScreen/EndScreenSuggestion.vue",
+      "resources/js/Pages/Viewer/Watch/Partials/SuggestionsScreen/SuggestionsScreen.vue",
+      "resources/js/Pages/Viewer/Watch/Partials/UpNextVideo.vue",
+      "resources/js/Pages/Viewer/Watch/Watch.vue"
+    ],
+    "file": "assets/app-8947f172.js",
+    "isEntry": true,
+    "src": "resources/js/app.js"
+  }
+}

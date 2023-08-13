@@ -4,15 +4,22 @@ if [ ! -z "$WWWUSER" ]; then
     usermod -u $WWWUSER sail
 fi
 
+# Set permissions for /.composer
 if [ ! -d /.composer ]; then
     mkdir /.composer
 fi
-
 chmod -R ugo+rw /.composer
 # Set ownership and permissions for Laravel directories
 chown -R sail:sail /var/www/html
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/vendor
+
+
+# Set ownership and permissions for Laravel directories
+chown -R sail:sail /var/www/html
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/vendor
+
 
 if [ $# -gt 0 ]; then
     exec gosu $WWWUSER "$@"

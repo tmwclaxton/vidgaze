@@ -1,0 +1,1 @@
+import{y as o,o as n,e as t,v as r}from"./app-8947f172.js";const s={name:"ConsistentContentHolder"},d={class:"bg-white border border-zinc-200 dark:border-zinc-800 dark:bg-zinc-900 shadow rounded-xl"};function a(e,c,i,l,_,p){return n(),t("div",d,[r(e.$slots,"default")])}const b=o(s,[["render",a]]);export{b as C};

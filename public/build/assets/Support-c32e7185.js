@@ -1,0 +1,1 @@
+import{y as t,r as _,o,e as c,d as s,_ as a}from"./app-8947f172.js";const n={layout:a},p=Object.assign(n,{__name:"Support",setup(r){return(u,l)=>{const e=_("Head");return o(),c("div",null,[s(e,{title:"Support"})])}}}),f=t(p,[["__scopeId","data-v-29f63c8c"]]);export{f as default};
