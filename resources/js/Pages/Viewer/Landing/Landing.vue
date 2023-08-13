@@ -40,13 +40,6 @@ onUnmounted(() => {
 
 
 </script>
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-export default {
-    layout: AuthenticatedLayout,
-
-};
-</script>
 
 <style>
 .target {
