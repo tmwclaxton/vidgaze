@@ -38,7 +38,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 // landing route
 Route::get('/', function () {
     if (auth()->user() === null) {
-        return redirect()->route('about');
+        return Inertia::render('Viewer/Landing/Landing');
     } else {
         return redirect()->route('home');
     }
