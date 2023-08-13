@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use TusPhp\Tus\Server as TusServer;
 
@@ -37,5 +38,9 @@ class AppServiceProvider extends ServiceProvider
         JsonResource::withoutWrapping(); // this is so that the json response does not have a data wrapper
 
         $this->loadMigrationsFrom($paths);
+
+        //if ($this->app->environment('production')) {
+        //    URL::forceScheme('https');
+        //}
     }
 }
