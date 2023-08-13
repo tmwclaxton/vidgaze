@@ -7,7 +7,6 @@
         <!--<FacebookIcon v-if="source === 'Facebook'" class="w-3 h-3 mr-1.5"/>-->
         <!--<InstagramIcon v-if="source === 'Instagram'" class="w-3 h-3 mr-1.5"/>-->
         <VimeoIcon v-if="source === 'Vimeo'" class="w-3 h-3 mr-1.5" />
-        <!--<TikTokIcon v-if="source === 'TikTok'" class="w-3 h-3 mr-1.5"/>-->
         <DailymotionIcon v-if="source === 'Dailymotion'" class="w-3 h-3 mr-1.5" />
 
         <p class="line-clamp-1 leading-tight font-bold text-xs" v-text="text"></p>
@@ -20,7 +19,6 @@ import TwitchIcon from '~/images/icons/twitch.svg';
 import FacebookIcon from '~/images/icons/facebook.svg';
 import InstagramIcon from '~/images/icons/instagram.svg';
 import VimeoIcon from '~/images/icons/vimeo.svg';
-import TikTokIcon from '~/images/icons/tiktok.svg';
 import DailymotionIcon from '~/images/icons/dailymotion.svg';
 
 import { defineProps, computed } from 'vue';
