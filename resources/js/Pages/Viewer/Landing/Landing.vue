@@ -128,7 +128,7 @@ onUnmounted(() => {
         </div>
 
         <!-- present the founders -->
-        <div id="support" class="relative w-screen min-h-screen flex  bg-white dark:bg-vidgaze-blue ">
+        <div id="support" class="relative w-screen min-h-screen flex overflow-x-hidden  bg-white dark:bg-vidgaze-blue ">
 
             <div class="grid grid-cols-1 lg:grid-cols-2 m-auto py-8 ">
                 <div class="max-w-4xl w-full  mx-auto px-4">

@@ -58,14 +58,14 @@ use Illuminate\Support\Facades\Route;
         //this is a test route to make sure the api is working
         Route::get('/health', function () {
             try {
-                $database = DB::connection()->getPdo() ? 'CONNECTED: ' . env('DB_HOST')
+                $database = DB::connection()->getPdo() ? 'CONNECTED: ' . env('DB_HOST') . ':' . env('DB_PORT')
                     : 'NOT CONNECTED';
             } catch (\Exception $e) {
                 $database = 'NOT CONNECTED';
             }
             // check if redis is connected
             try {
-                $redis = Redis::connection()->ping() ? 'CONNECTED: ' . env('REDIS_HOST') . ':6379'
+                $redis = Redis::connection()->ping() ? 'CONNECTED: ' . env('REDIS_HOST') . ':' . env('REDIS_PORT')
                     : 'NOT CONNECTED';
             } catch (\Exception $e) {
                 $redis = 'NOT CONNECTED';
