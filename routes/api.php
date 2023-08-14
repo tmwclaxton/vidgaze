@@ -89,6 +89,9 @@ use Illuminate\Support\Facades\Route;
             ], 200);
         })->name('health');
 
+        Route::get('/ping', function(){
+            return JoshPing::ping();
+        })->middleware('auth:sanctum');
     });
 
 

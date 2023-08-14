@@ -6,3 +6,5 @@ Route::middleware('auth:sanctum')->prefix('profile')->name('profile.')->group(fu
     Route::patch('/update', [UserApiController::class, 'update'])->name('update');
     Route::delete('/destroy', [UserApiController::class, 'destroy'])->name('destroy');
 });
+
+

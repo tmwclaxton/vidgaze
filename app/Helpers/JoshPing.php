@@ -23,7 +23,11 @@ class JoshPing
 
     public static function ping()
     {
-
+        return response()->json([
+            'message' => 'pong',
+            'time' => now(),
+        ]);
+        dd(auth()->user());
 //        dd("hi");
 //        dd(\Storage::get('public/thumbnails/m55NepKM9JDBsn7pQos1azpZXZIMGvolGvfAgBLn.jpg'));
         $creator = auth()->user()->creator()->first();
