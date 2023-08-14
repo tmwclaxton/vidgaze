@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Route;
         //require __DIR__ . '/ApiV1Routes/music.php';
         require __DIR__ . '/ApiV1Routes/user.php';
         require __DIR__ . '/ApiV1Routes/playlists.php';
+        require __DIR__ . '/ApiV1Routes/cron.php';
 
         // if in local environment add the ping route
         if (config('app.env') == 'local') {
@@ -55,6 +56,8 @@ use Illuminate\Support\Facades\Route;
         // view listener route
         Route::post('/view-listener', [ViewListenerController::class, 'message'])->middleware('auth.sanctum.switch')->name('view.listener');
 
+
+
         //this is a test route to make sure the api is working
         Route::get('/health', function () {
             try {
@@ -65,7 +68,7 @@ use Illuminate\Support\Facades\Route;
             }
             // check if redis is connected
             try {
-                $redis = Redis::connection()->ping() ? 'CONNECTED: ' . env('REDIS_HOST') . ':' . env('REDIS_PORT')
+                $redis = Redis::client()->ping() ? 'CONNECTED: ' . env('REDIS_HOST') . ':' . env('REDIS_PORT')
                     : 'NOT CONNECTED';
             } catch (\Exception $e) {
                 $redis = 'NOT CONNECTED';
@@ -81,10 +84,24 @@ use Illuminate\Support\Facades\Route;
                 $message = 'VidGaze API v1 is not working!';
             }
 
+
+            //if redis is working then try to write to it and read from it
+            if ($redis == 'CONNECTED: ' . env('REDIS_HOST') . ':' . env('REDIS_PORT')) {
+                try {
+                    Redis::client()->set('test', 'test');
+                    $redisMessage = Redis::client()->get('test');
+                    Redis::client()->del('test');
+                } catch (\Exception $e) {
+                    $redis = 'NOT CONNECTED';
+                }
+            }
+
+
             return response()->json([
                 'message' => $message,
                 'database' => $database,
                 'redis' => $redis,
+                'redisMessage' => $redisMessage ?? null,
                 'filesystem' => $storage,
             ], 200);
         })->name('health');
