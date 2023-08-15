@@ -20,6 +20,7 @@
         "laravel/sanctum": "^3.2",
         "laravel/telescope": "^4.14",
         "laravel/tinker": "^2.8",
+        "league/flysystem-aws-s3-v3": "^3.0",
         "nesbot/carbon": "^2.66",
         "nicklaw5/twitch-api-php": "^7.0",
         "tightenco/ziggy": "^1.0",

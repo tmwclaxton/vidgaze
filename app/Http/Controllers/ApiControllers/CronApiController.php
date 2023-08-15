@@ -108,4 +108,18 @@ class CronApiController extends Controller
         ], 200);
     }
 
+
+    /** Backup logs
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function backupLogs(Request $request): JsonResponse
+    {
+        Artisan::call('backup:logs');
+
+        return response()->json([
+            'message' => 'logs backed up'
+        ], 200);
+    }
+
 }

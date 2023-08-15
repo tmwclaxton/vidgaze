@@ -26,5 +26,8 @@ Route::middleware(['cron'])->group(function () {
         // refresh subscriptions
         Route::post('/refresh/subscriptions', [CronApiController::class, 'refreshSubscriptions'])->name('refresh.subscriptions');
 
+        // store logs to s3
+        Route::post('/logs/backup', [CronApiController::class, 'backupLogs'])->name('logs.backup');
+
     });
 });

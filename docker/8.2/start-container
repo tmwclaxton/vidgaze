@@ -12,6 +12,7 @@ chmod -R ugo+rw /.composer
 # Set ownership and permissions for Laravel directories
 chown -R sail:sail /var/www/html
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/vendor
+#chmod o+w ./storage/ -R
 
 if [ $# -gt 0 ]; then
     exec gosu $WWWUSER "$@"
