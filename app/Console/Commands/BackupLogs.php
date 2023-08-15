@@ -2,12 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Google\Service\Storagetransfer\ErrorLogEntry;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Laravel\Octane\Swoole\SwooleClient;
 
 class BackupLogs extends Command
 {
