@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\Response;
 
-class CronKey
+class VidGazeAPI
 {
     /**
      * Handle an incoming request.
@@ -17,7 +17,7 @@ class CronKey
     public function handle(Request $request, Closure $next): Response
     {
         // check if header has config cron key
-        if (request()->header('CRON_KEY') === null || request()->header('CRON_KEY') !== Config::get('app.cron_key')) {
+        if (request()->header('VIDGAZE_API_KEY') === null || request()->header('VIDGAZE_API_KEY') !== Config::get('app.vidgaze_api_key')) {
             return response()->json([
                 'message' => 'unauthorized'
             ], 401);

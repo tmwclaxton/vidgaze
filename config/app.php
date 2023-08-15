@@ -20,7 +20,7 @@ return [
     /*
      * Cron key
      */
-    'cron_key' => env('CRON_KEY'),
+    'vidgaze_api_key' => env('VIDGAZE_API_KEY'),
 
     /*
     |--------------------------------------------------------------------------

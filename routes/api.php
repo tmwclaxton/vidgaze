@@ -43,13 +43,6 @@ use Illuminate\Support\Facades\Route;
         require __DIR__ . '/ApiV1Routes/playlists.php';
         require __DIR__ . '/ApiV1Routes/cron.php';
 
-        // if in local environment add the ping route
-        if (config('app.env') == 'local') {
-            Route::get('/ping', function () {
-                return JoshPing::ping();
-            })->name('ping');
-        }
-
         //this is the route for creating share links
         Route::get('/shares', [ShareApiController::class, 'index'])->name('share.index');
 
@@ -106,9 +99,13 @@ use Illuminate\Support\Facades\Route;
             ], 200);
         })->name('health');
 
-        Route::get('/ping', function(){
-            return JoshPing::ping();
-        })->middleware('auth:sanctum');
+
+        // if in local environment add the ping route it should not be in production and if it is then JoshPing needs updated as its in gitignore
+        if (config('app.env') == 'local') {
+            Route::get('/ping', function () {
+                return JoshPing::ping();
+            })->middleware('auth:sanctum')->name('ping');
+        }
     });
 
 
