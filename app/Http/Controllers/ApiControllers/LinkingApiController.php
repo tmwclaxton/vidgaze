@@ -26,9 +26,11 @@ class LinkingApiController extends Controller
             function ($source) use (&$sources){
                 $sources[$source->source_name] = $source->external_channel_id;
             }
-
         );
-        return $sources;
+
+        return response()->json(
+            ['sources' => $sources]
+        );
     }
 
 
