@@ -91,7 +91,7 @@ function redirect(which) {
                     </div>
                     <!--log in-->
                     <div v-if="authStore.user == null"
-                         class="hidden sm:flex sm:items-center   flex-shrink-0">
+                         class="hidden sm:flex sm:items-center   flex-shrink-0 ml-auto">
                         <div class="flex gap-x-2 flex-row-reverse">
                             <div @click="redirect('login')" >
 

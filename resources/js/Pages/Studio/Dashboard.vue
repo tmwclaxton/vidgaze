@@ -9,6 +9,8 @@ import ConnectChannels from "@/Pages/Studio/Partials/ConnectChannels.vue";
 import ItemPerformance from "@/Pages/Studio/Partials/ItemPerformance.vue";
 import LatestComment from "@/Pages/Studio/Partials/LatestComment.vue";
 import ChannelOverview from "@/Pages/Studio/Partials/ChannelOverview.vue";
+import StreamIcon from '~/images/icons/livestreams.svg';
+
 import {defineProps} from "vue";
 
 let props = defineProps({
@@ -36,7 +38,7 @@ let props = defineProps({
             <!--connect channels-->
             <div class="col-span-4 row-span-1">
                 <ConsistentContentHolder class="p-5 h-full">
-                    <ConnectChannels :claimed_platforms="claimed_platforms"/>
+                    <ConnectChannels v-if="claimed_platforms" :claimed_platforms="claimed_platforms"/>
 
                 </ConsistentContentHolder>
             </div>
