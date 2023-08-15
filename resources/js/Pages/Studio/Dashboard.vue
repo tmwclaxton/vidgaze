@@ -9,14 +9,17 @@ import ConnectChannels from "@/Pages/Studio/Partials/ConnectChannels.vue";
 import ItemPerformance from "@/Pages/Studio/Partials/ItemPerformance.vue";
 import LatestComment from "@/Pages/Studio/Partials/LatestComment.vue";
 import ChannelOverview from "@/Pages/Studio/Partials/ChannelOverview.vue";
-import {defineProps} from "vue";
+import {onMounted, ref} from "vue";
 
-let props = defineProps({
-    claimed_platforms: {
-        type: Object,
-        required: true
-    }
-})
+
+let claimedPlatforms = ref({});
+
+onMounted(async () => {
+    claimedPlatforms.value = await axios.get(route("api.my.creator.sources")).then((response) => {
+        return response.data;
+    });
+});
+
 
 </script>
 <template>
@@ -36,8 +39,7 @@ let props = defineProps({
             <!--connect channels-->
             <div class="col-span-4 row-span-1">
                 <ConsistentContentHolder class="p-5 h-full">
-                    <ConnectChannels :claimed_platforms="claimed_platforms"/>
-
+                    <ConnectChannels :claimed_platforms="claimedPlatforms"/>
                 </ConsistentContentHolder>
             </div>
 
