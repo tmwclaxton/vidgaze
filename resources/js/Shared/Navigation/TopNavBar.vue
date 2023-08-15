@@ -19,8 +19,9 @@ const name = 'TopNavBar';
 
 
 function redirect(which) {
-    // if not on about page set intended to current page
-    if (window.location.href !== route('about')) {
+    localStorage.removeItem('intended');
+    // if not on about page set intended to current page if route current not about
+    if (!route().current("landing")) {  //
         localStorage.setItem('intended', window.location.href);
     }
     if (which === "login") {

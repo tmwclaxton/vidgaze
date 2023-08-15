@@ -81,8 +81,8 @@ RUN composer install --no-interaction --no-plugins --no-scripts --prefer-dist --
 ## this will
 RUN php artisan config:clear
 RUN php artisan cache:clear
-RUN php artisan route:clear
-RUN php artisan optimize
+RUN #php artisan route:clear  # I think if these 2 lines are run it causes missing app key error cause env is exported by AppRunner
+RUN #php artisan optimize
 
 # run npm install
 RUN npm install --no-audit --no-progress
