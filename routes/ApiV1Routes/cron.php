@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiControllers\CronApiController;
-Route::middleware(['cron'])->group(function () {
+Route::middleware(['vidgaze.api.key'])->group(function () {
     Route::prefix('/cron')->name('cron.')->group(function () {
 
         // telescope prune endpoint
@@ -20,7 +20,7 @@ Route::middleware(['cron'])->group(function () {
         // refresh streams
         Route::post('/refresh/streams', [CronApiController::class, 'refreshStreams'])->name('refresh.streams');
 
-        // delete old live viewers
+        // prune old live viewers
         Route::post('/live_viewers/prune', [CronApiController::class, 'liveViewersPrune'])->name('live_viewers.prune');
 
         // refresh subscriptions
@@ -28,6 +28,9 @@ Route::middleware(['cron'])->group(function () {
 
         // store logs to s3
         Route::post('/logs/backup', [CronApiController::class, 'backupLogs'])->name('logs.backup');
+
+        // prune batch logs
+        Route::post('/batches/prune', [CronApiController::class, 'pruneBatches'])->name('batches.prune');
 
     });
 });

@@ -17,8 +17,8 @@ class CronApiController extends Controller
      */
     public function telescope(Request $request): JsonResponse
     {
-        Artisan::call('telescope:prune --hours=48');
-
+        // queue the command
+        Artisan::queue('telescope:prune --hours=48')->onQueue('commands');
         return response()->json([
             'message' => 'telescope pruned'
         ], 200);
@@ -30,8 +30,7 @@ class CronApiController extends Controller
      */
     public function sanctumTokens(Request $request): JsonResponse
     {
-        Artisan::call('sanctum:prune-expired --hours=24');
-
+        Artisan::queue('sanctum:prune-expired --hours=48')->onQueue('commands');
         return response()->json([
             'message' => 'sanctum tokens pruned'
         ], 200);
@@ -44,9 +43,7 @@ class CronApiController extends Controller
      */
     public function refreshOneTwitchCategory(Request $request): JsonResponse
     {
-
-        Artisan::call('refresh:one_twitch_category');
-
+        Artisan::queue('refresh:one_twitch_category')->onQueue('commands');
         return response()->json([
             'message' => 'one twitch category refreshed'
         ], 200);
@@ -59,8 +56,7 @@ class CronApiController extends Controller
      */
     public function refreshTwitchCategoryInfo(Request $request): JsonResponse
     {
-        Artisan::call('refresh:twitch-category-info');
-
+        Artisan::queue('refresh:twitch-category-info')->onQueue('commands');
         return response()->json([
             'message' => 'twitch category info refreshed'
         ], 200);
@@ -73,8 +69,7 @@ class CronApiController extends Controller
      */
     public function refreshStreams(Request $request): JsonResponse
     {
-        Artisan::call('refresh:streams');
-
+        Artisan::queue('refresh:streams')->onQueue('commands');
         return response()->json([
             'message' => 'streams refreshed'
         ], 200);
@@ -87,8 +82,7 @@ class CronApiController extends Controller
      */
     public function liveViewersPrune(Request $request): JsonResponse
     {
-        Artisan::call('delete:old_live_viewers');
-
+        Artisan::queue('delete:old_live_viewers')->onQueue('commands');
         return response()->json([
             'message' => 'old live viewers deleted'
         ], 200);
@@ -101,8 +95,7 @@ class CronApiController extends Controller
      */
     public function refreshSubscriptions(Request $request): JsonResponse
     {
-        Artisan::call('refresh:subscriptions');
-
+        Artisan::queue('refresh:subscriptions')->onQueue('commands');
         return response()->json([
             'message' => 'subscriptions refreshed'
         ], 200);
@@ -115,10 +108,23 @@ class CronApiController extends Controller
      */
     public function backupLogs(Request $request): JsonResponse
     {
-        Artisan::call('backup:logs');
+        Artisan::queue('backup:logs')->onQueue('commands');
 
         return response()->json([
             'message' => 'logs backed up'
+        ], 200);
+    }
+
+    /** Prune batches
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function pruneBatches(Request $request): JsonResponse
+    {
+        Artisan::queue('queue:prune-batches')->onQueue('commands');
+
+        return response()->json([
+            'message' => 'batch entries pruned'
         ], 200);
     }
 
