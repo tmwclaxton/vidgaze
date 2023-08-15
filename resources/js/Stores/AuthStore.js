@@ -29,14 +29,13 @@ export const useAuthStore = defineStore('AuthStore', {
                         });
                     }
                 } ).catch(error => {
-                    this.handleErrors(error);
+                    this.clearBrowserStorage();
+                    toastStore.add({
+                        message: 'Sorry we couldn\'t log you in!  Please login again.',
+                        type: 'warning',
+                    });
                 });
             } else {
-                this.clearBrowserStorage();
-                toastStore.add({
-                    message: 'Authentication failed.  Please login again.',
-                    type: 'warning',
-                });
             }
         },
 
