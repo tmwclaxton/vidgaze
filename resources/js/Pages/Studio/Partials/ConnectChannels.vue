@@ -21,7 +21,6 @@
 </template>
 
 <script setup>
-import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
 import StudioLinkButton from "@/Components/Buttons/StudioLinkButton.vue";
 import YouTubeIcon from '#icons/youtube.svg';
 import TwitchIcon from '#icons/twitch.svg';

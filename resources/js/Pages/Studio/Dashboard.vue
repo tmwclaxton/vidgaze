@@ -12,13 +12,17 @@ import ChannelOverview from "@/Pages/Studio/Partials/ChannelOverview.vue";
 import StreamIcon from '~/images/icons/livestreams.svg';
 
 import {defineProps} from "vue";
+import {onMounted, ref} from "vue";
 
-let props = defineProps({
-    claimed_platforms: {
-        type: Object,
-        required: true
-    }
-})
+
+let claimedPlatforms = ref({});
+
+onMounted(async () => {
+    claimedPlatforms.value = await axios.get(route("api.my.creator.sources")).then((response) => {
+        return response.data;
+    });
+});
+
 
 </script>
 <template>
@@ -38,8 +42,7 @@ let props = defineProps({
             <!--connect channels-->
             <div class="col-span-4 row-span-1">
                 <ConsistentContentHolder class="p-5 h-full">
-                    <ConnectChannels v-if="claimed_platforms" :claimed_platforms="claimed_platforms"/>
-
+                    <ConnectChannels :claimed_platforms="claimed_platforms"/>
                 </ConsistentContentHolder>
             </div>
 

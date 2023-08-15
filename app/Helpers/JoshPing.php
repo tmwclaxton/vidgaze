@@ -16,6 +16,7 @@ use App\Helpers\PlatformAPIs\YouTube;
 use App\Models\CreatorModels\Creator;
 use App\Models\CreatorModels\CreatorSource;
 use Google_Service_YouTube;
+use GuzzleHttp\Client;
 use Laravel\Octane\Facades\Octane;
 
 class JoshPing
@@ -23,6 +24,14 @@ class JoshPing
 
     public static function ping()
     {
+        // access bearer token from request
+        $token = request()->bearerToken();
+        return ['message' => 'success', 'token' => $token];
+
+        // query local api route
+        $client = new Client();
+        $response = $client->get('http://localhost/api/v1/studio/link/youtube');
+        dd($response->getBody()->getContents());
         return response()->json([
             'message' => 'pong',
             'time' => now(),
