@@ -42,7 +42,7 @@ onMounted(async () => {
             <!--connect channels-->
             <div class="col-span-4 row-span-1">
                 <ConsistentContentHolder class="p-5 h-full">
-                    <ConnectChannels :claimed_platforms="claimed_platforms"/>
+                    <ConnectChannels :claimed_platforms="claimedPlatforms"/>
                 </ConsistentContentHolder>
             </div>
 
