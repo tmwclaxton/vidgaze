@@ -105,7 +105,7 @@ return new class extends Migration {
         ]);
 
 
-        /*$categories = [
+        $categories = [
             [
                 'slug' => 'league_of_legends',
                 'name' => 'League of Legends',
@@ -210,7 +210,7 @@ return new class extends Migration {
                     ]
                 );
             }
-        }*/
+        }
 
 
 
