@@ -37,11 +37,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
 // landing route
 Route::get('/', function () {
-    if (auth()->user() === null) {
         return Inertia::render('Viewer/Landing/Landing');
-    } else {
-        return redirect()->route('home');
-    }
 })->name('landing');
 
 //home route
@@ -53,9 +49,5 @@ Route::get('/about', [SupportWebController::class, 'about'])->name('about');
 //policy and terms
 Route::get('/terms_of_service', [SupportWebController::class, 'terms'])->name('terms');
 Route::get('/privacy_policy', [SupportWebController::class,'privacy'])->name('privacy');
-
-Route::get('/ping', function(){
-    return JoshPing::ping();
-});
 
 

@@ -2,6 +2,7 @@
 import {onMounted, onUnmounted, ref} from "vue";
 import FounderCard from "@/Pages/Viewer/Landing/Partials/FounderCard.vue";
 import Footer from "@/Components/General/Footer.vue";
+import {useAuthStore} from "@/Stores/AuthStore";
 
 
 // this changes the opacity of the elements with the class "target" as you scroll
@@ -26,6 +27,14 @@ const updateOpacity = () => {
 const welcomeMessageDiv = ref(null);
 
 onMounted(() => {
+
+    // if user goes to landing route '/' and logged in redirect to home route
+    // if they arrive here via about route stay here
+    if (route().current('landing') && useAuthStore().user ) {
+        router.visit(route('home'));
+    }
+
+
     window.addEventListener("scroll", updateOpacity);
     //wait for 2 seconds before removing the opacity-0 class
     setTimeout(() => {
@@ -37,6 +46,8 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener("scroll", updateOpacity);
 });
+
+
 
 
 </script>

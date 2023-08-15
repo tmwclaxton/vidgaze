@@ -19,8 +19,9 @@ const name = 'TopNavBar';
 
 
 function redirect(which) {
-    // if not on about page set intended to current page
-    if (window.location.href !== route('about')) {
+    localStorage.removeItem('intended');
+    // if not on about page set intended to current page if route current not about
+    if (!route().current("landing")) {  //
         localStorage.setItem('intended', window.location.href);
     }
     if (which === "login") {
@@ -90,7 +91,7 @@ function redirect(which) {
                     </div>
                     <!--log in-->
                     <div v-if="authStore.user == null"
-                         class="hidden sm:flex sm:items-center   flex-shrink-0">
+                         class="hidden sm:flex sm:items-center   flex-shrink-0 ml-auto">
                         <div class="flex gap-x-2 flex-row-reverse">
                             <div @click="redirect('login')" >
 

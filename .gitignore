@@ -20,3 +20,4 @@ yarn-error.log
 /storage/app/
 /deployment/production/.terraform/
 /deployment/remote-state/.terraform/
+/storage/

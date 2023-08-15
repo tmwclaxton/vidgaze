@@ -65,7 +65,9 @@ RUN if [ ! -d "/var/www/html/storage" ]; then mkdir /var/www/html/storage; fi
 RUN if [ ! -d "/var/www/html/storage/logs" ]; then mkdir /var/www/html/storage/logs; fi
 RUN if [ ! -d "/var/www/html/storage/framework" ]; then mkdir /var/www/html/storage/framework; fi
 RUN if [ ! -d "/var/www/html/storage/framework/cache" ]; then mkdir /var/www/html/storage/framework/cache; fi
+RUN if [ ! -d "/var/www/html/storage/framework/cache/data" ]; then mkdir /var/www/html/storage/framework/cache/data; fi
 RUN if [ ! -d "/var/www/html/storage/framework/sessions" ]; then mkdir /var/www/html/storage/framework/sessions; fi
+RUN if [ ! -d "/var/www/html/storage/framework/views" ]; then mkdir /var/www/html/storage/framework/views; fi
 
 # create laravel log file
 RUN touch /var/www/html/storage/logs/laravel.log
@@ -79,6 +81,8 @@ RUN composer install --no-interaction --no-plugins --no-scripts --prefer-dist --
 ## this will
 RUN php artisan config:clear
 RUN php artisan cache:clear
+RUN #php artisan route:clear  # I think if these 2 lines are run it causes missing app key error cause env is exported by AppRunner
+RUN #php artisan optimize
 
 # run npm install
 RUN npm install --no-audit --no-progress

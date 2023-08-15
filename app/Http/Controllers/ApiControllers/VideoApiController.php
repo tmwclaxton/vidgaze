@@ -100,7 +100,6 @@ class VideoApiController extends Controller
                         ->select('video_id', DB::raw('SUM(CASE WHEN liked = "like" THEN 1 ELSE 0 END) as likes'), DB::raw('SUM(CASE WHEN liked = "dislike" THEN 1 ELSE 0 END) as dislikes'))
                         ->where('created_at', '>=', Carbon::now()->subWeek())
                         ->groupBy('video_id')
-                        ->orderByRaw('likes - dislikes DESC')
                         ->limit(500)
                         ->get();
 

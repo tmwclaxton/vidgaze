@@ -29,17 +29,17 @@ const form = reactive({
 
 const submit = async () => {
     authStore.login(form.data).then(() => {
-        if (localStorage.getItem('intended')) {
+        if (localStorage.getItem('intended') ) {
             router.visit(localStorage.getItem('intended'));
             localStorage.removeItem('intended');
         } else if (localStorage.getItem('token')) {
             router.visit(route('home'));
         }
     }).catch(function (error) {
-            const errors = (error.response.data.errors);
-            form.errors.email = errors.email ? errors.email[0] : null;
-            form.errors.password = errors.password ? errors.password[0] : null;
-        });
+        const errors = (error.response.data.errors);
+        form.errors.email = errors.email ? errors.email[0] : null;
+        form.errors.password = errors.password ? errors.password[0] : null;
+    });
 };
 
 

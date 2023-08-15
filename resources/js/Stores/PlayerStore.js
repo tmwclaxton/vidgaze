@@ -3,6 +3,7 @@ import {useQueueStore} from "@/Stores/QueueStore";
 import {toRaw} from "vue";
 import {usePage} from "@inertiajs/vue3";
 import axios from "axios";
+import {useAuthStore} from "@/Stores/AuthStore";
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
