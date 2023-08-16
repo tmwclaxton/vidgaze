@@ -19,7 +19,7 @@ let claimedPlatforms = ref({});
 
 onMounted(async () => {
     claimedPlatforms.value = await axios.get(route("api.my.creator.sources")).then((response) => {
-        return response.data;
+        return response.data.sources;
     });
 });
 

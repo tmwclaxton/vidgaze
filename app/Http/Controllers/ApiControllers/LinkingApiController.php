@@ -28,9 +28,7 @@ class LinkingApiController extends Controller
             }
         );
 
-        return response()->json(
-            ['sources' => $sources]
-        );
+        return ["sources" => $sources];
     }
 
 
