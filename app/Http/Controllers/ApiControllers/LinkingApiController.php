@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ApiControllers;
 
 use App\Enums\Platform;
+use App\Helpers\PlatformAPIs\AuthDailymotion;
 use App\Helpers\PlatformAPIs\AuthTwitch;
 use App\Helpers\PlatformAPIs\AuthVimeo;
 use App\Helpers\PlatformAPIs\AuthYouTube;
@@ -64,9 +65,9 @@ class LinkingApiController extends Controller
                 }
 
             case Platform::Dailymotion->value:
-                try {
-
-                    $api = new \Dailymotion();
+//                try {
+                    return response()->json(['message' => AuthDailymotion::getAccessTokenWithCode($code)]);
+                    $api = new AuthDailymotion(AuthDailymotion::getAccessTokenWithCode($code));
 
                     $api->setGrantType(
                         \Dailymotion::GRANT_TYPE_AUTHORIZATION,
@@ -130,9 +131,10 @@ class LinkingApiController extends Controller
 
 
                     return redirect()->route('studio.dashboard');
-                } catch (Exception $e) {
-                    abort('401');
-                }
+//                } catch (Exception $e) {
+//                    return response()->json(['message' => $e->getMessage()]);
+//                    abort('401');
+//                }
             case Platform::Vimeo->value:
                 try {
                     $vimeo = new AuthVimeo(AuthVimeo::getAccessTokenWithCode($code));

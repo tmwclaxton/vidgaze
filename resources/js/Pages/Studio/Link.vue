@@ -20,11 +20,12 @@ onMounted(() => {
     axios.get('/api/v1/studio/link/' + platform + '?' + params.toString())
         .then(response => {
             console.log(response.data);
-            window.location.href = route('studio.dashboard');
+            // window.location.href = route('studio.dashboard');
         })
-        .catch(() => {
+        .catch((error) => {
+            console.log(error);
             console.error("Could not link " + platform + " account");
-            window.location.href = route('studio.dashboard');
+            // window.location.href = route('studio.dashboard');
         });
 });
 

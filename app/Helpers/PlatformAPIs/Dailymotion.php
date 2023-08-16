@@ -6,7 +6,6 @@ use App\Enums\Kind;
 use App\Enums\Platform;
 use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
-use App\Helpers\PlatformAPIs\PlatformInterfaces\iCanLogin;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
 use App\Helpers\ResultDTO;
@@ -16,7 +15,7 @@ use Carbon\Carbon;
 use Dailymotion as DailymotionSDK;
 use Illuminate\Support\Arr;
 
-class Dailymotion implements iSearchable, iIsPlatform, iCanLogin
+class Dailymotion implements iSearchable, iIsPlatform
 {
     public DailymotionSDK $client;
 
@@ -42,16 +41,14 @@ class Dailymotion implements iSearchable, iIsPlatform, iCanLogin
             'owner.cover_url',
 
         );
-    public function __construct($auth = false)
+    public function __construct()
     {
         $dailymotion_client = new DailymotionSDK();
 
         $dailymotion_client->setGrantType(
-            $auth ? DailymotionSDK::GRANT_TYPE_AUTHORIZATION : DailymotionSDK::GRANT_TYPE_CLIENT_CREDENTIALS,
+            DailymotionSDK::GRANT_TYPE_CLIENT_CREDENTIALS,
             config('platforms.dailymotion.client_key'),
-            config('platforms.dailymotion.client_secret'),
-            ['email','userinfo','manage_videos','manage_playlists','manage_subscriptions','manage_likes'],
-            ['redirect_uri'=>Tools::convertRedirectPathToUrl(config('platforms.dailymotion.redirect_url'))]
+            config('platforms.dailymotion.client_secret')
         );
 
         $this->client = $dailymotion_client;
@@ -153,39 +150,5 @@ class Dailymotion implements iSearchable, iIsPlatform, iCanLogin
 //            ];
 //        }
     }
-
-
-    public static function getLogInUrl(array $scopes = null, string $redirect_url_path = null)
-    {
-        //check if user already has linked their account
-        $creator = auth()->user()->creator()->with('sources')->first();
-        if(!$creator){
-            abort(403, 'You must be logged in to link your Dailymotion account');
-        }
-        if(!$creator->dailymotion_channel_id){
-            return (new Dailymotion(true))->client->getAuthorizationUrl();
-        }
-        else{
-            abort(403, 'You have already claimed a Dailymotion channel');
-        }
-    }
-
-    public static function getRefreshAccessToken($refreshToken): array
-    {
-//        $dm = new Dailymotion();
-//        $dm->client->refreshToken($refreshToken);
-//        $access_token = $dm->client->getAccessToken();
-//
-//        return [
-//            'access_token' => $access_token['access_token'],
-//            'refresh_token' => $access_token['refresh_token'],
-//            'expires_in' => $access_token['expires_in'],
-//        ];
-        return [];
-    }
-
-
-
-
 
     }

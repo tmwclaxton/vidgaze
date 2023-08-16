@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use App\Helpers\PlatformAPIs\AuthDailymotion;
 use App\Helpers\PlatformAPIs\AuthTwitch;
 use App\Helpers\PlatformAPIs\AuthVimeo;
 use App\Helpers\PlatformAPIs\AuthYouTube;
@@ -127,6 +128,7 @@ enum Platform: string
             Platform::YouTube => new AuthYouTube($accessToken),
             Platform::Vimeo => new AuthVimeo($accessToken),
             Platform::Twitch => new AuthTwitch($accessToken),
+            Platform::Dailymotion => new AuthDailymotion($accessToken),
         };
     }
 
@@ -136,6 +138,7 @@ enum Platform: string
             Platform::YouTube => AuthYouTube::class,
             Platform::Vimeo => AuthVimeo::class,
             Platform::Twitch => AuthTwitch::class,
+            Platform::Dailymotion => AuthDailymotion::class,
         };
     }
 
