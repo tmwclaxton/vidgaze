@@ -101,6 +101,79 @@ class VideoDraftApiController extends Controller
         return response()->json();
     }
 
+    public function publish(string $slug){
+        $creator = auth()->user()->creator()->first();
+        $videoDraft = $creator->video_drafts()->where('slug', $slug)->firstOrFail();
+
+        $validated = request()->validate([
+            'thumbnail' => ['file', 'required', 'mimes:jpeg,jpg,png', 'max:2048'],
+            'title' => ['max:255', 'required', 'string', 'min:1'],
+            'description' => ['nullable', 'string'],
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['string'],
+            'visibility' => ['required', 'string', 'in:public,unlisted,private,scheduled'],
+            'language' => ['nullable', 'string'],
+            'region' => ['nullable', 'string'],
+            'audience' => ['required', 'string', 'in:all,kids,mature'],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'publish_time' => ['nullable', 'int'],
+            'platforms' => ['required', 'array', 'min:1', Rule::in($creator->getUploadablePlatforms())],
+        ]);
+
+        $publish_time = null;
+        if(request()->visibility == Visibility::SCHEDULED->value){
+            request()->validate([
+                'publish_time' => ['required', 'int']
+            ]);
+            $publish_time = Carbon::createFromTimestamp(request()->publish_time);
+            if($publish_time->isPast()) return  response()->json(['errors' => [ 'publish_time' => ['Publish time must be in the future']]], 422);
+        }
+
+        $thumbnail_path = null;
+        if(request()->file('thumbnail'))
+        {
+            $thumbnail_path = request()->file('thumbnail')->storePublicly('thumbnails', 'public');
+        }
+        $video = Video::create([
+            'slug' => $slug,
+            'creator_id' => $creator->id,
+            'preferred_source' => Platform::YouTube,
+            'title' => request()->title,
+            'description' => request()->description,
+            'thumbnail_url' => \Storage::url($thumbnail_path),
+            'tags' => json_encode(request()->tags),
+            'visibility' => request()->visibility,
+            'language' => request()->language,
+            'region' => request()->region,
+            'audience' => request()->audience,
+            'category_id' => request()->category_id,
+        ]);
+
+
+        $uploadDTO = new UploadDTO(
+            $video->id,
+            $videoDraft->video_path,
+            request()->title,
+            request()->description,
+            $creator->id,
+            array_map(fn($platform) => Platform::fromValue($platform), request()->platforms),
+            $thumbnail_path,
+            request()->tags,
+            Category::find(request()->category_id),
+            Visibility::fromValue(request()->visibility),
+            Audience::fromValue(request()->audience),
+            $publish_time
+        );
+        $videoDraft->delete();
+
+        $batch_id = Upload::platformUpload($creator->id, $video->id, $uploadDTO);
+
+        return response()->json([
+            'batch_id' => $batch_id,
+            'video_slug' => $video->slug
+        ]);
+    }
+
 
     public function destroy(string $slug)
     {

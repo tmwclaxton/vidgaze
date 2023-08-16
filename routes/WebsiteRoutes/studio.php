@@ -25,9 +25,6 @@ Route::get('studio/link/{platform}', [LinkingWebController::class,'link'])->name
 
 Route::get('studio/upload',  [VideoDraftWebController::class, 'upload'])->name("studio.upload");
 Route::get('studio/video-draft/{slug}/edit',  [VideoDraftWebController::class, 'edit'])->name("studio.video.draft.edit");
-Route::put('studio/video/{slug}',  [VideoDraftWebController::class, 'update'])->name("studio.video.update");
-Route::post('studio/video/{slug}/publish',  [VideoDraftWebController::class, 'publish'])->name("studio.video.publish");
-
 
 
 //oauth routes

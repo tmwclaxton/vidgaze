@@ -197,7 +197,7 @@ let form = useForm({
 });
 
 
-const handleSaveDraft = () => {
+function prepareFormData(){
     const formData = new FormData();
     formData.append('title', form.title);
     formData.append('description', form.description);
@@ -215,10 +215,10 @@ const handleSaveDraft = () => {
     form.platforms.forEach((platform) => {
         formData.append('platforms[]', platform);
     });
-
-
-    axios.put(route('api.studio.video.draft.update', [video.value.slug]), formData).then(
-        () => {
+    return formData;
+}
+const handleSaveDraft = () => {
+    axios.put(route('api.studio.video.draft.update', [video.value.slug]), prepareFormData()).then(() => {
             router.get(route('studio.dashboard'))
         }
     ).catch((error) => {
@@ -228,9 +228,18 @@ const handleSaveDraft = () => {
 };
 
 const handlePublish = () => {
-    form.post(route('studio.video.publish', [props.video.slug]), {
-        preserveScroll: true,
+    axios.post(route('api.studio.video.publish', [video.value.slug]), prepareFormData()).then(() => {
+            router.get(route('studio.dashboard'))
+        }
+    ).catch((error) => {
+        form.errors = error.response.data.errors || {};
+        console.log(error);
     });
+
+
+    // form.post(route('studio.video.publish', [props.video.slug]), {
+    //     preserveScroll: true,
+    // });
 };
 
 

@@ -6,7 +6,6 @@ use App\Enums\Kind;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CommentCollection;
 use App\Http\Resources\CommentResource;
-use App\Models\CommentInteraction;
 use App\Models\CommentModels\Comment;
 use App\Models\CreatorModels\Creator;
 use App\Models\CreatorModels\CreatorComment;
