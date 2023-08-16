@@ -13,25 +13,15 @@ const contentRoutesStore = useContentRoutesStore();
 
 const categories = ref([]);
 const fetchCategories = async () => {
-    await contentRoutesStore.getCategories(8, null, true)
-        .then(response => {
-            setTimeout(() => {
-                console.log(response);
-                categories.value = response.data.categories.data;
-            }, 500); // 500ms delay
-        })
+    categories.value = await contentRoutesStore.getCategories(8, null, true)
 };
 
 const categoriesForRows = ref([]);
 const fetchCategoriesForRows = async () => {
     const categoryIds = categoriesForRows.value.map(category => category.id).join(',');
-    await contentRoutesStore.getCategories(8, categoryIds, false)
-        .then(response => {
-            setTimeout(() => {
-                categoriesForRows.value = categoriesForRows.value.concat(response.data.categories.data);
-            }, 100); // 500ms delay
-        });
-
+    categoriesForRows.value = categoriesForRows.value.concat(
+        await contentRoutesStore.getCategories(8, categoryIds, false)
+    );
 };
 
 const debouncedFetchCategoriesForRows = debounce(fetchCategoriesForRows, 500);

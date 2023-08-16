@@ -61,7 +61,7 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
                 .catch(error => {
                     console.log(error);
                 })
-            return response;
+            return response.data.categories.data;
         },
 
 
