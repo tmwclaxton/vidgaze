@@ -22,8 +22,9 @@ onMounted(() => {
             console.log(response.data);
             window.location.href = route('studio.dashboard');
         })
-        .catch(error => {
-            console.error(error);
+        .catch(() => {
+            console.error("Could not link " + platform + " account");
+            window.location.href = route('studio.dashboard');
         });
 });
 

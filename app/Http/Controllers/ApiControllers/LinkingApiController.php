@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ApiControllers;
 
 use App\Enums\Platform;
+use App\Helpers\PlatformAPIs\AuthTwitch;
 use App\Helpers\PlatformAPIs\AuthVimeo;
 use App\Helpers\PlatformAPIs\AuthYouTube;
 use App\Helpers\PlatformAPIs\Dailymotion;
@@ -134,7 +135,7 @@ class LinkingApiController extends Controller
                 }
             case Platform::Vimeo->value:
                 try {
-                $vimeo = new AuthVimeo(AuthVimeo::getAccessTokenWithCode($code));
+                    $vimeo = new AuthVimeo(AuthVimeo::getAccessTokenWithCode($code));
 
                     $vm_channel_id = $vimeo->getMyCreator()->id;
 
@@ -148,18 +149,16 @@ class LinkingApiController extends Controller
                         'refresh_token' => null,
                     ]);
 
-                return response()->json(['message' => 'success']);
+                    return response()->json(['message' => 'success']);
                 } catch (Exception $e) {
                     return response()->json(['message' => $e->getMessage()]);
                     abort('401');
                 }
             case Platform::Twitch->value:
                 try {
-                    $twitch_oauth = resolve(Twitch::class)->client->getOauthApi();
-                    $tokens = json_decode($twitch_oauth->getUserAccessToken($code,convertRedirectPathToUrl(strval(config('platforms.twitch.redirect_url'))))->getBody()->getContents());
+                    $tokens = AuthTwitch::getAccessTokenWithCode($code);
 
-
-                    $twitch = new Twitch($tokens->access_token);
+                    $twitch = new AuthTwitch($tokens["access_token"]);
                     $twitch_channel_id = $twitch->getMyCreator()->id;
 
                     self::breakIfChannelClaimed($twitch_channel_id, Platform::Twitch);
@@ -168,13 +167,14 @@ class LinkingApiController extends Controller
                         'source_name' => Platform::Twitch->value,
                         'external_channel_id' => $twitch_channel_id,
                         'creator_id' => Auth::user()->creator->id,
-                        'access_token' => $tokens->access_token,
-                        'refresh_token' => $tokens->refresh_token
+                        'access_token' => $tokens['access_token'],
+                        'refresh_token' => $tokens['refresh_token']
                     ]);
 
-                    return redirect()->route('studio.dashboard');
+                    return response()->json(['message' => 'success']);
                 } catch (Exception $e) {
-                    abort('401');
+                    return response()->json(['errorr' => $e->getMessage()]);
+                    abort('401', $e->getMessage());
                 }
 
             default:
