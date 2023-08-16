@@ -24,12 +24,19 @@ use Laravel\Octane\Facades\Octane;
 class AuthYouTube extends YouTube implements iCanLogin, iCanUpload
 {
 
+    public function __construct($access_token)
+    {
+        $google = new Google();
+        $google->client->setAccessToken($access_token);
+        $this->google_client = $google->client;
+        $this->client = new Google_Service_YouTube($google->client);
+    }
+
     public static function getAccessTokenWithCode(string $code, array $scopes = null, string $redirect_url_path = null): array{
         $google = new Google($scopes, $redirect_url_path);
         $accessToken = $google->client->fetchAccessTokenWithAuthCode($code);
         return $accessToken;
     }
-
     public static function getLogInUrl(array $scopes = null, string $redirect_url_path = null){
         //check if user already has linked their account
         $creator = auth()->user()->creator()->with('sources')->first();
@@ -42,13 +49,6 @@ class AuthYouTube extends YouTube implements iCanLogin, iCanUpload
         else{
             abort(403, 'You have already claimed a YouTube channel');
         }
-    }
-    public function __construct($access_token)
-    {
-        $google = new Google();
-        $google->client->setAccessToken($access_token);
-        $this->google_client = $google->client;
-        $this->client = new Google_Service_YouTube($google->client);
     }
 
     public function getMyCreator(): CreatorDTO

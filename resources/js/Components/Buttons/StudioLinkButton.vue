@@ -20,6 +20,7 @@ const props = defineProps({
 
 function loginRedirect() {
     console.log(props.platform);
+    console.log(route('api.studio.login', {platform: props.platform}));
     axios.get(route('api.studio.login', {platform: props.platform}))
         .then(response => {
             window.location.href = response.data.url;

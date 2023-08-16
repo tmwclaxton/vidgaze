@@ -50,4 +50,8 @@ Route::get('/about', [SupportWebController::class, 'about'])->name('about');
 Route::get('/terms_of_service', [SupportWebController::class, 'terms'])->name('terms');
 Route::get('/privacy_policy', [SupportWebController::class,'privacy'])->name('privacy');
 
-
+if (config('app.env') == 'local') {
+    Route::get('/ping', function () {
+        return JoshPing::ping();
+    });
+}

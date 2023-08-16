@@ -57,8 +57,6 @@ class YouTube implements iSearchable, iIsPlatform
         },$creators);
     }
 
-
-
     public static function search(SearchQueryDTO $searchQueryDTO){
         $yt = new self();
         $response = $yt->client->search->listSearch(['snippet'], [
@@ -108,7 +106,6 @@ class YouTube implements iSearchable, iIsPlatform
         // only return creators in the creator_ids array (and other results)
         return array_merge($results, $data[1]);
     }
-
 
     public static function getVideoOrStream(array $ids, bool $returnJustContentDTO = true): array
     {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ApiControllers;
 
 use App\Enums\Platform;
+use App\Helpers\PlatformAPIs\AuthVimeo;
 use App\Helpers\PlatformAPIs\AuthYouTube;
 use App\Helpers\PlatformAPIs\Dailymotion;
 use App\Helpers\PlatformAPIs\Twitch;
@@ -40,20 +41,20 @@ class LinkingApiController extends Controller
             case Platform::YouTube->value:
 
                 try {
-                $yt = new AuthYouTube(AuthYouTube::getAccessTokenWithCode($code));
-                $yt_channel_id = $yt->getMyCreator()->id;
+                    $yt = new AuthYouTube(AuthYouTube::getAccessTokenWithCode($code));
+                    $yt_channel_id = $yt->getMyCreator()->id;
 
-                self::breakIfChannelClaimed($yt_channel_id, Platform::YouTube);
+                    self::breakIfChannelClaimed($yt_channel_id, Platform::YouTube);
 
-                CreatorSource::create([
-                    'source_name' => Platform::YouTube->value,
-                    'external_channel_id' => $yt_channel_id,
-                    'creator_id' => Auth::user()->creator->id,
-                    'access_token' => $yt->client->getClient()->getAccessToken()['access_token'],
-                    'refresh_token' => $yt->client->getClient()->getAccessToken()['refresh_token'],
-                ]);
+                    CreatorSource::create([
+                        'source_name' => Platform::YouTube->value,
+                        'external_channel_id' => $yt_channel_id,
+                        'creator_id' => Auth::user()->creator->id,
+                        'access_token' => $yt->client->getClient()->getAccessToken()['access_token'],
+                        'refresh_token' => $yt->client->getClient()->getAccessToken()['refresh_token'],
+                    ]);
 
-                return response()->json(['message' => 'success']);
+                    return response()->json(['message' => 'success']);
                 } catch (Exception $e) {
                     if($e->getCode() == 403) {
                         abort('403', $e->getMessage());
@@ -133,8 +134,7 @@ class LinkingApiController extends Controller
                 }
             case Platform::Vimeo->value:
                 try {
-
-                    $vimeo = (new Vimeo($code));
+                $vimeo = new AuthVimeo(AuthVimeo::getAccessTokenWithCode($code));
 
                     $vm_channel_id = $vimeo->getMyCreator()->id;
 
@@ -148,8 +148,9 @@ class LinkingApiController extends Controller
                         'refresh_token' => null,
                     ]);
 
-                    return redirect()->route('studio.dashboard');
+                return response()->json(['message' => 'success']);
                 } catch (Exception $e) {
+                    return response()->json(['message' => $e->getMessage()]);
                     abort('401');
                 }
             case Platform::Twitch->value:
@@ -203,8 +204,9 @@ class LinkingApiController extends Controller
     public function logIn(string $platform)
     {
         $platform = Platform::fromValue($platform)->getPlatformAuthClass();
+
         // if $platform has a logIn method, call it
-        if (method_exists($platform, 'getLoginUrl')) {
+        if (method_exists($platform, 'getLogInUrl')) {
             $auth_url = $platform::getLoginUrl();
         }
         else {

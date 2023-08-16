@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Enums\Audience;
 use App\Enums\Platform;
 use App\Enums\Visibility;
+use App\Helpers\PlatformAPIs\AuthVimeo;
 use App\Helpers\PlatformAPIs\AuthYouTube;
 use App\Helpers\PlatformAPIs\Dailymotion;
 use App\Helpers\PlatformAPIs\Google;
@@ -24,6 +25,8 @@ class JoshPing
 
     public static function ping()
     {
+        dd(AuthVimeo::getLogInUrl());
+        dd('hi');
         // access bearer token from request
         $token = request()->bearerToken();
         return ['message' => 'success', 'token' => $token];
