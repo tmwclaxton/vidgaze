@@ -28,12 +28,8 @@ export default {
 
 import {ref} from "vue";
 import {Head, router, useForm} from "@inertiajs/vue3";
-import InputLabel from "@/Components/Inputs/InputLabel.vue";
-import InputError from "@/Components/Inputs/InputError.vue";
-import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
 import Title from "@/Components/General/Title.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
-import {Inertia} from "@inertiajs/inertia";
 import DropZone from "@/Pages/Studio/Partials/DropZone.vue";
 
 let form = useForm({
@@ -41,17 +37,17 @@ let form = useForm({
 });
 
 const submit = () => {
-    axios.post(route('studio.video.prime')).then((response) => {
+    axios.post(route('api.studio.video.prime')).then((response) => {
         console.log('video draft created: ' + response.data.slug);
 
         const formData = new FormData();
         formData.append('video', form.video);
-        axios.post(route('studio.video.upload', {slug: response.data.slug}), formData).then(
+        axios.post(route('api.studio.video.upload', {slug: response.data.slug}), formData).then(
             () => { console.log('upload complete'); }
         );
 
         // redirect to studio.video.edit with slug given in response
-        router.get(route('studio.video.edit', {slug: response.data.slug}));
+        router.get(route('studio.video.draft.edit', {slug: response.data.slug}));
     }).catch((error) => {
         console.log(error);
     });

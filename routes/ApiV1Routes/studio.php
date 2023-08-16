@@ -11,6 +11,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('studio/video/{slug}/upload', [VideoDraftApiController::class, 'upload'])->name("studio.video.upload");
     Route::post('studio/video/prime', [VideoDraftApiController::class, 'primeNewVideoDraft'])->name("studio.video.prime");
+    Route::get('studio/video-drafts/{slug}/get-edit', [VideoDraftApiController::class, 'getEdit'])->name("studio.video.draft.getEdit");
+    Route::put('studio/video-drafts/{slug}/update', [VideoDraftApiController::class, 'update'])->name("studio.video.draft.update");
 
     Route::get('studio/login/{platform}', [LinkingApiController::class, 'logIn'])->name('studio.login');
     Route::get('studio/link/{platform}', [LinkingApiController::class, 'link'])->name('studio.link');

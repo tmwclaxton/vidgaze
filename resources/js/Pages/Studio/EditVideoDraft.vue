@@ -10,7 +10,7 @@
             <div>
                 <InputLabel class="mb-1" for="title" value="Title"/>
                 <TextInput type="text" title="title" id="title" placeholder="Title" v-model="form.title" class="w-full" required/>
-                <InputError class="mt-2" :message="form.errors.title"/>
+                <InputError class="mt-2" :message="form.errors.title ? form.errors.title[0] : null"/>
             </div>
             <div>
                 <InputLabel class="mb-1" for="description" value="Description"/>
@@ -19,17 +19,17 @@
                     v-model="form.description"
                     rows="4"
                 />
-                <InputError :message="form.errors.description"/>
+                <InputError :message="form.errors.description ? form.errors.description[0] : null"/>
             </div>
             <div>
                 <InputLabel class="mb-1" for="tags" value="Tags"/>
-                <TagInput v-model="form.tags"/>
-                <InputError :message="form.errors.tags"/>
+                <TagInput v-model="form.tags" :key="key"/>
+                <InputError :message="form.errors.tags ? form.errors.tags[0] : null"/>
             </div>
             <div class="max-w-md">
                 <InputLabel class="mb-1" for="thumbnail" value="Thumbnail"/>
                 <input type="file" name="thumbnail" id="thumbnail" @input="selectedFileThumbnail">
-                <InputError class="mt-1" :message="form.errors.thumbnail"/>
+                <InputError class="mt-1" :message="form.errors.thumbnail ? form.errors.thumbnail[0] : null"/>
             </div>
             <div>
                 <InputLabel class="mb-1" for="audience" value="Audience"/>
@@ -39,7 +39,7 @@
                     id="audience"
                     :items="audiences"
                     required/>
-                <InputError class="mt-2" :message="form.errors.audience"/>
+                <InputError class="mt-2" :message="form.errors.audience ? form.errors.audience[0] : null"/>
             </div>
             <div>
                 <InputLabel class="mb-1" for="visibility" value="Visibility"/>
@@ -60,10 +60,10 @@
                         <div class="flex items-center"><input type="radio" id="scheduled" value="scheduled" v-model="form.visibility" class="mr-2">
                             <label for="scheduled">Schedule</label></div>
                         <DateInput class="mt-2" v-if="form.visibility === 'scheduled'" v-model="form.publish_time"/>
-                        <InputError class="mt-2" :message="form.errors.publish_time"/>
+                        <InputError class="mt-2" :message="form.errors.publish_time ? form.errors.publish_time[0] : null"/>
                     </div>
                 </div>
-                <InputError class="mt-2" :message="form.errors.visibility"/>
+                <InputError class="mt-2" :message="form.errors.visibility ? form.errors.visibility[0] : null"/>
             </div>
             <div>
                 <InputLabel class="mb-1" for="collection" value="Category"/>
@@ -74,7 +74,7 @@
                     :items="categories"
                     required
                 />
-                <InputError class="mt-2" :message="form.errors.category_id"/>
+                <InputError class="mt-2" :message="form.errors.category_id ? form.errors.category_id[0] : null"/>
             </div>
             <div>
                 <InputLabel class="mb-1" for="platforms" value="Platforms"/>
@@ -95,7 +95,7 @@
                         <label for="vimeo">Vimeo</label>
                     </div>
                 </div>
-                <InputError class="mt-2" :message="form.errors.platforms"/>
+                <InputError class="mt-2" :message="form.errors.platforms ? form.errors.platforms[0] : null"/>
             </div>
             <div class="flex space-x-3 justify-center">
                 <div class="flex justify-center">
@@ -128,8 +128,8 @@ export default {
 </script>
 <script setup>
 
-import {ref} from "vue";
-import {Head, useForm} from "@inertiajs/vue3";
+import {onBeforeMount, ref} from "vue";
+import {Head, router, useForm} from "@inertiajs/vue3";
 import InputLabel from "@/Components/Inputs/InputLabel.vue";
 import TextInput from "@/Components/Inputs/TextInput.vue";
 import InputError from "@/Components/Inputs/InputError.vue";
@@ -145,10 +145,38 @@ import DailyMotionIcon from '#icons/dailymotion.svg';
 import VimeoIcon from '#icons/vimeo.svg';
 
 
+let categories = ref([]);
+let video = ref({});
 let props = defineProps({
-    video: Object,
-    categories: Object,
+    slug: String,
 });
+let key = ref('');
+
+onBeforeMount(() => {
+    axios.get(route('api.studio.video.draft.getEdit', [props.slug])).then((response) => {
+        categories.value = response.data.categories;
+        video.value = response.data.video;
+        form = useForm({
+            title: video.value.title,
+            description: video.value.description,
+            tags: video.value.tags,
+            thumbnail: '',
+            category_id: video.value.category_id,
+            visibility: video.value.visibility,
+            publish_time: video.value.publish_time,
+            audience: video.value.audience,
+            platforms: video.value.platforms,
+        });
+        // convert unix time to local date
+        // if publish time before now, set to now
+        if (form.publish_time < Math.floor((new Date().getTime()) / 1000)) {
+            form.publish_time = Math.floor((new Date().getTime()) / 1000);
+        }
+        form.publish_time = new Date(form.publish_time).getTime() - new Date().getTimezoneOffset() * 60;
+
+        key.value = Math.random().toString(36)
+    })
+})
 
 const audiences = [
     { value: 'all', name: 'Everyone' },
@@ -157,41 +185,46 @@ const audiences = [
 ];
 
 let form = useForm({
-    title: props.video.title,
-    description: props.video.description,
-    tags: props.video.tags,
+    title: video.value.title,
+    description: video.value.description,
+    tags: video.value.tags,
     thumbnail: '',
-    category_id: props.video.category_id,
-    visibility: props.video.visibility,
-    publish_time: props.video.publish_time,
-    audience: props.video.audience,
-    platforms: props.video.platforms,
+    category_id: video.value.category_id,
+    visibility: video.value.visibility,
+    publish_time: video.value.publish_time,
+    audience: video.value.audience,
+    platforms: video.value.platforms,
 });
 
 
 const handleSaveDraft = () => {
-    form.put(route('studio.video.update', [props.video.slug]), {
-        preserveScroll: true,
+    const formData = new FormData();
+    formData.append('title', form.title);
+    formData.append('description', form.description);
+    form.tags.forEach((tag) => {
+        formData.append('tags[]', tag);
+    });
+    formData.append('category_id', form.category_id);
+    formData.append('thumbnail', form.thumbnail);
+    formData.append('visibility', form.visibility);
+
+    // convert local publish time to unix integer
+    let publish_time = Math.floor(new Date(form.publish_time).getTime());
+    formData.append('publish_time', publish_time);
+    formData.append('audience', form.audience);
+    form.platforms.forEach((platform) => {
+        formData.append('platforms[]', platform);
     });
 
-    // const formData = new FormData();
-    // formData.append('title', form.title);
-    // formData.append('description', form.description);
-    // formData.append('tags', form.tags);
-    // formData.append('thumbnail', form.thumbnail);
-    // formData.append('visibility', form.visibility);
-    // formData.append('publish_time', form.publish_time);
-    // formData.append('audience', form.audience);
-    // formData.append('platforms', form.platforms);
-    // formData.append('use_publish_time', form.use_publish_time);
-    // formData.append('category_id', form.category_id);
-    //
-    //
-    // axios.put(route('studio.video.update', [props.video.slug]), formData).then(
-    //     () => { router.get(route('studio.dashboard')) }
-    // ).catch((error) => {
-    //     console.log(error);
-    // })
+
+    axios.put(route('api.studio.video.draft.update', [video.value.slug]), formData).then(
+        () => {
+            router.get(route('studio.dashboard'))
+        }
+    ).catch((error) => {
+        form.errors = error.response.data.errors || {};
+        console.log(error);
+    })
 };
 
 const handlePublish = () => {

@@ -25,27 +25,8 @@ class VideoDraftWebController extends Controller
 
     public function edit(string $slug)
     {
-        $video = auth()->user()->creator()->first()->video_drafts()->where('slug', $slug)->firstOrFail();
         return Inertia::render('Studio/EditVideoDraft', [
-            'video' => [
-                'slug' => $video->slug,
-                'title' => $video->title,
-                'description' => $video->description,
-                'tags' => json_decode($video->tags)?? [],
-                'visibility' => $video->visibility,
-                'language' => $video->language,
-                'region' => $video->region,
-                'audience' => $video->audience,
-                'category_id' => $video->category_id,
-                'platforms' => json_decode($video->platforms)?? [],
-                'publish_time' => $video->publish_time ? Carbon::create($video->publish_time)->timestamp: null,
-                'thumbnail' => $video->thumbnail_path,
-            ],
-            'categories' => Category::orderBy('name')->get(['id', 'name'])->map(fn($category)=>
-            [
-                'value' => $category->id,
-                'name' => $category->name
-            ]),
+            'slug' => $slug,
         ]);
     }
 

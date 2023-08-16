@@ -1,7 +1,7 @@
 <template>
     <div class="w-full border-1 border-gray-300 border-box">
         <div
-            v-for="(tag, index) in tags"
+            v-for="(tag, index) in modelValue"
             :key="tag"
             class="h-[30px] float-left mr-[10px] bg-gray-300 rounded-[5px] px-[5px] leading-[30px] mb-[10px] dark:bg-gray-900 dark:text-gray-300"
         >
@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import {ref, defineProps, defineEmits, onMounted} from 'vue';
 
 const { modelValue } = defineProps(['modelValue']);
 const emit = defineEmits();
