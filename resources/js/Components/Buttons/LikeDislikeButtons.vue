@@ -69,9 +69,9 @@ const toggleLike = () => {
     }
     let likeRoute = '';
     if (props.comment === undefined) {
-        likeRoute = route('video.like.toggle', { videoId: props.video.id  });
+        likeRoute = route('api.video.like.toggle', { item_id: props.video.id, item_type: 'video' });
     } else {
-        likeRoute = route('comment.like.toggle', { commentId: props.comment.id  });
+        likeRoute = route('api.comment.like.toggle', { item_id: props.video.id, item_type: 'video', comment_id: props.comment.id });
     }
 
     // Send a POST request to the like route

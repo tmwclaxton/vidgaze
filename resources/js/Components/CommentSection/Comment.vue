@@ -6,6 +6,7 @@ import {usePage} from "@inertiajs/vue3";
 import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
 import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
 import CommentTextarea from "@/Components/CommentSection/Partials/CommentTextarea.vue";
+import {useAuthStore} from "@/Stores/AuthStore";
 const confirmStore = useConfirmModalStore();
 const CommentSectionStore = useCommentSectionStore();
 
@@ -143,7 +144,7 @@ const noRepliesText = computed(() => {
 
 
                                     <TertiaryButton>
-                                        <LikeDislikeButtons :orientation-vertical="false" :comment="comment"
+                                        <LikeDislikeButtons :orientation-vertical="false" :comment="comment" :video="props.item"
                                                             :setLikeValue="CommentSectionStore.getCommentInteraction(comment.id)"/>
                                     </TertiaryButton>
 

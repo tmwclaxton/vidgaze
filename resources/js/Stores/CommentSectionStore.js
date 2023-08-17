@@ -79,7 +79,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
             if (!useAuthStore().user) {
                 return;
             }
-            axios.get(route('comment.interactions', {
+            axios.get(route('api.comment.interactions', {
                 item_id: this.item.id,
                 item_type: this.item_type,
             }))
@@ -122,7 +122,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
             }
 
             // make request using ziggy to route name comments.store
-            axios.post(route('comments.store', {
+            axios.post(route('api.comment.store', {
                 item_id: this.item.id,
                 item_type: this.item.type,
                 parent_comment_id: parent_comment_id,
@@ -168,7 +168,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
         deleteComment(comment_id) {
             const toastStore = useToastStore();
 
-            axios.delete(route('comments.destroy', {
+            axios.delete(route('api.comment.destroy', {
                 comment_id: comment_id,
                 item_id: this.item.id,
                 item_type: this.item_type,
@@ -202,7 +202,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
         editComment(comment_id, body) {
             const toastStore = useToastStore();
 
-            axios.put(route('comments.update', {
+            axios.put(route('api.comment.update', {
                 comment_id: comment_id,
                 item_id: this.item.id,
                 item_type: this.item_type,
