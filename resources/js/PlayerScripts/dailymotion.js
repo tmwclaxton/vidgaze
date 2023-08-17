@@ -22,7 +22,6 @@ export default class DailymotionPlayer extends Player {
             document.getElementById(this.playerDiv).removeAttribute('style');
 
             this.player.on(dailymotion.events.PLAYER_VIDEOCHANGE, () => {
-                // this.debugMessage('BUILDDailymotion: Dailymotion player ready')
                 if (this.autoplay) {
                     this.player.play();
                 }
