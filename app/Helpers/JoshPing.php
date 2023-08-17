@@ -25,29 +25,13 @@ class JoshPing
 
     public static function ping()
     {
-        dd(AuthVimeo::getLogInUrl());
-        dd('hi');
-        // access bearer token from request
-        $token = request()->bearerToken();
-        return ['message' => 'success', 'token' => $token];
+        $access_token = auth()->user()->creator()->first()->sources()->where('source_name', Platform::Vimeo)->first()->access_token;
+        $v = new AuthVimeo($access_token);
+        // Include the tags as a JSON array as the body of the request with the name field, like this: [{ "name": "funny"}, {"name": "concert" }]
 
-        // query local api route
-        $client = new Client();
-        $response = $client->get('http://localhost/api/v1/studio/link/youtube');
-        dd($response->getBody()->getContents());
-        return response()->json([
-            'message' => 'pong',
-            'time' => now(),
-        ]);
-        dd(auth()->user());
-//        dd("hi");
-//        dd(\Storage::get('public/thumbnails/m55NepKM9JDBsn7pQos1azpZXZIMGvolGvfAgBLn.jpg'));
-        $creator = auth()->user()->creator()->first();
-        dd($creator);
-        $ayt = new AuthYouTube($creator->sources()->where('source_name', Platform::YouTube)->first()->refreshAccessToken());
-        ddd($ayt->getMyCreator());
-        dd(Visibility::PUBLIC->value);
-
+        $thumbnail_path = 'public/thumbnails/xTkmSv3xdpQr8NKsp9kB7SX1tTwoVUX6vatAhcxp.jpg';
+        $response = $v->setThumbnail('855459884', $thumbnail_path);
+        return [$response];
 //        $creator = auth()->user()->creator()->first();
 //
 //        $yt = new YouTube(null, $creator->sources()->where('source_name', Platform::YouTube)->first()->access_token);

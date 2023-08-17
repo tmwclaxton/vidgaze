@@ -26,5 +26,3 @@ Route::get('studio/link/{platform}', [LinkingWebController::class,'link'])->name
 Route::get('studio/upload',  [VideoDraftWebController::class, 'upload'])->name("studio.upload");
 Route::get('studio/video-draft/{slug}/edit',  [VideoDraftWebController::class, 'edit'])->name("studio.video.draft.edit");
 
-
-//oauth routes

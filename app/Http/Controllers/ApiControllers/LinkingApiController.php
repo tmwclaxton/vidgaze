@@ -137,7 +137,7 @@ class LinkingApiController extends Controller
 //                }
             case Platform::Vimeo->value:
                 try {
-                    $vimeo = new AuthVimeo(AuthVimeo::getAccessTokenWithCode($code));
+                    $vimeo = new AuthVimeo(AuthVimeo::getAccessTokenWithCode($code)['access_token']);
 
                     $vm_channel_id = $vimeo->getMyCreator()->id;
 
