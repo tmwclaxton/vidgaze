@@ -7,6 +7,19 @@ import axios from "axios";
 import {useQueueStore} from "@/Stores/QueueStore";
 
 export default class Player {
+    type = null; // video / stream / podcast
+    source = null; // platform
+    playing = false; // is the player playing
+    playerDivHolderID = null; // the id of the div that will hold the player
+    external_id = null; // the id of the video on the platform
+    autoplay = false;
+    checkHistoryTime = false; // should we check the history to see if we have a start time
+    start_time = 0;
+    currentTime = 0;
+    ready = false; // is the player ready to play
+    player = null; // the player object
+    built = false; // is the player built
+
     async constructor(type, source, playerDivHolderID, external_id, start_time = 0, autoplay = false, checkHistoryTime = false) {
         this.built = false;
         this.type = type; // video / stream / podcast
@@ -66,7 +79,7 @@ export default class Player {
 
     }
 
-    startViewRecord(external_id) {
+    startViewRecord() {
 
     }
 
@@ -78,13 +91,4 @@ export default class Player {
 
     }
 
-    // give function and how many times to attempt
-    attempt(func, attempts = 3, i = 0) {
-        if (func(i)) {
-            return;
-        }
-        if (i < attempts) {
-            this.attempt(func, attempts, i++);
-        }
-    }
 }

@@ -1,8 +1,9 @@
 // import player.js
 import Player from './player.js';
+import {toRaw} from "vue";
 
 // make a constructor function for the youtube player extending the player class
-class YouTubePlayer extends Player {
+class TwitchPlayer extends Player {
     create() {
         // check if window.YT exists
         if (window.YT === undefined) {
@@ -81,13 +82,21 @@ class YouTubePlayer extends Player {
         return true;
     }
 
-    getCurrentTime() {
+    async getCurrentPosition() {
         if (this.ready === false) {
             return false;
         }
-        return this.player.getCurrentTime();
+        // const state = await player.player.getState();
+        // this.currentTime = state.videoTime;
+        // return this.currentTime
     }
 
-
-
+    async isPlaying() {
+        if (this.ready === false) {
+            return false;
+        }
+        // const state = await player.player.getState();
+        // this.playing = state.playerIsPlaying;
+        // return this.playing;
+    }
 }
