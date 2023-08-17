@@ -64,7 +64,7 @@ class VimeoPlayer extends Player {
         return true;
     }
 
-    async play(i = 0) {
+    async play() {
         if (this.ready === false) {
             return false;
         }
@@ -87,7 +87,7 @@ class VimeoPlayer extends Player {
         if (this.ready === false) {
             return false;
         }
-        this.currentTime = await toRaw(player.player).getCurrentTime();
+        this.currentTime = await toRaw(this.player).getCurrentTime();
         return this.currentTime;
     }
 
@@ -95,7 +95,7 @@ class VimeoPlayer extends Player {
         if (this.ready === false) {
             return false;
         }
-        this.playing = await toRaw(player.player).getPaused();
+        this.playing = await toRaw(this.player).getPaused();
         return this.playing;
     }
 

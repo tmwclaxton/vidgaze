@@ -56,7 +56,7 @@ class DailymotionPlayer extends Player {
         return true;
     }
 
-    async play(i = 0) {
+    async play() {
         if (this.ready === false) {
             return false;
         }
@@ -78,7 +78,7 @@ class DailymotionPlayer extends Player {
         if (this.ready === false) {
             return false;
         }
-        const state = await player.player.getState();
+        const state = await this.player.getState();
         this.currentTime = state.videoTime;
         return this.currentTime
     }
@@ -87,7 +87,7 @@ class DailymotionPlayer extends Player {
         if (this.ready === false) {
             return false;
         }
-        const state = await player.player.getState();
+        const state = await this.player.getState();
         this.playing = state.playerIsPlaying;
         return this.playing;
     }
