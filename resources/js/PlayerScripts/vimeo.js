@@ -1,14 +1,15 @@
 // import player.js
 import Player from './player.js';
 import {toRaw} from "vue";
+import {usePlayerStore} from "@/Stores/PlayerStore";
 
 // make a constructor function for the youtube player extending the player class
-class VimeoPlayer extends Player {
+export default class VimeoPlayer extends Player {
     create() {
 
         let html_collection;
 
-        this.player = new Vimeo.Player(this.playerDivHolderID, {
+        this.player = new Vimeo.Player(this.playerDiv, {
             id: this.external_id,
             responsive: true,
             autopause: ! this.autoplay
@@ -29,8 +30,8 @@ class VimeoPlayer extends Player {
                 //styling
 
                 // this.debugMessage(document.getElementById(playerDiv.id).firstElementChild);
-                document.getElementById(this.playerDivHolderID).firstElementChild.classList.add("h-full", "w-full","p-0", "relative");
-                document.getElementById(this.playerDivHolderID).firstElementChild.removeAttribute("style");
+                document.getElementById(this.playerDiv).firstElementChild.classList.add("h-full", "w-full","p-0", "relative");
+                document.getElementById(this.playerDiv).firstElementChild.removeAttribute("style");
 
                 // reset all Vimeo players to default size
                 html_collection = document.getElementsByClassName("player");
@@ -41,21 +42,21 @@ class VimeoPlayer extends Player {
         });
 
         this.player.on('play', () => {
-            this.startViewRecord();
+            usePlayerStore().startViewRecord(this.external_id);
         });
 
         this.player.on('pause', () => {
-            this.pauseViewRecord();
+            usePlayerStore().pauseViewRecord(this.external_id);
         });
 
         this.player.on('ended', () => {
-            this.endVideo();
+            usePlayerStore().endVideo(this.external_id);
         });
 
         this.createPlayer()
     }
 
-    async destroy() {
+    async remove() {
         if (this.ready === false) {
             return false;
         }
@@ -64,7 +65,7 @@ class VimeoPlayer extends Player {
         return true;
     }
 
-    async play() {
+    async togglePlay() {
         if (this.ready === false) {
             return false;
         }
@@ -74,11 +75,11 @@ class VimeoPlayer extends Player {
 
     }
 
-    async pause() {
+    async togglePause() {
         if (this.ready === false) {
             return false;
         }
-        await toRaw(this.player).play()
+        await toRaw(this.player).pause()
         this.pausePlayer();
         return true;
     }

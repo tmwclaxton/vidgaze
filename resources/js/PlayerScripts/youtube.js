@@ -1,8 +1,9 @@
 // import player.js
 import Player from './player.js';
+import {usePlayerStore} from "@/Stores/PlayerStore";
 
 // make a constructor function for the youtube player extending the player class
-class YouTubePlayer extends Player {
+export default class YouTubePlayer extends Player {
     create() {
         // check if window.YT exists
         if (window.YT === undefined) {
@@ -13,7 +14,7 @@ class YouTubePlayer extends Player {
             return;
         }
 
-        this.player = new window.YT.Player(this.playerDivHolderID, {
+        this.player = new window.YT.Player(this.playerDiv, {
             videoId: this.external_id,
             playerVars: {
                 'autoplay': this.autoplay ? 1 : 0,
@@ -28,19 +29,19 @@ class YouTubePlayer extends Player {
                 onStateChange: (event) => {
                     if (event.data === 0) { // this state means the video has ended
                         // this.debugMessage('BUILDYouTube: YouTube video ended')
-                        this.endVideo();
+                        usePlayerStore().endVideo(this.external_id);
                     }
                     if (event.data === 1) { // this state means the video is playing
                         // this.debugMessage('BUILDYouTube: YouTube video playing')
-                        this.startViewRecord();
+                        usePlayerStore().startViewRecord(this.external_id);
                     }
                     if (event.data === 2) { // this state means the video is paused
                         // this.debugMessage('BUILDYouTube: YouTube video paused')
-                        this.pauseViewRecord();
+                        usePlayerStore().pauseViewRecord(this.external_id);
                     }
                     if (event.data === 3) { // this state means the video is buffering
                         // this.debugMessage('BUILDYouTube: YouTube video buffering')
-                        this.pauseViewRecord();
+                        usePlayerStore().pauseViewRecord(this.external_id);
                     }
                 },
                 onReady: (event) => {
@@ -54,7 +55,7 @@ class YouTubePlayer extends Player {
         this.createPlayer()
     }
 
-    destroy() {
+    async remove() {
         if (this.ready === false) {
             return false;
         }
@@ -63,7 +64,7 @@ class YouTubePlayer extends Player {
         return true;
     }
 
-    play() {
+    async togglePlay() {
         if (this.ready === false) {
             return false;
         }
@@ -72,7 +73,7 @@ class YouTubePlayer extends Player {
         return true;
     }
 
-    pause() {
+    async togglePause() {
         if (this.ready === false) {
             return false;
         }
@@ -96,6 +97,4 @@ class YouTubePlayer extends Player {
         this.playing = await this.player.getPlayerState() === 1;
         return this.playing;
     }
-
-
 }

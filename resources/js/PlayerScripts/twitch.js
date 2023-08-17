@@ -1,11 +1,12 @@
 // import player.js
 import Player from './player.js';
 import {toRaw} from "vue";
+import {usePlayerStore} from "@/Stores/PlayerStore";
 
 // make a constructor function for the youtube player extending the player class
-class TwitchPlayer extends Player {
+export default class TwitchPlayer extends Player {
     create() {
-        this.player = new Twitch.Player(this.playerDivHolderID, {
+        this.player = new Twitch.Player(this.playerDiv, {
             channel: this.external_id,
             parent: ["localhost","127.0.0.1","vidgaze.tv","www.vidgaze.tv","www.staging.vidgaze.tv","staging.vidgaze.tv"],
             width: '100%',
@@ -16,17 +17,17 @@ class TwitchPlayer extends Player {
 
         // on play start view record
         this.player.addEventListener(Twitch.Player.PLAY, () => {
-            this.startViewRecord();
+            usePlayerStore().startViewRecord(this.external_id);
         });
 
         // on pause stop view record
         this.player.addEventListener(Twitch.Player.PAUSE, () => {
-            this.pauseViewRecord();
+            usePlayerStore().pauseViewRecord(this.external_id);
         });
 
         // on video end stop view record
         this.player.addEventListener(Twitch.Player.ENDED, () => {
-            this.endVideo();
+            usePlayerStore().endVideo(this.external_id);
         });
 
         this.player.addEventListener(Twitch.Player.READY, () => {
@@ -36,7 +37,7 @@ class TwitchPlayer extends Player {
         this.createPlayer()
     }
 
-    destroy() {
+    async remove() {
         if (this.ready === false) {
             return false;
         }
@@ -45,7 +46,7 @@ class TwitchPlayer extends Player {
         return true;
     }
 
-    async play() {
+    async togglePlay() {
         if (this.ready === false) {
             return false;
         }
@@ -54,7 +55,7 @@ class TwitchPlayer extends Player {
         return true;
     }
 
-    async pause() {
+    async togglePause() {
         if (this.ready === false) {
             return false;
         }

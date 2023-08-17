@@ -7,7 +7,7 @@ import axios from "axios";
 import {useQueueStore} from "@/Stores/QueueStore";
 
 export default class Player {
-    type = null; // video / stream / podcast
+    object = null;
     source = null; // platform
     playing = false; // is the player playing
     playerDivHolderID = null; // the id of the div that will hold the player
@@ -20,13 +20,12 @@ export default class Player {
     player = null; // the player object
     built = false; // is the player built
 
-    async constructor(type, source, playerDivHolderID, external_id, start_time = 0, autoplay = false, checkHistoryTime = false) {
+    async constructor(object, playerDiv, start_time = 0, autoplay = false, checkHistoryTime = false) {
         this.built = false;
-        this.type = type; // video / stream / podcast
-        this.source = source; // youtube / vimeo / twitch / dailymotion / soundcloud / spotify
+        this.object = object
         this.playing = false;
-        this.playerDivHolderID = playerDivHolderID;
-        this.external_id = external_id;
+        this.playerDiv = playerDiv;
+        this.external_id = object.external_id;
         this.autoplay = autoplay;
         this.checkHistoryTime = checkHistoryTime;
         this.start_time = start_time;
@@ -79,16 +78,5 @@ export default class Player {
 
     }
 
-    startViewRecord() {
-
-    }
-
-    pauseViewRecord() {
-
-    }
-
-    stopViewRecord() {
-
-    }
 
 }

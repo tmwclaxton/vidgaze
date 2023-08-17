@@ -1,11 +1,12 @@
 // import player.js
 import Player from './player.js';
 import {toRaw} from "vue";
+import {usePlayerStore} from "@/Stores/PlayerStore";
 
 // make a constructor function for the youtube player extending the player class
-class DailymotionPlayer extends Player {
+export default class DailymotionPlayer extends Player {
     create() {
-        dailymotion.createPlayer(this.playerDivHolderID, {
+        dailymotion.createPlayer(this.playerDiv, {
             video: this.external_id,
             params: {
                 startTime: this.startTime,
@@ -17,8 +18,8 @@ class DailymotionPlayer extends Player {
             this.player = resolvedPlayer;
 
             // don't remove these 2 lines, they are need otherwise the player disappears into the ether
-            document.getElementById(this.playerDivHolderID).classList.add("h-full", "w-full", "p-0", "relative");
-            document.getElementById(this.playerDivHolderID).removeAttribute('style');
+            document.getElementById(this.playerDiv).classList.add("h-full", "w-full", "p-0", "relative");
+            document.getElementById(this.playerDiv).removeAttribute('style');
 
             this.player.on(dailymotion.events.PLAYER_VIDEOCHANGE, () => {
                 // this.debugMessage('BUILDDailymotion: Dailymotion player ready')
@@ -28,15 +29,15 @@ class DailymotionPlayer extends Player {
             });
 
             this.player.on(dailymotion.events.VIDEO_PLAY, () => {
-                this.startViewRecord();
+                usePlayerStore().startViewRecord(this.external_id);
             });
 
             this.player.on(dailymotion.events.VIDEO_PAUSE, () => {
-                this.pauseViewRecord();
+                usePlayerStore().pauseViewRecord(this.external_id);
             });
 
             this.player.on(dailymotion.events.VIDEO_END, () => {
-                this.endVideo();
+                usePlayerStore().endVideo(this.external_id);
             });
 
             this.player.on(dailymotion.events.PLAYER_READY, () => {
@@ -47,7 +48,7 @@ class DailymotionPlayer extends Player {
         this.createPlayer()
     }
 
-    async destroy() {
+    async remove() {
         if (this.ready === false) {
             return false;
         }
@@ -56,7 +57,7 @@ class DailymotionPlayer extends Player {
         return true;
     }
 
-    async play() {
+    async togglePlay() {
         if (this.ready === false) {
             return false;
         }
@@ -65,7 +66,7 @@ class DailymotionPlayer extends Player {
         return true;
     }
 
-    async pause() {
+    async togglePause() {
         if (this.ready === false) {
             return false;
         }
