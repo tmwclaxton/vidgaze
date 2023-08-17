@@ -20,7 +20,7 @@ export default class Player {
     player = null; // the player object
     built = false; // is the player built
 
-    async constructor(object, playerDiv, start_time = 0, autoplay = false, checkHistoryTime = false) {
+    constructor(object, playerDiv, start_time = 0, autoplay = false, checkHistoryTime = false) {
         this.built = false;
         this.object = object
         this.playing = false;
@@ -30,7 +30,7 @@ export default class Player {
         this.checkHistoryTime = checkHistoryTime;
         this.start_time = start_time;
         if (checkHistoryTime) {
-            this.start_time = await this.getStartTimePlayer();
+            this.start_time = this.getStartTimePlayer();
         }
         this.currentTime = this.start_time;
         this.ready = false;
