@@ -77,9 +77,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
         getCommentInteraction(comment_id) {
             //0 both unselected, 1 like button, 2-->
             // check liked value if like then 1, if dislike then 2 otherwise null
-            // console.log(comment_id);
-
-            const commentInteraction = this.commentInteractions.data.find(interaction => interaction.comment_id === comment_id);
+            const commentInteraction = this.commentInteractions.data ? this.commentInteractions.data.find(interaction => interaction.comment_id === comment_id) : null;
             if (commentInteraction) {
                 if (commentInteraction.liked === 'like') {
                     return 1;
@@ -141,7 +139,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
             const shareStore = useShareModalStore();
 
             shareStore.showMenu = true; // show share menu
-            const link = route('watch.show', { video: {slug: this.item.slug }, comment: comment.id });
+            const link = route('watch.show', { slug: this.item.slug, comment: comment.id });
             const title = "Check out this comment on VidGaze" + this.item.title
             shareStore.getShareLinks(link, title);
         },

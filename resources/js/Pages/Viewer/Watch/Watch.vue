@@ -78,13 +78,13 @@ const share = () => {
     if (showShare.value) {
         shareModalStore.showMenu = false;
     } else {
-        contentModalStore.itemType = props.type;
-        contentModalStore.item = props.item;
+        contentModalStore.itemType = item.value.type;
+        contentModalStore.item = item.value;
         contentModalStore.shareContent();
     }
     showShare.value = !showShare.value;
-
 };
+
 function shouldShowMoreDescriptionButton() {
     const el = document.getElementById('description');
     const divHeight = el.offsetHeight;

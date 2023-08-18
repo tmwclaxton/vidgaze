@@ -196,15 +196,15 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             let link = '';
             let title = '';
             if (this.itemType === 'video') {
-                link = route('watch.show', { video: {slug: this.item.slug } });
-                title = "Check out this cool video on VidGaze" + this.item.title
+                link = route('watch.show', { slug: this.item.slug  });
+                title = "Check out this cool video on VidGaze: " + this.item.title
                 // console.log(link);
             } else if (this.itemType === 'stream') {
                 link = route('stream.show', { stream: {slug: this.item.slug } });
-                title = "Check out this cool stream on VidGaze" + this.item.title
+                title = "Check out this cool stream on VidGaze: " + this.item.title
             } else if (this.itemType === 'short') {
                 link = route('short.show', { video: {slug: this.item.slug } });
-                title = "Check out this cool short on VidGaze" + this.item.title
+                title = "Check out this cool short on VidGaze: " + this.item.title
             }
             shareStore.getShareLinks(link, title);
         },
