@@ -7,7 +7,6 @@ import {useAuthStore} from "@/Stores/AuthStore";
 export const useCommentSectionStore = defineStore('CommentSectionStore', {
     state: () => {
         return {
-            // showingStudioLinks: false,
             commentInteractions: [],
             comments: [],
             item: null,
@@ -23,7 +22,6 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
     },
     actions: {
         async fetchComments(category, parent_comment_id = null, first_comment_id = null,loadMore = false) {
-            const toastStore = useToastStore();
             try {
                 let comment_ids = null;
                 if (loadMore) {
@@ -45,31 +43,16 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                     }
                 }).then(
                     response => {
-                        return response;
+                        // console.log(response.data);
+                        if (!response.data.error) {
+                            this.comments = this.comments.concat(response.data.comments);
+                        } else {
+                            console.log(response.data.error);
+                        }
                     }
                 ).catch(error => {
-                        console.log(error);
-                    }
-                )
-
-                setTimeout(() => {
-                    // console.log(response.data);
-                    if (!response.data.error) {
-                        this.comments = this.comments.concat(response.data.comments);
-
-                        // if load more and no comment toast message
-                        if (loadMore === true && response.data.comments.length === 0) {
-
-                            // toastStore.add({
-                            //     message: "No more comments",
-                            //     type: "warning"
-                            // });
-                        }
-
-                    } else {
-                        console.log(response.data.error);
-                    }
-                }, 200); // 200ms delay
+                    console.log(error);
+                })
             } catch (error) {
                 console.log(error);
             }
@@ -79,13 +62,12 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
             if (!useAuthStore().user) {
                 return;
             }
-            axios.get(route('comment.interactions', {
+            axios.get(route('api.comment.interactions', {
                 item_id: this.item.id,
                 item_type: this.item_type,
             }))
                 .then(response => {
-                    // console.log(response.data);
-                    this.commentInteractions = response.data.result;
+                    this.commentInteractions = response.data.interactions;
                 })
                 .catch(error => {
                     console.log(error);
@@ -95,10 +77,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
         getCommentInteraction(comment_id) {
             //0 both unselected, 1 like button, 2-->
             // check liked value if like then 1, if dislike then 2 otherwise null
-            // console.log(comment_id);
-
-            const commentInteraction = this.commentInteractions.find(interaction => interaction.comment_id === comment_id);
-            // console.log(commentInteraction);
+            const commentInteraction = this.commentInteractions.data ? this.commentInteractions.data.find(interaction => interaction.comment_id === comment_id) : null;
             if (commentInteraction) {
                 if (commentInteraction.liked === 'like') {
                     return 1;
@@ -122,7 +101,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
             }
 
             // make request using ziggy to route name comments.store
-            axios.post(route('comments.store', {
+            axios.post(route('api.comment.store', {
                 item_id: this.item.id,
                 item_type: this.item.type,
                 parent_comment_id: parent_comment_id,
@@ -160,7 +139,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
             const shareStore = useShareModalStore();
 
             shareStore.showMenu = true; // show share menu
-            const link = route('watch.show', { video: {slug: this.item.slug }, comment: comment.id });
+            const link = route('watch.show', { slug: this.item.slug, comment: comment.id });
             const title = "Check out this comment on VidGaze" + this.item.title
             shareStore.getShareLinks(link, title);
         },
@@ -168,7 +147,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
         deleteComment(comment_id) {
             const toastStore = useToastStore();
 
-            axios.delete(route('comments.destroy', {
+            axios.delete(route('api.comment.destroy', {
                 comment_id: comment_id,
                 item_id: this.item.id,
                 item_type: this.item_type,
@@ -202,7 +181,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
         editComment(comment_id, body) {
             const toastStore = useToastStore();
 
-            axios.put(route('comments.update', {
+            axios.patch(route('api.comment.update', {
                 comment_id: comment_id,
                 item_id: this.item.id,
                 item_type: this.item_type,

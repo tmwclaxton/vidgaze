@@ -6,21 +6,11 @@ import {usePage} from "@inertiajs/vue3";
 import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
 import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
 import CommentTextarea from "@/Components/CommentSection/Partials/CommentTextarea.vue";
+import {useAuthStore} from "@/Stores/AuthStore";
 const confirmStore = useConfirmModalStore();
 const CommentSectionStore = useCommentSectionStore();
 
 const name = 'Comment';
-const props = defineProps({
-    comment: {
-        type: Object,
-        required: true
-    },
-    simple: {
-        type: Boolean,
-        required: false,
-        default: false
-    }
-});
 const editComment = ref(false);
 const isCollapsed = ref(true);
 const replyComment = ref(false);
@@ -31,6 +21,21 @@ const editable = computed(() => {
 
     return (user && (user.creator.id === props.comment.owner.id || useAuthStore().admin));
 
+});
+const props = defineProps({
+    item: {
+        type: Object,
+        required: true,
+    },
+    comment: {
+        type: Object,
+        required: true
+    },
+    simple: {
+        type: Boolean,
+        required: false,
+        default: false
+    }
 });
 
 const share = () => {
@@ -65,13 +70,11 @@ const noRepliesText = computed(() => {
 <template>
     <div class="flex flex-row gap-x-2"  :class=" props.comment.parent_comment_id === null ? 'my-2' : ' '">
 
-        <div v-if="props.comment.parent_comment_id != null" class=" w-0.5 col-span-1  g-zinc-100 dark:bg-zinc-900 " :class=" props.comment.parent_comment_id != null ? 'mt-2' : ' '"></div>
+        <div v-if="props.comment.parent_comment_id != null" class=" w-0.5 col-span-1  g-zinc-100 dark:bg-zinc-900 mt-2"></div>
 
 
         <!--if parent comment id is set then no margin bottom otherwise mb-3-->
         <div class="w-full inline-flex flex-col " >
-
-
 
                 <div class="flex flex-col w-full">
                     <div id="comment" class='w-full  flex flex-row relative  ' :class=" props.comment.parent_comment_id != null ? 'mt-2' : ' '">
@@ -142,8 +145,8 @@ const noRepliesText = computed(() => {
                                 <div class="  flex flex-row flex-wrap gap-2  font-semibold pt-3 hover:cursor-pointer select-none">
 
 
-                                    <TertiaryButton>
-                                        <LikeDislikeButtons :orientation-vertical="false" :comment="comment"
+                                    <TertiaryButton >
+                                        <LikeDislikeButtons :orientation-vertical="false" :comment="comment" :item="props.item" :key="'comment' + comment.id"
                                                             :setLikeValue="CommentSectionStore.getCommentInteraction(comment.id)"/>
                                     </TertiaryButton>
 
@@ -220,7 +223,7 @@ const noRepliesText = computed(() => {
 
                 </div>
             <Comment v-if="!isCollapsed" v-for="comment in CommentSectionStore.comments.filter(comment =>  parseInt(comment.parent_comment_id) === props.comment.id )"
-                     :comment="comment" :key="comment.id" />
+                     :comment="comment" :key="comment.id"  :item="props.item"/>
             </div>
     </div>
 </template>

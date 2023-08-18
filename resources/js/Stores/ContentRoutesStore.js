@@ -14,6 +14,15 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
 
     },
     actions: {
+        async getVideo(slug) {
+            const response = await axios.get(route('api.video.show', {slug: slug}))
+            .catch((error) => {
+                console.log(error);
+            });
+            return response.data.video;
+        },
+
+
         // get videos
         async getVideos(category = "popular", per_page = 20, video_ids = [], shorts = false, first_video_slug = null) {
             // convert shorts to 1 or 0

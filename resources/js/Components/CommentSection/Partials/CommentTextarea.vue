@@ -80,12 +80,12 @@ const resizeTextarea = (event) => {
 
 const textarea = ref(null);
 function resetTextArea() {
+    // remove style attribute
+    textarea.value.removeAttribute('style');
     if (props.action === 'reply' || props.action === 'comment') {
         commentOptions.value = false
         comment.value = ''
     }
-    // remove style attribute
-    textarea.value.removeAttribute('style');
 }
 
 const cancelComment = () => {
@@ -97,17 +97,15 @@ const cancelComment = () => {
         confirmStore.title = 'Are you sure, this will delete your comment?';
         confirmStore.show = true;
         confirmStore.continue = () => {
-            commentOptions.value = false;
             resetTextArea();
+            commentOptions.value = false;
+            emits('close')
         };
     } else if(props.action === 'edit') {
         commentOptions.value = true;
+        emits('close')
     } else {
         commentOptions.value = false;
-    }
-    // if reply or edit emit event to parent component to hide reply / edit form
-    if (props.action === 'reply' || props.action === 'edit') {
-        emits('close')
     }
 };
 

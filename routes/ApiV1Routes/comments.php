@@ -24,7 +24,7 @@ Route::prefix('/comment')->name('comment.')->group(function () {
             ->name('dislike.toggle');
 
         // used for like and dislike button
-        Route::get('/interactions', [CommentInteractionApiController::class,"getInteractionsByItem"])->name('interaction');
+        Route::get('/interactions', [CommentInteractionApiController::class,"getInteractionsByItem"])->name('interactions');
 
     });
 

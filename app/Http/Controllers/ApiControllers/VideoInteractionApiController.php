@@ -72,13 +72,14 @@ class VideoInteractionApiController extends Controller
     public function getVideoInteraction($video_id) {
         $creatorId = Auth::user()->creator->id;
         // check if user has liked video
-        $VideoViewInfo = VideoInteraction::where('viewer_id', $creatorId)->where('video_id', $video_id)->first() ?? null;
+        $videoInteraction = VideoInteraction::where('viewer_id', $creatorId)->where('video_id', $video_id)->first() ?? null;
 
-        $VideoViewInfo = new VideoInteractionResource($VideoViewInfo);
-
-        return response()->json([
-            'interaction' => $VideoViewInfo,
-        ]);
+    if ($videoInteraction != null) {
+        $videoInteraction = new VideoInteractionResource($videoInteraction);
+    }
+    return response()->json([
+        'interaction' => $videoInteraction,
+    ]);
     }
 
     /** toggled disinterested

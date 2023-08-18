@@ -131,37 +131,46 @@ class CommentInteractionApiController extends Controller
      * @return JsonResponse
      */
     public function getInteractionsByItem(Request $request) {
-        $request->validate($this->rules);
-
-        $comments = null;
+        $request->validate(
+            [
+                'item_id' => 'required|integer',
+                'item_type' => 'required|in:video,podcast,stream',
+            ]
+        );
 
         // get type of item (video / stream / podcast) and id of item
         $itemType = $request->input('item_type');
         $itemId = $request->input('item_id');
-        $commentId = $request->input('comment_id');
 
-        // get all comments for item and has user's creator id
-        if ($itemType == 'video') {
-            //$commentInteractions = CommentInteraction::query()->where([['comment_id', '=', $itemId],['creator_id', '=', Auth::user()->creator->id]])->get();
-            $commentInteractions = Comment::query()->join('comment_interactions', 'comments.id', '=', 'comment_interactions.comment_id')->where([['comments.video_id', '=', $itemId],['comment_interactions.creator_id', '=', Auth::user()->creator->id]])->get();
-            //return $commentInteractions;
-            // format so it return the comment id and the interaction
-            //$commentInteractions = $commentInteractions->map(function($commentInteraction) {
-            //    return [
-            //        'comment_id' => $commentInteraction->comment_id,
-            //        'liked' => $commentInteraction->liked,
-            //    ];
-            //});
+        if ($itemType == "video") {
+            // join comment interactions, comments and video comments to get the interactions for the video
+            $commentInteractions = CommentInteraction::join('comments', 'comments.id', '=', 'comment_interactions.comment_id')
+                ->join('video_comments', 'video_comments.comment_id', '=', 'comments.id')
+                ->where('video_comments.video_id', '=', $itemId)
+                ->where('comment_interactions.creator_id', '=', Auth::user()->creator->id)
+                ->get();
+        } else if ($itemType == "stream") {
+            // join comment interactions, comments and stream comments to get the interactions for the stream
+            $commentInteractions = CommentInteraction::join('comments', 'comments.id', '=', 'comment_interactions.comment_id')
+                ->join('stream_comments', 'stream_comments.comment_id', '=', 'comments.id')
+                ->where('stream_comments.stream_id', '=', $itemId)
+                ->where('comment_interactions.creator_id', '=', Auth::user()->creator->id)
+                ->get();
+        } else if ($itemType == "podcast") {
+            // join comment interactions, comments and podcast comments to get the interactions for the podcast
+
+        } else {
+            return response()->json([
+                'error' => 'Invalid item type',
+            ], 400);
         }
 
-        if (!$commentInteractions) {
-            return response()->json([
-                'error' => 'No comment interactions found',
-            ], 404);
+        if ($commentInteractions != null && !$commentInteractions->isEmpty() ) {
+            $commentInteractions = new CommentInteractionCollection($commentInteractions);
         }
 
         return response()->json([
-            'result' => new CommentInteractionCollection($commentInteractions)
+            'interactions' => $commentInteractions,
         ], 200);
 
     }

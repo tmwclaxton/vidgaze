@@ -1,0 +1,105 @@
+// import player.js
+import Player from './player.js';
+import {toRaw} from "vue";
+import {usePlayerStore} from "@/Stores/PlayerStore";
+
+// make a constructor function for the youtube player extending the player class
+export default class VimeoPlayer extends Player {
+    create() {
+
+        let html_collection;
+
+        this.player = new Vimeo.Player(this.playerDiv, {
+            id: this.external_id,
+            responsive: true,
+            autopause: ! this.autoplay
+        });
+
+        this.player.on('loaded', () => {
+            // wait for player to load then set start time
+            this.player.ready().then(function () {
+                // find the player by external_id and change ready to true
+                this.ready = true;
+
+                // set up
+                if (this.autoplay) {
+                    this.player.play();
+                }
+                this.player.setCurrentTime(this.start_time);
+
+                //styling
+
+                // this.debugMessage(document.getElementById(playerDiv.id).firstElementChild);
+                document.getElementById(this.playerDiv).firstElementChild.classList.add("h-full", "w-full","p-0", "relative");
+                document.getElementById(this.playerDiv).firstElementChild.removeAttribute("style");
+
+                // reset all Vimeo players to default size
+                html_collection = document.getElementsByClassName("player");
+                for (let i = 0; i < html_collection.length; i++) {
+                    html_collection[i].removeAttribute("style");
+                }
+            }.bind(this));
+        });
+
+        this.player.on('play', () => {
+            usePlayerStore().startViewRecord(this.external_id);
+        });
+
+        this.player.on('pause', () => {
+            usePlayerStore().pauseViewRecord(this.external_id);
+        });
+
+        this.player.on('ended', () => {
+            usePlayerStore().endVideo(this.external_id);
+        });
+
+        this.createPlayer()
+    }
+
+    async remove() {
+        if (this.ready === false) {
+            return false;
+        }
+        await toRaw(this.player).unload();
+        this.destroyPlayer();
+        return true;
+    }
+
+    async togglePlay() {
+        if (this.ready === false) {
+            return false;
+        }
+        await toRaw(this.player).play();
+        this.playPlayer();
+        return true;
+
+    }
+
+    async togglePause() {
+        if (this.ready === false) {
+            return false;
+        }
+        await toRaw(this.player).pause()
+        this.pausePlayer();
+        return true;
+    }
+
+    async getCurrentPosition() {
+        if (this.ready === false) {
+            return false;
+        }
+        this.currentTime = await toRaw(this.player).getCurrentTime();
+        return this.currentTime;
+    }
+
+    async isPlaying() {
+        if (this.ready === false) {
+            return false;
+        }
+        this.playing = await toRaw(this.player).getPaused();
+        return this.playing;
+    }
+
+
+
+}

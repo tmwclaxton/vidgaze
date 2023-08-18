@@ -26,6 +26,9 @@ import SuggestionsScreen from "@/Pages/Viewer/Watch/Partials/SuggestionsScreen/S
 
 import EndScreen from "@/Pages/Viewer/Watch/Partials/EndScreen.vue";
 import {useAuthStore} from "@/Stores/AuthStore";
+import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
+import Title from "@/Components/General/Title.vue";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -37,15 +40,14 @@ const authStore = useAuthStore();
 const name = 'Watch';
 
 const theatre = ref(false);
-
-
-
-const layout = AuthenticatedLayout;
-
 const item = ref(null);
 const comments = ref(null)
 const isDescriptionCollapsed = ref(true);
 const showCommentSection = ref(false);
+const playlistToggled = ref(false); // can't seem to get it work directly with the store
+const showShare = ref(false);
+const showMoreDescriptionButton = ref(false);
+const suggestedVideos = ref(null);
 
 
 const props = defineProps({
@@ -59,14 +61,11 @@ const props = defineProps({
     },
 });
 
-const playlistToggled = ref(false); // can't seem to get it work directly with the store
-const showShare = ref(false);
-const showMoreDescriptionButton = ref(false);
 function togglePlaylistModal()  {
     if (props.type !== 'video') {
         return;
     }
-    playlistModalStore.videoIds = [props.item.id];
+    playlistModalStore.videoIds = [item.id];
 
 
     if (!playlistToggled.value) {
@@ -82,96 +81,32 @@ const share = () => {
     if (showShare.value) {
         shareModalStore.showMenu = false;
     } else {
-        contentModalStore.itemType = props.type;
-        contentModalStore.item = props.item;
+        contentModalStore.itemType = item.value.type;
+        contentModalStore.item = item.value;
         contentModalStore.shareContent();
     }
     showShare.value = !showShare.value;
-
 };
+
 function shouldShowMoreDescriptionButton() {
     const el = document.getElementById('description');
     const divHeight = el.offsetHeight;
     const lineHeight = parseInt(el.style.lineHeight);
     return divHeight / lineHeight >= 3;
 }
-onMounted( () => {
 
+onMounted( async () => {
     // close sidebar
     NavStore.showingNavigationDropdown = false;
 
-
-
-
     // get video / stream details
     if (props.type === 'video') {
-        // get
-        axios.get(route('api.video.show', {slug: props.slug})).then((response) => {
-            console.log(response);
-            item.value = response.data.video;
-            // should description show more button be shown?
-            showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
-        }).catch((error) => {
-            console.log(error);
-        });
-
-    } else {
+        item.value = await useContentRoutesStore().getVideo(props.slug);
+        suggestedVideos.value = await useContentRoutesStore().getVideos("popular", 10);
+        showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
     }
 
 
-    // get video suggestions
-
-    // get video comments
-
-    watch(() => props.item, (newVal, oldVal) => {
-        if (newVal !== null) {
-            // // should description show more button be shown?
-            // showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
-            //
-            // get video suggestions
-            // axios.get(`/api/videos/${props.item.id}/suggestions`).then((response) => {
-            //     props.suggestions = response.data.data;
-            // }).catch((error) => {
-            //     console.log(error);
-            // });
-            //
-            // // get video comments
-            // axios.get(`/api/videos/${props.item.id}/comments`).then((response) => {
-            //     props.comments = response.data.data;
-            // }).catch((error) => {
-            //     console.log(error);
-            // });
-            //
-            // playerStore.destroyPlayers().then(() => {
-            //     console.log("players destroyed");
-            //
-            //
-            //     // if video/stream was already playing by accessing the queueStore's index and is same as props.item.external_id, resume from where it left off
-            //     const queueStoreItem = queueStore.items[queueStore.index];
-            //     const queueStoreExternalId = queueStoreItem !== undefined ? queueStoreItem.object.external_id : null;
-            //
-            //
-            //
-            //     // check if video was on queue or not
-            //     if (queueStoreExternalId === null || queueStoreExternalId !== props.item.external_id) {
-            //
-            //         console.log("start from beginning");
-            //         playerStore.currentTimePosition = 0;
-            //         playerStore.buildPlayer('watch_player', props.item, 0, true);
-            //     } else {
-            //
-            //         console.log("resume from where it left off");
-            //         const currentTime = round(playerStore.currentTimePosition);
-            //         playerStore.buildPlayer('watch_player', props.item, currentTime, true);
-            //
-            //
-            //     }
-            //
-            //
-            // });
-
-        }
-    });
 
 });
 
@@ -192,7 +127,7 @@ onUnmounted(() => {
     //         let currentTime = 0;
     //
     //         // if the video that was playing was in the queue get time and rebuild player with time in mini player
-    //         if (queueStoreExternalId !== null && queueStoreExternalId === props.item.external_id) {
+    //         if (queueStoreExternalId !== null && queueStoreExternalId === item.external_id) {
     //             // get the current time from the playerStore
     //             currentTime = round(playerStore.currentTimePosition);
     //
@@ -232,7 +167,7 @@ onUnmounted(() => {
                         </div>
 
                         <!--end screen-->
-                        <EndScreen v-if="playerStore.players.length === 0 && item != null" :item="item" class="h-full w-full"/>
+                        <EndScreen v-if="playerStore.players.length === 0" :item="item" class="h-full w-full"/>
 
 
                     </div>
@@ -255,19 +190,15 @@ onUnmounted(() => {
                                 </div>
                                 <div class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
 
-
                                     <FeatureCreatorButton v-if="authStore.admin" :creator_id="item.creator.id"/>
 
-
                                     <TertiaryButton>
-                                        <LikeDislikeButtons :video="item" :orientationVertical="false"/>
+                                        <LikeDislikeButtons v-if="item" :item="item" :orientationVertical="false"/>
                                     </TertiaryButton>
-
-
 
                                     <div @click="share" class="flex flex-row cursor-pointer align-middle items-center">
                                         <ShareIcon class="h-5"/>
-                                        <p class="pl-2  ">Share</p>
+                                        <p class="pl-2">Share</p>
                                     </div>
 
                                     <div v-if="authStore.user" @click="togglePlaylistModal()" class="flex flex-row cursor-pointer align-middle items-center" >
@@ -345,7 +276,7 @@ onUnmounted(() => {
                         <p class="w-full text-center">Open Comments</p>
                     </TertiaryButton>
 
-                    <CommentSection :item="item"
+                    <CommentSection v-if="item != null" :item="item"
                                     v-bind:class="[showCommentSection ? 'flex' : 'hidden lg:flex']" />
 
                     <RowDivider class=" " :class="[theatre ? 'flex ' : 'flex lg:hidden ']"/>
@@ -386,6 +317,22 @@ onUnmounted(() => {
 
 
                 <!--suggested videos-->
+                <div v-if="suggestedVideos.length > 0">
+
+                    <div class="flex flex-row">
+                        <Title text="Recommended" class="px-5 e">
+                            <font-awesome-icon :icon="['fas', 'fire']" class="my-auto"/>
+                        </Title>
+                        <Title text="Channel" class="px-5">
+                            <font-awesome-icon :icon="['fas', 'heart']" class="my-auto"/>
+                        </Title>
+                    </div>
+
+                    <div id="miniPlayerItemsHolder" class="relative flex flex-col pb-1 max-h-48 overflow-y-auto">
+                        <div v-for="(item, index) in suggestedVideos">
+                        </div>
+                    </div>
+                </div>
 
 
 

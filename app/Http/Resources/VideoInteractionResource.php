@@ -20,7 +20,7 @@ class VideoInteractionResource extends JsonResource
             'video_id' => $this->video_id,
             'creator_id' => $this->viewer_id,
             'reported' => boolval($this->reported),
-            'liked' => boolval($this->liked),
+            'liked' => $this->liked,
             'disinterested' => boolval($this->disinterested),
             'view_point' => $this->view_point,
             'created_at' => Carbon::parse($this->created_at)->format('Y-m-d H:i:s'),

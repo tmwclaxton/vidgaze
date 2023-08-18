@@ -47,12 +47,16 @@ onMounted(() => {
     CommentSectionStore.item_type = props.item.type;
 
     // grab interactions first then comments
-    CommentSectionStore.getCommentInteractions();
     setTimeout(() => {
-        // grab comment parameter from url if it exists
-        const urlParams = new URLSearchParams(window.location.search);
-        const comment = urlParams.get('comment');
-        CommentSectionStore.fetchComments(category.value, null, comment);
+        CommentSectionStore.getCommentInteractions().then(() => {
+            // grab comment parameter from url if it exists
+            const urlParams = new URLSearchParams(window.location.search);
+            const comment = urlParams.get('comment');
+            // once interactions are grabbed, fetch comments
+            CommentSectionStore.fetchComments(category.value, null, comment);
+        });
+
+
     }, 200); // 200ms delay
 
 });
@@ -101,8 +105,9 @@ onMounted(() => {
 
             <div class="flex flex-col w-full mt-5 mb-2" v-if="CommentSectionStore.comments.length > 0">
 
-                <Comment v-for="comment in CommentSectionStore.comments.filter(comment => comment.parent_comment_id === null)"
-                         :comment="comment" :key="comment.id" />
+                <Comment v-if="CommentSectionStore.comments.length > 0"
+                         v-for="comment in CommentSectionStore.comments.filter(comment => comment.parent_comment_id === null)"
+                         :comment="comment" :key="comment.id" :item="props.item" />
 
                 <!--<x-button wire:click="loadMore" name="rect_button"-->
                 <!--          class=" mt-1 w-full generic_button_2">-->

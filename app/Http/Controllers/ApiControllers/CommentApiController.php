@@ -65,7 +65,7 @@ class CommentApiController extends Controller
             // default is order by
             'category' => 'in:' . implode(',', $this->allowedCategories) . '|nullable',
             'per_page' => 'nullable|integer',
-            'comment_ids' => 'nullable|array',
+            'comment_ids' => 'string|regex:/^[0-9,]+$/|nullable',
             'first_comment_id' => 'nullable|integer',
             'parent_comment_id' => 'nullable|integer'
         ]);
@@ -108,18 +108,22 @@ class CommentApiController extends Controller
 
         // if firstCommentId is not null, add where clause to query
         if ($first_comment_id !== null) {
-            $query->where('id', '!=', $first_comment_id);
+            $query->where('comments.id', '!=', $first_comment_id);
         }
+
+        // if parentCommentId is not null, add where clause to query
+        $query->where('comments.parent_comment_id', '=', $parent_comment_id);
 
         // if commentIds is not empty, add where clause to query
         if (!empty($comment_ids)) {
-            $query->whereNotIn('id', $comment_ids);
+            $query->whereNotIn('comments.id', $comment_ids);
         }
 
         // order the query by the orderByMethod passed in
         switch ($category) {
             // best and order by are the same
-            case 'best' || 'order by':
+            case 'order by':
+            case 'best':
                 $query->orderBy('like_count', 'DESC')
                     ->orderBy('dislike_count', 'ASC')
                     ->orderBy('created_at', 'DESC');
