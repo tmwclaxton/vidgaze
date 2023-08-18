@@ -45,6 +45,7 @@ const showCommentSection = ref(false);
 const playlistToggled = ref(false); // can't seem to get it work directly with the store
 const showShare = ref(false);
 const showMoreDescriptionButton = ref(false);
+const sugggestedVideos = ref(null);
 
 
 const props = defineProps({
@@ -62,7 +63,7 @@ function togglePlaylistModal()  {
     if (props.type !== 'video') {
         return;
     }
-    playlistModalStore.videoIds = [props.item.id];
+    playlistModalStore.videoIds = [item.id];
 
 
     if (!playlistToggled.value) {
@@ -91,6 +92,7 @@ function shouldShowMoreDescriptionButton() {
     const lineHeight = parseInt(el.style.lineHeight);
     return divHeight / lineHeight >= 3;
 }
+
 onMounted( async () => {
     // close sidebar
     NavStore.showingNavigationDropdown = false;
@@ -98,60 +100,11 @@ onMounted( async () => {
     // get video / stream details
     if (props.type === 'video') {
         item.value = await useContentRoutesStore().getVideo(props.slug);
-    } else {
-
+        sugggestedVideos.value = await useContentRoutesStore().getVideos("popular", 10);
+        showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
     }
 
 
-    watch(() => props.item, (newVal, oldVal) => {
-        if (newVal !== null) {
-            // // should description show more button be shown?
-            showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
-            //
-            // get video suggestions
-            // axios.get(`/api/videos/${props.item.id}/suggestions`).then((response) => {
-            //     props.suggestions = response.data.data;
-            // }).catch((error) => {
-            //     console.log(error);
-            // });
-            //
-            // // get video comments
-            // axios.get(`/api/videos/${props.item.id}/comments`).then((response) => {
-            //     props.comments = response.data.data;
-            // }).catch((error) => {
-            //     console.log(error);
-            // });
-            //
-            // playerStore.destroyPlayers().then(() => {
-            //     console.log("players destroyed");
-            //
-            //
-            //     // if video/stream was already playing by accessing the queueStore's index and is same as props.item.external_id, resume from where it left off
-            //     const queueStoreItem = queueStore.items[queueStore.index];
-            //     const queueStoreExternalId = queueStoreItem !== undefined ? queueStoreItem.object.external_id : null;
-            //
-            //
-            //
-            //     // check if video was on queue or not
-            //     if (queueStoreExternalId === null || queueStoreExternalId !== props.item.external_id) {
-            //
-            //         console.log("start from beginning");
-            //         playerStore.currentTimePosition = 0;
-            //         playerStore.buildPlayer('watch_player', props.item, 0, true);
-            //     } else {
-            //
-            //         console.log("resume from where it left off");
-            //         const currentTime = round(playerStore.currentTimePosition);
-            //         playerStore.buildPlayer('watch_player', props.item, currentTime, true);
-            //
-            //
-            //     }
-            //
-            //
-            // });
-
-        }
-    });
 
 });
 
@@ -172,7 +125,7 @@ onUnmounted(() => {
     //         let currentTime = 0;
     //
     //         // if the video that was playing was in the queue get time and rebuild player with time in mini player
-    //         if (queueStoreExternalId !== null && queueStoreExternalId === props.item.external_id) {
+    //         if (queueStoreExternalId !== null && queueStoreExternalId === item.external_id) {
     //             // get the current time from the playerStore
     //             currentTime = round(playerStore.currentTimePosition);
     //
@@ -235,15 +188,11 @@ onUnmounted(() => {
                                 </div>
                                 <div class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
 
-
                                     <FeatureCreatorButton v-if="authStore.admin" :creator_id="item.creator.id"/>
-
 
                                     <TertiaryButton>
                                         <LikeDislikeButtons v-if="item" :item="item" :orientationVertical="false"/>
                                     </TertiaryButton>
-
-
 
                                     <div @click="share" class="flex flex-row cursor-pointer align-middle items-center">
                                         <ShareIcon class="h-5"/>

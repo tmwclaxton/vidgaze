@@ -67,7 +67,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
         },
         // position menu so it doesn't go off screen
         setCoordinates() {
-            if (this.item !== null && this.itemType !== null) {
+            if (this.item !== null && this.itemType !== null && document.getElementById('dotsButton_' + this.itemType + '_' + this.item.id) !== null) {
                 const buttonRect = document.getElementById('dotsButton_' + this.itemType + '_' + this.item.id).getBoundingClientRect();
                 this.y = buttonRect.top + window.scrollY + 37;
                 this.x = buttonRect.left + window.scrollX ;

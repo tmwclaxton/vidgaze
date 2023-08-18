@@ -33,10 +33,12 @@ const props = defineProps({
     item: {
         type: Object,
         required: false,
+        default: null
     },
     comment: {
         type: Object,
-        required: false
+        required: false,
+        default: null
     },
     orientationVertical: {
         type: Boolean,
@@ -52,9 +54,9 @@ const props = defineProps({
 
 });
 const itemHandler = computed(() => {
-    if (props.comment !== undefined) {
+    if (props.comment !== null) {
         return props.comment;
-    } else if (props.item !== undefined) {
+    } else if (props.item !== null) {
         return props.item;
     } else {
         return null;
@@ -68,7 +70,7 @@ const toggleLike = () => {
         return;
     }
     let likeRoute = '';
-    if (props.comment === undefined) {
+    if (props.comment === null) {
         likeRoute = route('api.video.like.toggle', { video_id: props.item.id });
     } else {
         likeRoute = route('api.comment.like.toggle', { item_id: props.item.id, item_type: props.item.type, comment_id: props.comment.id });
@@ -109,7 +111,6 @@ const toggleDislike = () => {
         if (props.item.type === 'video') {
             dislikeRoute = route('api.video.dislike.toggle', { video_id: itemHandler.value.id  });
         }
-
     } else {
         dislikeRoute = route('api.comment.dislike.toggle', {  item_id: props.item.id, item_type: 'video', comment_id: props.comment.id   });
     }
@@ -152,20 +153,23 @@ const dislikeButtonClasses = computed(() => ({
 
 onMounted(async () => {
     setTimeout(async () => {
-        if (useAuthStore().user !== null && props.item !== undefined && props.comment === undefined) {
+        if (useAuthStore().user !== null && props.item !== null && props.comment === null) {
             const videoId = props.item.id;
             try {
                 const response = await axios.get(route('api.video.interaction', {video_id: videoId}));
                 const data = response.data.interaction;
-                if (data.liked === "like") {
-                    liked.value = true;
-                } else if (data.liked === "dislike") {
-                    disliked.value = true;
+                if (data !== null) {
+                    if (data.liked === "like") {
+                        liked.value = true;
+                    } else if (data.liked === "dislike") {
+                        disliked.value = true;
+                    }
                 }
             } catch (error) {
                 console.log(error);
             }
         } else {
+            // this is how comments set the like & dislike values as they get interactions in a batch
             // 0 both unselected, 1 like button, 2 dislike button
             if (props.setLikeValue === 1) {
                 liked.value = true;
