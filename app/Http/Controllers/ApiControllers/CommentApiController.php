@@ -109,8 +109,10 @@ class CommentApiController extends Controller
         // if firstCommentId is not null, add where clause to query
         if ($first_comment_id !== null) {
             $query->where('comments.id', '!=', $first_comment_id);
-
         }
+
+        // if parentCommentId is not null, add where clause to query
+        $query->where('comments.parent_comment_id', '=', $parent_comment_id);
 
         // if commentIds is not empty, add where clause to query
         if (!empty($comment_ids)) {

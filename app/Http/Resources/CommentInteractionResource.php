@@ -17,6 +17,7 @@ class CommentInteractionResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'comment_id' => $this->comment_id,
             'creator_id' => $this->creator_id,
             'liked' => $this->liked,
             // human readable format

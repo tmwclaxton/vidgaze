@@ -52,10 +52,10 @@ const props = defineProps({
 
 });
 const itemHandler = computed(() => {
-    if (props.item !== undefined) {
-        return props.item;
-    } else if (props.comment !== undefined) {
+    if (props.comment !== undefined) {
         return props.comment;
+    } else if (props.item !== undefined) {
+        return props.item;
     } else {
         return null;
     }
@@ -71,7 +71,7 @@ const toggleLike = () => {
     if (props.comment === undefined) {
         likeRoute = route('api.video.like.toggle', { video_id: props.item.id });
     } else {
-        likeRoute = route('api.comment.like.toggle', { item_id: props.item.id, item_type: 'video', comment_id: props.comment.id });
+        likeRoute = route('api.comment.like.toggle', { item_id: props.item.id, item_type: props.item.type, comment_id: props.comment.id });
     }
 
     // Send a POST request to the like route
@@ -105,7 +105,7 @@ const toggleDislike = () => {
     }
 
     let dislikeRoute = '';
-    if (props.comment === undefined) {
+    if (props.comment === null) {
         if (props.item.type === 'video') {
             dislikeRoute = route('api.video.dislike.toggle', { video_id: itemHandler.value.id  });
         }
@@ -152,7 +152,7 @@ const dislikeButtonClasses = computed(() => ({
 
 onMounted(async () => {
     setTimeout(async () => {
-        if (useAuthStore().user !== null && props.item !== undefined) {
+        if (useAuthStore().user !== null && props.item !== undefined && props.comment === undefined) {
             const videoId = props.item.id;
             try {
                 const response = await axios.get(route('api.video.interaction', {video_id: videoId}));

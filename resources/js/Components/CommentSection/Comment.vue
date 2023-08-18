@@ -11,17 +11,6 @@ const confirmStore = useConfirmModalStore();
 const CommentSectionStore = useCommentSectionStore();
 
 const name = 'Comment';
-const props = defineProps({
-    comment: {
-        type: Object,
-        required: true
-    },
-    simple: {
-        type: Boolean,
-        required: false,
-        default: false
-    }
-});
 const editComment = ref(false);
 const isCollapsed = ref(true);
 const replyComment = ref(false);
@@ -32,6 +21,21 @@ const editable = computed(() => {
 
     return (user && (user.creator.id === props.comment.owner.id || useAuthStore().admin));
 
+});
+const props = defineProps({
+    item: {
+        type: Object,
+        required: true,
+    },
+    comment: {
+        type: Object,
+        required: true
+    },
+    simple: {
+        type: Boolean,
+        required: false,
+        default: false
+    }
 });
 
 const share = () => {
@@ -141,9 +145,9 @@ const noRepliesText = computed(() => {
                                 <div class="  flex flex-row flex-wrap gap-2  font-semibold pt-3 hover:cursor-pointer select-none">
 
 
-                                    <TertiaryButton>
-                                        <!--<LikeDislikeButtons :orientation-vertical="false" :comment="comment" :video="props.item"-->
-                                        <!--                    :setLikeValue="CommentSectionStore.getCommentInteraction(comment.id)"/>-->
+                                    <TertiaryButton >
+                                        <LikeDislikeButtons :orientation-vertical="false" :comment="comment" :item="props.item" :key="'comment' + comment.id"
+                                                            :setLikeValue="CommentSectionStore.getCommentInteraction(comment.id)"/>
                                     </TertiaryButton>
 
                                     <span v-if="!simple && useAuthStore().user !== null" @click="replyComment = !replyComment">
@@ -219,7 +223,7 @@ const noRepliesText = computed(() => {
 
                 </div>
             <Comment v-if="!isCollapsed" v-for="comment in CommentSectionStore.comments.filter(comment =>  parseInt(comment.parent_comment_id) === props.comment.id )"
-                     :comment="comment" :key="comment.id" />
+                     :comment="comment" :key="comment.id"  :item="props.item"/>
             </div>
     </div>
 </template>
