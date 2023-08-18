@@ -27,6 +27,8 @@ import SuggestionsScreen from "@/Pages/Viewer/Watch/Partials/SuggestionsScreen/S
 import EndScreen from "@/Pages/Viewer/Watch/Partials/EndScreen.vue";
 import {useAuthStore} from "@/Stores/AuthStore";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
+import Title from "@/Components/General/Title.vue";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -45,7 +47,7 @@ const showCommentSection = ref(false);
 const playlistToggled = ref(false); // can't seem to get it work directly with the store
 const showShare = ref(false);
 const showMoreDescriptionButton = ref(false);
-const sugggestedVideos = ref(null);
+const suggestedVideos = ref(null);
 
 
 const props = defineProps({
@@ -100,7 +102,7 @@ onMounted( async () => {
     // get video / stream details
     if (props.type === 'video') {
         item.value = await useContentRoutesStore().getVideo(props.slug);
-        sugggestedVideos.value = await useContentRoutesStore().getVideos("popular", 10);
+        suggestedVideos.value = await useContentRoutesStore().getVideos("popular", 10);
         showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
     }
 
@@ -315,6 +317,22 @@ onUnmounted(() => {
 
 
                 <!--suggested videos-->
+                <div v-if="suggestedVideos.length > 0">
+
+                    <div class="flex flex-row">
+                        <Title text="Recommended" class="px-5 e">
+                            <font-awesome-icon :icon="['fas', 'fire']" class="my-auto"/>
+                        </Title>
+                        <Title text="Channel" class="px-5">
+                            <font-awesome-icon :icon="['fas', 'heart']" class="my-auto"/>
+                        </Title>
+                    </div>
+
+                    <div id="miniPlayerItemsHolder" class="relative flex flex-col pb-1 max-h-48 overflow-y-auto">
+                        <div v-for="(item, index) in suggestedVideos">
+                        </div>
+                    </div>
+                </div>
 
 
 
