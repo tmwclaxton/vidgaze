@@ -325,8 +325,8 @@ onUnmounted(() => {
                         <p class="w-full text-center">Open Comments</p>
                     </TertiaryButton>
 
-                    <!--<CommentSection :item="item"-->
-                    <!--                v-bind:class="[showCommentSection ? 'flex' : 'hidden lg:flex']" />-->
+                    <CommentSection :item="item"
+                                    v-bind:class="[showCommentSection ? 'flex' : 'hidden lg:flex']" />
 
                     <RowDivider class=" " :class="[theatre ? 'flex ' : 'flex lg:hidden ']"/>
 

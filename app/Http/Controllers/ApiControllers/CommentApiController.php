@@ -120,7 +120,8 @@ class CommentApiController extends Controller
         // order the query by the orderByMethod passed in
         switch ($category) {
             // best and order by are the same
-            case 'best' || 'order by':
+            case 'order by':
+            case 'best':
                 $query->orderBy('like_count', 'DESC')
                     ->orderBy('dislike_count', 'ASC')
                     ->orderBy('created_at', 'DESC');

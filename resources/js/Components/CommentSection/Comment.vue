@@ -66,13 +66,11 @@ const noRepliesText = computed(() => {
 <template>
     <div class="flex flex-row gap-x-2"  :class=" props.comment.parent_comment_id === null ? 'my-2' : ' '">
 
-        <div v-if="props.comment.parent_comment_id != null" class=" w-0.5 col-span-1  g-zinc-100 dark:bg-zinc-900 " :class=" props.comment.parent_comment_id != null ? 'mt-2' : ' '"></div>
+        <div v-if="props.comment.parent_comment_id != null" class=" w-0.5 col-span-1  g-zinc-100 dark:bg-zinc-900 mt-2"></div>
 
 
         <!--if parent comment id is set then no margin bottom otherwise mb-3-->
         <div class="w-full inline-flex flex-col " >
-
-
 
                 <div class="flex flex-col w-full">
                     <div id="comment" class='w-full  flex flex-row relative  ' :class=" props.comment.parent_comment_id != null ? 'mt-2' : ' '">
@@ -144,8 +142,8 @@ const noRepliesText = computed(() => {
 
 
                                     <TertiaryButton>
-                                        <LikeDislikeButtons :orientation-vertical="false" :comment="comment" :video="props.item"
-                                                            :setLikeValue="CommentSectionStore.getCommentInteraction(comment.id)"/>
+                                        <!--<LikeDislikeButtons :orientation-vertical="false" :comment="comment" :video="props.item"-->
+                                        <!--                    :setLikeValue="CommentSectionStore.getCommentInteraction(comment.id)"/>-->
                                     </TertiaryButton>
 
                                     <span v-if="!simple && useAuthStore().user !== null" @click="replyComment = !replyComment">
