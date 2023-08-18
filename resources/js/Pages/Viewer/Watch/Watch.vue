@@ -26,6 +26,7 @@ import SuggestionsScreen from "@/Pages/Viewer/Watch/Partials/SuggestionsScreen/S
 
 import EndScreen from "@/Pages/Viewer/Watch/Partials/EndScreen.vue";
 import {useAuthStore} from "@/Stores/AuthStore";
+import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -37,15 +38,13 @@ const authStore = useAuthStore();
 const name = 'Watch';
 
 const theatre = ref(false);
-
-
-
-const layout = AuthenticatedLayout;
-
 const item = ref(null);
 const comments = ref(null)
 const isDescriptionCollapsed = ref(true);
 const showCommentSection = ref(false);
+const playlistToggled = ref(false); // can't seem to get it work directly with the store
+const showShare = ref(false);
+const showMoreDescriptionButton = ref(false);
 
 
 const props = defineProps({
@@ -59,9 +58,6 @@ const props = defineProps({
     },
 });
 
-const playlistToggled = ref(false); // can't seem to get it work directly with the store
-const showShare = ref(false);
-const showMoreDescriptionButton = ref(false);
 function togglePlaylistModal()  {
     if (props.type !== 'video') {
         return;
@@ -95,38 +91,22 @@ function shouldShowMoreDescriptionButton() {
     const lineHeight = parseInt(el.style.lineHeight);
     return divHeight / lineHeight >= 3;
 }
-onMounted( () => {
-
+onMounted( async () => {
     // close sidebar
     NavStore.showingNavigationDropdown = false;
 
-
-
-
     // get video / stream details
     if (props.type === 'video') {
-        // get
-        axios.get(route('api.video.show', {slug: props.slug})).then((response) => {
-            console.log(response);
-            item.value = response.data.video;
-            // should description show more button be shown?
-            showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
-        }).catch((error) => {
-            console.log(error);
-        });
-
+        item.value = await useContentRoutesStore().getVideo(props.slug);
     } else {
+
     }
 
-
-    // get video suggestions
-
-    // get video comments
 
     watch(() => props.item, (newVal, oldVal) => {
         if (newVal !== null) {
             // // should description show more button be shown?
-            // showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
+            showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
             //
             // get video suggestions
             // axios.get(`/api/videos/${props.item.id}/suggestions`).then((response) => {
@@ -232,7 +212,7 @@ onUnmounted(() => {
                         </div>
 
                         <!--end screen-->
-                        <EndScreen v-if="playerStore.players.length === 0 && item != null" :item="item" class="h-full w-full"/>
+                        <EndScreen v-if="playerStore.players.length === 0" :item="item" class="h-full w-full"/>
 
 
                     </div>
@@ -260,14 +240,14 @@ onUnmounted(() => {
 
 
                                     <TertiaryButton>
-                                        <LikeDislikeButtons :video="item" :orientationVertical="false"/>
+                                        <LikeDislikeButtons v-if="item" :item="item" :orientationVertical="false"/>
                                     </TertiaryButton>
 
 
 
                                     <div @click="share" class="flex flex-row cursor-pointer align-middle items-center">
                                         <ShareIcon class="h-5"/>
-                                        <p class="pl-2  ">Share</p>
+                                        <p class="pl-2">Share</p>
                                     </div>
 
                                     <div v-if="authStore.user" @click="togglePlaylistModal()" class="flex flex-row cursor-pointer align-middle items-center" >
@@ -345,8 +325,8 @@ onUnmounted(() => {
                         <p class="w-full text-center">Open Comments</p>
                     </TertiaryButton>
 
-                    <CommentSection :item="item"
-                                    v-bind:class="[showCommentSection ? 'flex' : 'hidden lg:flex']" />
+                    <!--<CommentSection :item="item"-->
+                    <!--                v-bind:class="[showCommentSection ? 'flex' : 'hidden lg:flex']" />-->
 
                     <RowDivider class=" " :class="[theatre ? 'flex ' : 'flex lg:hidden ']"/>
 

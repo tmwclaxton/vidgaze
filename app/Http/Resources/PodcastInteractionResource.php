@@ -18,7 +18,7 @@ class PodcastInteractionResource extends JsonResource
         return [
             'id' => $this->id,
             'creator_id' => $this->creator_id,
-            'liked' => boolval($this->liked),
+            'liked' => $this->liked,
             'reported' => boolval($this->reported),
             'disinterested' => boolval($this->disinterested),
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(),

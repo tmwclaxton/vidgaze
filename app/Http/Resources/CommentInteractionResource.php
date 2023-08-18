@@ -18,7 +18,7 @@ class CommentInteractionResource extends JsonResource
         return [
             'id' => $this->id,
             'creator_id' => $this->creator_id,
-            'liked' => boolval($this->liked),
+            'liked' => $this->liked,
             // human readable format
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(),
             'updated_at' => Carbon::parse($this->updated_at)->diffForHumans(),

@@ -7,7 +7,6 @@ import {useAuthStore} from "@/Stores/AuthStore";
 export const useCommentSectionStore = defineStore('CommentSectionStore', {
     state: () => {
         return {
-            // showingStudioLinks: false,
             commentInteractions: [],
             comments: [],
             item: null,
@@ -75,7 +74,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
             }
         },
 
-        async getCommentInteractions() {
+        async getCommentInteractions(comment_id) {
             if (!useAuthStore().user) {
                 return;
             }
@@ -84,8 +83,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                 item_type: this.item_type,
             }))
                 .then(response => {
-                    // console.log(response.data);
-                    this.commentInteractions = response.data.result;
+                    this.commentInteractions = response.data.interactions;
                 })
                 .catch(error => {
                     console.log(error);
@@ -202,7 +200,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
         editComment(comment_id, body) {
             const toastStore = useToastStore();
 
-            axios.put(route('api.comment.update', {
+            axios.patch(route('api.comment.update', {
                 comment_id: comment_id,
                 item_id: this.item.id,
                 item_type: this.item_type,

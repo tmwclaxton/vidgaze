@@ -47,7 +47,7 @@ class VideoApiController extends Controller
         $request->validate([
             'per_page' => 'integer|min:1|max:50',
             // comma separated list of video ids, only allow commas and numbers
-            'video_ids' => 'string|regex:/^[0-9,]+$/',
+            'video_ids' => 'string|regex:/^[0-9,]+$/|nullable',
             'category' => 'string|in:' . implode(',', $this->allowedCategories),
             'platforms' => 'array|in:' . implode(',', $this->allowedPlatforms),
             'shorts' => 'boolean',

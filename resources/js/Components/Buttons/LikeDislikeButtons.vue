@@ -2,7 +2,7 @@
         <div @click="toggleLike" class="select-none flex gap-1 cursor-pointer justify-center "
              :class="[props.orientationVertical ? 'flex-col' : 'flex-row gap-x-3 ']">
             <ThumbsUpIcon class="transform transition-all duration-200  my-auto flex-shrink-0"  :class="[ props.orientationVertical ? 'mx-auto h-8' : 'h-6', likeButtonClasses]"  />
-            <p class="font-bold text-sm text-center my-auto" v-text="item.like_count ?? 0" />
+            <p class="font-bold text-sm text-center my-auto" v-text="itemHandler.like_count ?? 0" />
         </div>
 
         <!--vertical hr-->
@@ -12,7 +12,7 @@
              :class="[props.orientationVertical ? 'flex-col' : 'flex-row gap-x-3']">
             <!--combine likeButtonClass and the props.ortientaitonVertical classes-->
             <ThumbsDownIcon class="transform transition duration-200 my-auto   " :class="[ props.orientationVertical ? 'mx-auto h-8' : 'w-6 h-6', dislikeButtonClasses]" />
-            <p class="font-bold text-sm text-center my-auto " v-text="item.dislike_count ?? 0" />
+            <p class="font-bold text-sm text-center my-auto " v-text="itemHandler.dislike_count ?? 0" />
         </div>
 </template>
 
@@ -30,7 +30,7 @@ const name = 'LikeDislikeButtons';
 const liked = ref(false);
 const disliked = ref(false);
 const props = defineProps({
-    video: {
+    item: {
         type: Object,
         required: false,
     },
@@ -51,9 +51,9 @@ const props = defineProps({
     },
 
 });
-const item = computed(() => {
-    if (props.video !== undefined) {
-        return props.video;
+const itemHandler = computed(() => {
+    if (props.item !== undefined) {
+        return props.item;
     } else if (props.comment !== undefined) {
         return props.comment;
     } else {
@@ -69,23 +69,23 @@ const toggleLike = () => {
     }
     let likeRoute = '';
     if (props.comment === undefined) {
-        likeRoute = route('api.video.like.toggle', { item_id: props.video.id, item_type: 'video' });
+        likeRoute = route('api.video.like.toggle', { video_id: props.item.id });
     } else {
-        likeRoute = route('api.comment.like.toggle', { item_id: props.video.id, item_type: 'video', comment_id: props.comment.id });
+        likeRoute = route('api.comment.like.toggle', { item_id: props.item.id, item_type: 'video', comment_id: props.comment.id });
     }
 
     // Send a POST request to the like route
     axios.post(likeRoute)
         .then(response => {
             if (response.data.result === "like") {
-                item.value.like_count++;
+                itemHandler.value.like_count++;
                 liked.value = true;
                 if (disliked.value) {
-                    item.value.dislike_count--;
+                    itemHandler.value.dislike_count--;
                     disliked.value = false;
                 }
             } else {
-                item.value.like_count--;
+                itemHandler.value.like_count--;
                 liked.value = false;
             }
         })
@@ -106,9 +106,12 @@ const toggleDislike = () => {
 
     let dislikeRoute = '';
     if (props.comment === undefined) {
-        dislikeRoute = route('video.dislike.toggle', { videoId: item.value.id  });
+        if (props.item.type === 'video') {
+            dislikeRoute = route('api.video.dislike.toggle', { video_id: itemHandler.value.id  });
+        }
+
     } else {
-        dislikeRoute = route('comment.dislike.toggle', { commentId: props.comment.id  });
+        dislikeRoute = route('api.comment.dislike.toggle', {  item_id: props.item.id, item_type: 'video', comment_id: props.comment.id   });
     }
 
     // Send a POST request to the dislike route
@@ -116,14 +119,14 @@ const toggleDislike = () => {
         .then(response => {
 
             if (response.data.result === "dislike") {
-                item.value.dislike_count++;
+                itemHandler.value.dislike_count++;
                 disliked.value = true;
                 if (liked.value) {
-                    item.value.like_count--;
+                    itemHandler.value.like_count--;
                     liked.value = false;
                 }
             } else {
-                item.value.dislike_count--;
+                itemHandler.value.dislike_count--;
                 disliked.value = false;
             }
         })
@@ -148,29 +151,29 @@ const dislikeButtonClasses = computed(() => ({
 }));
 
 onMounted(async () => {
-    // console.log(props.setLikeValue)
-    if (useAuthStore().user !== null && props.setLikeValue === null) {
-        // check if user has liked or disliked the video
-        const videoId = props.video.id;
-        try {
-            const response = await axios.get(route('video.interaction', {videoId: videoId}));
-            const data = response.data;
-            if (data.liked === "like") {
+    setTimeout(async () => {
+        if (useAuthStore().user !== null && props.item !== undefined) {
+            const videoId = props.item.id;
+            try {
+                const response = await axios.get(route('api.video.interaction', {video_id: videoId}));
+                const data = response.data.interaction;
+                if (data.liked === "like") {
+                    liked.value = true;
+                } else if (data.liked === "dislike") {
+                    disliked.value = true;
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            // 0 both unselected, 1 like button, 2 dislike button
+            if (props.setLikeValue === 1) {
                 liked.value = true;
-            } else if (data.liked === "dislike") {
+            } else if (props.setLikeValue === 2) {
                 disliked.value = true;
             }
-        } catch (error) {
-            console.log(error);
         }
-    } else {
-        // 0 both unselected, 1 like button, 2 dislike button
-        if (props.setLikeValue === 1) {
-            liked.value = true;
-        } else if (props.setLikeValue === 2) {
-            disliked.value = true;
-        }
-    }
+    }, 500);
 
 });
 </script>
