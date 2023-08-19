@@ -13,9 +13,7 @@ const contentRoutesStore = useContentRoutesStore();
 const fetchStreams = async () => {
     await contentRoutesStore.getStreams(6)
         .then(response => {
-            setTimeout(() => {
-                streams.value = response;
-            }, 300); // 500ms delay
+            streams.value = response;
         })
 }
 
