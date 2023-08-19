@@ -19,6 +19,7 @@ export default class Player {
     ready = false; // is the player ready to play
     player = null; // the player object
     built = false; // is the player built
+    locked = false; // is the player locked i.e. a call to play or pause is in progress
 
     constructor(object, playerDiv, start_time = 0, autoplay = false, checkHistoryTime = false) {
         this.built = false;
@@ -29,9 +30,6 @@ export default class Player {
         this.autoplay = autoplay;
         this.checkHistoryTime = checkHistoryTime;
         this.start_time = start_time;
-        if (checkHistoryTime) {
-            this.start_time = this.getStartTimePlayer();
-        }
         this.currentTime = this.start_time;
         this.ready = false;
         this.player = null;
@@ -46,31 +44,36 @@ export default class Player {
         this.playing = false;
         this.player = null;
         this.currentTime = 0;
+        this.ready = false;
+        this.locked = false;
     }
 
     playPlayer() {
         this.playing = true;
+        this.locked = false;
     }
 
     pausePlayer() {
         this.playing = false;
+        this.locked = false;
     }
 
     // get the start time of the video by checking the history
     async getStartTimePlayer() {
-        if (useAuthStore().user === null) {
-            return 0;
+        if (useAuthStore().user === null || this.checkHistoryTime === false) {
+            this.start_time = 0;
+            return;
         }
         // get the view history for this video and set the start time to the last time they watched it
         try {
-            const response = await axios.get(route('api.video.interaction', {video_id: this.external_id}));
+            const response = await axios.get(route('api.video.interaction', {video_id: this.object.id}));
             const data = response.data;
-            if (data !== undefined && data.view_point !== null) {
-                return data.view_point;
+            if (data !== undefined && data.interaction !== null) {
+                this.start_time = data.interaction.view_point;
             }
         } catch (error) {
             console.log(error);
-            return 0;
+            this.start_time = 0;
         }
     }
 
@@ -78,5 +81,15 @@ export default class Player {
 
     }
 
+    isLocked() {
+        if (this.locked) {
+            console.log("player locked");
+            return true;
+        } else {
+            // player wasn't locked so lock it
+            this.locked = true;
+            return false;
+        }
+    }
 
 }

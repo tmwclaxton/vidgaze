@@ -16,14 +16,14 @@ export default class TwitchPlayer extends Player {
         });
 
         // on play start view record
-        this.player.addEventListener(Twitch.Player.PLAY, () => {
-            usePlayerStore().startViewRecord(this.external_id);
-        });
+        // this.player.addEventListener(Twitch.Player.PLAY, () => {
+        //     usePlayerStore().startViewRecord(this.external_id);
+        // });
 
         // on pause stop view record
-        this.player.addEventListener(Twitch.Player.PAUSE, () => {
-            usePlayerStore().pauseViewRecord(this.external_id);
-        });
+        // this.player.addEventListener(Twitch.Player.PAUSE, () => {
+        //     usePlayerStore().pauseViewRecord(this.external_id);
+        // });
 
         // on video end stop view record
         this.player.addEventListener(Twitch.Player.ENDED, () => {

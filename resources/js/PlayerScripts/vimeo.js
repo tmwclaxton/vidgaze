@@ -5,59 +5,61 @@ import {usePlayerStore} from "@/Stores/PlayerStore";
 
 // make a constructor function for the youtube player extending the player class
 export default class VimeoPlayer extends Player {
-    create() {
+    async create() {
+        await this.getStartTimePlayer().then(() => {
+            console.log(this.start_time)
+            let html_collection;
 
-        let html_collection;
+            this.player = new Vimeo.Player(this.playerDiv, {
+                id: this.external_id,
+                responsive: true,
+                autopause: !this.autoplay
+            });
 
-        this.player = new Vimeo.Player(this.playerDiv, {
-            id: this.external_id,
-            responsive: true,
-            autopause: ! this.autoplay
-        });
-
-        this.player.on('loaded', () => {
-            // wait for player to load then set start time
-            this.player.ready().then(function () {
-                // find the player by external_id and change ready to true
+            this.player.on('loaded', () => {
                 this.ready = true;
+                // wait for player to load then set start time
+                this.player.ready().then(function () {
+                    // find the player by external_id and change ready to true
 
-                // set up
-                if (this.autoplay) {
-                    this.player.play();
-                }
-                this.player.setCurrentTime(this.start_time);
+                    // set up
+                    if (this.autoplay) {
+                        this.player.play();
+                    }
+                    this.player.setCurrentTime(this.start_time);
 
-                //styling
+                    //styling
 
-                // this.debugMessage(document.getElementById(playerDiv.id).firstElementChild);
-                document.getElementById(this.playerDiv).firstElementChild.classList.add("h-full", "w-full","p-0", "relative");
-                document.getElementById(this.playerDiv).firstElementChild.removeAttribute("style");
+                    // this.debugMessage(document.getElementById(playerDiv.id).firstElementChild);
+                    document.getElementById(this.playerDiv).firstElementChild.classList.add("h-full", "w-full", "p-0", "relative");
+                    document.getElementById(this.playerDiv).firstElementChild.removeAttribute("style");
 
-                // reset all Vimeo players to default size
-                html_collection = document.getElementsByClassName("player");
-                for (let i = 0; i < html_collection.length; i++) {
-                    html_collection[i].removeAttribute("style");
-                }
-            }.bind(this));
+                    // reset all Vimeo players to default size
+                    html_collection = document.getElementsByClassName("player");
+                    for (let i = 0; i < html_collection.length; i++) {
+                        html_collection[i].removeAttribute("style");
+                    }
+                }.bind(this));
+            });
+
+            this.player.on('play', () => {
+                usePlayerStore().startViewRecord(this.external_id);
+            });
+
+            this.player.on('pause', () => {
+                usePlayerStore().pauseViewRecord(this.external_id);
+            });
+
+            this.player.on('ended', () => {
+                usePlayerStore().endVideo(this.external_id);
+            });
+
+            this.createPlayer();
         });
-
-        this.player.on('play', () => {
-            usePlayerStore().startViewRecord(this.external_id);
-        });
-
-        this.player.on('pause', () => {
-            usePlayerStore().pauseViewRecord(this.external_id);
-        });
-
-        this.player.on('ended', () => {
-            usePlayerStore().endVideo(this.external_id);
-        });
-
-        this.createPlayer()
     }
 
     async remove() {
-        if (this.ready === false) {
+        if (this.ready === false || this.isLocked()) {
             return false;
         }
         await toRaw(this.player).unload();
@@ -66,7 +68,7 @@ export default class VimeoPlayer extends Player {
     }
 
     async togglePlay() {
-        if (this.ready === false) {
+        if (this.ready === false || this.isLocked()) {
             return false;
         }
         await toRaw(this.player).play();
@@ -76,7 +78,7 @@ export default class VimeoPlayer extends Player {
     }
 
     async togglePause() {
-        if (this.ready === false) {
+        if (this.ready === false || this.isLocked()) {
             return false;
         }
         await toRaw(this.player).pause()
@@ -96,7 +98,7 @@ export default class VimeoPlayer extends Player {
         if (this.ready === false) {
             return false;
         }
-        this.playing = await toRaw(this.player).getPaused();
+        this.playing = !await toRaw(this.player).getPaused();
         return this.playing;
     }
 
