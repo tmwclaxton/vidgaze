@@ -63,7 +63,7 @@ export default class Player {
         }
         // get the view history for this video and set the start time to the last time they watched it
         try {
-            const response = await axios.get(route('video.interaction', {videoId: this.external_id}));
+            const response = await axios.get(route('api.video.interaction', {video_id: this.external_id}));
             const data = response.data;
             if (data !== undefined && data.view_point !== null) {
                 return data.view_point;

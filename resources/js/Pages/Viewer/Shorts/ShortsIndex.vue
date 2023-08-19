@@ -90,7 +90,7 @@ onMounted(async () => {
     setTimeout(async () => {
         shorts.value = [];
         fullyVisibleIndex.value = 0;
-        await playerStore.destroyPlayers();
+        await playerStore.destroyPlayers(); // destroy all players
         console.log('shorts index mounted');
 
         // if short slug is in url, play that short

@@ -196,7 +196,7 @@ class VideoApiController extends Controller
         }
 
         // Retrieve the videos
-        if ($query->exists()) {
+        if ($videos->count() > 0) {
             $videos = new VideoCollection($videos);
         }
 

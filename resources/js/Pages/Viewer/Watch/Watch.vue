@@ -89,6 +89,9 @@ const share = () => {
 };
 
 function shouldShowMoreDescriptionButton() {
+    if (document.getElementById('description') === null) {
+        return false;
+    }
     const el = document.getElementById('description');
     const divHeight = el.offsetHeight;
     const lineHeight = parseInt(el.style.lineHeight);
@@ -102,12 +105,20 @@ onMounted( async () => {
     // get video / stream details
     if (props.type === 'video') {
         item.value = await useContentRoutesStore().getVideo(props.slug);
+    }
+});
+
+
+// watch item for changes
+watch(item, async (newItem) => {
+    if (newItem !== null) {
         suggestedVideos.value = await useContentRoutesStore().getVideos("popular", 10);
         showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
+
+
+        await usePlayerStore().buildPlayer('watch_player', item.value, 0, true,true);
+
     }
-
-
-
 });
 
 onUnmounted(() => {
@@ -317,7 +328,7 @@ onUnmounted(() => {
 
 
                 <!--suggested videos-->
-                <div v-if="suggestedVideos.length > 0">
+                <div v-if="suggestedVideos && suggestedVideos.length > 0">
 
                     <div class="flex flex-row">
                         <Title text="Recommended" class="px-5 e">
