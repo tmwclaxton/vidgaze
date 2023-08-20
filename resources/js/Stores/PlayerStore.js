@@ -12,10 +12,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
         return {
             scriptsLoaded: false, // this is true when the scripts have been loaded
             players: [],
-            isViewRecording: false,  // this is true when we are recording the view of a video
-            viewRecordTimer: null, // the timer that is running to record the view
-            viewRecordDuration: 0, // this is the total time spent watching the video
-            endScreen: false
         }
     },
     getters: {
@@ -124,21 +120,10 @@ export const usePlayerStore = defineStore('PlayerStore', {
             }
             await player.create().then(() => {
                 // add player to players array
-                this.pushPlayer(player);
+                this.players.push( player );
             });
         },
 
-        pushPlayer(player) {
-            // check if player is already in players array
-            if (this.findPlayer(player.object.external_id)) {
-                console.log('player already in array')
-                return;
-            }
-
-            //create player and add to players array
-            this.players.push( player );
-
-        },
 
         findPlayer(external_id) {
             for (let i = 0; i < this.players.length; i++) {
@@ -169,89 +154,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 this.players = this.players.filter(player => player.object.external_id !== external_id);
             }
         },
-
-        endVideo(external_id) {
-            this.stopViewRecord();
-            console.log('end view record' + external_id);
-            if (!this.shortsPage) {
-                // check if queue has an item after this one
-                let queueStore = useQueueStore();
-
-                // wait 1 - as if we are deleting the item from the queue it will take a second to update
-                if (queueStore.items.length > queueStore.index + 1) {
-                    queueStore.changeIndex(queueStore.index + 1);
-                } else {
-                    const player = this.findPlayer(external_id);
-                    player.remove();
-                }
-            }
-        },
-
-        startViewRecord(external_id) {
-            console.log('start view record' + external_id);
-
-            const interval = 2.5;
-            if (!this.isViewRecording) {
-                this.isViewRecording = true;
-                let player = this.findPlayer(external_id);
-
-                // pause any current players
-                // iterate through players except the one we are starting
-                // this.players.filter(player => player.object.external_id !== external_id).forEach(item => {
-                //     player.togglePause(); // this won't work as other players that should be paused will run this function themselves
-                // });
-
-                const uuid = uuidv4();
-                this.viewRecordTimer = setInterval(async () => {
-                    try {
-                        const isPlaying = await player.isPlaying();
-                        if (isPlaying && this.players.length > 0) {
-                            const viewPoint = await player.getCurrentPosition();
-                            this.viewRecordDuration += interval;
-                            if (player.object.id && player.object.type && this.viewRecordDuration && viewPoint) {
-                                //using ziggy to get the view record route view.listener
-                                axios.post(route('api.view.listener'), {
-                                    item_id: player.object.id,
-                                    type: player.object.type,
-                                    watch_duration: parseInt(this.viewRecordDuration),
-                                    view_point: parseInt(viewPoint),
-                                    client_identifier: uuid
-                                });
-                            } else {
-                                console.log("missing data to record view");
-                            }
-                        } else {
-                            console.log('STARTVIEWRECORD: Error: Player is not playing');
-                        }
-                    } catch (error) {
-                        console.log('STARTVIEWRECORD: Error: ' + error);
-                        clearInterval(this.viewRecordTimer);
-                    }
-                }, interval * 1000);
-            }
-        },
-
-
-        pauseViewRecord(external_id = null) {
-            console.log('pause view record' + external_id);
-            if (this.isViewRecording) {
-                this.isViewRecording = false;
-                clearInterval(this.viewRecordTimer);
-            }
-
-        },
-
-        stopViewRecord(external_id = null) {
-            console.log('stop view record' + external_id);
-            if (this.isViewRecording) {
-                this.isViewRecording = false;
-                clearInterval(this.viewRecordTimer);
-            }
-            this.viewRecordDuration = 0;
-
-            this.endScreen = true;
-        },
-
 
     }
 })

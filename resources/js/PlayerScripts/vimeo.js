@@ -43,15 +43,15 @@ export default class VimeoPlayer extends Player {
             });
 
             this.player.on('play', () => {
-                usePlayerStore().startViewRecord(this.external_id);
+                this.startViewRecord();
             });
 
             this.player.on('pause', () => {
-                usePlayerStore().pauseViewRecord(this.external_id);
+                this.pauseViewRecord();
             });
 
             this.player.on('ended', () => {
-                usePlayerStore().endVideo(this.external_id);
+                this.endVideo();
             });
 
             this.createPlayer();
@@ -69,6 +69,7 @@ export default class VimeoPlayer extends Player {
 
     async togglePlay() {
         if (this.ready === false) {
+            console.log("vm not ready");
             return false;
         }
         await toRaw(this.player).play();
@@ -79,6 +80,7 @@ export default class VimeoPlayer extends Player {
 
     async togglePause() {
         if (this.ready === false) {
+            console.log("vm not ready");
             return false;
         }
         await toRaw(this.player).pause()
@@ -88,6 +90,7 @@ export default class VimeoPlayer extends Player {
 
     async getCurrentPosition() {
         if (this.ready === false) {
+            console.log("vm not ready");
             return false;
         }
         this.currentTime = await toRaw(this.player).getCurrentTime();
@@ -96,6 +99,7 @@ export default class VimeoPlayer extends Player {
 
     async isPlaying() {
         if (this.ready === false) {
+            console.log("vm not ready");
             return false;
         }
         this.playing = !await toRaw(this.player).getPaused();

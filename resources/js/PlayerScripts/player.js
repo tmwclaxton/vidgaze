@@ -6,6 +6,7 @@ import {useAuthStore} from "@/Stores/AuthStore";
 import axios from "axios";
 import {useQueueStore} from "@/Stores/QueueStore";
 import {usePlayerStore} from "@/Stores/PlayerStore";
+import {v4 as uuidv4} from "uuid";
 
 export default class Player {
     object = null;
@@ -23,6 +24,9 @@ export default class Player {
     built = false; // is the player built
     // locked = false; // is the player locked i.e. a call to play or pause is in progress
     endScreen = false; // is the player on the end screen
+    isViewRecording = false; // this is true when we are recording the view of a video
+    viewRecordTimer = null;// the timer that is running to record the view
+    viewRecordDuration = 0;// this is the total time spent watching the video
 
     constructor(object, playerDiv, start_time = 0, autoplay = false, checkHistoryTime = false) {
         this.built = false;
@@ -36,6 +40,10 @@ export default class Player {
         this.currentTime = this.start_time;
         this.ready = false;
         this.player = null;
+        this.endScreen = false;
+        this.isViewRecording = false;
+        this.viewRecordTimer = null;
+        this.viewRecordDuration = 0;
     }
 
     createPlayer() {
@@ -79,19 +87,76 @@ export default class Player {
     }
 
     endVideo() {
+        this.stopViewRecord();
+        console.log('end view record' + this.external_id);
+        if (!usePlayerStore().shortsPage) {
+            // check if queue has an item after this one
+            // wait 1 - as if we are deleting the item from the queue it will take a second to update
+            if (useQueueStore().items.length > useQueueStore().index + 1) {
+                useQueueStore().changeIndex(useQueueStore().index + 1);
+            } else {
+                this.player.remove();
+            }
+        }
+    }
+
+    startViewRecord() {
+        if (this.isViewRecording) {
+            console.log('STARTVIEWRECORD: Error: View recording already started');
+            return;
+        }
+
+        console.log('start view record' + external_id);
+        const interval = 2.5;
+        this.isViewRecording = true;
+        const uuid = uuidv4();
+        this.viewRecordTimer = setInterval(async () => {
+            try {
+                const isPlaying = await this.player.isPlaying();
+                if (isPlaying && this.isViewRecording) {
+                    const viewPoint = await this.player.getCurrentPosition();
+                    this.viewRecordDuration += interval;
+                    if (this.object.id && this.object.type && this.viewRecordDuration && viewPoint) {
+                        //using ziggy to get the view record route view.listener
+                        await axios.post(route('api.view.listener'), {
+                            item_id: this.object.id,
+                            type: this.object.type,
+                            watch_duration: parseInt(this.viewRecordDuration),
+                            view_point: parseInt(viewPoint),
+                            client_identifier: uuid
+                        });
+                    } else {
+                        console.log("missing data to record view");
+                    }
+                } else {
+                    console.log('STARTVIEWRECORD: Error: Player is not playing');
+                }
+            } catch (error) {
+                console.log('STARTVIEWRECORD: Error: ' + error);
+                clearInterval(this.viewRecordTimer);
+            }
+        }, interval * 1000);
+    }
+
+
+    pauseViewRecord() {
+        console.log('pause view record' + this.external_id);
+        if (this.isViewRecording) {
+            this.isViewRecording = false;
+            clearInterval(this.viewRecordTimer);
+        }
 
     }
 
-    // isLocked() {
-    //     if (this.locked) {
-    //         console.log("player locked");
-    //         return true;
-    //     } else {
-    //         console.log("player locking");
-    //         // player wasn't locked so lock it
-    //         this.locked = true;
-    //         return false;
-    //     }
-    // }
+    stopViewRecord() {
+        console.log('stop view record' + this.external_id);
+        if (this.isViewRecording) {
+            this.isViewRecording = false;
+            clearInterval(this.viewRecordTimer);
+        }
+        this.viewRecordDuration = 0;
+
+        this.endScreen = true;
+    }
 
 }

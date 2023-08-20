@@ -121,7 +121,7 @@ watch(item, async (newItem) => {
         if (queueStore.items.length === 0 || queueStore.currentItem.external_id === null || queueStore.currentItem.external_id !== item.value.external_id) {
             await usePlayerStore().buildPlayer('watch_player', item.value, 0, true,true);
             // remove all items from queue
-            queueStore.removeAll();
+            // queueStore.removeAll();
         } else {
             console.log('building queue player' + [useQueueStore().currentPlayer.currentTime]);
             // if in queue build player with time
@@ -134,13 +134,8 @@ onUnmounted(() => {
     // if the queue has items destroy the players and rebuild the player with the current item in the mini player
     if (queueStore.items.length > 0) {
         playerStore.destroyPlayers().then(() => {
-                // watch showMiniPlayer if it is changed to true check if queueStore has any items if so then build the player
-                const queueStoreCurrentItem = useQueueStore().currentItem;
-                // if the video that was playing was in the queue get time and rebuild player with time in mini player
-                if (queueStoreCurrentItem.external_id !== null && queueStoreCurrentItem.external_id === item.value.external_id) {
-                    playerStore.buildPlayer('miniplayer_div_holder', queueStoreCurrentItem, queueStore.currentPlayer.currentTime, true, false);
-                }
-            });
+            // queueStore.rebuildPlayer();
+        });
     } else {
         console.log('destroying all players');
         // otherwise destroy all players and remove the players in playerstore entirely

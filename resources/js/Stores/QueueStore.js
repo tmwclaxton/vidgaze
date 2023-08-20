@@ -104,6 +104,17 @@ export const useQueueStore = defineStore('QueueStore', {
             return false;
         },
 
+        rebuildPlayer() {
+            // watch showMiniPlayer if it is changed to true check if queueStore has any items if so then build the player
+            const queueStoreCurrentItem = useQueueStore().currentItem;
+            this.currentPlayer.endScreen = false;
+            // if the video that was playing was in the queue get time and rebuild player with time in mini player
+            if (this.currentItem.external_id !== null) {
+                usePlayerStore().buildPlayer('miniplayer_div_holder', this.currentItem, this.currentPlayer.currentTime, true, false).then(r => {
+                });
+            }
+        },
+
         changeIndexByExternalID(external_id) {
             for (let i = 0; i < this.items.length; i++) {
                 if (this.items[i].external_id === external_id) {

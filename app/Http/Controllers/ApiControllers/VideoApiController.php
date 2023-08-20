@@ -179,10 +179,9 @@ class VideoApiController extends Controller
             } else {
                 $amt = $per_page;
             }
-            $randomVideos = new VideoCollection(Video::where('visibility', 'public')->whereNotIn('id', $video_ids)->inRandomOrder()->take($amt)->get());
+            $randomVideos = Video::where('visibility', 'public')->whereNotIn('id', $video_ids)->inRandomOrder()->take($amt)->get();
 
             $videos = $videos->merge($randomVideos);
-
         }
 
         // if first_video_slug is not null, then find that video and put it at the beginning of the collection

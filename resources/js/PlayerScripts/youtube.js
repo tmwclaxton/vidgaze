@@ -32,19 +32,19 @@ export default class YouTubePlayer extends Player {
                     onStateChange: async (event) => {
                         if (event.data === 0) { // this state means the video has ended
                             // this.debugMessage('BUILDYouTube: YouTube video ended')
-                            usePlayerStore().endVideo(this.external_id);
+                            this.endVideo();
                         }
                         if (event.data === 1) { // this state means the video is playing
                             // this.debugMessage('BUILDYouTube: YouTube video playing')
-                            usePlayerStore().startViewRecord(this.external_id);
+                            this.startViewRecord();
                         }
                         if (event.data === 2) { // this state means the video is paused
                             // this.debugMessage('BUILDYouTube: YouTube video paused')
-                            usePlayerStore().pauseViewRecord(this.external_id);
+                            this.pauseViewRecord();
                         }
                         if (event.data === 3) { // this state means the video is buffering
                             // this.debugMessage('BUILDYouTube: YouTube video buffering')
-                            usePlayerStore().pauseViewRecord(this.external_id);
+                            this.pauseViewRecord();
                         }
                     },
                     onReady: (event) => {

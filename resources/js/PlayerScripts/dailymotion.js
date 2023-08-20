@@ -34,15 +34,15 @@ export default class DailymotionPlayer extends Player {
 
                 this.player.on(dailymotion.events.VIDEO_PLAY, () => {
                     this.ready = true;
-                    usePlayerStore().startViewRecord(this.external_id);
+                    this.startViewRecord();
                 });
 
                 this.player.on(dailymotion.events.VIDEO_PAUSE, () => {
-                    usePlayerStore().pauseViewRecord(this.external_id);
+                    this.pauseViewRecord();
                 });
 
                 this.player.on(dailymotion.events.VIDEO_END, () => {
-                    usePlayerStore().endVideo(this.external_id);
+                    this.endVideo();
                 });
 
                 // this.player.on(dailymotion.events.PLAYER_READY, () => {
