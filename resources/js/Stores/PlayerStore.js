@@ -19,13 +19,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
         }
     },
     getters: {
-        showMiniPlayer() {
-            // Compute the value of showMiniPlayer based on your logic
-            // For example, you can check if players array is not empty
-            let queueStore = useQueueStore();
-            // also depends on what page you are on ... // url doesn't contian shorts or watch
-            return queueStore.items !== undefined && queueStore.items.length > 0 && usePage().url !== '/shorts' && !route().current('watch.show');
-        },
         shortsPage() {
             // use ziggy to check if we are on the shorts page
             return route().current('videos.shorts');
@@ -53,6 +46,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
 
         async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false, checkViewHistoryStartTime = true) {
+            // console.log('building player for object: ', object);
             this.endScreen = false; // for watch page
             this.show = true; // for mini player
 
@@ -63,12 +57,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     console.log('scripts not loaded yet, trying again in 2 second')
                     this.buildPlayer(playerDivHolderID, object, startTime, autoplay, checkViewHistoryStartTime);
                 }, 2000);
-                return;
-            }
-
-            // check if player already exists
-            if (this.findPlayer(object.external_id)) {
-                console.log('player already exists');
                 return;
             }
 
@@ -99,20 +87,31 @@ export const usePlayerStore = defineStore('PlayerStore', {
             playerDiv.classList.add('h-full');
             playerDiv.classList.add('w-full');
 
+            // check if player already exists
+            const existingPlayer = this.findPlayer(object.external_id);
+            if (existingPlayer) {
+                console.log('player already exists');
+                existingPlayer.playerDiv = playerDiv;
+                existingPlayer.endScreen = false;
+                existingPlayer.checkHistoryTime = checkViewHistoryStartTime;
+                console.log('setting start time to: ', startTime);
+                existingPlayer.start_time = startTime;
+                existingPlayer.create();
+                return;
+            }
+
+
             let player = null;
             // // create player
             switch (object.preferred_source) {
                 case "YouTube":
-                    playerDiv.removeAttribute('style');
                     player = await new YouTubePlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime);
                     break;
                 case "Vimeo":
                     object.external_id = "855016876"
-                    playerDiv.removeAttribute('style');
                     player = await new VimeoPlayer(object, playerDiv.id, startTime, autoplay, checkViewHistoryStartTime);
                     break;
                 case "Dailymotion":
-                    playerDiv.removeAttribute('style');
                     object.external_id = "x8n4xse";
                     player = await new DailymotionPlayer(object, playerDiv.id, startTime, autoplay, checkViewHistoryStartTime);
                     break;
@@ -120,11 +119,12 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     player = await new TwitchPlayer(object, playerDiv, startTime, autoplay);
                 default:
                     console.log("ERROR: preferred source not found");
+                    return;
             }
-            player.create();
-
-            // // add player to players array
-            this.pushPlayer(player);
+            await player.create().then(() => {
+                // add player to players array
+                this.pushPlayer(player);
+            });
         },
 
         pushPlayer(player) {
@@ -148,14 +148,27 @@ export const usePlayerStore = defineStore('PlayerStore', {
             return false;
         },
 
-        async destroyPlayers() {
+        async destroyPlayers(fullDestroy = false) {
             // iterate through players and get object external_id and destroy div using that as id
             this.players.forEach(player => {
-                player.player.remove();
+                player.remove()
             });
 
+            if (fullDestroy) {
+                this.players = [];
+            }
+
             this.stopViewRecord();
-            this.players = [];
+        },
+
+        async destroyPlayer(external_id, fullDestroy = false) {
+            const player = this.findPlayer(external_id);
+            if (player) {
+                player.remove();
+            }
+            if (fullDestroy) {
+                this.players = this.players.filter(player => player.object.external_id !== external_id);
+            }
         },
 
         endVideo(external_id) {
@@ -201,8 +214,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
                                 axios.post(route('api.view.listener'), {
                                     item_id: player.object.id,
                                     type: player.object.type,
-                                    watch_duration: this.viewRecordDuration,
-                                    view_point: viewPoint,
+                                    watch_duration: parseInt(this.viewRecordDuration),
+                                    view_point: parseInt(viewPoint),
                                     client_identifier: uuid
                                 });
                             } else {
@@ -210,7 +223,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
                             }
                         } else {
                             console.log('STARTVIEWRECORD: Error: Player is not playing');
-                            clearInterval(this.viewRecordTimer);
                         }
                     } catch (error) {
                         console.log('STARTVIEWRECORD: Error: ' + error);

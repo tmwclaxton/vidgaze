@@ -1,10 +1,12 @@
 // import player.js
 import Player from './player.js';
 import {usePlayerStore} from "@/Stores/PlayerStore";
+import {toRaw} from "vue";
 
 // make a constructor function for the youtube player extending the player class
 export default class YouTubePlayer extends Player {
     async create() {
+        this.playerDiv.removeAttribute('style');
         await this.getStartTimePlayer().then(() => {
             // check if window.YT exists
             if (window.YT === undefined) {
@@ -23,11 +25,11 @@ export default class YouTubePlayer extends Player {
                     'modestbranding': 1,
                     'rel': 0,
                     'showinfo': 0,
-                    'start': this.startTime,
+                    'start': parseInt(this.startTime),
                 },
                 events: {
                     // when YouTube video ends run the endVideo function
-                    onStateChange: (event) => {
+                    onStateChange: async (event) => {
                         if (event.data === 0) { // this state means the video has ended
                             // this.debugMessage('BUILDYouTube: YouTube video ended')
                             usePlayerStore().endVideo(this.external_id);
@@ -58,37 +60,41 @@ export default class YouTubePlayer extends Player {
     }
 
     async remove() {
-        if (this.ready === false || this.isLocked()) {
+        if (this.ready === false) {
+            console.log("yt_player not ready");
             return false;
         }
-        this.player.destroy();
+        await toRaw(this.player).destroy();
         this.destroyPlayer();
         return true;
     }
 
     async togglePlay() {
-        if (this.ready === false || this.isLocked()) {
+        if (this.ready === false) {
+            console.log("yt_player not ready");
             return false;
         }
-        this.player.playVideo();
+        await toRaw(this.player).playVideo();
         this.playPlayer();
         return true;
     }
 
     async togglePause() {
-        if (this.ready === false || this.isLocked()) {
+        if (this.ready === false) {
+            console.log("yt_player not ready");
             return false;
         }
-        this.player.pauseVideo();
+        await toRaw(this.player).pauseVideo();
         this.pausePlayer();
         return true;
     }
 
     async getCurrentPosition() {
         if (this.ready === false) {
+            console.log("yt_player not ready");
             return false;
         }
-        this.currentTime = await this.player.getCurrentTime();
+        this.currentTime = await toRaw(this.player).getCurrentTime();
         return this.currentTime;
     }
 
@@ -96,7 +102,7 @@ export default class YouTubePlayer extends Player {
         if (this.ready === false) {
             return false;
         }
-        this.playing = await this.player.getPlayerState() === 1;
+        this.playing = await toRaw(this.player).getPlayerState() === 1;
         return this.playing;
     }
 }

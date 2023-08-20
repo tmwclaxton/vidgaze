@@ -6,6 +6,7 @@ import {usePlayerStore} from "@/Stores/PlayerStore";
 // make a constructor function for the youtube player extending the player class
 export default class DailymotionPlayer extends Player {
     async create() {
+        this.playerDiv.removeAttribute('style');
         await this.getStartTimePlayer().then( () => {
             dailymotion.createPlayer(this.playerDiv, {
                 video: this.external_id,
@@ -54,7 +55,7 @@ export default class DailymotionPlayer extends Player {
     }
 
     async remove() {
-        if (this.ready === false || this.isLocked()) {
+        if (this.ready === false) {
             return false;
         }
         await this.player.destroy();
@@ -63,7 +64,7 @@ export default class DailymotionPlayer extends Player {
     }
 
     async togglePlay() {
-        if (this.ready === false || this.isLocked()) {
+        if (this.ready === false) {
             return false;
         }
         await this.player.play();
@@ -72,7 +73,7 @@ export default class DailymotionPlayer extends Player {
     }
 
     async togglePause() {
-        if (this.ready === false || this.isLocked()) {
+        if (this.ready === false) {
             return false;
         }
         await this.player.pause();

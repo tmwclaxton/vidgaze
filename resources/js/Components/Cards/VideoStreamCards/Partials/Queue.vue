@@ -4,13 +4,7 @@
 import PlaylistIcon from '#icons/playlists.svg';
 import TickIcon from '#icons/tick.svg';
 import {computed, ref} from "vue";
-import {useToastStore} from "@/Stores/ToastStore.js";
 import {useQueueStore} from "@/Stores/QueueStore.js";
-import {usePage} from "@inertiajs/vue3";
-import axios from 'axios';
-
-const toastStore = useToastStore();
-const queueStore = useQueueStore();
 
 //props below
 const props = defineProps({
@@ -18,29 +12,27 @@ const props = defineProps({
     itemType: String,
 });
 const name = 'QueueList';
-
+const QueueOpen = ref(false);
 
 //computed inQueue
 const inQueue = computed(() => {
-    return queueStore.inQueue(props.item.id, props.itemType);
+    return useQueueStore().inQueue(props.item.external_id);
 });
-const QueueOpen = ref(false);
-const addToQueue = () => {
 
+const addToQueue = () => {
     if (inQueue.value) {
-        if(queueStore.remove(props.item.id, props.itemType)) {
+        if(useQueueStore().remove(props.item.external_id)) {
             inQueue.value = false;
         }
     } else {
-        if (queueStore.add({object: props.item,type: props.itemType,}) ) {
+        if (useQueueStore().add(props.item) ) {
             inQueue.value = true;
         }
-
     }
-
 }
 
 </script>
+
 <template>
     <div  @mouseenter="QueueOpen = true" @mouseleave="QueueOpen = false" @click="addToQueue()" key="queue"
          class="h-7 w-max text-sm px-1.5 z-1 pointer-events-auto cursor-pointer flex flex-row gap-x-3
@@ -56,7 +48,6 @@ const addToQueue = () => {
             <PlaylistIcon v-if="!inQueue" class="w-4 my-auto mx-auto"/>
         </div>
     </div>
-
 </template>
 
 

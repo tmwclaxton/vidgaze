@@ -6,8 +6,8 @@ import {usePlayerStore} from "@/Stores/PlayerStore";
 // make a constructor function for the youtube player extending the player class
 export default class VimeoPlayer extends Player {
     async create() {
+        // this.playerDiv.removeAttribute('style');
         await this.getStartTimePlayer().then(() => {
-            console.log(this.start_time)
             let html_collection;
 
             this.player = new Vimeo.Player(this.playerDiv, {
@@ -24,7 +24,7 @@ export default class VimeoPlayer extends Player {
 
                     // set up
                     if (this.autoplay) {
-                        this.player.play();
+                        this.togglePlay();
                     }
                     this.player.setCurrentTime(this.start_time);
 
@@ -59,7 +59,7 @@ export default class VimeoPlayer extends Player {
     }
 
     async remove() {
-        if (this.ready === false || this.isLocked()) {
+        if (this.ready === false) {
             return false;
         }
         await toRaw(this.player).unload();
@@ -68,7 +68,7 @@ export default class VimeoPlayer extends Player {
     }
 
     async togglePlay() {
-        if (this.ready === false || this.isLocked()) {
+        if (this.ready === false) {
             return false;
         }
         await toRaw(this.player).play();
@@ -78,7 +78,7 @@ export default class VimeoPlayer extends Player {
     }
 
     async togglePause() {
-        if (this.ready === false || this.isLocked()) {
+        if (this.ready === false) {
             return false;
         }
         await toRaw(this.player).pause()

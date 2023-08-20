@@ -5,9 +5,11 @@
 import {useAuthStore} from "@/Stores/AuthStore";
 import axios from "axios";
 import {useQueueStore} from "@/Stores/QueueStore";
+import {usePlayerStore} from "@/Stores/PlayerStore";
 
 export default class Player {
     object = null;
+    playerDiv = null; // the div / div id that will hold the player
     source = null; // platform
     playing = false; // is the player playing
     playerDivHolderID = null; // the id of the div that will hold the player
@@ -19,7 +21,8 @@ export default class Player {
     ready = false; // is the player ready to play
     player = null; // the player object
     built = false; // is the player built
-    locked = false; // is the player locked i.e. a call to play or pause is in progress
+    // locked = false; // is the player locked i.e. a call to play or pause is in progress
+    endScreen = false; // is the player on the end screen
 
     constructor(object, playerDiv, start_time = 0, autoplay = false, checkHistoryTime = false) {
         this.built = false;
@@ -37,31 +40,29 @@ export default class Player {
 
     createPlayer() {
         this.built = true;
+        this.endScreen = false;
     }
 
     destroyPlayer() {
+        // usePlayerStore().endVideo(this.external_id);
         this.built = false;
         this.playing = false;
         this.player = null;
-        this.currentTime = 0;
         this.ready = false;
-        this.locked = false;
+        this.endScreen = true;
     }
 
     playPlayer() {
         this.playing = true;
-        this.locked = false;
     }
 
     pausePlayer() {
         this.playing = false;
-        this.locked = false;
     }
 
     // get the start time of the video by checking the history
     async getStartTimePlayer() {
         if (useAuthStore().user === null || this.checkHistoryTime === false) {
-            this.start_time = 0;
             return;
         }
         // get the view history for this video and set the start time to the last time they watched it
@@ -81,15 +82,16 @@ export default class Player {
 
     }
 
-    isLocked() {
-        if (this.locked) {
-            console.log("player locked");
-            return true;
-        } else {
-            // player wasn't locked so lock it
-            this.locked = true;
-            return false;
-        }
-    }
+    // isLocked() {
+    //     if (this.locked) {
+    //         console.log("player locked");
+    //         return true;
+    //     } else {
+    //         console.log("player locking");
+    //         // player wasn't locked so lock it
+    //         this.locked = true;
+    //         return false;
+    //     }
+    // }
 
 }

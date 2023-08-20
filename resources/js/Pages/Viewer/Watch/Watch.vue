@@ -114,42 +114,36 @@ watch(item, async (newItem) => {
     if (newItem !== null) {
         suggestedVideos.value = await useContentRoutesStore().getVideos("popular", 10);
         showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
-
-
-        await usePlayerStore().buildPlayer('watch_player', item.value, 0, true,true);
-
+        // if not in queue build player like normal
+        if (queueStore.items.length === 0 || queueStore.currentItem.external_id === null || queueStore.currentItem.external_id !== item.value.external_id) {
+            console.log('building normal player');
+            await usePlayerStore().buildPlayer('watch_player', item.value, 0, true,true);
+            // remove all items from queue
+            // queueStore.removeAll();
+        } else {
+            console.log('building queue player' + [useQueueStore().currentPlayer.currentTime]);
+            // if in queue build player with time
+            await usePlayerStore().buildPlayer('watch_player', item.value, queueStore.currentPlayer.currentTime, true,true);
+        }
     }
 });
 
 onUnmounted(() => {
-    // // stop view record
-    // playerStore.stopViewRecord();
-    // // destroy players
-    // playerStore.destroyPlayers().then(() => {
-    //     console.log("players destroyed");
-    //
-    //     // watch showMiniPlayer if it is changed to true check if queueStore has any items if so then build the player
-    //     if (queueStore.items.length > 0) {
-    //
-    //
-    //         const queueStoreItem = queueStore.items[queueStore.index];
-    //         const queueStoreExternalId = queueStoreItem !== undefined ? queueStoreItem.object.external_id : null;
-    //
-    //         let currentTime = 0;
-    //
-    //         // if the video that was playing was in the queue get time and rebuild player with time in mini player
-    //         if (queueStoreExternalId !== null && queueStoreExternalId === item.external_id) {
-    //             // get the current time from the playerStore
-    //             currentTime = round(playerStore.currentTimePosition);
-    //
-    //         } else {
-    //             // get time by checking the server's view history time
-    //
-    //         }
-    //
-    //         playerStore.buildPlayer('miniplayer_div_holder', queueStoreItem.object, currentTime, true, true);
-    //     }
-    // });
+    // if the queue has items destroy the players and rebuild the player with the current item in the mini player
+    if (queueStore.items.length > 0) {
+        playerStore.destroyPlayers().then(() => {
+                // watch showMiniPlayer if it is changed to true check if queueStore has any items if so then build the player
+                const queueStoreCurrentItem = useQueueStore().currentItem;
+                // if the video that was playing was in the queue get time and rebuild player with time in mini player
+                if (queueStoreCurrentItem.external_id !== null && queueStoreCurrentItem.external_id === item.value.external_id) {
+                    playerStore.buildPlayer('miniplayer_div_holder', queueStoreCurrentItem, queueStore.currentPlayer.currentTime, true, false);
+                }
+            });
+    } else {
+        console.log('destroying all players');
+        // otherwise destroy all players and remove the players in playerstore entirely
+        playerStore.destroyPlayers(true);
+    }
 });
 
 

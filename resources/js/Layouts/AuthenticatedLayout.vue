@@ -18,25 +18,11 @@ const navStore = useNavStore();
 const name = 'AuthenticatedLayout';
 let showingNavigationDropdown = ref(false);
 
-const loadScript = (src, id) => {
-    if (!document.getElementById(id)) {
-        const tag = document.createElement('script');
-        tag.src = src;
-        tag.id = id;
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    }
-};
 
-// once 4 loadscripts are loaded update state of playerStore
-
-const loadScripts = async () => {
-
-};
 
 onMounted(() => {
 
-    loadScripts();
+    usePlayerStore().loadScripts();
     // use authStore to get user if token is set in local storage
     if (authStore.user === null && localStorage.getItem('token') !== null) {
         authStore.getUser();
