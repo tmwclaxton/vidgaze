@@ -6,7 +6,6 @@ import {usePlayerStore} from "@/Stores/PlayerStore";
 // make a constructor function for the youtube player extending the player class
 export default class DailymotionPlayer extends Player {
     async create() {
-        this.playerDiv.removeAttribute('style');
         await this.getStartTimePlayer().then( () => {
             dailymotion.createPlayer(this.playerDiv, {
                 video: this.external_id,
@@ -17,6 +16,8 @@ export default class DailymotionPlayer extends Player {
 
                 }
             }).then((resolvedPlayer) => {
+                // this.playerDiv.removeAttribute('style');
+
                 this.player = resolvedPlayer;
 
                 // don't remove these 2 lines, they are need otherwise the player disappears into the ether
