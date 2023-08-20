@@ -25,7 +25,7 @@ export default class YouTubePlayer extends Player {
                     'modestbranding': 1,
                     'rel': 0,
                     'showinfo': 0,
-                    'start': parseInt(this.startTime),
+                    'start': parseInt(this.start_time),
                 },
                 events: {
                     // when YouTube video ends run the endVideo function

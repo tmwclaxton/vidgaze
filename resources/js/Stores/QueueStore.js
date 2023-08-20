@@ -104,6 +104,14 @@ export const useQueueStore = defineStore('QueueStore', {
             return false;
         },
 
+        changeIndexByExternalID(external_id) {
+            for (let i = 0; i < this.items.length; i++) {
+                if (this.items[i].external_id === external_id) {
+                    this.changeIndex(i);
+                }
+            }
+        },
+
         changeIndex(index) {
             let playerDivHolderID = null;
             if (this.showMiniPlayer) {

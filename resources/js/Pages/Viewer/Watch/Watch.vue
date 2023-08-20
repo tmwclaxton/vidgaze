@@ -98,14 +98,17 @@ function shouldShowMoreDescriptionButton() {
     return divHeight / lineHeight >= 3;
 }
 
-onMounted( async () => {
-    // close sidebar
-    NavStore.showingNavigationDropdown = false;
+onMounted(  () => {
+    usePlayerStore().destroyPlayers().then(async () => {
+        // close sidebar
+        NavStore.showingNavigationDropdown = false;
 
-    // get video / stream details
-    if (props.type === 'video') {
-        item.value = await useContentRoutesStore().getVideo(props.slug);
-    }
+        // get video / stream details
+        if (props.type === 'video') {
+            item.value = await useContentRoutesStore().getVideo(props.slug);
+        }
+    });
+
 });
 
 
@@ -116,10 +119,9 @@ watch(item, async (newItem) => {
         showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
         // if not in queue build player like normal
         if (queueStore.items.length === 0 || queueStore.currentItem.external_id === null || queueStore.currentItem.external_id !== item.value.external_id) {
-            console.log('building normal player');
             await usePlayerStore().buildPlayer('watch_player', item.value, 0, true,true);
             // remove all items from queue
-            // queueStore.removeAll();
+            queueStore.removeAll();
         } else {
             console.log('building queue player' + [useQueueStore().currentPlayer.currentTime]);
             // if in queue build player with time

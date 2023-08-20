@@ -117,6 +117,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     break;
                 case "Twitch":
                     player = await new TwitchPlayer(object, playerDiv, startTime, autoplay);
+                    break;
                 default:
                     console.log("ERROR: preferred source not found");
                     return;
@@ -157,8 +158,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
             if (fullDestroy) {
                 this.players = [];
             }
-
-            this.stopViewRecord();
         },
 
         async destroyPlayer(external_id, fullDestroy = false) {
