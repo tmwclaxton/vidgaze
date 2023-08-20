@@ -71,11 +71,11 @@ export const useQueueStore = defineStore('QueueStore', {
         },
 
         remove(external_id) {
-          // items is in the form of [[object, type], [{id:2, ...}, "video"], ...]
             for (let i = 0; i < this.items.length; i++) {
                 // if the item is not in the queue
                 if (this.items[i].external_id !== external_id) {
-                    break;
+                    console.log("item not in queue");
+                    continue;
                 }
 
                 let changeIndexBool = false

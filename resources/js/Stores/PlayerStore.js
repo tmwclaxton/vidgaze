@@ -198,9 +198,9 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
                 // pause any current players
                 // iterate through players except the one we are starting
-                this.players.filter(player => player.object.external_id !== external_id).forEach(item => {
-                    player.togglePause();
-                });
+                // this.players.filter(player => player.object.external_id !== external_id).forEach(item => {
+                //     player.togglePause(); // this won't work as other players that should be paused will run this function themselves
+                // });
 
                 const uuid = uuidv4();
                 this.viewRecordTimer = setInterval(async () => {

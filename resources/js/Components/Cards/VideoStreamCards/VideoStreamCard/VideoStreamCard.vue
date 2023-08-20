@@ -132,7 +132,7 @@ const dotsIconShow = computed(() => {
 
                                     <div v-if="item.preferred_source != null" class=" info-tag dark:info-tag-dark flex flex-row gap-2 items-center align-middle pb-0.5 ">
                                         <font-awesome-icon :icon="['fas', 'location-dot']" class=" ml-0.5 h-3 my-auto" />
-                                        <p class="line-clamp-1 capitalize" v-text="(item.preferred_source)"/>
+                                        <p class="line-clamp-1" v-text="(item.preferred_source)"/>
                                     </div>
 
                                     <Link  v-if="item.category != null && !category_page" :href="route('category.show',{slug:item.category.slug})" class=" info-tag dark:info-tag-dark inline-flex mb-0.5 ">
