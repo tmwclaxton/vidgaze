@@ -126,9 +126,9 @@ watch(() => queueStore.items.length, () => {
 
 //watch for changes in the index of the queue if so then scroll to the new index
 watch(() => queueStore.index, (x, y) => {
-    if (expandQueue.value && queueStore.items.length > 1 && playerStore.showMiniPlayer) {
+    if (expandQueue.value && queueStore.items.length > 1 && useQueueStore().showMiniPlayer) {
         // get index of the current item then get element by id and scroll to it in the queueStoreHolder
-        const externalId = 'queueItem_'+  queueStore.items[queueStore.index].object.external_id;
+        const externalId = 'queueItem_'+  queueStore.items[queueStore.index].external_id;
         const element = document.getElementById(externalId);
         // console.log(element);
 
@@ -159,17 +159,17 @@ const closeMiniPlayer = () => {
 
 <template>
     <div ref="draggableDiv"   class="z-40 fixed shadow shadow-md
-     bg-white dark:bg-vidgaze-blue-dropdown rounded-xl overflow-hidden flex flex-col w-96" v-bind:class="playerStore.showMiniPlayer ? '' : 'opacity-0 w-0 h-0 pointer-events-none' ">
+     bg-white dark:bg-vidgaze-blue-dropdown rounded-xl overflow-hidden flex flex-col w-96" v-bind:class="useQueueStore().showMiniPlayer ? '' : 'opacity-0 w-0 h-0 pointer-events-none' ">
         <!--top part with creator & subscribe button-->
         <div v-if="queueStore.items[queueStore.index] !== undefined" class="overflow-hidden h-0 group-hover: h-full  group-hover: p-2 duration-300 ease-in-out transition delay-75 flex flex-row gap-x-2 ">
             <div class="flex-shrink-0 cursor-pointer h-12 my-auto aspect-square rounded-full bg-zinc-200 dark:bg-zinc-800 relative">
-                <img class="w-full h-full rounded-full" v-bind:src="queueStore.items[queueStore.index].object.creator.avatar_url">
+                <img class="w-full h-full rounded-full" v-bind:src="queueStore.items[queueStore.index].creator.avatar_url">
             </div>
             <div class=" flex-grow  rounded-full px-2 -mt-0.5 ">
                 <div class="flex flex-col   h-full">
                     <div class="flex flex-col ">
-                        <p class="font-bold text-lg text-left " v-text="queueStore.items[queueStore.index].object.creator.name"></p>
-                        <SubscribeButton :channel="queueStore.items[queueStore.index].object.creator" :key="[queueStore.index]"/>
+                        <p class="font-bold text-lg text-left " v-text="queueStore.items[queueStore.index].creator.name"></p>
+                        <SubscribeButton :channel="queueStore.items[queueStore.index].creator" :key="[queueStore.index]"/>
                     </div>
                 </div>
             </div>
@@ -178,16 +178,24 @@ const closeMiniPlayer = () => {
         </div>
 
         <!--player-->
-        <div class="flex justify-between   select-none">
-                <div class="player w-full aspect-21/12 overflow-hidden">
+        <div class="flex justify-between select-none">
+                <div class="player w-full aspect-21/12 overflow-hidden bg-black">
                     <!--this is where the embed gets build inside-->
-                    <div id="miniplayer_div_holder" :class="playerStore.players.length > 0 ? 'w-full h-full bg-black' : 'opacity-0'"/>
-                    <div v-if="playerStore.players.length === 0"
-                        class="w-full h-full bg-black flex flex-row">
-                        <div class="flex flex-col space-y-1 mx-auto my-auto cursor-pointer select-none"
+                    <div v-if="useQueueStore().currentPlayer !== null"
+                        id="miniplayer_div_holder" :class="(playerStore.players.length > 0 && !useQueueStore().currentPlayer.endScreen) ? 'w-full h-full bg-black' : 'opacity-0'"/>
+                    <!--end screen or loading screen-->
+                    <div class="w-full h-full bg-black flex flex-row">
+                        <div v-if="useQueueStore().items.length > 0 && useQueueStore().currentPlayer && useQueueStore().currentPlayer.endScreen"
+                            class="flex flex-col space-y-1 mx-auto my-auto cursor-pointer select-none"
                              @click="queueStore.changeIndex(queueStore.index)">
                             <font-awesome-icon icon="rotate-right" class="text-white h-5"/>
                             <p class="text-sm font-bold">Restart Video</p>
+                        </div>
+                        <div v-else class="flex flex-col space-y-1 mx-auto my-auto">
+                            <div class="flex flex-col space-y-1 mx-auto my-auto">
+                                <font-awesome-icon icon="spinner" class="text-white h-5 animate-spin"/>
+                                <p class="text-sm font-bold">Loading Video</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -197,7 +205,7 @@ const closeMiniPlayer = () => {
             <div class="flex flex-row justify-between">
                 <!--video title-->
                 <div class="flex flex-col">
-                    <p class="text-sm font-semibold text-left" v-text="queueStore.items[queueStore.index].object.title"></p>
+                    <p class="text-sm font-semibold text-left" v-text="queueStore.items[queueStore.index].title"></p>
                     <p class="text-xs font-normal text-left" >Queue · <span v-text="(queueStore.index) + 1 + ' / ' + queueStore.items.length"></span></p>
                 </div>
                 <!--expand queue button-->

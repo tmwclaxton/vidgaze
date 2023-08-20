@@ -20,14 +20,13 @@ const shorts = ref([]);
 const category = ref('');
 
 onMounted(async () => {
-    await fetchTrendingVideos();
+    await fetchTrendingVideos().then(async () => {
+        await debouncedFetchVideos(); // call it immediately on mount
+
+        window.addEventListener('scroll', handleScroll);
+    });
 
 
-    //wait , this gives time for trending_videos to be populated
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    await debouncedFetchVideos(); // call it immediately on mount
-
-    window.addEventListener('scroll', handleScroll);
 });
 
 onUnmounted(() => {
@@ -60,9 +59,7 @@ const fetchTrendingVideos = async () => {
     trending_videos.value = [];
     await contentRoutesStore.getVideos('trending', 6)
         .then(response => {
-            setTimeout(() => {
-                trending_videos.value = response
-            }, 200); // 500ms delay
+            trending_videos.value = response
         })
 
 };
@@ -71,13 +68,11 @@ const fetchVideos = async (videoArray) => {
     const videoIds = videoArray.map(video => video.id).join(',');
     const response = await contentRoutesStore.getVideos('popular', 40, videoIds)
 
-    setTimeout(() => {
-        if (response === undefined) {
-            window.removeEventListener('scroll', handleScroll);
-        } else {
-            videos.value = videos.value.concat(response);
-        }
-    }, 200); // 200ms delay
+    if (response === undefined) {
+        window.removeEventListener('scroll', handleScroll);
+    } else {
+        videos.value = videos.value.concat(response);
+    }
 
 };
 

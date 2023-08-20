@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\ApiControllers;
+use App\Enums\Kind;
 use App\Helpers\Tokens\TokenHelper;
 use App\Http\Controllers\Controller;
 use App\Models\LiveClient;
@@ -20,12 +21,28 @@ class ViewListenerController extends Controller
     private Stream $stream;
     private PodcastEpisode $podcast;
 
+    public array $allowedKinds = [
+        Kind::Video->value,
+        Kind::PodcastEpisode->value,
+        Kind::Stream->value,
+    ];
+
+
 
     /**
      * @throws \Exception
      */
     public function message(Request $request)
     {
+        $request->validate([
+            'watch_duration' => 'required|int',
+            'view_point' => 'required|int',
+            'item_id' => 'required|int',
+            'type' => 'in:' . implode(',', $this->allowedKinds),
+            'client_identifier' => 'required|string',
+        ]);
+
+
         $data = $request->all();
         $item_id = $data['item_id'] ?? null;
         $type = $data['type'] ?? null;
@@ -108,15 +125,15 @@ class ViewListenerController extends Controller
         }
 
         if (Auth()->check()) {
-
             // check if view point is less than 1 minute from the end of the video
             if ($view_point > $this->video->duration - 60) {
                 // if so record the view point as the start of the video
                 $view_point = 0;
             }
-
             // Record the view point only if logged in
             $view_point_recorded = $this->recordVideoViewPoint($liveClient->viewer_id, $item_id, $view_point);
+        } else {
+            $view_point_recorded = false;
         }
 
         //increment view count on video model
@@ -192,14 +209,15 @@ class ViewListenerController extends Controller
 
     private function recordVideoViewPoint(mixed $viewer_id, string $item_id, int $viewPoint): bool
     {
-
         //this records where in the video was watched to
-        VideoInteraction::updateOrCreate(
+        if (VideoInteraction::updateOrCreate(
             ['video_id' => $item_id],
             ['viewer_id' => $viewer_id]
-        )->update(['view_point' => $viewPoint]);
+        )->update(['view_point' => $viewPoint])) {
+            return true;
+        }
 
-        return true;
+        return false;
     }
 
     private function recordVideoView(mixed $viewer_id, string $item_id, string $session_id, int $watch_duration): array

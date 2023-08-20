@@ -6,6 +6,7 @@ import YouTubePlayer from "../PlayerScripts/youtube.js";
 import VimeoPlayer from "@/PlayerScripts/vimeo";
 import TwitchPlayer from "@/PlayerScripts/twitch";
 import DailymotionPlayer from "@/PlayerScripts/dailymotion";
+import { v4 as uuidv4 } from 'uuid';
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
@@ -18,13 +19,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
         }
     },
     getters: {
-        showMiniPlayer() {
-            // Compute the value of showMiniPlayer based on your logic
-            // For example, you can check if players array is not empty
-            let queueStore = useQueueStore();
-            // also depends on what page you are on ... // url doesn't contian shorts or watch
-            return queueStore.items !== undefined && queueStore.items.length > 0 && usePage().url !== '/shorts' && !route().current('watch.show');
-        },
         shortsPage() {
             // use ziggy to check if we are on the shorts page
             return route().current('videos.shorts');
@@ -51,117 +45,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
 
-        endVideo(external_id) {
-            this.stopViewRecord();
-            if (this.showMiniPlayer) {
-                // check if queue has an item after this one
-                let queueStore = useQueueStore();
-
-                // wait 1 - as if we are deleting the item from the queue it will take a second to update
-                if (queueStore.items.length > queueStore.index + 1) {
-                    queueStore.changeIndex(queueStore.index + 1);
-                } else {
-                    const player = this.findPlayer(external_id);
-                    player.remove();
-                }
-            } else if (this.shortsPage) {
-
-            } else {
-                // if we are on the watch page
-
-                // check if queue has an item after this one
-                let queueStore = useQueueStore();
-
-                // wait 1 - as if we are deleting the item from the queue it will take a second to update
-                if (queueStore.items.length > queueStore.index + 1) {
-                    queueStore.changeIndex(queueStore.index + 1);
-                } else {
-                    const player = this.findPlayer(external_id);
-                    player.remove();
-                }
-                return;
-            }
-        },
-
-        startViewRecord(external_id) {
-            // pause any current players
-            // iterate through players except the one we are starting
-
-            const interval = 2.5;
-            if (!this.isViewRecording) {
-                this.isViewRecording = true;
-                let player = this.findPlayer(external_id);
-
-                this.players.filter(player => player.object.external_id !== external_id).forEach(item => {
-                    player.pause();
-                });
-
-
-                this.viewRecordTimer = setInterval(async () => {
-                    try {
-                        const isPlaying = await player.isPlaying();
-                        if (isPlaying && this.players.length > 0) {
-                            this.viewRecordDuration += interval;
-                            if (player.object.id && player.object.type && this.viewRecordDuration && this.currentTimePosition) {
-                                //using ziggy to get the view record route view.listener
-                                axios.post(route('view.listener'), {
-                                    item_id: player.object.id,
-                                    type: player.object.type,
-                                    watch_duration: this.viewRecordDuration,
-                                    view_point: this.currentTimePosition
-                                });
-                            } else {
-                                console.log('null values');
-                            }
-
-
-                        } else {
-                            this.debugMessage('STARTVIEWRECORD: Error: Player is not playing');
-                            clearInterval(this.viewRecordTimer);
-
-                        }
-                    } catch (error) {
-                        this.debugMessage('STARTVIEWRECORD: Error: ' + error);
-                        clearInterval(this.viewRecordTimer);
-                    }
-                }, interval * 1000);
-            }
-        },
-
-
-        pauseViewRecord(external_id = null) {
-            this.debugMessage('pause view record' + external_id);
-            if (this.isViewRecording) {
-                this.isViewRecording = false;
-                clearInterval(this.viewRecordTimer);
-            }
-
-        },
-
-        stopViewRecord(external_id = null) {
-            this.debugMessage('stop view record' + external_id);
-            if (this.isViewRecording) {
-                this.isViewRecording = false;
-                clearInterval(this.viewRecordTimer);
-            }
-            this.viewRecordDuration = 0;
-
-            this.endScreen = true;
-        },
-
-        async destroyPlayers() {
-            // iterate through players and get object external_id and destroy div using that as id
-            this.players.forEach(player => {
-                player.remove();
-            });
-
-            this.stopViewRecord();
-            this.players = [];
-        },
-
-
-
         async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false, checkViewHistoryStartTime = true) {
+            // console.log('building player for object: ', object);
             this.endScreen = false; // for watch page
             this.show = true; // for mini player
 
@@ -169,14 +54,9 @@ export const usePlayerStore = defineStore('PlayerStore', {
             if (!this.scriptsLoaded) {
                 await this.loadScripts(); // don't worry about this running multiple times, it checks if the script by id exists before trying to add it again
                 setTimeout(() => {
-                    this.debugMessage('scripts not loaded yet, trying again in 2 second')
+                    console.log('scripts not loaded yet, trying again in 2 second')
                     this.buildPlayer(playerDivHolderID, object, startTime, autoplay, checkViewHistoryStartTime);
                 }, 2000);
-                return;
-            }
-
-            // check if player already exists
-            if (this.findPlayer(object.external_id)) {
                 return;
             }
 
@@ -207,39 +87,54 @@ export const usePlayerStore = defineStore('PlayerStore', {
             playerDiv.classList.add('h-full');
             playerDiv.classList.add('w-full');
 
+            // check if player already exists
+            const existingPlayer = this.findPlayer(object.external_id);
+            if (existingPlayer) {
+                console.log('player already exists');
+                existingPlayer.playerDiv = playerDiv;
+                existingPlayer.endScreen = false;
+                existingPlayer.checkHistoryTime = checkViewHistoryStartTime;
+                console.log('setting start time to: ', startTime);
+                existingPlayer.start_time = startTime;
+                existingPlayer.create();
+                return;
+            }
+
+
             let player = null;
             // // create player
             switch (object.preferred_source) {
                 case "YouTube":
-                    playerDiv.removeAttribute('style');
-                    player = new YouTubePlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime);
+                    player = await new YouTubePlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime);
                     break;
                 case "Vimeo":
-                    playerDiv.removeAttribute('style');
-                    player = new VimeoPlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime);
+                    object.external_id = "855016876"
+                    player = await new VimeoPlayer(object, playerDiv.id, startTime, autoplay, checkViewHistoryStartTime);
                     break;
                 case "Dailymotion":
-                    playerDiv.removeAttribute('style');
-                    player = new DailymotionPlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime);
+                    object.external_id = "x8n4xse";
+                    player = await new DailymotionPlayer(object, playerDiv.id, startTime, autoplay, checkViewHistoryStartTime);
                     break;
                 case "Twitch":
-                    player = new TwitchPlayer(object, playerDiv, startTime, autoplay);
+                    player = await new TwitchPlayer(object, playerDiv, startTime, autoplay);
                 default:
                     console.log("ERROR: preferred source not found");
+                    return;
             }
-
-            // // add player to players array
-            this.pushPlayer(player);
+            await player.create().then(() => {
+                // add player to players array
+                this.pushPlayer(player);
+            });
         },
 
         pushPlayer(player) {
             // check if player is already in players array
             if (this.findPlayer(player.object.external_id)) {
-                this.debugMessage('player already in array')
+                console.log('player already in array')
                 return;
             }
 
-            //create player and add to players array and then reset variables
+            //create player and add to players array
             this.players.push( player );
 
         },
@@ -251,6 +146,111 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 }
             }
             return false;
+        },
+
+        async destroyPlayers(fullDestroy = false) {
+            // iterate through players and get object external_id and destroy div using that as id
+            this.players.forEach(player => {
+                player.remove()
+            });
+
+            if (fullDestroy) {
+                this.players = [];
+            }
+
+            this.stopViewRecord();
+        },
+
+        async destroyPlayer(external_id, fullDestroy = false) {
+            const player = this.findPlayer(external_id);
+            if (player) {
+                player.remove();
+            }
+            if (fullDestroy) {
+                this.players = this.players.filter(player => player.object.external_id !== external_id);
+            }
+        },
+
+        endVideo(external_id) {
+            this.stopViewRecord();
+            console.log('end view record' + external_id);
+            if (!this.shortsPage) {
+                // check if queue has an item after this one
+                let queueStore = useQueueStore();
+
+                // wait 1 - as if we are deleting the item from the queue it will take a second to update
+                if (queueStore.items.length > queueStore.index + 1) {
+                    queueStore.changeIndex(queueStore.index + 1);
+                } else {
+                    const player = this.findPlayer(external_id);
+                    player.remove();
+                }
+            }
+        },
+
+        startViewRecord(external_id) {
+            console.log('start view record' + external_id);
+
+            const interval = 2.5;
+            if (!this.isViewRecording) {
+                this.isViewRecording = true;
+                let player = this.findPlayer(external_id);
+
+                // pause any current players
+                // iterate through players except the one we are starting
+                this.players.filter(player => player.object.external_id !== external_id).forEach(item => {
+                    player.togglePause();
+                });
+
+                const uuid = uuidv4();
+                this.viewRecordTimer = setInterval(async () => {
+                    try {
+                        const isPlaying = await player.isPlaying();
+                        if (isPlaying && this.players.length > 0) {
+                            const viewPoint = await player.getCurrentPosition();
+                            this.viewRecordDuration += interval;
+                            if (player.object.id && player.object.type && this.viewRecordDuration && viewPoint) {
+                                //using ziggy to get the view record route view.listener
+                                axios.post(route('api.view.listener'), {
+                                    item_id: player.object.id,
+                                    type: player.object.type,
+                                    watch_duration: parseInt(this.viewRecordDuration),
+                                    view_point: parseInt(viewPoint),
+                                    client_identifier: uuid
+                                });
+                            } else {
+                                console.log("missing data to record view");
+                            }
+                        } else {
+                            console.log('STARTVIEWRECORD: Error: Player is not playing');
+                        }
+                    } catch (error) {
+                        console.log('STARTVIEWRECORD: Error: ' + error);
+                        clearInterval(this.viewRecordTimer);
+                    }
+                }, interval * 1000);
+            }
+        },
+
+
+        pauseViewRecord(external_id = null) {
+            console.log('pause view record' + external_id);
+            if (this.isViewRecording) {
+                this.isViewRecording = false;
+                clearInterval(this.viewRecordTimer);
+            }
+
+        },
+
+        stopViewRecord(external_id = null) {
+            console.log('stop view record' + external_id);
+            if (this.isViewRecording) {
+                this.isViewRecording = false;
+                clearInterval(this.viewRecordTimer);
+            }
+            this.viewRecordDuration = 0;
+
+            this.endScreen = true;
         },
 
 
