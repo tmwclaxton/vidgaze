@@ -181,7 +181,7 @@ const closeMiniPlayer = () => {
         <div class="flex justify-between select-none" v-bind:id="useQueueStore().refreshMiniPlayer">
                 <div class="player w-full aspect-21/12 overflow-hidden bg-black">
                     <!--this is where the embed gets build inside-->
-                    <div
+                    <div v-if="useQueueStore().currentPlayer !== null"
                         id="miniplayer_div_holder" :class="(usePlayerStore().players.length > 0 && !useQueueStore().currentPlayer.endScreen) ? 'w-full h-full bg-black' : 'opacity-0'"/>
                     <!--end screen or loading screen-->
                     <div class="w-full h-full bg-black flex flex-row">

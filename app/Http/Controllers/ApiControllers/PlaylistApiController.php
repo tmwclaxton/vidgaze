@@ -163,6 +163,9 @@ class PlaylistApiController extends Controller
      */
     public function playlist_modal_refresh(Request $request)
     {
+        $request->validate([
+            'video_ids' => 'nullable|string'
+        ]);
         $playlists = Playlist::query()->where([
             ['creator_id', '=', Auth::user()->creator->id],
             ['visibility', '!=', 'hidden'],

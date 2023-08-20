@@ -38,6 +38,12 @@ class PlaylistVideoApiController extends Controller
      */
     public function create(Request $request)
     {
+        $request->validate([
+            'playlist_id' => 'required|int',
+            'video_ids' => 'regex:/^[0-9,]+$/|required',
+        ]);
+
+
         $playlistId = $request->playlist_id;
         $videoIds = explode(',', $request->video_ids);
         $playlistId = $this->checkForReservedPlaylist($playlistId);
@@ -63,7 +69,7 @@ class PlaylistVideoApiController extends Controller
         $successCount = 0;
         foreach ($videoIds as $videoId) {
 
-            if ($playlist->addVideo($videoId)) {
+            if ($playlist->addVideo(intval($videoId)))  {
                 $successCount++;
             }
 

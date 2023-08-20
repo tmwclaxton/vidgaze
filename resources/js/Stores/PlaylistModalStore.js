@@ -14,7 +14,9 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
     actions: {
         async getPlaylists() {
             if (useAuthStore().user !== null) {
-                axios.get(route('api.playlist.modal.refresh', {video_ids:  this.videoIds.join()}))
+                axios.post(route('api.playlist.modal.refresh', {
+                    video_ids:  this.videoIds.join()})
+                )
                     .then(response => {
                         this.playlists = response.data['playlists'];
                     })
@@ -27,7 +29,10 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
         async addVideosToPlaylist(playlistId) {
             if (useAuthStore().user !== null) {
                 let toastStore = useToastStore();
-                axios.post('/playlists/' + playlistId + '/videos', { video_ids: this.videoIds.join() })
+                axios.post(route('api.playlist.video.create', {
+                    playlist_id: playlistId,
+                    video_ids: this.videoIds.join()
+                }))
                     .then(response => {
                         this.getPlaylists();
                         toastStore.add({
@@ -41,12 +46,12 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
             }
         },
         async removeVideosFromPlaylist(playlistId) {
-
             if (useAuthStore().user !== null) {
                 let toastStore = useToastStore();
-
-
-                axios.delete('api/playlists/' + playlistId + '/videos', { data: { video_ids: this.videoIds.join() } })
+                axios.delete(route('api.playlist.video.destroy', {
+                    playlist_id: playlistId,
+                    video_ids: this.videoIds.join()
+                }))
                     .then(response => {
                         this.getPlaylists();
                         toastStore.add({
@@ -57,27 +62,16 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                     .catch(error => {
                         console.log(error);
                     });
-
-            // same as above but with ziggy route helper
-            axios.delete(route('playlists.videos.delete', {playlist: playlistId, video_ids: this.videoIds.join()}))
-                .then(response => {
-                    this.getPlaylists();
-                    toastStore.add({
-                        message:"Removed from playlist",
-                        type: 'warning',
-                    });
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-
              }
         },
         async createPlaylist(name, visibility) {
-
             if (useAuthStore().user !== null) {
                 let toastStore = useToastStore();
-                axios.post('/playlist/create', { name: name, visibility: visibility })
+                axios.post(
+                    route('api.playlist.create', {
+                        name: name,
+                        visibility: visibility
+                    } ))
                     .then(response => {
                         this.getPlaylists();
                         toastStore.add({
