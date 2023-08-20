@@ -1,12 +1,8 @@
 import {defineStore} from 'pinia'
-import {useQueueStore} from "@/Stores/QueueStore";
-import {usePage} from "@inertiajs/vue3";
-import axios from "axios";
 import YouTubePlayer from "../PlayerScripts/youtube.js";
 import VimeoPlayer from "@/PlayerScripts/vimeo";
 import TwitchPlayer from "@/PlayerScripts/twitch";
 import DailymotionPlayer from "@/PlayerScripts/dailymotion";
-import { v4 as uuidv4 } from 'uuid';
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
@@ -90,38 +86,35 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 existingPlayer.playerDiv = playerDiv;
                 existingPlayer.endScreen = false;
                 existingPlayer.checkHistoryTime = checkViewHistoryStartTime;
-                console.log('setting start time to: ', startTime);
                 existingPlayer.start_time = startTime;
+
                 existingPlayer.create();
                 return;
+            } else {
+                let player = null;
+                // // create player
+                switch (object.preferred_source) {
+                    case "YouTube":
+                        player = await new YouTubePlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime);
+                        break;
+                    case "Vimeo":
+                        player = await new VimeoPlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime);
+                        break;
+                    case "Dailymotion":
+                        player = await new DailymotionPlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime);
+                        break;
+                    case "Twitch":
+                        player = await new TwitchPlayer(object, playerDiv, startTime, autoplay);
+                        break;
+                    default:
+                        console.log("ERROR: preferred source not found");
+                        return;
+                }
+                await player.create().then(() => {
+                    // add player to players array
+                    this.players.push( player );
+                });
             }
-
-
-            let player = null;
-            // // create player
-            switch (object.preferred_source) {
-                case "YouTube":
-                    player = await new YouTubePlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime);
-                    break;
-                case "Vimeo":
-                    object.external_id = "855016876"
-                    player = await new VimeoPlayer(object, playerDiv.id, startTime, autoplay, checkViewHistoryStartTime);
-                    break;
-                case "Dailymotion":
-                    object.external_id = "x8n4xse";
-                    player = await new DailymotionPlayer(object, playerDiv.id, startTime, autoplay, checkViewHistoryStartTime);
-                    break;
-                case "Twitch":
-                    player = await new TwitchPlayer(object, playerDiv, startTime, autoplay);
-                    break;
-                default:
-                    console.log("ERROR: preferred source not found");
-                    return;
-            }
-            await player.create().then(() => {
-                // add player to players array
-                this.players.push( player );
-            });
         },
 
 

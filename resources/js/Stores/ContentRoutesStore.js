@@ -39,6 +39,10 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
                     console.log(error);
                 }
             )
+            if (response === undefined) {
+                return [];
+            }
+
             return response.data.videos.data;
         },
 

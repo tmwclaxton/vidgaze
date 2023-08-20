@@ -7,8 +7,8 @@ import {usePlayerStore} from "@/Stores/PlayerStore";
 export default class DailymotionPlayer extends Player {
     async create() {
         await this.getStartTimePlayer().then( () => {
-            dailymotion.createPlayer(this.playerDiv, {
-                video: this.external_id,
+            dailymotion.createPlayer(this.playerDiv.id, {
+                video: "x8n4xse", //this.external_id,
                 params: {
                     // startTime: this.startTime, // this doesn't work for some reason
                     autoplay: this.autoplay,
@@ -16,13 +16,10 @@ export default class DailymotionPlayer extends Player {
 
                 }
             }).then((resolvedPlayer) => {
-                // this.playerDiv.removeAttribute('style');
-
                 this.player = resolvedPlayer;
-
                 // don't remove these 2 lines, they are need otherwise the player disappears into the ether
-                document.getElementById(this.playerDiv).classList.add("h-full", "w-full", "p-0", "relative");
-                document.getElementById(this.playerDiv).removeAttribute('style');
+                document.getElementById(this.playerDiv.id).classList.add("h-full", "w-full", "p-0", "relative");
+                document.getElementById(this.playerDiv.id).removeAttribute('style');
 
                 this.player.on(dailymotion.events.PLAYER_VIDEOCHANGE, () => {
                     this.ready = true;
@@ -57,6 +54,7 @@ export default class DailymotionPlayer extends Player {
 
     async remove() {
         if (this.ready === false) {
+            console.log("dm player not ready");
             return false;
         }
         await this.player.destroy();
@@ -65,6 +63,10 @@ export default class DailymotionPlayer extends Player {
     }
 
     async togglePlay() {
+        if (this.ready === false) {
+            console.log("dm player not ready");
+            return false;
+        }
         if (this.ready === false) {
             return false;
         }
@@ -75,6 +77,7 @@ export default class DailymotionPlayer extends Player {
 
     async togglePause() {
         if (this.ready === false) {
+            console.log("dm player not ready");
             return false;
         }
         await this.player.pause();
@@ -84,6 +87,7 @@ export default class DailymotionPlayer extends Player {
 
     async getCurrentPosition() {
         if (this.ready === false) {
+            console.log("dm player not ready");
             return false;
         }
         const state = await this.player.getState();
@@ -94,6 +98,7 @@ export default class DailymotionPlayer extends Player {
     async isPlaying() {
         // console.log("isPlaying called");
         if (this.ready === false) {
+            console.log("dm player not ready");
             return false;
         }
         const state = await this.player.getState();

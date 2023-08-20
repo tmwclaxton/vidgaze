@@ -134,7 +134,7 @@ onUnmounted(() => {
     // if the queue has items destroy the players and rebuild the player with the current item in the mini player
     if (queueStore.items.length > 0) {
         playerStore.destroyPlayers().then(() => {
-            // queueStore.rebuildPlayer();
+            queueStore.rebuildPlayer();
         });
     } else {
         console.log('destroying all players');

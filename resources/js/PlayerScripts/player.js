@@ -88,7 +88,7 @@ export default class Player {
 
     endVideo() {
         this.stopViewRecord();
-        console.log('end view record' + this.external_id);
+        console.log('end view record: ' + this.external_id);
         if (!usePlayerStore().shortsPage) {
             // check if queue has an item after this one
             // wait 1 - as if we are deleting the item from the queue it will take a second to update
@@ -106,31 +106,38 @@ export default class Player {
             return;
         }
 
-        console.log('start view record' + external_id);
+        console.log('start view record' + this.external_id);
         const interval = 2.5;
         this.isViewRecording = true;
         const uuid = uuidv4();
         this.viewRecordTimer = setInterval(async () => {
             try {
-                const isPlaying = await this.player.isPlaying();
-                if (isPlaying && this.isViewRecording) {
-                    const viewPoint = await this.player.getCurrentPosition();
-                    this.viewRecordDuration += interval;
-                    if (this.object.id && this.object.type && this.viewRecordDuration && viewPoint) {
-                        //using ziggy to get the view record route view.listener
-                        await axios.post(route('api.view.listener'), {
-                            item_id: this.object.id,
-                            type: this.object.type,
-                            watch_duration: parseInt(this.viewRecordDuration),
-                            view_point: parseInt(viewPoint),
-                            client_identifier: uuid
-                        });
-                    } else {
-                        console.log("missing data to record view");
-                    }
-                } else {
+                const isPlaying = await this.isPlaying();
+                if (!isPlaying) {
+                    clearInterval(this.viewRecordTimer);
                     console.log('STARTVIEWRECORD: Error: Player is not playing');
+                    return;
                 }
+                if (!this.isViewRecording) {
+                    clearInterval(this.viewRecordTimer);
+                    console.log('STARTVIEWRECORD: Error: View recording was stopped');
+                    return
+                }
+
+                const viewPoint = await this.getCurrentPosition();
+                this.viewRecordDuration += interval;
+                if (!(this.object.id && this.object.type && this.viewRecordDuration && viewPoint)) {
+                    console.log("missing data to record view");
+                    return;
+                }
+                    //using ziggy to get the view record route view.listener
+                await axios.post(route('api.view.listener'), {
+                    item_id: this.object.id,
+                    type: this.object.type,
+                    watch_duration: parseInt(this.viewRecordDuration),
+                    view_point: parseInt(viewPoint),
+                    client_identifier: uuid
+                });
             } catch (error) {
                 console.log('STARTVIEWRECORD: Error: ' + error);
                 clearInterval(this.viewRecordTimer);
@@ -140,7 +147,7 @@ export default class Player {
 
 
     pauseViewRecord() {
-        console.log('pause view record' + this.external_id);
+        console.log('pause view record: ' + this.external_id);
         if (this.isViewRecording) {
             this.isViewRecording = false;
             clearInterval(this.viewRecordTimer);
@@ -149,7 +156,7 @@ export default class Player {
     }
 
     stopViewRecord() {
-        console.log('stop view record' + this.external_id);
+        console.log('stop view record: ' + this.external_id);
         if (this.isViewRecording) {
             this.isViewRecording = false;
             clearInterval(this.viewRecordTimer);

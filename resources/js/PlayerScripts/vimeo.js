@@ -10,17 +10,19 @@ export default class VimeoPlayer extends Player {
         await this.getStartTimePlayer().then(() => {
             let html_collection;
 
-            this.player = new Vimeo.Player(this.playerDiv, {
-                id: this.external_id,
+            this.player = new Vimeo.Player(this.playerDiv.id, {
+                id: 855016876, // this.external_id,
                 responsive: true,
                 autopause: !this.autoplay
             });
 
             this.player.on('loaded', () => {
-                this.ready = true;
                 // wait for player to load then set start time
                 this.player.ready().then(function () {
+
+                    console.log("vimeo player ready, start time: " + this.start_time + " autoplay: " + this.autoplay);
                     // find the player by external_id and change ready to true
+                    this.ready = true;
 
                     // set up
                     if (this.autoplay) {
@@ -31,8 +33,8 @@ export default class VimeoPlayer extends Player {
                     //styling
 
                     // this.debugMessage(document.getElementById(playerDiv.id).firstElementChild);
-                    document.getElementById(this.playerDiv).firstElementChild.classList.add("h-full", "w-full", "p-0", "relative");
-                    document.getElementById(this.playerDiv).firstElementChild.removeAttribute("style");
+                    document.getElementById(this.playerDiv.id).firstElementChild.classList.add("h-full", "w-full", "p-0", "relative");
+                    document.getElementById(this.playerDiv.id).firstElementChild.removeAttribute("style");
 
                     // reset all Vimeo players to default size
                     html_collection = document.getElementsByClassName("player");
