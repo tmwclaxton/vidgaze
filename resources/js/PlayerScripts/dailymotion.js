@@ -52,13 +52,13 @@ export default class DailymotionPlayer extends Player {
         });
     }
 
-    async remove() {
+    async removePlayer() {
         if (this.ready === false) {
             console.log("dm player not ready");
             return false;
         }
         await this.player.destroy();
-        this.destroyPlayer();
+        this.resetPlayerValues();
         return true;
     }
 

@@ -87,7 +87,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 existingPlayer.endScreen = false;
                 existingPlayer.checkHistoryTime = checkViewHistoryStartTime;
                 existingPlayer.start_time = startTime;
-
                 existingPlayer.create();
                 return;
             } else {
@@ -130,7 +129,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
         async destroyPlayers(fullDestroy = false) {
             // iterate through players and get object external_id and destroy div using that as id
             this.players.forEach(player => {
-                player.remove()
+                player.removePlayer()
             });
 
             if (fullDestroy) {
@@ -141,7 +140,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
         async destroyPlayer(external_id, fullDestroy = false) {
             const player = this.findPlayer(external_id);
             if (player) {
-                player.remove();
+                player.removePlayer();
             }
             if (fullDestroy) {
                 this.players = this.players.filter(player => player.object.external_id !== external_id);

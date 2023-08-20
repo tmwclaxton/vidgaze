@@ -37,12 +37,12 @@ export default class TwitchPlayer extends Player {
         this.createPlayer()
     }
 
-    async remove() {
+    async removePlayer() {
         if (this.ready === false) {
             return false;
         }
         this.player.destroy();
-        this.destroyPlayer();
+        this.resetPlayerValues();
         return true;
     }
 

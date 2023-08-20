@@ -4,11 +4,11 @@ import {usePage} from "@inertiajs/vue3";
 export const useQueueStore = defineStore('QueueStore', {
     state: () => {
         return {
-            debug: true,
             items: [] ,
             index: 0,
             playlist: null,
             autoplay: false,
+            refreshMiniPlayer: "",
         }
     },
     getters: {

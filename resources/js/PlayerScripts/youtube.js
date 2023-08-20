@@ -59,13 +59,13 @@ export default class YouTubePlayer extends Player {
         });
     }
 
-    async remove() {
+    async removePlayer() {
         if (this.ready === false) {
             console.log("yt_player not ready");
             return false;
         }
         await toRaw(this.player).destroy();
-        this.destroyPlayer();
+        this.resetPlayerValues();
         return true;
     }
 
