@@ -6,7 +6,7 @@ import DailymotionPlayer from "@/PlayerScripts/dailymotion";
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
-            scriptsLoaded: false, // this is true when the scripts have been loaded
+            scriptsLoaded: false,
             players: [],
         }
     },
