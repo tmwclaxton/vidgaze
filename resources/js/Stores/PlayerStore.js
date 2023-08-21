@@ -38,6 +38,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         isScriptLoaded(platform) {
+            // this is so if one scripts takes longer to load or fails to load it doesn't stop the others from loading
+            // but still prevents the player from being built until the script is loaded
             switch (platform) {
                 case 'YouTube':
                     return window.YT !== undefined && window.YT.Player !== undefined;

@@ -19,6 +19,12 @@ export default class VimeoPlayer extends Player {
                     // wait for player to load then set start time
                     await toRaw(this.player).ready().then(function () {
                         this.playerDiv.removeAttribute('style');
+                        // get the child div of the player div and add remove style attribute
+                        if (this.short) {
+                            // this removes the padding from the player and centers the video vertically
+                            // but if you remove it normally it will add a 2px padding at the bottom
+                            document.getElementById(this.playerDiv.id).firstElementChild.removeAttribute("style");
+                        }
                         this.loaded = true;
                         this.playerSetup();
                     }.bind(this));

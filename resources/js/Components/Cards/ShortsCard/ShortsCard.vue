@@ -46,14 +46,14 @@ const dotsIconShow = computed(() => {
         </div>
         <div  v-if="!hideItem">
             <div class="relative aspect-[10/16] overflow-hidden rounded-xl">
-                <a :href="'shorts?short=' + item.slug">
+                <Link :href="'shorts?short=' + item.slug">
                     <img class="object-none w-full  h-full bg-zinc-900" v-bind:src="item.thumbnail_url"   alt=""/>
-                </a>
+                </Link>
 
 
                 <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2
                 opacity-0 group-hover:opacity-100 flex duration-300 ease-in-out transition
-                p-3  cursor-pointer
+                p-3  cursor-pointer pointer-events-none
                 bg-zinc-100/75 dark:bg-black/75 rounded-xl  ">
                     <font-awesome-icon :icon="['fas', 'play']" class="h-4 aspect-square text-zinc-800 dark:text-white" />
                 </div>
@@ -82,21 +82,21 @@ const dotsIconShow = computed(() => {
                         <div class=" flex flex-row pt-1">
                             <div class=" mt-1 flex-shrink-0">
                                 <div v-if="!channel_page" class="flex-shrink-0 pr-2">
-                                    <a class="without-ring " :href="route('channel.show', {creator: {slug: item.creator.slug}})">
+                                    <Link class="without-ring " :href="route('channel.show', {creator: {slug: item.creator.slug}})">
 
                                         <img v-if="item.creator.avatar_url != null"
                                              class=" pointer-events-auto w-9 aspect-square rounded-full bg-zinc-800 "
                                              v-bind:src="item.creator.avatar_url">
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                             <div class="my-auto">
                                 <div class="  space-y-0    text-xs font-normal">
-                                    <a v-if="!channel_page" :href="route('channel.show', {creator: {slug: item.creator.slug}})"
+                                    <Link v-if="!channel_page" :href="route('channel.show', {creator: {slug: item.creator.slug}})"
                                        class="w-max without-ring pointer-events-auto line-clamp-1 text-hover dark:text-hover-dark  ">
 
                                         <p class="text-base font-semibold" v-text="item.creator.name"></p>
-                                    </a>
+                                    </Link>
                                 </div>
 
                             </div>

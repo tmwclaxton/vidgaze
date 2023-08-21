@@ -53,7 +53,8 @@ const fetchShorts = async (first_video_slug = null) => {
         console.log('no more shorts');
         return;
     }
-    shorts.value = shorts.value.concat(videos);
+    // concat if external_id isn't already in shorts
+    shorts.value = shorts.value.concat(videos.filter(video => !shorts.value.some(short => short.external_id === video.external_id)));
 };
 
 // this basically watches what index shorts is currently on and then calls the watchAction function
