@@ -98,7 +98,7 @@ onUnmounted(() => {
     observer.disconnect();
 });
 
-const sizeToHide = 1268;
+const sizeToHide = 958;
 
 // show comment section shoould be computed property if screen size is mobile
 const showCommentSectionMobile = computed(() => {
