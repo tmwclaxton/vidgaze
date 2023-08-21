@@ -40,8 +40,10 @@ onMounted(async () => {
         const firstShort = urlParams.get('short') || null;
 
         await fetchShorts(firstShort).finally(() => {
-            watchAction(0);
+            watchAction(0)
         });
+
+
     });
 });
 
@@ -65,31 +67,24 @@ watch(fullyVisibleIndex, (index) => {
 });
 
 
-function watchAction(index, i = 0) {
+async function watchAction(index, i = 0) {
     if (shorts.value === undefined || shorts.value.length === 0) {
         setTimeout(() => {
-            if (i > 2) {
+            if (i > 6) {
                 console.log('shorts is undefined or empty');
                 return;
             } else {
+                console.log('retrying watchAction')
                 watchAction(index, i + 1);
             }
         }, 1000);
         return;
     }
-    console.log(['watchAction: ', index])
+    // console.log(['watchAction: ', index])
 
-    buildPlayers();
-
-    useCommentSectionStore().item = shorts.value[index];
-    useCommentSectionStore().item_type = shorts.value[index].type;
-
-    // grab interactions first then comments
-    useCommentSectionStore().getCommentInteractions().then(() => {
-        useCommentSectionStore().fetchComments("order by");
+    await buildPlayers().then(() => {
+        playFullyVisiblePlayer();
     });
-
-    playFullyVisiblePlayer();
 }
 
 function createVisibleIndices() {
@@ -115,12 +110,12 @@ function createVisibleIndices() {
     visibleIndices = visibleIndices.filter(index => index >= 0 && index < shorts.value.length);
 
     // get external ids of shorts that should be visible
-    console.log(['These shorts should be loaded',  visibleIndices.map(index => shorts.value[index].external_id)]);
+    // console.log(['These shorts should be loaded',  visibleIndices.map(index => shorts.value[index].external_id)]);
     return visibleIndices;
 
 }
 
-function buildPlayers() {
+async function buildPlayers() {
     // make a list of the indices of the shorts that should be visible
     let visibleIndices = createVisibleIndices();
 
@@ -135,22 +130,16 @@ function buildPlayers() {
             return;
         }
 
-        // if visible player doesn't exist, build it and play it
         let id = 'player_div_holder_' + shorts.value[visibleIndex].external_id; // external_id is the ref to the div
         let object = shorts.value[visibleIndex];
         let player = usePlayerStore().findPlayer(shorts.value[visibleIndex].external_id)
-        if (!player.external_id || !player.built) {
-            console.log('BUILDING PLAYER ' + shorts.value[visibleIndex].external_id);
-            usePlayerStore().buildPlayer(id, object, 0, false, false, true);
-        } else {
-            // if player exists and it's not the fully visible id, pause it
-            console.log([
-                player.external_id,
-                shorts.value[fullyVisibleIndex.value].external_id
-            ]);
 
+        // if a visible player doesn't exist built it
+        if (!player.external_id || !player.built) {
+            await usePlayerStore().buildPlayer(id, object, 0, false, false, true);
+        } else {
+            // if player exists but it's not the fully visible id, pause it
             if (player.external_id !== shorts.value[fullyVisibleIndex.value].external_id) {
-                console.log('PAUSING PLAYER ' + player.external_id);
                 player.togglePause();
             }
         }
@@ -163,7 +152,7 @@ function buildPlayers() {
             let player = usePlayerStore().findPlayer(shorts.value[i].external_id)
 
             if (player) {
-                usePlayerStore().destroyPlayer(shorts.value[i].external_id, true, true);
+                await usePlayerStore().destroyPlayer(shorts.value[i].external_id, true, true);
             }
         }
     }

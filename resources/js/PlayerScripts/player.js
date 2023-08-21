@@ -44,14 +44,6 @@ export default class Player {
         this.isViewRecording = false;
     }
 
-    playPlayer() {
-        this.playing = true;
-    }
-
-    pausePlayer() {
-        this.playing = false;
-    }
-
     // get the start time of the video by checking the history
     async getStartTimePlayer() {
         if (useAuthStore().user === null || this.checkHistoryTime === false) {

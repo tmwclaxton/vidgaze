@@ -19,10 +19,11 @@ export default class DailymotionPlayer extends Player {
                 this.player = resolvedPlayer;
 
                 this.player.on(dailymotion.events.PLAYER_VIDEOCHANGE, () => {
+                    this.ready = true;
+
                     // don't remove these 2 lines, they are need otherwise the player disappears into the ether
                     document.getElementById(this.playerDiv.id).classList.add("h-full", "w-full", "p-0", "relative");
                     document.getElementById(this.playerDiv.id).removeAttribute('style');
-                    this.ready = true;
                     if (this.autoplay) {
                         this.togglePlay();
                     } else {
@@ -73,11 +74,8 @@ export default class DailymotionPlayer extends Player {
             console.log("dm player not ready");
             return false;
         }
-        if (this.ready === false) {
-            return false;
-        }
         await this.player.play();
-        this.playPlayer();
+        this.playing = true;
         return true;
     }
 
@@ -87,7 +85,7 @@ export default class DailymotionPlayer extends Player {
             return false;
         }
         await this.player.pause();
-        this.pausePlayer();
+        this.playing = false;
         return true;
     }
 

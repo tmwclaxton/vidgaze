@@ -50,7 +50,7 @@ export default class TwitchPlayer extends Player {
             return false;
         }
         await toRaw(this.player).play();
-        this.playPlayer();
+        this.playing = true;
         return true;
     }
 
@@ -59,7 +59,7 @@ export default class TwitchPlayer extends Player {
             return false;
         }
         await toRaw(this.player).pause();
-        this.pausePlayer();
+        this.playing = false;
         return true;
     }
 

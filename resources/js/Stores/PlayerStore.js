@@ -7,7 +7,7 @@ import {loadScript} from "vue-plugin-load-script";
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
-            scriptsLoaded: false,
+            // scriptsLoaded: false,
             players: [],
         }
     },
@@ -16,6 +16,18 @@ export const usePlayerStore = defineStore('PlayerStore', {
             // use ziggy to check if we are on the shorts page
             return route().current('videos.shorts');
         },
+        scriptsLoaded() {
+            if (
+                this.isScriptLoaded('YouTube') &&
+                this.isScriptLoaded('Vimeo') &&
+                this.isScriptLoaded('Twitch') &&
+                this.isScriptLoaded('Dailymotion')
+            ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     },
 
     actions: {

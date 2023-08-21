@@ -45,6 +45,23 @@ const share = () => {
     }
 
 };
+
+const showComment = () => {
+    if (showCommentSection.value) {
+        showCommentSection.value = false;
+        return;
+    } else {
+        showCommentSection.value = true;
+        // get comment interactions and comments for that short
+        useCommentSectionStore().item = props.video;
+        useCommentSectionStore().item_type = props.video.type;
+        // grab interactions first then comments
+        useCommentSectionStore().getCommentInteractions().then(() => {
+            useCommentSectionStore().fetchComments("order by");
+        });
+    }
+};
+
 let observer = ref(null);
 const emits = defineEmits(['UpdateFullyVisibleIndex' ]);
 onMounted(() => {
@@ -152,7 +169,7 @@ const hideCommentsButton = computed(() => {
 
                     <!--<LikeDislikeButtons :video="video" :orientation-vertical="true"/>-->
 
-                    <div v-if="hideCommentsButton" class="flex flex-col gap-1  cursor-pointer " @click="showCommentSection = !showCommentSection">
+                    <div v-if="hideCommentsButton" class="flex flex-col gap-1  cursor-pointer " @click="showComment">
                         <CommentsIcon class="h-8 mx-auto" />
                         <p class="font-bold text-sm text-center">Comments</p>
                     </div>

@@ -65,7 +65,7 @@ export default class YouTubePlayer extends Player {
             return false;
         }
         await toRaw(this.player).playVideo();
-        this.playPlayer();
+        this.playing = true;
         return true;
     }
 
@@ -75,7 +75,7 @@ export default class YouTubePlayer extends Player {
             return false;
         }
         await toRaw(this.player).pauseVideo();
-        this.pausePlayer();
+        this.playing = false;
         return true;
     }
 
