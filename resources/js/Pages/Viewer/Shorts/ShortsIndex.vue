@@ -88,6 +88,8 @@ function watchAction(index, i = 0) {
     useCommentSectionStore().getCommentInteractions().then(() => {
         useCommentSectionStore().fetchComments("order by");
     });
+
+    playFullyVisiblePlayer();
 }
 
 function createVisibleIndices() {
@@ -97,12 +99,15 @@ function createVisibleIndices() {
     if (index === 0) {
         // if at start
         visibleIndices = [index, index + 1, index + 2, index + 3, index + 4];
+    } else if (index === 1) {
+        // if at start + 1
+        visibleIndices =  [index - 1, index, index + 1, index + 2];
     } else if (index >= shorts.value.length - 1) {
         // if at end
         visibleIndices = [index - 2, index - 1, index , index + 1];
     } else {
         // if in middle
-        visibleIndices =  [index - 1, index, index + 1, index + 2];
+        visibleIndices =  [index - 2, index - 1, index, index + 1, index + 2];
     }
 
     // check visible indices are within bounds of shorts
@@ -133,40 +138,45 @@ function buildPlayers() {
         // if visible player doesn't exist, build it and play it
         let id = 'player_div_holder_' + shorts.value[visibleIndex].external_id; // external_id is the ref to the div
         let object = shorts.value[visibleIndex];
-
-        if (!usePlayerStore().findPlayer(shorts.value[visibleIndex].external_id)) {
+        let player = usePlayerStore().findPlayer(shorts.value[visibleIndex].external_id)
+        if (!player.external_id || !player.built) {
             console.log('BUILDING PLAYER ' + shorts.value[visibleIndex].external_id);
-            usePlayerStore().buildPlayer(id, object, 0, false, false, true).then(() => {
-                // playFullyVisiblePlayer(visibleIndex);
-            });
+            usePlayerStore().buildPlayer(id, object, 0, false, false, true);
+        } else {
+            // if player exists and it's not the fully visible id, pause it
+            console.log([
+                player.external_id,
+                shorts.value[fullyVisibleIndex.value].external_id
+            ]);
+
+            if (player.external_id !== shorts.value[fullyVisibleIndex.value].external_id) {
+                console.log('PAUSING PLAYER ' + player.external_id);
+                player.togglePause();
+            }
         }
     }
 
     //loop through the shorts and check if the player is visible
-    // for (let i = 0; i < shorts.value.length; i++) {
-    //     if (!visibleIndices.includes(i)) {
-    //         // if not the visible players, destroy it
-    //         let player = usePlayerStore().findPlayer(shorts.value[i].external_id)
-    //
-    //         if (player) {
-    //             usePlayerStore().destroyPlayer(shorts.value[i].external_id, false, true);
-    //         }
-    //     }
-    // }
+    for (let i = 0; i < shorts.value.length; i++) {
+        if (!visibleIndices.includes(i)) {
+            // if not the visible players, destroy it
+            let player = usePlayerStore().findPlayer(shorts.value[i].external_id)
 
-
-};
-
-function playFullyVisiblePlayer(i) {
-    if (i === fullyVisibleIndex.value) {
-        console.log('PLAYING VISIBLE PLAYER ' + shorts.value[fullyVisibleIndex.value].external_id);
-        let player;
-        player = usePlayerStore().findPlayer(shorts.value[fullyVisibleIndex.value].external_id);
-        if (player) {
-            // player.togglePlay();
-        } else {
-            console.log('player not found');
+            if (player) {
+                usePlayerStore().destroyPlayer(shorts.value[i].external_id, true, true);
+            }
         }
+    }
+}
+
+function playFullyVisiblePlayer() {
+    let player;
+    player = usePlayerStore().findPlayer(shorts.value[fullyVisibleIndex.value].external_id);
+    if (player) {
+        console.log('PLAYING VISIBLE PLAYER ' + player.external_id);
+        player.togglePlay();
+    } else {
+        console.log('player not found');
     }
 }
 

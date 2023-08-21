@@ -26,6 +26,8 @@ export default class VimeoPlayer extends Player {
                             document.getElementById(this.playerDiv.id).firstElementChild.removeAttribute("style");
                         }
                         this.loaded = true;
+
+                        this.createPlayer();
                         this.playerSetup();
                     }.bind(this));
                 });
@@ -71,7 +73,6 @@ export default class VimeoPlayer extends Player {
             html_collection[i].removeAttribute("style");
         }
 
-        this.createPlayer();
     }
 
     async removePlayer() {
@@ -97,8 +98,9 @@ export default class VimeoPlayer extends Player {
     }
 
     async togglePause() {
+        console.log("toggle pause vm");
         if (this.ready === false) {
-            // console.log("vm not ready");
+            console.log("vm not ready");
             return false;
         }
         await toRaw(this.player).pause()
