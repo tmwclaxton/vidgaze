@@ -3,20 +3,10 @@ import Player from './player.js';
 import {usePlayerStore} from "@/Stores/PlayerStore";
 import {toRaw} from "vue";
 
-// make a constructor function for the youtube player extending the player class
 export default class YouTubePlayer extends Player {
     async create() {
         this.playerDiv.removeAttribute('style');
         await this.getStartTimePlayer().then(() => {
-            // check if window.YT exists
-            if (window.YT === undefined) {
-                console.log('window.YT is undefined, trying again in 1 second ' + this.external_id);
-                setTimeout(() => {
-                    this.create();
-                }, 2000)
-                return;
-            }
-
             this.player = new window.YT.Player(this.playerDiv, {
                 videoId: this.external_id,
                 playerVars: {

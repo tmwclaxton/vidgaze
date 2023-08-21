@@ -3,7 +3,6 @@ import Player from './player.js';
 import {toRaw} from "vue";
 import {usePlayerStore} from "@/Stores/PlayerStore";
 
-// make a constructor function for the youtube player extending the player class
 export default class TwitchPlayer extends Player {
     async create() {
         this.player = new Twitch.Player(this.playerDiv, {

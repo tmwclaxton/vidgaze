@@ -3,6 +3,7 @@ import YouTubePlayer from "../PlayerScripts/youtube.js";
 import VimeoPlayer from "@/PlayerScripts/vimeo";
 import TwitchPlayer from "@/PlayerScripts/twitch";
 import DailymotionPlayer from "@/PlayerScripts/dailymotion";
+import {loadScript} from "vue-plugin-load-script";
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
@@ -29,21 +30,41 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
         async loadScripts() {
-            await this.loadScript('https://geo.dailymotion.com/libs/player/xfjc3.js', 'dailymotion-api')
+            console.log('loading player scripts');
+            await this.loadScript('https://geo.dailymotion.com/libs/player/xiohs.js', 'dailymotion-api')
             await this.loadScript('https://www.youtube.com/iframe_api', 'youtube-api');
             await this.loadScript('https://player.vimeo.com/api/player.js', 'vimeo-api');
             await this.loadScript('https://player.twitch.tv/js/embed/v1.js', 'twitch-api');
-            this.scriptsLoaded = true
+        },
+
+        isScriptLoaded(platform) {
+            switch (platform) {
+                case 'YouTube':
+                    return window.YT !== undefined && window.YT.Player !== undefined;
+                case 'Vimeo':
+                    return Vimeo !== undefined;
+                case 'Twitch':
+                    return Twitch !== undefined;
+                case 'Dailymotion':
+                    return dailymotion !== undefined;
+            }
         },
 
 
         async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false, checkViewHistoryStartTime = true, short = false) {
+
+            // check if player already exists
+            const existingPlayer = this.findPlayer(object.external_id);
+            if (existingPlayer !== null && existingPlayer.short === true) {
+                return;
+            }
+
             // console.log('building player for object: ', object);
             this.endScreen = false; // for watch page
             this.show = true; // for mini player
 
             // until scriptsLoaded is true wait 1 second and try again
-            if (!this.scriptsLoaded) {
+            if (!this.isScriptLoaded(object.preferred_source)) {
                 await this.loadScripts(); // don't worry about this running multiple times, it checks if the script by id exists before trying to add it again
                 setTimeout(() => {
                     console.log('scripts not loaded yet, trying again in 2 second')
@@ -85,8 +106,6 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 startTime = 0;
             }
 
-            // check if player already exists
-            const existingPlayer = this.findPlayer(object.external_id);
             if (existingPlayer) {
                 console.log('player already exists');
                 existingPlayer.playerDiv = playerDiv;
@@ -135,7 +154,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
         async destroyPlayers(fullDestroy = false, shorts = false) {
             // if shorts is true player.shorts should be true and only those players will be destroyed
             this.players.forEach(player => {
-                player.destroyPlayer( player.external_id, fullDestroy, shorts );
+                this.destroyPlayer( player.external_id, fullDestroy, shorts );
             });
         },
 

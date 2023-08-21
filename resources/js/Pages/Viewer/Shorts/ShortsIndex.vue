@@ -14,7 +14,6 @@ const name = 'Shorts'
 const shorts = ref([]);
 // this is the index of the short that is fully visible
 const fullyVisibleIndex = ref(0);
-const category = ref('popular');
 const { list, containerProps, wrapperProps } = useVirtualList(shorts, {
     itemHeight: window.innerHeight - 64,
     itemWidth: 400,
@@ -22,31 +21,6 @@ const { list, containerProps, wrapperProps } = useVirtualList(shorts, {
 const UpdateFullyVisibleIndex = (index) => {
     fullyVisibleIndex.value = index;
 };
-
-
-
-const fetchShorts = async (first_video_slug = null) => {
-    let shortsIds = [];
-    shortsIds = (shorts.value.length > 0) ? shorts.value.map(short => short.id).join(',') : [];  // get ids of shorts that have already been loaded to prevent duplicates
-    let videos = await useContentRoutesStore().getVideos(category.value, 8,shortsIds, true, first_video_slug)
-    if (videos === undefined || videos.length === 0) {
-        console.log('no more shorts');
-        return;
-    }
-    shorts.value = shorts.value.concat(videos);
-};
-
-onMounted(async () => {
-    // destroy all players this doesn't remove the metadata as full destroy is false
-    await usePlayerStore().destroyPlayers(false).then(async () => {
-        // if short slug is in url, play that short
-        const urlParams = new URLSearchParams(window.location.search);
-        const firstShort = urlParams.get('short') || null;
-
-        await fetchShorts(firstShort).then(() => {
-        });
-    });
-});
 
 useInfiniteScroll(
     containerProps.ref,
@@ -58,12 +32,52 @@ useInfiniteScroll(
     }
 )
 
-watch(fullyVisibleIndex, (index) => {
-    if (shorts.value.length === 0) {
+onMounted(async () => {
+    // destroy all players this doesn't remove the metadata as full destroy is false
+    await usePlayerStore().destroyPlayers(false).then(async () => {
+        // if short slug is in url, play that short
+        const urlParams = new URLSearchParams(window.location.search);
+        const firstShort = urlParams.get('short') || null;
+
+        await fetchShorts(firstShort).finally(() => {
+            watchAction(0);
+        });
+    });
+});
+
+const fetchShorts = async (first_video_slug = null) => {
+    let shortsIds = [];
+    shortsIds = (shorts.value.length > 0) ? shorts.value.map(short => short.id).join(',') : [];  // get ids of shorts that have already been loaded to prevent duplicates
+    let videos = await useContentRoutesStore().getVideos("popular", 8,shortsIds, true, first_video_slug)
+    if (videos === undefined || videos.length === 0) {
+        console.log('no more shorts');
         return;
     }
+    shorts.value = shorts.value.concat(videos);
+};
 
-    console.log(['current short: ', index])
+// this basically watches what index shorts is currently on and then calls the watchAction function
+// the reason we call watchAction earlier is cause the doesn't update the index until it changes
+watch(fullyVisibleIndex, (index) => {
+    // console.log(['current short: ', index])
+    watchAction(index);
+});
+
+
+function watchAction(index, i = 0) {
+    if (shorts.value === undefined || shorts.value.length === 0) {
+        setTimeout(() => {
+            if (i > 2) {
+                console.log('shorts is undefined or empty');
+                return;
+            } else {
+                watchAction(index, i + 1);
+            }
+        }, 1000);
+        return;
+    }
+    console.log(['watchAction: ', index])
+
     buildPlayers();
 
     useCommentSectionStore().item = shorts.value[index];
@@ -71,10 +85,9 @@ watch(fullyVisibleIndex, (index) => {
 
     // grab interactions first then comments
     useCommentSectionStore().getCommentInteractions().then(() => {
-        useCommentSectionStore().fetchComments(category.value);
+        useCommentSectionStore().fetchComments("order by");
     });
-});
-
+}
 
 function createVisibleIndices() {
 
@@ -120,8 +133,12 @@ function buildPlayers() {
         let id = 'player_div_holder_' + shorts.value[visibleIndex].external_id; // external_id is the ref to the div
         let object = shorts.value[visibleIndex];
 
-        // usePlayerStore().buildPlayer(id, object, 0, false, false, true).then(() => {
-        // });
+        if (!usePlayerStore().findPlayer(shorts.value[visibleIndex].external_id)) {
+            console.log('BUILDING PLAYER ' + shorts.value[visibleIndex].external_id);
+            usePlayerStore().buildPlayer(id, object, 0, false, false, true).then(() => {
+                // playFullyVisiblePlayer(visibleIndex);
+            });
+        }
     }
 
     //loop through the shorts and check if the player is visible

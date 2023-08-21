@@ -3,33 +3,39 @@ import Player from './player.js';
 import {toRaw} from "vue";
 import {usePlayerStore} from "@/Stores/PlayerStore";
 
-// make a constructor function for the youtube player extending the player class
 export default class DailymotionPlayer extends Player {
+    seeked = false
     async create() {
         await this.getStartTimePlayer().then( () => {
             dailymotion.createPlayer(this.playerDiv.id, {
-                video: "x8n4xse", //this.external_id,
+                video: this.external_id,
                 params: {
                     // startTime: this.startTime, // this doesn't work for some reason
-                    autoplay: this.autoplay,
+                    autoplay: this.autoplay ? 1 : 0,
                     mute: false,
 
                 }
             }).then((resolvedPlayer) => {
                 this.player = resolvedPlayer;
-                // don't remove these 2 lines, they are need otherwise the player disappears into the ether
-                document.getElementById(this.playerDiv.id).classList.add("h-full", "w-full", "p-0", "relative");
-                document.getElementById(this.playerDiv.id).removeAttribute('style');
 
                 this.player.on(dailymotion.events.PLAYER_VIDEOCHANGE, () => {
+                    // don't remove these 2 lines, they are need otherwise the player disappears into the ether
+                    document.getElementById(this.playerDiv.id).classList.add("h-full", "w-full", "p-0", "relative");
+                    document.getElementById(this.playerDiv.id).removeAttribute('style');
                     this.ready = true;
-                    this.player.seek(this.start_time);
                     if (this.autoplay) {
-                        this.player.play();
+                        this.togglePlay();
+                    } else {
+                        this.togglePause();
                     }
                 });
 
                 this.player.on(dailymotion.events.VIDEO_PLAY, () => {
+                    if (!this.seeked) {
+                        this.player.seek(this.start_time);
+                        this.seeked = true;
+                    }
+
                     this.ready = true;
                     this.startViewRecord();
                 });

@@ -2,15 +2,13 @@
 import Player from './player.js';
 import {toRaw} from "vue";
 
-// make a constructor function for the youtube player extending the player class
 export default class VimeoPlayer extends Player {
     loaded = false;
     async create() {
-        // this.playerDiv.removeAttribute('style');
         await this.getStartTimePlayer().then(async () => {
 
             this.player = new Vimeo.Player(this.playerDiv.id, {
-                id: 855016876, // this.external_id,
+                id: this.external_id,
                 responsive: true,
                 autopause: !this.autoplay
             });
@@ -20,6 +18,7 @@ export default class VimeoPlayer extends Player {
                 await toRaw(this.player).on('loaded', async () => {
                     // wait for player to load then set start time
                     await toRaw(this.player).ready().then(function () {
+                        this.playerDiv.removeAttribute('style');
                         this.loaded = true;
                         this.playerSetup();
                     }.bind(this));
