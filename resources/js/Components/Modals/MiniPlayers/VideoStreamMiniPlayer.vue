@@ -184,16 +184,16 @@ const closeMiniPlayer = () => {
                     <div v-if="useQueueStore().currentPlayer !== null"
                         id="miniplayer_div_holder" :class="(usePlayerStore().players.length > 0 && !useQueueStore().currentPlayer.endScreen) ? 'w-full h-full bg-black' : 'opacity-0'"/>
                     <!--end screen or loading screen-->
-                    <div class="w-full h-full bg-black flex flex-row">
+                    <div class="w-full h-full bg-black flex flex-row text-white">
                         <div v-if="useQueueStore().items.length > 0 && useQueueStore().currentPlayer && useQueueStore().currentPlayer.endScreen"
                             class="flex flex-col space-y-1 mx-auto my-auto cursor-pointer select-none"
                              @click="queueStore.changeIndex(queueStore.index)">
-                            <font-awesome-icon icon="rotate-right" class="text-white h-5"/>
+                            <font-awesome-icon icon="rotate-right" class=" h-5"/>
                             <p class="text-sm font-bold">Restart Video</p>
                         </div>
                         <div v-else class="flex flex-col space-y-1 mx-auto my-auto">
                             <div class="flex flex-col space-y-1 mx-auto my-auto">
-                                <font-awesome-icon icon="spinner" class="text-white h-5 animate-spin"/>
+                                <font-awesome-icon icon="spinner" class="h-5 animate-spin"/>
                                 <p class="text-sm font-bold">Loading Video</p>
                             </div>
                         </div>

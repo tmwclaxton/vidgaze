@@ -37,7 +37,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
         },
 
 
-        async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false, checkViewHistoryStartTime = true) {
+        async buildPlayer(playerDivHolderID = null, object, startTime = 0, autoplay = false, checkViewHistoryStartTime = true, short = false) {
             // console.log('building player for object: ', object);
             this.endScreen = false; // for watch page
             this.show = true; // for mini player
@@ -79,6 +79,12 @@ export const usePlayerStore = defineStore('PlayerStore', {
             playerDiv.classList.add('h-full');
             playerDiv.classList.add('w-full');
 
+            // check if the start time is within 60 seconds of the end of the video and if so set it to 0
+            // if this doesn't seem to be working, just double check with db that the duration is set correctly
+            if (object.duration - startTime < 60) {
+                startTime = 0;
+            }
+
             // check if player already exists
             const existingPlayer = this.findPlayer(object.external_id);
             if (existingPlayer) {
@@ -94,16 +100,16 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 // // create player
                 switch (object.preferred_source) {
                     case "YouTube":
-                        player = await new YouTubePlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime);
+                        player = await new YouTubePlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime, short);
                         break;
                     case "Vimeo":
-                        player = await new VimeoPlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime);
+                        player = await new VimeoPlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime, short);
                         break;
                     case "Dailymotion":
-                        player = await new DailymotionPlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime);
+                        player = await new DailymotionPlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime, short);
                         break;
                     case "Twitch":
-                        player = await new TwitchPlayer(object, playerDiv, startTime, autoplay);
+                        player = await new TwitchPlayer(object, playerDiv, startTime, autoplay, false, short);
                         break;
                     default:
                         console.log("ERROR: preferred source not found");
@@ -126,24 +132,20 @@ export const usePlayerStore = defineStore('PlayerStore', {
             return false;
         },
 
-        async destroyPlayers(fullDestroy = false) {
-            // iterate through players and get object external_id and destroy div using that as id
+        async destroyPlayers(fullDestroy = false, shorts = false) {
+            // if shorts is true player.shorts should be true and only those players will be destroyed
             this.players.forEach(player => {
-                player.removePlayer()
+                player.destroyPlayer( player.external_id, fullDestroy, shorts );
             });
-
-            if (fullDestroy) {
-                this.players = [];
-            }
         },
 
-        async destroyPlayer(external_id, fullDestroy = false) {
+        async destroyPlayer(external_id, fullDestroy = false, shorts = false) {
             const player = this.findPlayer(external_id);
             if (player) {
                 player.removePlayer();
             }
             if (fullDestroy) {
-                this.players = this.players.filter(player => player.object.external_id !== external_id);
+                this.players = this.players.filter(player => player.external_id !== external_id && player.shorts !== shorts);
             }
         },
 

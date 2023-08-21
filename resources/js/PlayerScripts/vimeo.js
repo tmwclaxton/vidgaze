@@ -14,7 +14,7 @@ export default class VimeoPlayer extends Player {
                 responsive: true,
                 autopause: !this.autoplay
             });
-            console.log(await toRaw(this.player));
+            // console.log(await toRaw(this.player));
 
             if (this.loaded === false) {
                 await toRaw(this.player).on('loaded', async () => {
@@ -46,7 +46,7 @@ export default class VimeoPlayer extends Player {
     async playerSetup() {
         let html_collection;
 
-        console.log("vimeo player ready");
+        // console.log("vimeo player ready");
         // find the player by external_id and change ready to true
         this.ready = true;
 
@@ -71,10 +71,10 @@ export default class VimeoPlayer extends Player {
 
     async removePlayer() {
         if (this.ready === false) {
-            console.log("vm player not ready to remove");
+            // console.log("vm player not ready to remove");
             return false;
         }
-        console.log("vm player being removed");
+        // console.log("vm player being removed");
         await toRaw(this.player).destroy();
         this.resetPlayerValues();
         return true;
@@ -82,7 +82,7 @@ export default class VimeoPlayer extends Player {
 
     async togglePlay() {
         if (this.ready === false) {
-            console.log("vm not ready");
+            // console.log("vm not ready");
             return false;
         }
         await toRaw(this.player).play();
@@ -93,7 +93,7 @@ export default class VimeoPlayer extends Player {
 
     async togglePause() {
         if (this.ready === false) {
-            console.log("vm not ready");
+            // console.log("vm not ready");
             return false;
         }
         await toRaw(this.player).pause()
@@ -103,7 +103,7 @@ export default class VimeoPlayer extends Player {
 
     async getCurrentPosition() {
         if (this.ready === false) {
-            console.log("vm not ready");
+            // console.log("vm not ready");
             return false;
         }
         this.currentTime = await toRaw(this.player).getCurrentTime();
@@ -112,7 +112,7 @@ export default class VimeoPlayer extends Player {
 
     async isPlaying() {
         if (this.ready === false) {
-            console.log("vm not ready");
+            // console.log("vm not ready");
             return false;
         }
         this.playing = !await toRaw(this.player).getPaused();

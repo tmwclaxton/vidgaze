@@ -9,24 +9,24 @@ import {usePlayerStore} from "@/Stores/PlayerStore";
 import {v4 as uuidv4} from "uuid";
 
 export default class Player {
+    built = false;
+    playing = false;
+    ready = false;
+    player = null;
+    endScreen = false;
+    isViewRecording = false;
+    viewRecordTimer = null;
+    viewRecordDuration = 0;
 
-
-    constructor(object, playerDiv, start_time = 0, autoplay = false, checkHistoryTime = false) {
+    constructor(object, playerDiv, start_time = 0, autoplay = false, checkHistoryTime = false, short = false) {
         this.object = object
         this.playerDiv = playerDiv;
-        this.playing = false;
         this.external_id = object.external_id;
         this.autoplay = autoplay;
         this.checkHistoryTime = checkHistoryTime;
         this.start_time = start_time;
         this.currentTime = this.start_time;
-        this.ready = false;
-        this.player = null;
-        this.built = false;
-        this.endScreen = false;
-        this.isViewRecording = false;
-        this.viewRecordTimer = null;
-        this.viewRecordDuration = 0;
+        this.short = short;
     }
 
     createPlayer() {

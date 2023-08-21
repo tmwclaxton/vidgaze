@@ -150,7 +150,7 @@ const hideCommentsButton = computed(() => {
                 <!--Buttons-->
                 <div class="flex flex-col gap-4 select-none justify-end text dark:textDark ml-6">
 
-                    <LikeDislikeButtons :video="video" :orientation-vertical="true"/>
+                    <!--<LikeDislikeButtons :video="video" :orientation-vertical="true"/>-->
 
                     <div v-if="hideCommentsButton" class="flex flex-col gap-1  cursor-pointer " @click="showCommentSection = !showCommentSection">
                         <CommentsIcon class="h-8 mx-auto" />
