@@ -1,1 +1,0 @@
-import{y as s,o,e as a,v as n,a as r,t as c}from"./app-8947f172.js";const l={props:{text:{type:String,required:!0}}},p={class:"flex flex-row gap-2 my-4 mb-8"},i={class:"font-bold text-2xl select-none"};function d(e,_,t,f,m,x){return o(),a("div",p,[n(e.$slots,"default",{class:"w-6 h-6 my-auto"}),r("p",i,c(t.text),1)])}const y=s(l,[["render",d]]);export{y as T};

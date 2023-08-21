@@ -21,3 +21,8 @@ yarn-error.log
 /deployment/production/.terraform/
 /deployment/remote-state/.terraform/
 /storage/
+
+# build assest
+/public/build/
+/public/mix-manifest.json
+
