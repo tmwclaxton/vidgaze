@@ -40,7 +40,7 @@ onMounted(async () => {
         const firstShort = urlParams.get('short') || null;
 
         await fetchShorts(firstShort).finally(() => {
-            watchAction(0)
+            watchAction(0);
         });
 
 
@@ -140,7 +140,7 @@ async function buildPlayers() {
         } else {
             // if player exists but it's not the fully visible id, pause it
             if (player.external_id !== shorts.value[fullyVisibleIndex.value].external_id) {
-                player.togglePause();
+                player.safeTogglePause();
             }
         }
     }
@@ -163,7 +163,7 @@ function playFullyVisiblePlayer() {
     player = usePlayerStore().findPlayer(shorts.value[fullyVisibleIndex.value].external_id);
     if (player) {
         console.log('PLAYING VISIBLE PLAYER ' + player.external_id);
-        player.togglePlay();
+        player.safeTogglePlay();
     } else {
         console.log('player not found');
     }

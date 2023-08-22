@@ -68,20 +68,20 @@ export default class Player {
         // random string to force the player to re-render
         useQueueStore().refreshMiniPlayer = Math.random().toString(36).substring(7);
         this.stopViewRecord();
-        console.log('end view record: ' + this.external_id);
+        // console.log('end view record: ' + this.external_id);
 
         if (usePlayerStore().shortsPage) {
-            console.log('shorts page functionality still needs to be added');
+            this.safeTogglePlay();
             return;
         }
 
         // check if queue has an item after this one
         // wait 1 - as if we are deleting the item from the queue it will take a second to update
         if (useQueueStore().items.length > useQueueStore().index + 1) {
-            console.log('end video: next video in queue');
+            // console.log('end video: next video in queue');
             useQueueStore().changeIndex(useQueueStore().index + 1);
         } else {
-            console.log('end video: no more videos in queue');
+            // console.log('end video: no more videos in queue');
             this.removePlayer();
         }
     }
@@ -92,7 +92,7 @@ export default class Player {
             return;
         }
 
-        console.log('start view record' + this.external_id);
+        // console.log('start view record' + this.external_id);
         const interval = 2.5;
         this.isViewRecording = true;
         const uuid = uuidv4();
@@ -127,7 +127,7 @@ export default class Player {
 
 
     pauseViewRecord() {
-        console.log('pause view record: ' + this.external_id);
+        // console.log('pause view record: ' + this.external_id);
         if (this.isViewRecording) {
             this.isViewRecording = false;
             clearInterval(this.viewRecordTimer);
@@ -136,12 +136,32 @@ export default class Player {
     }
 
     stopViewRecord() {
-        console.log('stop view record: ' + this.external_id);
+        // console.log('stop view record: ' + this.external_id);
         if (this.isViewRecording) {
             this.isViewRecording = false;
             clearInterval(this.viewRecordTimer);
         }
         this.viewRecordDuration = 0;
+    }
+
+    safeTogglePlay() {
+        if (usePlayerStore().scriptsLoaded && this.built && this.ready) {
+            this.togglePlay();
+        } else {
+            setTimeout(() => {
+                this.safeTogglePlay();
+            }, 1000);
+        }
+    }
+
+    safeTogglePause() {
+        if (usePlayerStore().scriptsLoaded && this.built && this.ready) {
+            this.togglePause();
+        } else {
+            setTimeout(() => {
+                this.safeTogglePause();
+            }, 1000);
+        }
     }
 
 }

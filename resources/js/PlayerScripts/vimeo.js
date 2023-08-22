@@ -96,9 +96,9 @@ export default class VimeoPlayer extends Player {
     }
 
     async togglePause() {
-        console.log("toggle pause vm");
+        // console.log("toggle pause vm");
         if (this.ready === false) {
-            console.log("vm not ready");
+            // console.log("vm not ready");
             return false;
         }
         await toRaw(this.player).pause()

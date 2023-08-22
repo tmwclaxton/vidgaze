@@ -61,7 +61,7 @@ export default class DailymotionPlayer extends Player {
 
     async removePlayer() {
         if (this.ready === false) {
-            console.log("dm player not ready");
+            // console.log("dm player not ready");
             return false;
         }
         await this.player.destroy();
@@ -71,7 +71,7 @@ export default class DailymotionPlayer extends Player {
 
     async togglePlay() {
         if (this.ready === false) {
-            console.log("dm player not ready");
+            // console.log("dm player not ready");
             return false;
         }
         await this.player.play();
@@ -81,7 +81,7 @@ export default class DailymotionPlayer extends Player {
 
     async togglePause() {
         if (this.ready === false) {
-            console.log("dm player not ready");
+            // console.log("dm player not ready");
             return false;
         }
         await this.player.pause();
@@ -91,7 +91,7 @@ export default class DailymotionPlayer extends Player {
 
     async getCurrentPosition() {
         if (this.ready === false) {
-            console.log("dm player not ready");
+            // console.log("dm player not ready");
             return false;
         }
         const state = await this.player.getState();
@@ -102,7 +102,7 @@ export default class DailymotionPlayer extends Player {
     async isPlaying() {
         // console.log("isPlaying called");
         if (this.ready === false) {
-            console.log("dm player not ready");
+            // console.log("dm player not ready");
             return false;
         }
         const state = await this.player.getState();
