@@ -35,8 +35,8 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                         item_id: this.item.id,
                         item_type: this.item.type,
                         per_page: 10,
-                        comment_ids: comment_ids,
                         category: category,
+                        comment_ids: comment_ids,
                         // grab comment attribute from url parameter
                         first_comment_id: first_comment_id,
                         parent_comment_id: parent_comment_id,

@@ -11,15 +11,16 @@ import {computed, onMounted, onUnmounted, ref, watchEffect} from "vue";
 import CommentSection from "@/Components/CommentSection/CommentSection.vue";
 import {useNavStore} from "@/Stores/NavStore";
 import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
+const name = 'ShortsPlayer'
 const contentModalStore = useContentModalStore();
-const commentSectionStore = useCommentSectionStore();
 const shareModalStore = useShareModalStore();
 const navStore = useNavStore();
-
-const name = 'ShortsPlayer'
-
 let showShare = false;
 const showCommentSection = ref(false);
+let observer = ref(null);
+const emits = defineEmits(['UpdateFullyVisibleIndex' ]);
+const sizeToHide = 958;
+
 const props = defineProps({
     video: {
         type: Object,
@@ -45,43 +46,22 @@ const share = () => {
     }
 
 };
-let observer = ref(null);
-const emits = defineEmits(['UpdateFullyVisibleIndex' ]);
-onMounted(() => {
-    const options = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 1.0,
-    };
 
-
-    const handleIntersection = (entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                // Emit an event upwards when the player becomes fully visible
-                emits('UpdateFullyVisibleIndex',props.index);
-                // change url to short/slug
-                window.history.pushState(null, null, 'shorts?short=' + props.video.slug);
-                // change title
-                document.title = props.video.title + ' | VidGaze';
-
-
-            } else {
-                // hide comment section
-                showCommentSection.value = false;
-            }
+const showComment = () => {
+    if (showCommentSection.value) {
+        showCommentSection.value = false;
+        return;
+    } else {
+        showCommentSection.value = true;
+        // get comment interactions and comments for that short
+        useCommentSectionStore().item = props.video;
+        useCommentSectionStore().item_type = props.video.type;
+        // grab interactions first then comments
+        useCommentSectionStore().getCommentInteractions().then(() => {
+            useCommentSectionStore().fetchComments("order by");
         });
-    };
-
-    observer = new IntersectionObserver(handleIntersection, options);
-    observer.observe(document.getElementById('player_div_holder_' + props.video.external_id));
-});
-
-onUnmounted(() => {
-    observer.disconnect();
-});
-
-const sizeToHide = 1268;
+    }
+};
 
 // show comment section shoould be computed property if screen size is mobile
 const showCommentSectionMobile = computed(() => {
@@ -99,6 +79,36 @@ const hideCommentsButton = computed(() => {
         return true;
     }
 });
+
+onMounted(() => {
+    const options = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 1.0,
+    };
+    const handleIntersection = (entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                // Emit an event upwards when the player becomes fully visible
+                emits('UpdateFullyVisibleIndex',props.index);
+                // change url to short/slug
+                window.history.pushState(null, null, 'shorts?short=' + props.video.slug);
+                // change title
+                document.title = props.video.title;
+            } else {
+                // hide comment section
+                showCommentSection.value = false;
+            }
+        });
+    };
+    observer = new IntersectionObserver(handleIntersection, options);
+    observer.observe(document.getElementById('player_div_holder_' + props.video.external_id));
+});
+
+onUnmounted(() => {
+    observer.disconnect();
+});
+
 
 
 </script>
@@ -150,9 +160,9 @@ const hideCommentsButton = computed(() => {
                 <!--Buttons-->
                 <div class="flex flex-col gap-4 select-none justify-end text dark:textDark ml-6">
 
-                    <LikeDislikeButtons :video="video" :orientation-vertical="true"/>
+                    <LikeDislikeButtons v-if="video" :item="video" :orientationVertical="true"/>
 
-                    <div v-if="hideCommentsButton" class="flex flex-col gap-1  cursor-pointer " @click="showCommentSection = !showCommentSection">
+                    <div v-if="hideCommentsButton" class="flex flex-col gap-1  cursor-pointer " @click="showComment">
                         <CommentsIcon class="h-8 mx-auto" />
                         <p class="font-bold text-sm text-center">Comments</p>
                     </div>

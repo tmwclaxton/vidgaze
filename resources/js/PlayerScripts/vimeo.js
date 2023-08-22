@@ -2,25 +2,30 @@
 import Player from './player.js';
 import {toRaw} from "vue";
 
-// make a constructor function for the youtube player extending the player class
 export default class VimeoPlayer extends Player {
     loaded = false;
     async create() {
-        // this.playerDiv.removeAttribute('style');
         await this.getStartTimePlayer().then(async () => {
 
             this.player = new Vimeo.Player(this.playerDiv.id, {
-                id: 855016876, // this.external_id,
+                id: this.external_id,
                 responsive: true,
                 autopause: !this.autoplay
             });
-            console.log(await toRaw(this.player));
+            // console.log(await toRaw(this.player));
 
             if (this.loaded === false) {
                 await toRaw(this.player).on('loaded', async () => {
                     // wait for player to load then set start time
                     await toRaw(this.player).ready().then(function () {
+                        this.playerDiv.removeAttribute('style');
+                        // get the child div of the player div and add remove style attribute
+                        document.getElementById(this.playerDiv.id).firstElementChild.removeAttribute("style");
+                        document.getElementById(this.playerDiv.id).firstElementChild.classList.add("h-full", "w-full", "p-0", "relative");
+
                         this.loaded = true;
+
+                        this.createPlayer();
                         this.playerSetup();
                     }.bind(this));
                 });
@@ -46,7 +51,7 @@ export default class VimeoPlayer extends Player {
     async playerSetup() {
         let html_collection;
 
-        console.log("vimeo player ready");
+        // console.log("vimeo player ready");
         // find the player by external_id and change ready to true
         this.ready = true;
 
@@ -66,15 +71,14 @@ export default class VimeoPlayer extends Player {
             html_collection[i].removeAttribute("style");
         }
 
-        this.createPlayer();
     }
 
     async removePlayer() {
         if (this.ready === false) {
-            console.log("vm player not ready to remove");
+            // console.log("vm player not ready to remove");
             return false;
         }
-        console.log("vm player being removed");
+        // console.log("vm player being removed");
         await toRaw(this.player).destroy();
         this.resetPlayerValues();
         return true;
@@ -82,28 +86,29 @@ export default class VimeoPlayer extends Player {
 
     async togglePlay() {
         if (this.ready === false) {
-            console.log("vm not ready");
+            // console.log("vm not ready");
             return false;
         }
         await toRaw(this.player).play();
-        this.playPlayer();
+        this.playing = true;
         return true;
 
     }
 
     async togglePause() {
+        // console.log("toggle pause vm");
         if (this.ready === false) {
-            console.log("vm not ready");
+            // console.log("vm not ready");
             return false;
         }
         await toRaw(this.player).pause()
-        this.pausePlayer();
+        this.playing = false;
         return true;
     }
 
     async getCurrentPosition() {
         if (this.ready === false) {
-            console.log("vm not ready");
+            // console.log("vm not ready");
             return false;
         }
         this.currentTime = await toRaw(this.player).getCurrentTime();
@@ -112,7 +117,7 @@ export default class VimeoPlayer extends Player {
 
     async isPlaying() {
         if (this.ready === false) {
-            console.log("vm not ready");
+            // console.log("vm not ready");
             return false;
         }
         this.playing = !await toRaw(this.player).getPaused();

@@ -3,11 +3,10 @@ import Player from './player.js';
 import {toRaw} from "vue";
 import {usePlayerStore} from "@/Stores/PlayerStore";
 
-// make a constructor function for the youtube player extending the player class
 export default class TwitchPlayer extends Player {
     async create() {
         this.player = new Twitch.Player(this.playerDiv, {
-            channel: this.external_id,
+            channel: "valorant", //this.external_id,
             parent: ["localhost","127.0.0.1","vidgaze.tv","www.vidgaze.tv","www.staging.vidgaze.tv","staging.vidgaze.tv"],
             width: '100%',
             height: '100%',
@@ -51,7 +50,7 @@ export default class TwitchPlayer extends Player {
             return false;
         }
         await toRaw(this.player).play();
-        this.playPlayer();
+        this.playing = true;
         return true;
     }
 
@@ -60,7 +59,7 @@ export default class TwitchPlayer extends Player {
             return false;
         }
         await toRaw(this.player).pause();
-        this.pausePlayer();
+        this.playing = false;
         return true;
     }
 

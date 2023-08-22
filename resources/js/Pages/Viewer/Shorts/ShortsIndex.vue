@@ -1,56 +1,23 @@
-
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-
-export default {
-    layout: AuthenticatedLayout
-};
-</script>
-
 <script setup>
 import { Head } from '@inertiajs/vue3';
 import ShortsPlayer from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayer.vue";
 import ShortsPlayerSkeleton from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayerSkeleton.vue";
-import {onMounted, onUnmounted, ref, toRaw, watch} from "vue";
-import { useInfiniteScroll, useVirtualList, useIntersectionObserver } from '@vueuse/core';
+import {onMounted, onUnmounted, ref, watch} from "vue";
+import { useInfiniteScroll, useVirtualList } from '@vueuse/core';
 
 import {usePlayerStore} from "@/Stores/PlayerStore";
-import {debounce} from "lodash";
-import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
-const playerStore = usePlayerStore();
-const commentSectionStore = useCommentSectionStore();
+
 const name = 'Shorts'
 const shorts = ref([]);
 // this is the index of the short that is fully visible
 const fullyVisibleIndex = ref(0);
-const contentRoutesStore = useContentRoutesStore();
-
 const { list, containerProps, wrapperProps } = useVirtualList(shorts, {
     itemHeight: window.innerHeight - 64,
     itemWidth: 400,
 });
-
-
-const category = ref('popular');
-const fetchShorts = async (first_video_slug = null) => {
-    let shortsIds = [];
-    if (shorts.value.length > 0) {
-        // const shortsIds = shorts.value.map(short => short.id).join(','); // what if there are no shorts?
-        shortsIds = shorts.value.map(short => short.id).join(',');
-    } else {
-        shortsIds = [];
-    }
-    await contentRoutesStore.getVideos(category.value, 8,shortsIds, true, first_video_slug)
-        .then(response => {
-            console.log("FETCHING SHORTS");
-            if (response === undefined || response.length === 0) {
-                console.log('no more shorts');
-                return;
-            }
-            shorts.value = shorts.value.concat(response)
-            console.log(shorts.value);
-        })
+const UpdateFullyVisibleIndex = (index) => {
+    fullyVisibleIndex.value = index;
 };
 
 useInfiniteScroll(
@@ -63,94 +30,94 @@ useInfiniteScroll(
     }
 )
 
-const UpdateFullyVisibleIndex = (index) => {
-    fullyVisibleIndex.value = index;
-};
-
-watch(fullyVisibleIndex, (index) => {
-    if (shorts.value.length === 0) {
-        return;
-    }
-    console.log(['current short: ', index])
-    buildPlayers();
-
-    commentSectionStore.item = shorts.value[index];
-    commentSectionStore.item_type = shorts.value[index].type;
-
-    // grab interactions first then comments
-    commentSectionStore.getCommentInteractions();
-    setTimeout(() => {
-        commentSectionStore.fetchComments(category.value);
-    }, 200); // 200ms delay
-
-});
-
 onMounted(async () => {
+    // forget page position i.e. scroll to top
+    window.history.scrollRestoration = 'manual';
 
-    setTimeout(async () => {
-        shorts.value = [];
-        fullyVisibleIndex.value = 0;
-        await playerStore.destroyPlayers(); // destroy all players
-        console.log('shorts index mounted');
-
+    // destroy all players this doesn't remove the metadata as full destroy is false
+    await usePlayerStore().destroyPlayers(false).then(async () => {
         // if short slug is in url, play that short
         const urlParams = new URLSearchParams(window.location.search);
         const firstShort = urlParams.get('short') || null;
 
-        if ( shorts.value.length === 0 ) {
-            await fetchShorts(firstShort).then(() => {
-                // if short slug is in url, play that short
-                    playFullyVisiblePlayer(0);
-            });
-        }
-    }, 1000); // 1s delay
+        await fetchShorts(firstShort).finally(() => {
+            watchAction(0);
+        });
+    });
+});
 
+const fetchShorts = async (first_video_slug = null) => {
+    let shortsIds = [];
+    shortsIds = (shorts.value.length > 0) ? shorts.value.map(short => short.id).join(',') : [];  // get ids of shorts that have already been loaded to prevent duplicates
+    let videos = await useContentRoutesStore().getVideos("popular", 8,shortsIds, true, first_video_slug)
+    if (videos === undefined || videos.length === 0) {
+        console.log('no more shorts');
+        return;
+    }
+    // concat if external_id isn't already in shorts
+    shorts.value = shorts.value.concat(videos.filter(video => !shorts.value.some(short => short.external_id === video.external_id)));
+};
 
-
+// this basically watches what index shorts is currently on and then calls the watchAction function
+// the reason we call watchAction earlier is cause the doesn't update the index until it changes
+watch(fullyVisibleIndex, (index) => {
+    // console.log(['current short: ', index])
+    watchAction(index);
 });
 
 
-function createVisibleIndices() {
-
-    // let index = fullyVisibleIndex.value;
-    // let visibleIndices = [index];
-    // if (index === 0) {
-    //     // if at start
-    //     visibleIndices = [index, index + 1, index + 2, index + 3, index + 4];
-    // } else if (index >= shorts.value.length - 1) {
-    //     // if at end
-    //     visibleIndices = [index - 2, index - 1, index , index + 1];
-    // } else {
-    //     // if in middle
-    //     visibleIndices =  [index - 1, index, index + 1, index + 2];
-    // }
-    //
-    // // check visible indices are within bounds of shorts
-    // // if return what ever is within bounds
-    // visibleIndices = visibleIndices.filter(index => index >= 0 && index < shorts.value.length);
-    //
-    // // get external ids of shorts that should be visible
-    // console.log(['These shorts should be loaded',  visibleIndices.map(index => shorts.value[index].external_id)]);
-
-    return shorts.value.map((short, index) => index);
+async function watchAction(index, i = 0) {
+    if (shorts.value === undefined || shorts.value.length === 0) {
+        setTimeout(() => {
+            if (i > 6) {
+                console.log('shorts is undefined or empty');
+                return;
+            } else {
+                console.log('retrying watchAction')
+                watchAction(index, i + 1);
+            }
+        }, 1000);
+        return;
+    }
+    await buildPlayers().then(() => {
+        playFullyVisiblePlayer();
+    });
 }
 
-function buildPlayers() {
-    console.log('BUILDING PLAYERS -----------------------');
+function createVisibleIndices() {
+
+    let index = fullyVisibleIndex.value;
+    let visibleIndices = [index];
+    if (index === 0) {
+        // if at start
+        visibleIndices = [index, index + 1, index + 2, index + 3, index + 4];
+    } else if (index === 1) {
+        // if at start + 1
+        visibleIndices =  [index - 1, index, index + 1, index + 2];
+    } else if (index >= shorts.value.length - 1) {
+        // if at end
+        visibleIndices = [index - 2, index - 1, index , index + 1];
+    } else {
+        // if in middle
+        visibleIndices =  [index - 2, index - 1, index, index + 1, index + 2];
+    }
+
+    // check visible indices are within bounds of shorts
+    // if return what ever is within bounds
+    visibleIndices = visibleIndices.filter(index => index >= 0 && index < shorts.value.length);
+
+    // get external ids of shorts that should be visible
+    // console.log(['These shorts should be loaded',  visibleIndices.map(index => shorts.value[index].external_id)]);
+    return visibleIndices;
+
+}
+
+async function buildPlayers() {
     // make a list of the indices of the shorts that should be visible
-    // 3 short players should be visible at a time
-    // we should have an index of the current short player
-    // we figure what players should be visible based on the index
-    // if the index is 0, we show the first 3 players, if the index is 1, we show the zeroth, first and second players
-
-
     let visibleIndices = createVisibleIndices();
-
 
     // loop through the 3 players that should be built and check if player has been loaded
     // if not, load it using playerStore
-
-    let builtPlayers = []; // for testing
 
     for (let i = 0; i < visibleIndices.length; i++) {
         let visibleIndex = visibleIndices[i];
@@ -159,80 +126,49 @@ function buildPlayers() {
             console.log('shorts is undefined');
             return;
         }
-        let player = playerStore.findPlayer(shorts.value[visibleIndex].external_id);
 
-        // if visible player doens't exists, build it and play it | if it exists, play it
-        if (!player) {
-            builtPlayers.push(shorts.value[visibleIndex].external_id); // for testing
+        let id = 'player_div_holder_' + shorts.value[visibleIndex].external_id; // external_id is the ref to the div
+        let object = shorts.value[visibleIndex];
+        let player = usePlayerStore().findPlayer(shorts.value[visibleIndex].external_id)
 
-            let id = 'player_div_holder_' + shorts.value[visibleIndex].external_id; // external_id is the ref to the div
-            let object = shorts.value[visibleIndex];
-
-            playerStore.buildPlayer(id, object, 0, false).then(() => {
-                // if the player is visible, play it | we don't need to pause the other players because PlayerStore does that for us
-                playFullyVisiblePlayer(visibleIndex);
-            });
+        // if a visible player doesn't exist built it
+        if (!player.external_id || !player.built) {
+            await usePlayerStore().buildPlayer(id, object, 0, false, false, true);
         } else {
-            // if it is visible, play it
-            playFullyVisiblePlayer(visibleIndex);
+            // if player exists but it's not the fully visible id, pause it
+            if (player.external_id !== shorts.value[fullyVisibleIndex.value].external_id) {
+                player.safeTogglePause();
+            }
         }
-
     }
-
-    console.log(['Built these players',builtPlayers]);
-
-
-    let removePlayers = []; // for testing
 
     //loop through the shorts and check if the player is visible
     for (let i = 0; i < shorts.value.length; i++) {
         if (!visibleIndices.includes(i)) {
             // if not the visible players, destroy it
-            let player = playerStore.findPlayer(shorts.value[i].external_id)
+            let player = usePlayerStore().findPlayer(shorts.value[i].external_id)
 
             if (player) {
-               removePlayers.push(shorts.value[i].external_id); // for testing
-                playerStore.destroyItem(player);
-            } else {
-                // console.log('player does not exist ' + shorts.value[i].external_id);
+                await usePlayerStore().destroyPlayer(shorts.value[i].external_id, true, true);
             }
         }
     }
+}
 
-    console.log(['Removed these players',removePlayers]);
-
-
-
-};
-
-function playFullyVisiblePlayer(i, count = 0) {
-    if (i === fullyVisibleIndex.value) {
-        console.log('PLAYING VISIBLE PLAYER ' + shorts.value[fullyVisibleIndex.value].external_id);
-
-        // check every 1 second fi player has been built in the playerStore once it has been built, play it and stop checking
-
-        if (playerStore.findPlayer(shorts.value[fullyVisibleIndex.value].external_id)) {
-            playerStore.play(shorts.value[fullyVisibleIndex.value].external_id);
-        } else {
-            console.log('player not built yet');
-            setTimeout(() => {
-
-                if (count % 3 === 0) {
-                    console.log("rebuild attempt")
-                     // build player if it hasn't been built after 10 seconds
-                    playerStore.buildPlayer('player_div_holder_' + shorts.value[fullyVisibleIndex.value].external_id, shorts.value[fullyVisibleIndex.value], 0, false).then(() => {
-                        playerStore.play(shorts.value[fullyVisibleIndex.value].external_id);
-                    });
-                }
-                playFullyVisiblePlayer(i, count + 1);
-            }, 2000);
-        }
+function playFullyVisiblePlayer() {
+    let player;
+    player = usePlayerStore().findPlayer(shorts.value[fullyVisibleIndex.value].external_id);
+    if (player) {
+        console.log('PLAYING VISIBLE PLAYER ' + player.external_id);
+        player.safeTogglePlay();
+    } else {
+        console.log('player not found');
     }
 }
 
 onUnmounted(() => {
     // destroy all players
-    playerStore.destroyPlayers();
+    usePlayerStore().destroyPlayers(true, true);
 });
 
 

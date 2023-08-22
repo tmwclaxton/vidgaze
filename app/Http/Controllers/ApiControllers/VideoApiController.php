@@ -68,7 +68,8 @@ class VideoApiController extends Controller
 
         // if first_video_id is set add it to videoIds to be ignored
         if ($first_video_slug) {
-            $video_ids[] = $first_video_slug;
+            $first_video_id = Video::where('slug', $first_video_slug)->first()->id;
+            $video_ids[] = $first_video_id;
         }
 
         $query = Video::query();
@@ -149,7 +150,7 @@ class VideoApiController extends Controller
             $query->whereIn('preferred_source', $selectedVideoPlatforms);
         }
 
-        //this doesn't work for some reason
+
         if (Auth::user()) {
             $channelDisinterestIDs = CreatorInteraction::where('viewer_id', Auth::user()->creator->id)->where('disinterested', '=', true)
                 ->pluck('creator_id')
@@ -179,7 +180,8 @@ class VideoApiController extends Controller
             } else {
                 $amt = $per_page;
             }
-            $randomVideos = Video::where('visibility', 'public')->whereNotIn('id', $video_ids)->inRandomOrder()->take($amt)->get();
+            $randomVideos = Video::where('visibility', 'public')->whereNotIn('id', $video_ids)
+                ->inRandomOrder()->take($amt)->get();
 
             $videos = $videos->merge($randomVideos);
         }
