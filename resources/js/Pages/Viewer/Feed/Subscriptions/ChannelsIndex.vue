@@ -1,12 +1,4 @@
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import PaddingLayout from "@/Layouts/Partials/ConsistentPadding.vue";
-export default {
-    components: {PaddingLayout},
-    layout: AuthenticatedLayout,
 
-};
-</script>
 <script setup>
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import CreatorSearchCard from "@/Components/Cards/CreatorSearchCard/CreatorSearchCard.vue";
@@ -18,7 +10,7 @@ const channels = ref([]);
 
 // on mounted grab subscriptions using axios and ziggy
 onMounted(() => {
-    axios.get(route('feed.channels.data', {category: category.value}
+    axios.get(route('api.feed.channels', {category: category.value}
     )).then((response) => {
         channels.value = response.data.subscriptions.data;
     });

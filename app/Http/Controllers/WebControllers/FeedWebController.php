@@ -16,11 +16,15 @@ use Inertia\Inertia;
 
 class FeedWebController extends Controller
 {
-    public function subscriptions_index()
+    public function library()
+    {
+        return Inertia::render('Viewer/Feed/Playlist/Library');
+    }
+    public function subscriptions()
     {
         return Inertia::render('Viewer/Feed/Subscriptions/SubscriptionsIndex');
     }
-    public function channels_index()
+    public function channels()
     {
         return Inertia::render('Viewer/Feed/Subscriptions/ChannelsIndex');
     }

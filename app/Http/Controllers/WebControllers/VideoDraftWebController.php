@@ -9,12 +9,12 @@ class VideoDraftWebController extends Controller
 {
 
     public function upload(){
-        return Inertia::render('Studio/Upload');
+        return Inertia::render('Studio/Upload/Upload');
     }
 
     public function edit(string $slug)
     {
-        return Inertia::render('Studio/EditVideoDraft', [
+        return Inertia::render('Studio/Upload/EditVideoDraft', [
             'slug' => $slug,
         ]);
     }

@@ -24,7 +24,7 @@ const podcasts = ref([]);
 
 // on mounted grab subscriptions using axios and ziggy
 onMounted(() => {
-    axios.get(route('feed.subscriptions.data')).then((response) => {
+    axios.get(route('api.feed.subscriptions')).then((response) => {
         videos.value = response.data.videos.data;
         streams.value = response.data.streams.data;
     });

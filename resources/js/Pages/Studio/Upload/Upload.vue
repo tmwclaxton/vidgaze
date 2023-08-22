@@ -30,7 +30,7 @@ import {ref} from "vue";
 import {Head, router, useForm} from "@inertiajs/vue3";
 import Title from "@/Components/General/Title.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
-import DropZone from "@/Pages/Studio/Partials/DropZone.vue";
+import DropZone from "@/Pages/Studio/Upload/Partials/DropZone.vue";
 
 let form = useForm({
     video: ''

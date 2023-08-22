@@ -100,7 +100,7 @@ const name = 'ExpandableNavigationLinks';
         </div>
         <!--content page-->
         <div v-if="useAuthStore().user != null" class="md:hid den">
-            <ResponsiveNavLink :href="route('studio.dashboard')" :active="route().current('studio.dashboard')">
+            <ResponsiveNavLink :href="route('studio.content')" :active="route().current('studio.content')">
                     <ContentIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Content</span>
             </ResponsiveNavLink>
@@ -114,21 +114,21 @@ const name = 'ExpandableNavigationLinks';
         </div>
         <!--creator streams-->
         <div v-if="useAuthStore().user != null" class="xl:hid den">
-            <ResponsiveNavLink :href="route('studio.dashboard')" :active="route().current('studio.dashboard')">
+            <ResponsiveNavLink :href="route('studio.streaming')" :active="route().current('studio.streaming')">
                     <LivestreamIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Stream</span>
             </ResponsiveNavLink>
         </div>
         <!--dashboard-->
         <div v-if="useAuthStore().user != null" class="xl:hid den">
-            <ResponsiveNavLink :href="route('studio.dashboard')" :active="route().current('studio.dashboard')">
+            <ResponsiveNavLink :href="route('studio.unionise')" :active="route().current('studio.unionise')">
                     <UnionIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Unions</span>
             </ResponsiveNavLink>
         </div>
         <!--Customise-->
         <div v-if="useAuthStore().user != null" class="md:hid den">
-            <ResponsiveNavLink :href="route('studio.dashboard')" :active="route().current('studio.dashboard')">
+            <ResponsiveNavLink :href="route('studio.customise')" :active="route().current('studio.customise')">
                     <CustomiseIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Customise</span>
             </ResponsiveNavLink>

@@ -5,11 +5,11 @@ import Title from "@/Components/General/Title.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
 
-import ConnectChannels from "@/Pages/Studio/Partials/ConnectChannels.vue";
-import ItemPerformance from "@/Pages/Studio/Partials/ItemPerformance.vue";
-import LatestComment from "@/Pages/Studio/Partials/LatestComment.vue";
-import ChannelOverview from "@/Pages/Studio/Partials/ChannelOverview.vue";
-import StreamIcon from '~/images/icons/livestreams.svg';
+import ConnectChannels from "@/Pages/Studio/Dashboard/Partials/ConnectChannels.vue";
+import ItemPerformance from "@/Pages/Studio/Dashboard/Partials/ItemPerformance.vue";
+import LatestComment from "@/Pages/Studio/Dashboard/Partials/LatestComment.vue";
+import ChannelOverview from "@/Pages/Studio/Dashboard/Partials/ChannelOverview.vue";
+import StreamIcon from '#icons/livestreams.svg';
 
 import {defineProps} from "vue";
 import {onMounted, ref} from "vue";

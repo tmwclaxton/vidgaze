@@ -8,10 +8,10 @@ Route::middleware(['throttle:60,1','auth:sanctum'])->prefix('feed')->name('feed.
 
 
     // grab subscription data
-    Route::get('/subscriptions', [CreatorInteractionApiController::class, 'getSubscriptionFeed'])->name("subscriptions.data");
+    Route::get('/subscriptions', [CreatorInteractionApiController::class, 'getSubscriptionFeed'])->name("subscriptions");
 
     // grab channels subscribed to
-    Route::get('/channels', [CreatorInteractionApiController::class, 'getSubscriptions'])->name("channels.data");
+    Route::get('/channels', [CreatorInteractionApiController::class, 'getSubscriptions'])->name("channels");
 
 
 });
