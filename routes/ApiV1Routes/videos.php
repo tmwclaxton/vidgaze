@@ -33,5 +33,5 @@ Route::prefix('/video')->name('video.')->group(function () {
 
 
     });
-
 });
+

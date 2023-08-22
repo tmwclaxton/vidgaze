@@ -70,7 +70,7 @@ export default class Player {
         this.stopViewRecord();
         // console.log('end view record: ' + this.external_id);
 
-        if (usePlayerStore().shortsPage) {
+        if (this.short) {
             this.safeTogglePlay();
             return;
         }
@@ -141,7 +141,6 @@ export default class Player {
             this.isViewRecording = false;
             clearInterval(this.viewRecordTimer);
         }
-        this.viewRecordDuration = 0;
     }
 
     safeTogglePlay() {

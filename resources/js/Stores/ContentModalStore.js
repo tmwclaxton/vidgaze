@@ -200,10 +200,10 @@ export const useContentModalStore = defineStore('ContentModalStore', {
                 title = "Check out this cool video on VidGaze: " + this.item.title
                 // console.log(link);
             } else if (this.itemType === 'stream') {
-                link = route('stream.show', { stream: {slug: this.item.slug } });
+                link = route('stream.show', { slug: this.item.slug });
                 title = "Check out this cool stream on VidGaze: " + this.item.title
             } else if (this.itemType === 'short') {
-                link = route('short.show', { video: {slug: this.item.slug } });
+                link = route('videos.shorts', { short: this.item.slug });
                 title = "Check out this cool short on VidGaze: " + this.item.title
             }
             shareStore.getShareLinks(link, title);

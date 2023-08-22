@@ -2,12 +2,10 @@
 import { Head } from '@inertiajs/vue3';
 import ShortsPlayer from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayer.vue";
 import ShortsPlayerSkeleton from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayerSkeleton.vue";
-import {onMounted, onUnmounted, ref, toRaw, watch} from "vue";
-import { useInfiniteScroll, useVirtualList, useIntersectionObserver } from '@vueuse/core';
+import {onMounted, onUnmounted, ref, watch} from "vue";
+import { useInfiniteScroll, useVirtualList } from '@vueuse/core';
 
 import {usePlayerStore} from "@/Stores/PlayerStore";
-import {debounce} from "lodash";
-import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 
 const name = 'Shorts'
@@ -33,6 +31,9 @@ useInfiniteScroll(
 )
 
 onMounted(async () => {
+    // forget page position i.e. scroll to top
+    window.history.scrollRestoration = 'manual';
+
     // destroy all players this doesn't remove the metadata as full destroy is false
     await usePlayerStore().destroyPlayers(false).then(async () => {
         // if short slug is in url, play that short
@@ -42,8 +43,6 @@ onMounted(async () => {
         await fetchShorts(firstShort).finally(() => {
             watchAction(0);
         });
-
-
     });
 });
 
@@ -80,8 +79,6 @@ async function watchAction(index, i = 0) {
         }, 1000);
         return;
     }
-    // console.log(['watchAction: ', index])
-
     await buildPlayers().then(() => {
         playFullyVisiblePlayer();
     });
