@@ -20,11 +20,9 @@ export default class VimeoPlayer extends Player {
                     await toRaw(this.player).ready().then(function () {
                         this.playerDiv.removeAttribute('style');
                         // get the child div of the player div and add remove style attribute
-                        if (this.short) {
-                            // this removes the padding from the player and centers the video vertically
-                            // but if you remove it normally it will add a 2px padding at the bottom
-                            document.getElementById(this.playerDiv.id).firstElementChild.removeAttribute("style");
-                        }
+                        document.getElementById(this.playerDiv.id).firstElementChild.removeAttribute("style");
+                        document.getElementById(this.playerDiv.id).firstElementChild.classList.add("h-full", "w-full", "p-0", "relative");
+
                         this.loaded = true;
 
                         this.createPlayer();
