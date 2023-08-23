@@ -7,6 +7,7 @@ import { useInfiniteScroll, useVirtualList } from '@vueuse/core';
 
 import {usePlayerStore} from "@/Stores/PlayerStore";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
+import {useQueueStore} from "@/Stores/QueueStore";
 
 const name = 'Shorts'
 const shorts = ref([]);
@@ -168,7 +169,9 @@ function playFullyVisiblePlayer() {
 
 onUnmounted(() => {
     // destroy all players
-    usePlayerStore().destroyPlayers(true, true);
+    usePlayerStore().destroyPlayers(true, true).then(() => {
+        useQueueStore().rebuildPlayer();
+    });
 });
 
 

@@ -17,6 +17,7 @@ const inPlaylist = ref(false);
 const open = ref(false);
 
 const toggleWatchLater = () => {
+    useContentModalStore().item = props.item;
     if (contentModalStore.toggleWatchLater(props.item.id, inPlaylist.value)) {
         inPlaylist.value = !inPlaylist.value;
     }

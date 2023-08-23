@@ -106,7 +106,9 @@ export const useQueueStore = defineStore('QueueStore', {
 
         rebuildPlayer() {
             // watch showMiniPlayer if it is changed to true check if queueStore has any items if so then build the player
-            const queueStoreCurrentItem = useQueueStore().currentItem;
+            if (this.currentPlayer === false) {
+                return;
+            }
             this.currentPlayer.endScreen = false;
             // if the video that was playing was in the queue get time and rebuild player with time in mini player
             if (this.currentItem.external_id !== null) {

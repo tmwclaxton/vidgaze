@@ -60,7 +60,9 @@ const fetchTrendingVideos = async () => {
     await contentRoutesStore.getVideos('trending', 6)
         .then(response => {
             trending_videos.value = response
-        })
+        }).catch(error => {
+            console.log(error)
+        });
 
 };
 const fetchVideos = async (videoArray) => {

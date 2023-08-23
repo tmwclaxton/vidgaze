@@ -39,7 +39,7 @@ class PlaylistVideoApiController extends Controller
     public function create(Request $request)
     {
         $request->validate([
-            'playlist_id' => 'required|int',
+            'playlist_id' => 'required', // because we pass History, Watch Later, etc
             'video_ids' => 'regex:/^[0-9,]+$/|required',
         ]);
 

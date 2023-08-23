@@ -174,11 +174,15 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         async destroyPlayer(external_id, fullDestroy = false, shorts = false) {
             const player = this.findPlayer(external_id);
+            if (player.short !== shorts) { // this means we can specify delete shorts and maintain the queue players or just delete everything
+                return;
+            }
+
             if (player) {
                 player.removePlayer();
             }
             if (fullDestroy) {
-                this.players = this.players.filter(player => player.external_id !== external_id && player.shorts !== shorts);
+                this.players = this.players.filter(player => player.external_id !== external_id);
             }
         },
 
