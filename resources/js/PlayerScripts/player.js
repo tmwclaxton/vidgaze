@@ -90,7 +90,6 @@ export default class Player {
     startViewRecord() {
         if (this.isViewRecording) {
             console.log('STARTVIEWRECORD: Error: View recording already started: ' + this.external_id);
-
             return;
         }
 

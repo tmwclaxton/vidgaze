@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import { useToastStore } from "@/Stores/ToastStore";
 import {usePage} from "@inertiajs/vue3";
 import {useAuthStore} from "@/Stores/AuthStore";
@@ -56,11 +56,21 @@ const subscribe = () => {
     };
 
 onMounted(() => {
-    // Check if user is subscribed to channel by checking in auth subscriptions
-    if (useAuthStore().user !== null) {
-        subscribed.value = useAuthStore().subscription_ids.some(subscription => subscription === props.channel.id);
-    }
+    subscribed.value = isSubscribed();
+    watch(() => useAuthStore().subscription_ids, () => {
+        // Check if user is subscribed to channel by checking in auth subscriptions
+        subscribed.value = isSubscribed();
+    });
 });
+
+const isSubscribed = () => {
+    if (useAuthStore().user !== null) {
+        return useAuthStore().subscription_ids.some(subscription => subscription === props.channel.id);
+    } else {
+        return false;
+    }
+
+}
 
 const buttonClasses = computed(() => ({
     'bg-zinc-200 text-zinc-700 hover:bg-zinc-300 dark:bg-zinc-700 dark:text-white  border-transparent ': subscribed.value,

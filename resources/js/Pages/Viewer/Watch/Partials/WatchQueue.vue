@@ -18,7 +18,7 @@ const props = defineProps({
 });
 
 watch(() => props.ready, () => {
-    if (props.ready) {
+    if (props.ready && useQueueStore().items.length > 0) {
         if (props.item.external_id !== useQueueStore().currentItem.external_id) {
             useQueueStore().setIndexByExternalID(props.item.external_id)
         }
