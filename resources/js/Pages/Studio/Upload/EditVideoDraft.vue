@@ -132,7 +132,7 @@ const selectedFileThumbnail = () =>{
         <Head title="Upload Video" />
 
         <ConsistentPadding class="mt-4">
-            <Title text="Upload Video">
+            <Title text="Upload Video" class="my-4 mb-8">
 <!--                <StreamIcon class="w-6 h-6 my-auto"/>-->
             </Title>
         <form @submit.prevent="" class="space-y-4 sm:min-w-[20rem] w-full sm:px-6">
