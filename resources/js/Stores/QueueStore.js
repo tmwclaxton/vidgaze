@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { usePlayerStore } from './PlayerStore.js'
-import {usePage} from "@inertiajs/vue3";
+import {router, usePage} from "@inertiajs/vue3";
 export const useQueueStore = defineStore('QueueStore', {
     state: () => {
         return {
@@ -117,10 +117,12 @@ export const useQueueStore = defineStore('QueueStore', {
             }
         },
 
-        changeIndexByExternalID(external_id) {
+        setIndexByExternalID(external_id) {
+            console.log("setIndexByExternalID");
             for (let i = 0; i < this.items.length; i++) {
                 if (this.items[i].external_id === external_id) {
-                    this.changeIndex(i);
+                    console.log("setting index to " + i);
+                    this.index = i;
                 }
             }
         },
@@ -135,13 +137,18 @@ export const useQueueStore = defineStore('QueueStore', {
             this.index = index;
             usePlayerStore().show = true;
             // set player modal store to this item
-            if (this.items.length > 0) {
-                usePlayerStore().destroyPlayers().then(r => {
-                    usePlayerStore().buildPlayer(playerDivHolderID, this.items[this.index], 0, true, true).then(r => {
-                        console.log("miniplayer player built");
-                    });
-                });
+            if (this.items.length === 0) {
+                return;
             }
+            usePlayerStore().destroyPlayers().then(r => {
+                if (route().current('watch.show')) {
+                    router.visit(route('watch.show', {slug: this.items[this.index].slug}))
+                } else {
+                        usePlayerStore().buildPlayer(playerDivHolderID, this.items[this.index], 0, true, true).then(r => {
+                            console.log("miniplayer player built");
+                        });
+                }
+            });
         }
     }
 })

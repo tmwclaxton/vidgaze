@@ -29,6 +29,9 @@ import {useAuthStore} from "@/Stores/AuthStore";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 import Title from "@/Components/General/Title.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
+import WatchQueue from "@/Pages/Viewer/Watch/Partials/WatchQueue.vue";
+import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -40,7 +43,8 @@ const authStore = useAuthStore();
 const name = 'Watch';
 
 const theatre = ref(false);
-const item = ref(null);
+const item = ref([]);
+
 const comments = ref(null)
 const isDescriptionCollapsed = ref(true);
 const showCommentSection = ref(false);
@@ -48,7 +52,7 @@ const playlistToggled = ref(false); // can't seem to get it work directly with t
 const showShare = ref(false);
 const showMoreDescriptionButton = ref(false);
 const suggestedVideos = ref(null);
-
+const ready = ref(false);
 
 const props = defineProps({
     type: {
@@ -106,13 +110,13 @@ onMounted(  () => {
             item.value = await useContentRoutesStore().getVideo(props.slug);
         }
     });
-
 });
 
 
 // watch item for changes
 watch(item, async (newItem) => {
     if (newItem !== null) {
+        ready.value = true;
         suggestedVideos.value = await useContentRoutesStore().getVideos("popular", 10);
         showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
         // if not in queue build player like normal
@@ -149,124 +153,93 @@ onUnmounted(() => {
 </script>
 
 <template>
+        <Head  :title="item.title"  />
 
-        <Head v-if="item != null" :title="item.title"  />
-
-
-        <div v-if="item != null" class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4 md:mx-24']">
-
-
+        <div class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4 md:mx-24']">
             <!--player with theatre mode-->
             <div :class="[theatre ? 'col-span-12   w-full ' : ' col-span-12 lg:col-span-8  ']" class=" w-full  relative flex flex-col gap-y-4">
 
                 <div :class="[theatre ? '   ' : ' rounded-lg ']" class="bg-black max-h-[calc(100vh-10rem)] overflow-hidden">
-                    <div :class="[ theatre ? 'aspect-video  h-full w-full' : 'w-full aspect-video max-h-screen']">
+                    <div   :class="[ theatre ? 'aspect-video  h-full w-full' : 'w-full aspect-video max-h-screen']">
                         <!--video player-->
-                        <div id="watch_player" :class="playerStore.players.length > 0 ? 'w-full h-full bg-black without-ring flex relative ' : 'opacity-0'">
-
-                        </div>
+                        <div id="watch_player" :class="playerStore.players.length > 0 ? 'w-full h-full bg-black without-ring flex relative ' : 'opacity-0'"/>
 
                         <!--end screen-->
-                        <EndScreen v-if="playerStore.players.length === 0" :item="item" class="h-full w-full"/>
-
+                        <EndScreen v-if="ready && playerStore.players.length === 0" :item="item" class="h-full w-full"/>
 
                     </div>
-
                 </div>
 
                 <div :class="[theatre ? 'px-2 sm:px-5 ' : 'px-0 sm:px-0 ']" class="">
 
                     <!--video details-->
-                    <div class="bg-re d-500 w-full  " :class="[theatre ? ' ' : ' ']">
-                        <div class=" w-full  ">
-
-                            <p class="text-lg font-bold leading-6 line-clamp-2 text dark:textDark" v-text="item.title"/>
-                            <div class="px-3 sm:px-0 flex pt-2 -mb-2 justify-between text dark:textDark flex flex-row flex-wrap gap-8 ">
-
-                                <div class="flex flex-col">
-                                    <p class=" pr-3 " v-text="item.view_count + ' · ' + item.time_published"/>
-                                    <span class="pr-3  pt-0.5 font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
-                                            v-text="item.live_viewer_count + ' Watching'"/>
-                                </div>
-                                <div class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
-
-                                    <FeatureCreatorButton v-if="authStore.admin" :creator_id="item.creator.id"/>
-
-                                    <TertiaryButton>
-                                        <LikeDislikeButtons v-if="item" :item="item" :orientationVertical="false"/>
-                                    </TertiaryButton>
-
-                                    <div @click="share" class="flex flex-row cursor-pointer align-middle items-center">
-                                        <ShareIcon class="h-5"/>
-                                        <p class="pl-2">Share</p>
-                                    </div>
-
-                                    <div v-if="authStore.user" @click="togglePlaylistModal()" class="flex flex-row cursor-pointer align-middle items-center" >
-                                        <LibraryIcon class="h-5"/>
-                                        <p class="pl-2">Save</p>
-                                    </div>
-
-                                    <!--<x-award-button type="video" object_id="{{$video->id}}">-->
-                                    <!--    <div class="flex flex-row    cursor-pointer"-->
-                                    <!--         @click=" shadowDiv = true">-->
-                                    <!--        <x-icon name="present" class="h-5"/>-->
-                                    <!--        <p class="pl-2">Award</p>-->
-                                    <!--    </div>-->
-                                    <!--</x-award-button>-->
-                                    <div
-                                        class="hidden lg:flex   flex-row cursor-pointer align-middle items-center"
-                                        @click="theatre = ! theatre">
-                                        <TheatreIcon class="h-5"/>
-                                        <p class="pl-2">Theatre</p>
-                                    </div>
-
-
-                                </div>
+                    <div  class="w-full">
+                        <p class="text-lg font-bold leading-6 line-clamp-2 text dark:textDark" v-text="ready ? item.title : 'Loading...'"/>
+                        <div class="px-3 sm:px-0 flex pt-2 -mb-2 justify-between text dark:textDark flex flex-row flex-wrap gap-8 ">
+                            <div v-if="ready" class="flex flex-col">
+                                <p class=" pr-3 " v-text="item.view_count + ' · ' + item.time_published"/>
+                                <span class="pr-3  pt-0.5 font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
+                                      v-text="item.live_viewer_count + ' Watching'"/>
                             </div>
+                            <div class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
+                                <FeatureCreatorButton v-if="ready && authStore.admin" :creator_id="item.creator.id"/>
 
-                            <!--<livewire:awards-bar type="video" :object="$video"/>-->
+                                <TertiaryButton>
+                                    <LikeDislikeButtons v-if="item" :item="item" :orientationVertical="false"/>
+                                </TertiaryButton>
 
-                            <RowDivider class="my-2"/>
-
-                            <div class=" py-6 ">
-                                <div class="flex justify-between">
-                                    <span class="flex flex-row   w-full overflow-hidden">
-                                        <a v-if="item.creator != null" href="/channel/" class="flex-shrink-0">
-                                            <img class="hover:cursor-pointer my-auto object-cover w-11 h-11 mr-2 rounded-full flex-shrink-0"
-                                                v-bind:src="item.creator.avatar_url" alt="Profile image"/>
-                                        </a>
-                                        <div class="pl-1 flex flex-col my-auto">
-                                            <a href="/channel/"
-                                               class="text-sm font-bold hover:cursor-pointer text dark:textDark w-44 xs:w-full break-words">
-                                                <span v-text="item.creator.name"></span>
-                                            </a>
-                                            <p class="text-xs text dark:textDark leading-4" v-text="item.creator.subscriber_count"/>
-                                        </div>
-
-                                        <div class="ml-auto sm:ml-5 my-auto">
-
-                                           <SubscribeButton :channel="item.creator"  />
-                                        </div>
-                                    </span>
-
-
+                                <div @click="share" class="flex flex-row cursor-pointer align-middle items-center">
+                                    <ShareIcon class="h-5"/>
+                                    <p class="pl-2">Share</p>
                                 </div>
 
+                                <div v-if="authStore.user" @click="togglePlaylistModal()" class="flex flex-row cursor-pointer align-middle items-center" >
+                                    <LibraryIcon class="h-5"/>
+                                    <p class="pl-2">Save</p>
+                                </div>
 
                                 <div
-                                     style="" class=" ml-14   pt-3   text dark:textDark text-sm">
-                                    <p id="description" style="line-height: 20px;"
-                                       v-bind:class="{' line-clamp-3': isDescriptionCollapsed}" v-html="item.description"/>
-
-                                    <button v-if="showMoreDescriptionButton" class="font-bold mt-5 text-xs uppercase"
-                                            @click="isDescriptionCollapsed = !isDescriptionCollapsed"
-                                            v-text="!isDescriptionCollapsed ? 'Show less' : 'Show more'"
-                                    ></button>
+                                    class="hidden lg:flex   flex-row cursor-pointer align-middle items-center"
+                                    @click="theatre = ! theatre">
+                                    <TheatreIcon class="h-5"/>
+                                    <p class="pl-2">Theatre</p>
                                 </div>
+
                             </div>
-                            <RowDivider/>
                         </div>
 
+                        <RowDivider class="my-2"/>
+
+                        <div class=" py-6 ">
+                            <div v-if="ready" class="flex justify-between">
+                                <span class="flex flex-row   w-full overflow-hidden">
+                                    <a  href="/channel/" class="flex-shrink-0">
+                                        <img class="hover:cursor-pointer my-auto object-cover w-11 h-11 mr-2 rounded-full flex-shrink-0"
+                                             v-bind:src="item.creator.avatar_url" alt="Profile image"/>
+                                    </a>
+                                    <div class="pl-1 flex flex-col my-auto">
+                                        <a href="/channel/"
+                                           class="text-sm font-bold hover:cursor-pointer text dark:textDark w-44 xs:w-full break-words">
+                                            <span v-text="item.creator.name"></span>
+                                        </a>
+                                        <p class="text-xs text dark:textDark leading-4" v-text="item.creator.subscriber_count"/>
+                                    </div>
+
+                                    <div class="ml-auto sm:ml-5 my-auto">
+                                       <SubscribeButton :channel="item.creator"  />
+                                    </div>
+                                </span>
+                            </div>
+                            <div class=" ml-14   pt-3   text dark:textDark text-sm">
+                                <p id="description" style="line-height: 20px;"
+                                   v-bind:class="{' line-clamp-3': isDescriptionCollapsed}" v-html="item.description"/>
+                                <button v-if="showMoreDescriptionButton" class="font-bold mt-5 text-xs uppercase"
+                                        @click="isDescriptionCollapsed = !isDescriptionCollapsed"
+                                        v-text="!isDescriptionCollapsed ? 'Show less' : 'Show more'"
+                                ></button>
+                            </div>
+                        </div>
+                        <RowDivider/>
                     </div>
 
                     <TertiaryButton v-if="!showCommentSection" class="w-full text-center"
@@ -276,7 +249,7 @@ onUnmounted(() => {
                         <p class="w-full text-center">Open Comments</p>
                     </TertiaryButton>
 
-                    <CommentSection v-if="item != null" :item="item"
+                    <CommentSection v-if="item.creator != undefined" :item="item"
                                     v-bind:class="[showCommentSection ? 'flex' : 'hidden lg:flex']" />
 
                     <RowDivider class=" " :class="[theatre ? 'flex ' : 'flex lg:hidden ']"/>
@@ -284,67 +257,29 @@ onUnmounted(() => {
                 </div>
             </div>
 
-
             <!--video suggestions-->
-
-            <div class=" relative w-full gap-2 flex flex-col " :class="[theatre ? 'col-span-12' : 'col-span-12 lg:col-span-4  ']">
-
-
-
-                    <!--playlist-->
-
-                <div v-if="queueStore.playlist !== null">
-                    <div class="border-generic dark:border-generic-dark flex-col mb-5">
-                        <div class="p-2 generic-background   dark:bg-zinc-900">
-                            <p class="font-bold text dark:textDark">
-                                <!--playlist name-->
-                            </p>
-
-                            <p class="font-bold text dark:textDark text-xs opacity-80 ">
-                                <!--<a href="/channel/{{$playlist->owner->slug}}">-->
-                                <!--    {{$playlist->owner->name}}-->
-                                <!--</a>-->
-                            </p>
-                        </div>
-                    </div>
-
-                    <div id="miniPlayerItemsHolder" class="relative flex flex-col pb-1 max-h-48 overflow-y-auto">
-                        <div v-for="(item, index) in queueStore.items">
-                            <QueueItem :item="item" :index="index" :key="index"/>
-                        </div>
-                    </div>
-                </div>
-
+            <div class=" relative w-full gap-4 flex flex-col " :class="[theatre ? 'col-span-12' : 'col-span-12 lg:col-span-4  ']">
+                <!--playlist-->
+                <WatchQueue :item="item" :ready="ready"/>
 
                 <!--suggested videos-->
+                <div class="flex flex-row flex-wrap">
+                    <QuaternaryButton class="mr-2" @click="">
+                        <font-awesome-icon :icon="['fas', 'fire']" class="my-auto"/>
+                        <span class="font-semibold">Recommended</span>
+                    </QuaternaryButton>
+                    <QuaternaryButton class="mr-2" @click="">
+                        <font-awesome-icon :icon="['fas', 'heart']" class="my-auto"/>
+                        <span class="font-semibold">Channel</span>
+                    </QuaternaryButton>
+                </div>
+
                 <div v-if="suggestedVideos && suggestedVideos.length > 0">
-
-                    <div class="flex flex-row">
-                        <Title text="Recommended" class="px-5 e">
-                            <font-awesome-icon :icon="['fas', 'fire']" class="my-auto"/>
-                        </Title>
-                        <Title text="Channel" class="px-5">
-                            <font-awesome-icon :icon="['fas', 'heart']" class="my-auto"/>
-                        </Title>
-                    </div>
-
                     <div id="miniPlayerItemsHolder" class="relative flex flex-col pb-1 max-h-48 overflow-y-auto">
                         <div v-for="(item, index) in suggestedVideos">
                         </div>
                     </div>
                 </div>
-
-
-
-
             </div>
-
-
-
         </div>
-
-
-
-
-
 </template>

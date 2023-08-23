@@ -20,8 +20,6 @@ const props = defineProps({
             </a>
 
             <!--<x-duration :video="$video" minimised="true"/>-->
-
-
         </div>
 
         <div class="w-full ">

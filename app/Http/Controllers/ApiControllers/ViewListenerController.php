@@ -114,13 +114,12 @@ class ViewListenerController extends Controller
 
         //check if live viewer count has been updated
         if (($liveClient->live_viewer_counted === false)) {
-            $liveClient->live_viewer_counted = true;
-            $liveClient->save();
-            //shorts has a bug so for now only if the video is longer than 60 seconds
-            if ($this->video->duration > 60) {
+            if ($this->video->duration > 15) {
                 // Increment the live viewer count
                 $this->video->increment('live_viewer_count', 1);
                 $this->video->save();
+                $liveClient->live_viewer_counted = true;
+                $liveClient->save();
             }
         }
 
@@ -164,6 +163,7 @@ class ViewListenerController extends Controller
             'duration_updated' => $durationUpdated ?? false,
             'view_recorded' => $liveClient->view_counted,
             'view_point_recorded' => $view_point_recorded ?? false,
+            'live_viewer_counted' => $liveClient->live_viewer_counted ?? false,
         ], 200);
     }
 

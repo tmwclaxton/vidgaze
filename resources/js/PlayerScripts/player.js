@@ -32,6 +32,7 @@ export default class Player {
     createPlayer() {
         this.built = true;
         this.endScreen = false;
+        this.viewRecordDuration = 0;
     }
 
     resetPlayerValues() {
@@ -68,13 +69,13 @@ export default class Player {
         // random string to force the player to re-render
         useQueueStore().refreshMiniPlayer = Math.random().toString(36).substring(7);
         this.stopViewRecord();
-        // console.log('end view record: ' + this.external_id);
 
         if (this.short) {
             this.safeTogglePlay();
             return;
         }
 
+        console.log('end view record: ' + this.external_id);
         // check if queue has an item after this one
         // wait 1 - as if we are deleting the item from the queue it will take a second to update
         if (useQueueStore().items.length > useQueueStore().index + 1) {
@@ -88,7 +89,8 @@ export default class Player {
 
     startViewRecord() {
         if (this.isViewRecording) {
-            console.log('STARTVIEWRECORD: Error: View recording already started');
+            console.log('STARTVIEWRECORD: Error: View recording already started: ' + this.external_id);
+
             return;
         }
 
@@ -98,16 +100,21 @@ export default class Player {
         const uuid = uuidv4();
         this.viewRecordTimer = setInterval(async () => {
             try {
+                // check if the player is playing
                 const isPlaying = await this.isPlaying();
                 if (!isPlaying) {
                     clearInterval(this.viewRecordTimer);
-                    console.log('STARTVIEWRECORD: Error: Player is not playing');
+                    this.isViewRecording = false;
+                    console.log('STARTVIEWRECORD: Error: Player is not playing' + this.external_id + ' resetting view record');
                     return;
                 }
                 const viewPoint = await this.getCurrentPosition();
                 this.viewRecordDuration += interval;
+                // check if we have all the data we need to record the view
                 if (!(this.object.id && this.object.type && this.viewRecordDuration && viewPoint)) {
-                    console.log("missing data to record view");
+                    this.isViewRecording = false;
+                    clearInterval(this.viewRecordTimer);
+                    console.log("missing data to record view: " + this.external_id + ' resetting view record');
                     return;
                 }
                     //using ziggy to get the view record route view.listener
@@ -119,7 +126,8 @@ export default class Player {
                     client_identifier: uuid
                 });
             } catch (error) {
-                console.log('STARTVIEWRECORD: Error: ' + error);
+                console.log('STARTVIEWRECORD: Error: ' + error + ' resetting view record');
+                this.isViewRecording = false;
                 clearInterval(this.viewRecordTimer);
             }
         }, interval * 1000);

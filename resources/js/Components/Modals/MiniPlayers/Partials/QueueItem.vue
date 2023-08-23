@@ -1,6 +1,6 @@
 <template>
     <div :id="'queueItem_' + props.item.external_id" class="relative group flex flex-row justify-between gap-x-2  cursor-pointer ">
-        <div class="relative group flex flex-row gap-x-2 p-1  cursor-pointer " @click="queueStore.changeIndex(index)">
+        <div class="relative group flex flex-row gap-x-2 p-1  cursor-pointer " @click="queueAction">
             <div class=" mx-0.5 ml-2 my-auto flex h-3 aspect-square" >
                 <font-awesome-icon
                     v-if="queueStore.index === props.index"
@@ -34,6 +34,7 @@ import { useQueueStore} from "@/Stores/QueueStore";
 const queueStore = useQueueStore();
 import { usePlayerStore} from "@/Stores/PlayerStore";
 import CornerInfo from "@/Components/Cards/VideoStreamCards/Partials/CornerInfo.vue";
+import {router} from "@inertiajs/vue3";
 const playerStore = usePlayerStore();
 
 //props
@@ -49,4 +50,15 @@ const props = defineProps({
 });
 
 const name = 'QueueItem';
+
+const queueAction = () => {
+    if (route().current('watch.show')) {
+        // route('watch.show', {slug: item.slug})
+        queueStore.index = props.index
+        router.visit(route('watch.show', {slug: props.item.slug}))
+
+    } else {
+        queueStore.changeIndex(props.index)
+    }
+};
 </script>
