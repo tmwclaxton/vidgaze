@@ -106,7 +106,7 @@ export const useQueueStore = defineStore('QueueStore', {
 
         rebuildPlayer() {
             // watch showMiniPlayer if it is changed to true check if queueStore has any items if so then build the player
-            if (this.currentPlayer === false) {
+            if (this.currentPlayer === false || this.currentPlayer === null) {
                 return;
             }
             this.currentPlayer.endScreen = false;

@@ -109,11 +109,11 @@ const dotsIconShow = computed(() => {
                                 </div>
                             </div>
                             <div class="my-auto">
-                                <div class="  space-y-0  ">
+                                <div class="  flex flex-col gap-y-1 ">
 
                                     <!--channel name-->
                                     <Link v-if="!item.channel_page" :href="route('channel.show', {creator: {slug: item.creator.slug}})"
-                                       class="w-max without-ring pointer-events-auto line-clamp-1 text-hover dark:text-hover-dark mb-1 ">
+                                       class="w-max without-ring pointer-events-auto line-clamp-1 text-hover dark:text-hover-dark   ">
                                         <p class="text-sm sm:text-lg font-bold " v-text="item.creator.name"></p>
                                     </Link>
 
@@ -135,7 +135,7 @@ const dotsIconShow = computed(() => {
                                     </div>
 
                                     <div class="hidden lg:flex">
-                                        <p class="line-clamp-2 font-semibold text-sm mt-4 px-5 break-all" v-text="item.description"></p>
+                                        <p class="line-clamp-2 font-semibold text-sm mt-3 px-5 break-all" v-text="item.description"></p>
                                     </div>
                                 </div>
 
