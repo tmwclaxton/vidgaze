@@ -14,12 +14,15 @@ import PlaylistsBar from "@/Pages/Viewer/Feed/Playlist/Partials/PlaylistsBar.vue
     <Head title="Library" />
 
     <ConsistentPadding class="px-12">
-        <PlaylistBar :route="route('feed.history')" text="History" id="history" key="history" />
-        <PlaylistBar :route="route('feed.watch-later')" text="Watch Later" id="watch_later" key="watch_later" />
+        <PlaylistBar :href="route('feed.history')" text="History" id="history" key="history" />
+        <PlaylistBar :href="route('feed.watch-later')" text="Watch Later" id="watch_later" key="watch_later" />
 
         <PlaylistsBar text="Playlists"/>
 
-        <PlaylistBar :route="route('feed.liked-videos')" text="Liked Videos" id="liked_videos" key="liked_videos" />
+        <PlaylistBar :href="route('feed.liked-videos')" text="Liked Videos" id="liked_videos" key="liked_videos" />
+
+
+
     </ConsistentPadding>
 
 

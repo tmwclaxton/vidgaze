@@ -18,7 +18,7 @@ const toastStore =  useToastStore();
 let showPlaylistCreate = ref(false);
 
 onMounted(() => {
-    playlistModalStore.getPlaylists();
+    playlistModalStore.refreshModal();
 });
 
 const name = "PlaylistModal";

@@ -168,43 +168,45 @@ class PlaylistApiController extends Controller
     public function index(Request $request)
     {
         $request->validate([
-            'video_ids' => 'nullable|string'
+            'video_ids' => 'nullable|string',
+            'where' => 'in:all,modal|nullable'
         ]);
-        $playlists = Playlist::query()->where([
+
+        $method = $request->where;
+        $wheres = [
             ['creator_id', '=', Auth::user()->creator->id],
             ['visibility', '!=', 'hidden'],
-            ['name', '!=', 'Liked Videos'],
-            ['name', '!=', 'History'],
-
-        ])->orderByDesc('updated_at')
-            //->with('owner')
-            ->get();
-
-
-        $video_ids = explode(',', $request->video_ids);
-
+        ];
+        if ($method == 'modal') {
+            $wheres = array_merge($wheres, [
+                ['name', '!=', 'Liked Videos'],
+                ['name', '!=', 'History'],
+            ]);
+        }
+        $playlists = Playlist::query()->where($wheres)->orderByDesc('updated_at')->get();
         $playlists = new PlaylistCollection($playlists);
 
-        foreach ($playlists as $playlist) {
-            $playlist->videos_present_in_playlist = false; // default value
+        if ($method === 'modal') {
+            $video_ids = explode(',', $request->video_ids);
+            foreach ($playlists as $playlist) {
+                $playlist->videos_present_in_playlist = false; // default value
 
-            foreach ($video_ids as $video_id) {
-                $playlist_video = PlaylistVideo::where([
-                    ['playlist_id', '=', $playlist->id],
-                    ['video_id', '=', $video_id],
-                ])->first();
+                foreach ($video_ids as $video_id) {
+                    $playlist_video = PlaylistVideo::where([
+                        ['playlist_id', '=', $playlist->id],
+                        ['video_id', '=', $video_id],
+                    ])->first();
 
-                if ($playlist_video) {
-                    $playlist->videos_present_in_playlist = true;
-                    break; // video found, no need to continue searching
+                    if ($playlist_video) {
+                        $playlist->videos_present_in_playlist = true;
+                        break; // video found, no need to continue searching
+                    }
                 }
             }
+            //order playlists by server_made then videos_present_in_playlist then updated_at
+            // can't cause computed order doesn't work or something
+            $playlists = $playlists->where('videos_present_in_playlist' , true)->merge($playlists->where('videos_present_in_playlist' , false));
         }
-
-
-        //order playlists by server_made then videos_present_in_playlist then updated_at
-        // can't cause computed order doesn't work or something
-        $playlists = $playlists->where('videos_present_in_playlist' , true)->merge($playlists->where('videos_present_in_playlist' , false));
 
         //put server made playlists at the top
         $playlists = $playlists->where('server_made' , true)->merge($playlists->where('server_made' , false));

@@ -12,9 +12,10 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
         }
     },
     actions: {
-        async getPlaylists() {
+        async refreshModal() {
             if (useAuthStore().user !== null) {
                 axios.get(route('api.playlist.index', {
+                    where: 'modal',
                     video_ids:  this.videoIds.join()})
                 )
                     .then(response => {
@@ -24,6 +25,20 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                         console.log(error);
                     });
             }
+        },
+
+        async getPlaylists() {
+            let playlists;
+            if (useAuthStore().user !== null) {
+                await axios.get(route('api.playlist.index'))
+                    .then(response => {
+                        playlists = response.data.playlists;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            }
+            return playlists;
         },
 
         async getPlaylist(playlistId, page = 1, perPage = 20) {
@@ -38,7 +53,7 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                     }
                 }).then(response => {
 
-                    console.log(response);
+                    // console.log(response);
                     playlist = response.data.playlist;
                     videos = response.data.videos.data;
                 }).
@@ -59,7 +74,7 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                     video_ids: this.videoIds.join()
                 }))
                     .then(response => {
-                        this.getPlaylists();
+                        this.refreshModal();
                         toastStore.add({
                             message:"Added to playlist",
                             type: 'success',
@@ -78,7 +93,7 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                     video_ids: this.videoIds.join()
                 }))
                     .then(response => {
-                        this.getPlaylists();
+                        this.refreshModal();
                         toastStore.add({
                             message:"Removed from playlist",
                             type: 'warning',
@@ -98,7 +113,7 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                         visibility: visibility
                     } ))
                     .then(response => {
-                        this.getPlaylists();
+                        this.refreshModal();
                         toastStore.add({
                             message:"Playlist created",
                             type: 'success',
