@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ApiControllers;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaylistCollection;
 use App\Http\Resources\PlaylistResource;
+use App\Http\Resources\VideoCollection;
 use App\Models\PlaylistModels\Playlist;
 use App\Models\PlaylistModels\PlaylistVideo;
 use Illuminate\Http\JsonResponse;
@@ -27,10 +28,13 @@ class PlaylistApiController extends Controller
     /** get playlist by slug
      * @return JsonResponse
      */
-    public function show($slug) {
+    public function show($request) {
+        $request->validate([
+            'slug' => 'required',
+        ]);
+        $slug = $request->slug;
 
         // if not logged in and playlist is private or hidden
-        $extraWheres = [];
         if (!Auth::check()) {
             $extraWheres = [
                 ['visibility', '=', 'public']
@@ -161,7 +165,7 @@ class PlaylistApiController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function playlist_modal_refresh(Request $request)
+    public function index(Request $request)
     {
         $request->validate([
             'video_ids' => 'nullable|string'

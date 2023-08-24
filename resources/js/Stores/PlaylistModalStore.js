@@ -14,7 +14,7 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
     actions: {
         async getPlaylists() {
             if (useAuthStore().user !== null) {
-                axios.post(route('api.playlist.modal.refresh', {
+                axios.get(route('api.playlist.index', {
                     video_ids:  this.videoIds.join()})
                 )
                     .then(response => {
@@ -24,8 +24,33 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                         console.log(error);
                     });
             }
-
         },
+
+        async getPlaylist(playlistId, page = 1, perPage = 20) {
+            let playlist;
+            let videos;
+            if (useAuthStore().user !== null) {
+                await axios.get(route('api.playlist.videos.index'), {
+                    params: {
+                        playlist_id: playlistId,
+                        page: page,
+                        per_page: perPage
+                    }
+                }).then(response => {
+
+                    console.log(response);
+                    playlist = response.data.playlist;
+                    videos = response.data.videos.data;
+                }).
+                catch(error => {
+                    console.log(error);
+                });
+
+                return [playlist, videos];
+            }
+        },
+
+
         async addVideosToPlaylist(playlistId) {
             if (useAuthStore().user !== null) {
                 let toastStore = useToastStore();

@@ -23,7 +23,9 @@ class Playlist extends Model
 
     public function videos(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
     {
-        return $this->hasManyThrough(Video::class, PlaylistVideo::class, 'playlist_id', 'id', 'id', 'video_id');
+        // order by pivot table created_at desc
+        return $this->hasManyThrough(Video::class, PlaylistVideo::class, 'playlist_id', 'id', 'id', 'video_id')
+            ->orderByDesc('playlist_video.created_at');
     }
 
     public function addVideo(int $videoId): bool

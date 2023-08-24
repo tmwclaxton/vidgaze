@@ -1,6 +1,6 @@
 <template>
     <div class="h-full flex flex-col gap-2 ">
-        <div class="bg-zinc-200 dark:bg-zinc-800 C rounded-md w-full aspect-[21/12]"></div>
+        <div class="bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded-md w-full aspect-[21/12]"></div>
         <div class="flex flex-row gap-2 ">
             <div class="bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded-full w-8 aspect-square"></div>
             <div class="bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded-md flex-grow h-7 my-auto  "></div>

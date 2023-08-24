@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PlaylistResource;
+use App\Http\Resources\VideoCollection;
 use App\Models\PlaylistModels\Playlist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -31,6 +33,31 @@ class PlaylistVideoApiController extends Controller
 
         return $playlistId;
     }
+
+    /** index
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function index(Request $request) {
+        $request->validate([
+            'playlist_id' => 'required', // because we pass History, Watch Later, etc
+            'page' => 'nullable|integer',
+            'per_page' => 'nullable|integer',
+        ]);
+        $playlistId = $request->playlist_id;
+        $page = $request->page ?? 1;
+        $per_page = $request->per_page ?? 10;
+        $playlistId = $this->checkForReservedPlaylist($playlistId);
+        $playlist = Playlist::findOrFail($playlistId);
+        // paginate in opposite order
+        $videos = $playlist->videos()->paginate($per_page, ['*'], 'page', $page);
+        return response()->json([
+            'playlist' => new PlaylistResource($playlist),
+            'videos' => $videos ? new VideoCollection($videos) : [],
+        ]);
+
+    }
+
 
     /** this creates a new playlist
      * @param Request $request
