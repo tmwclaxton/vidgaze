@@ -219,7 +219,7 @@ function prepareFormData(){
 }
 const handleSaveDraft = () => {
     axios.put(route('api.studio.video.draft.update', [video.value.slug]), prepareFormData()).then(() => {
-            router.get(route('studio.dashboard'))
+            router.get(route('studio.content'))
         }
     ).catch((error) => {
         form.errors = error.response.data.errors || {};
@@ -229,7 +229,7 @@ const handleSaveDraft = () => {
 
 const handlePublish = () => {
     axios.post(route('api.studio.video.publish', [video.value.slug]), prepareFormData()).then(() => {
-            router.get(route('studio.dashboard'))
+            router.get(route('studio.content'))
         }
     ).catch((error) => {
         form.errors = error.response.data.errors || {};

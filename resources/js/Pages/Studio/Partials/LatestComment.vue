@@ -8,7 +8,7 @@
 
         <div class="w-full grid grid-cols-3">
             <div class="cols-1">
-                <img src="https://i.ytimg.com/vi/9XaS93WMRQQ/hqdefault.jpg" class="w-full aspect-[21/12] rounded-lg shadow">
+                <img src="https://picsum.photos/1600/900" class="w-full aspect-[21/12] rounded-lg shadow">
             </div>
             <div class="col-2">
 

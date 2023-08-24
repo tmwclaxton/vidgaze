@@ -25,7 +25,6 @@ return new class extends Migration {
             $table->string('region', 3)->nullable();
             $table->enum('audience', array_map(fn($audience) => $audience->value, Audience::getAll()))->default(Audience::ALL->value);
             $table->enum('visibility', array_map(fn($visibility) => $visibility->value, Visibility::getAll()))->default(Visibility::PUBLIC->value);
-            $table->timestamp('publish_time')->nullable();
             $table->string('platforms')->nullable();
 
             $table->timestamps();

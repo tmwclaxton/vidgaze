@@ -100,7 +100,7 @@ const name = 'ExpandableNavigationLinks';
         </div>
         <!--content page-->
         <div v-if="useAuthStore().user != null" class="md:hid den">
-            <ResponsiveNavLink :href="route('studio.dashboard')" :active="route().current('studio.dashboard')">
+            <ResponsiveNavLink :href="route('studio.content')" :active="route().current('studio.content')">
                     <ContentIcon class=" w-5 h-5 flex-shrink-0"/>
                     <span>Content</span>
             </ResponsiveNavLink>
