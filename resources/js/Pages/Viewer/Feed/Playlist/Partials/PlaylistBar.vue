@@ -56,7 +56,7 @@ onMounted(async () => {
 
     <row-divider class="mt-6 mb-3 rounded-2xl"></row-divider>
 
-    <div class="mx-1  mb-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4 overflow-x-scroll gap-4">
+    <div class="mx-1 mb-14 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4 overflow-x-scroll gap-4">
         <template v-if="videos !== [] && videos.length > 0" v-for="video in videos" >
             <VideoStreamCard :item="video"/>
         </template>

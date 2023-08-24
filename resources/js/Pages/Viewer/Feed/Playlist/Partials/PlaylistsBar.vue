@@ -3,9 +3,11 @@ import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 import Title from "@/Components/General/Title.vue";
 import HistoryIcon from '~/images/icons/subscriptions.svg';
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import PlaylistCard from "@/Components/Cards/PlaylistCard/PlaylistCard.vue";
 import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
+import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamSkeleton.vue";
+import {useAuthStore} from "@/Stores/AuthStore";
 
 const name = "PlaylistBar";
 
@@ -20,9 +22,15 @@ const playlists = ref([]);
 //
 onMounted(async () => {
     {
-        setTimeout(async () => {
-            playlists.value = await usePlaylistModalStore().getPlaylists();
-        }, 2000);
+        if (useAuthStore().user !== null) {
+            setTimeout(async () => {
+                playlists.value = await usePlaylistModalStore().getPlaylists();
+            }, 1000);
+        } else {
+            watch(() => useAuthStore().user, async () => {
+                playlists.value = await usePlaylistModalStore().getPlaylists();
+            });
+        }
     }
 });
 </script>
@@ -38,9 +46,13 @@ onMounted(async () => {
 
     <row-divider class="mt-6 mb-3 rounded-2xl"></row-divider>
 
-    <div class="mx-1  mb-5 flex grid grid-cols-1 xs:grid-cols-2 ld:grid-cols-3 lg:grid-cols-4 ml:grid-cols-4 4xl:grid-cols-6 gap-4">
+    <div class="mx-1 mb-14 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4 overflow-x-scroll gap-4">
         <template v-if="playlists !== undefined && playlists.length > 0" v-for="playlist in playlists" >
-            <playlist-card :item="playlist"/>
+            <playlist-card :item="playlist" channel="true"/>
+        </template>
+
+        <template v-else >
+            <VideoStreamSkeleton v-for="i in 6"/>
         </template>
     </div>
 </template>

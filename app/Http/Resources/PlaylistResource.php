@@ -25,7 +25,7 @@ class PlaylistResource extends JsonResource
             'server_made' => $this->server_made ? true : false,
             'visibility' => $this->visibility,
             'description' => $this->description,
-            'video_count' => $this->video_count ,
+            'video_count' => number_format_short($this->video_count) . " " . Str::plural('Video', $this->video_count),
             'recent_video_image' => $this->recent_video_image,
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(),
             'updated_at' => Carbon::parse($this->updated_at)->diffForHumans(),
