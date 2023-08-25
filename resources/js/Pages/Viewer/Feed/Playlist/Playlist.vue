@@ -2,6 +2,7 @@
 import {onMounted, ref, watch} from "vue";
 import {useAuthStore} from "@/Stores/AuthStore";
 import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
+import PlaylistLock from "@/Components/Cards/PlaylistCard/Partials/PlaylistLock.vue";
 
 const playlist = ref([]);
 const videos = ref([]);
@@ -28,13 +29,12 @@ onMounted(async () => {
 
 
 
-            <div class="flex flex-col xs:flex-row  ">
+            <div class="flex flex-col xs:flex-row max-h-[calc(100vh-4rem)] overflow-hidden">
 
                 <!--playlist details-->
-                <div class="xs:bg-zinc-200 dark:xs:bg-zinc-900  w-full xs:w-72 md:w-96 flex-shrink-0 pt-5 px-5">
+                <div class="xs:bg-zinc-200 dark:xs:bg-zinc-900 w-full xs:w-72 md:w-96 flex-shrink-0 pt-5 px-5">
                     <div class="relative rounded-lg overflow-hidden aspect-video bg-vidgaze-blue w-full cursor-pointer ">
-                        <img class="object-cover w-full h-full bg-zinc-900"
-                             src="" alt=""/>
+                        <img v-if="playlist.recent_video_image !== null" class="object-cover w-full h-full " v-bind:src="playlist.recent_video_image" />
                         <div class="absolute rounded overflow-hidden w-full bottom-0 right-0  ">
                             <a href="/watch"
                                class="relative w-full text-white font-semibold bg-black opacity-80 px-auto flex flex-row   rounded-sm text-sm dark:text-zinc-200 justify-center">
@@ -50,12 +50,11 @@ onMounted(async () => {
 
 
                     <div class=" space-y-1 text dark:textDark px-1">
-                        <p class="inline-flex" v-text="playlist.video_count + ' · ' + 'Updated ' + playlist.updated_at"></p>
-                        <p class="inline-flex ">·</p>
-                        <!--<x-icon name="private" class="inline-flex w-3"/>-->
-                        <div class="inline-flex relative">
+                        <p class="inline-flex mr-2" v-text="playlist.video_count + ' · ' + 'Updated ' + playlist.updated_at + ' · ' "></p>
+                        <PlaylistLock :visibility="playlist.visibility" class="inline-flex w-3 mx-1"/>
+                        <div class="inline-flex relative ml-1.5">
                             <div class="inline-flex relative cursor-pointer w-full">
-                                <span class="capitalize select-none" x-text="visibility"></span>
+                                <span class="capitalize select-none" v-text="playlist.visibility"></span>
                             </div>
                         </div>
                     </div>

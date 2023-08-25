@@ -1,4 +1,6 @@
 <script setup>
+import PlaylistLock from "@/Components/Cards/PlaylistCard/Partials/PlaylistLock.vue";
+
 const name = "PlaylistCard";
 const props = defineProps({
     item: {
@@ -23,9 +25,7 @@ const props = defineProps({
                     </div>
                     <div class="absolute h-full w-full top-0 right-0 ">
                         <div class="relative h-full ml-auto  w-1/3  text-white font-semibold bg-black px-auto flex flex-col px-2 rounded-sm text-sm dark:text-zinc-200 opacity-80 justify-center">
-                            <font-awesome-icon :icon="['fas', 'lock']" v-if="item.visibility === 'private'"/>
-                            <font-awesome-icon :icon="['fas', 'earth-americas']" v-if="item.visibility === 'public'"/>
-                            <font-awesome-icon :icon="['fas', 'link']" v-if="item.visibility === 'unlisted'"/>
+                            <PlaylistLock :visibility="item.visibility"/>
                             <p class="text-center text-white font-bold mt-1" v-text="item.video_count"></p>
                         </div>
                     </div>
