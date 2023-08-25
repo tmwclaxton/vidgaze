@@ -3,10 +3,11 @@ import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 import Title from "@/Components/General/Title.vue";
 import HistoryIcon from '~/images/icons/subscriptions.svg';
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 import VideoStreamCard from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamCard.vue";
 import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamSkeleton.vue";
+import {useAuthStore} from "@/Stores/AuthStore";
 
 const name = "PlaylistBar";
 
@@ -30,12 +31,14 @@ const videos = ref([]);
 
 onMounted(async () => {
     {
-        setTimeout(async () => {
-
-            let playlist;
+        let playlist;
+        if (useAuthStore().user !== null) {
             [playlist, videos.value] = await usePlaylistModalStore().getPlaylist(props.id,0,6);
-
-        }, 1000);
+        } else {
+            watch(() => useAuthStore().user, async () => {
+                [playlist, videos.value] = await usePlaylistModalStore().getPlaylist(props.id,0,6);
+            });
+        }
     }
 });
 

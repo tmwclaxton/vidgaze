@@ -8,6 +8,8 @@ import PlaylistCard from "@/Components/Cards/PlaylistCard/PlaylistCard.vue";
 import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamSkeleton.vue";
 import {useAuthStore} from "@/Stores/AuthStore";
+import CreatePlaylistPartial from "@/Components/Modals/Partials/CreatePlaylistPartial.vue";
+import OptionHolder from "@/Components/Modals/Partials/OptionHolder.vue";
 
 const name = "PlaylistBar";
 
@@ -18,17 +20,16 @@ const props = defineProps({
     },
 });
 
-const playlists = ref([]);
+// const playlists = ref([]);
 //
 onMounted(async () => {
     {
+        usePlaylistModalStore().videoIds = [];
         if (useAuthStore().user !== null) {
-            setTimeout(async () => {
-                playlists.value = await usePlaylistModalStore().getPlaylists();
-            }, 1000);
+            await usePlaylistModalStore().getPlaylists('all');
         } else {
             watch(() => useAuthStore().user, async () => {
-                playlists.value = await usePlaylistModalStore().getPlaylists();
+                await usePlaylistModalStore().getPlaylists('all')
             });
         }
     }
@@ -39,16 +40,18 @@ onMounted(async () => {
         <Title :text="props.text" class="my-auto">
             <HistoryIcon class="w-5"/>
         </Title>
-        <QuaternaryButton class="h-max" @click="">
+
+        <QuaternaryButton class="h-max relative" @click="usePlaylistModalStore().showMenu = true; usePlaylistModalStore().createPage = true;">
             <span class="font-semibold">Create new</span>
         </QuaternaryButton>
+
     </div>
 
     <row-divider class="mt-6 mb-3 rounded-2xl"></row-divider>
 
     <div class="mx-1 mb-14 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4 overflow-x-scroll gap-4">
-        <template v-if="playlists !== undefined && playlists.length > 0" v-for="playlist in playlists" >
-            <playlist-card :item="playlist" channel="true"/>
+        <template v-if="usePlaylistModalStore().playlists.length > 0" v-for="playlist in usePlaylistModalStore().playlists" >
+            <playlist-card :item="playlist" :channel="true"/>
         </template>
 
         <template v-else >

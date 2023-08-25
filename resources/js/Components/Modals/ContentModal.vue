@@ -55,7 +55,7 @@ const togglePlaylistModal = () => {
     playlistModalStore.videoIds = [contentModalStore.item.id];
     playlistModalStore.showMenu = !playlistModalStore.showMenu;
     contentModalStore.showMenu = !contentModalStore.showMenu;
-    playlistModalStore.refreshModal();
+    playlistModalStore.getPlaylists();
 }
 
 </script>
