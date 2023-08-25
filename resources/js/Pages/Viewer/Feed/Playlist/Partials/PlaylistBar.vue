@@ -21,7 +21,7 @@ const props = defineProps({
         type: String,
         required: true
     },
-    id: {
+    slug: {
         type: String,
         required: true
     }
@@ -33,10 +33,10 @@ onMounted(async () => {
     {
         let playlist;
         if (useAuthStore().user !== null) {
-            [playlist, videos.value] = await usePlaylistModalStore().getPlaylist(props.id,0,6);
+            [playlist, videos.value] = await usePlaylistModalStore().getPlaylist(props.slug,0,6);
         } else {
             watch(() => useAuthStore().user, async () => {
-                [playlist, videos.value] = await usePlaylistModalStore().getPlaylist(props.id,0,6);
+                [playlist, videos.value] = await usePlaylistModalStore().getPlaylist(props.slug,0,6);
             });
         }
     }

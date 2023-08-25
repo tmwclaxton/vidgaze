@@ -24,11 +24,11 @@ onMounted(() => {
 const name = "PlaylistModal";
 
 
-const toggle = ((videos_present_in_playlist, playlist_id) => {
+const toggle = ((videos_present_in_playlist, playlist_slug) => {
     if (videos_present_in_playlist) {
-        playlistModalStore.removeVideosFromPlaylist(playlist_id)
+        playlistModalStore.removeVideosFromPlaylist(playlist_slug)
     } else {
-        playlistModalStore.addVideosToPlaylist(playlist_id)
+        playlistModalStore.addVideosToPlaylist(playlist_slug)
     }
 });
 
@@ -72,7 +72,7 @@ const togglePlaylistCreate = () => {
                 <!--</div>-->
                 <div v-if="!usePlaylistModalStore().createPage" class="h-52 overflow-y-auto ">
                     <hr class="border-1 border-zinc-300 dark:border-zinc-800 my-1">
-                    <Option class="items-center w-full" v-for="playlist in playlistModalStore.playlists"  :key="playlist.id" @click="toggle(playlist.videos_present_in_playlist,playlist.id)">
+                    <Option class="items-center w-full" v-for="playlist in playlistModalStore.playlists"  :key="playlist.id" @click="toggle(playlist.videos_present_in_playlist,playlist.slug)">
                         <Checkbox :checked="playlist.videos_present_in_playlist" class="my-auto" :id="'playlist_' + playlist.id" :name="'playlist_' + playlist.id" :value="playlist.id" />
                         <p v-text="playlist.name"/>
                         <span class="flex-grow"/>

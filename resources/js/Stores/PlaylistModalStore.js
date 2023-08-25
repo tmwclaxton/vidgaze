@@ -28,13 +28,13 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
             }
         },
 
-        async getPlaylist(playlistId, page = 1, perPage = 20) {
+        async getPlaylist(playlist_slug, page = 1, perPage = 20) {
             let playlist;
             let videos;
             if (useAuthStore().user !== null) {
                 await axios.get(route('api.playlist.videos.index'), {
                     params: {
-                        playlist_id: playlistId,
+                        playlist_slug: playlist_slug,
                         page: page,
                         per_page: perPage
                     }
@@ -53,11 +53,11 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
         },
 
 
-        async addVideosToPlaylist(playlistId) {
+        async addVideosToPlaylist(playlist_slug) {
             if (useAuthStore().user !== null) {
                 let toastStore = useToastStore();
                 axios.post(route('api.playlist.video.create', {
-                    playlist_id: playlistId,
+                    playlist_slug: playlist_slug,
                     video_ids: this.videoIds.join()
                 }))
                     .then(response => {
@@ -72,11 +72,11 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                     });
             }
         },
-        async removeVideosFromPlaylist(playlistId) {
+        async removeVideosFromPlaylist(playlist_slug) {
             if (useAuthStore().user !== null) {
                 let toastStore = useToastStore();
                 axios.delete(route('api.playlist.video.destroy', {
-                    playlist_id: playlistId,
+                    playlist_slug: playlist_slug,
                     video_ids: this.videoIds.join()
                 }))
                     .then(response => {

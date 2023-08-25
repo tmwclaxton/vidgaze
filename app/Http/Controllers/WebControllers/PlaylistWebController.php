@@ -16,5 +16,4 @@ class PlaylistWebController extends Controller
     public function show() {
         return Inertia::render('Viewer/Feed/Playlist/Playlist');
     }
-
 }

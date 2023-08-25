@@ -16,7 +16,7 @@ const props = defineProps({
 <template>
     <div class="relative group min-h-40 w-full">
         <div class="relative group overflow-hidden">
-            <Link :href="route('playlist', {playlist: item.slug})">
+            <Link :href="route('playlist', {slug: item.slug})">
                 <div class="relative aspect-[21/12] overflow-hidden rounded-lg">
                     <div class="h-full w-full  bg-vidgaze-blue-nav">
                         <img v-if="item.recent_video_image !== null" class="object-cover w-full h-full" v-bind:src="item.recent_video_image" />
@@ -34,7 +34,7 @@ const props = defineProps({
             <div class="pl-0 py-2">
                 <div class="flex flex-row">
                     <div class=" flex flex-col  overflow-hidden  ">
-                        <Link :href="route('playlist', {playlist: item.slug})">
+                        <Link :href="route('playlist', {slug: item.slug})">
                             <span
                                 class="  line-clamp-2 overflow-hidden leading-4 font-bold  text-base text-zinc-900 dark:text-zinc-200 inline-flex">
                                 <span class="pr-2" v-text="item.name"/>
