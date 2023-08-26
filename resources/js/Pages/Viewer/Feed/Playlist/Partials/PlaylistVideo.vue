@@ -1,5 +1,6 @@
 <script setup>
 import RowDivider from "@/Components/General/RowDivider.vue";
+import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 
 const name = "PlaylistVideo";
 
@@ -14,17 +15,26 @@ const props = defineProps({
     },
     playlist: {
         type: Object,
-        required: false
+        required: true
     }
 });
 
+const emits = defineEmits(['deleteVideo']);
+
+const deleteVideo = async () => {
+    usePlaylistModalStore().videoIds = [props.video.id];
+    await usePlaylistModalStore().removeVideosFromPlaylist(props.playlist.slug);
+    usePlaylistModalStore().videoIds = [];
+    emits('deleteVideo', props.video.id);
+};
+
 </script>
 <template>
-    <Link :href="route('watch.show', {slug: video.slug})">
-    <div class="relative w-full hover:bg-zinc-300 dark:hover:bg-zinc-800 p-5">
+    <div class="relative w-full hover:bg-zinc-300 dark:hover:bg-zinc-800 ">
         <div class=" h-full flex flex-row px-2 cursor-pointer">
+                <Link :href="route('watch.show', {slug: video.slug})" class="flex flex-row w-full py-5 pl-5">
                 <div class="my-auto px-4 w-12 h-full font-semibold flex flex-col justify-center flex-grow ">
-                    <p class=" text dark:textDark" v-text="index + 1"></p>
+                    <p v-text="index + 1"></p>
                 </div>
                 <div class="pr-10 w-full my-auto ">
                     <div class="relative flex group z-0">
@@ -52,9 +62,12 @@ const props = defineProps({
 
                     </div>
                 </div>
+                </Link>
+                <div class="my-auto px-4 w-12 h-full font-semibold flex flex-col justify-center flex-grow pr-5" @click="deleteVideo">
+                    <font-awesome-icon :icon="['fas', 'trash']" />
+                </div>
             </div>
     </div>
-    </Link>
             <hr class="flex border-1 border-zinc-300 dark:border-zinc-800" />
 
 </template>

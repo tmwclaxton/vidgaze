@@ -16,6 +16,7 @@ const videos = ref([]);
 const page = ref(2);
 const perPage = ref(20);
 const showShare = ref(false);
+import { vInfiniteScroll } from '@vueuse/components'; // don't remove this import
 import {throttle} from "lodash";
 onMounted(async () => {
     {
@@ -25,6 +26,7 @@ onMounted(async () => {
         watch(() => useAuthStore().user, async () => {
     [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,1,perPage.value);
             });
+
     }
 });
 
@@ -123,9 +125,10 @@ const playlistPageModal = ref(false);
 
                 <!--playlist videos-->
                 <div id="playlist_video_holder" class=" w-full xs:bg-zinc-200 dark:xs:bg-zinc-900 ">
-                    <div  v-infinite-scroll="throttledLoadMore" class="h-[calc(100vh-4rem)] overflow-y-auto flex flex-col pb-96">
-                        <PlaylistVideo v-if="videos.length > 0"
-                            v-for="(video,index) in videos" :key="video.id" :video="video" :index="index" class="w-full"/>
+                    <div  v-infinite-scroll="throttledLoadMore" class="h-[calc(100vh-4rem)] overflow-y-auto flex flex-col pb-36">
+
+                        <PlaylistVideo v-if="videos.length > 0" @deleteVideo="videos.splice(index, 1)"
+                            v-for="(video,index) in videos" :key="video.id" :video="video" :index="index" :playlist="playlist"/>
                     </div>
 
                 </div>
