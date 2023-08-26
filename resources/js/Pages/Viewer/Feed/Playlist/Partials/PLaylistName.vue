@@ -10,15 +10,12 @@ const props = defineProps({
     playlist: {
         type: Object,
         required: true
+    },
+    editable: {
+        type: Boolean,
+        default: true
     }
 });
-// computed property that returns true if the playlist is editable
-const editable = computed(() => {
-    if (!useAuthStore().user) return false;
-    // if playlist isn't server made and the user is the owner of the playlistX
-    return !props.playlist.server_made && props.playlist.creator.id === useAuthStore().user.creator.id;
-});
-
 const editMode = ref(false);
 
 const toggleEditMode = () => {
@@ -37,6 +34,6 @@ const submit = () => {
         <text-input v-if="editMode" v-model="playlist.name" @escape="submit"
                     @keydown.enter="submit" @keydown.escape="submit" />
         <p v-if="!editMode" class=" text-xl font-semibold" v-text="playlist.name"></p>
-        <font-awesome-icon :icon="['fas', 'pencil']" v-if="editable" @click="toggleEditMode" class="my-auto cursor-pointer" />
+        <font-awesome-icon :icon="['fas', 'pencil']" v-if="props.editable" @click="toggleEditMode" class="my-auto cursor-pointer" />
     </div>
 </template>

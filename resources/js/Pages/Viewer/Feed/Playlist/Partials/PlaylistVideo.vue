@@ -16,6 +16,10 @@ const props = defineProps({
     playlist: {
         type: Object,
         required: true
+    },
+    editable: {
+        type: Boolean,
+        default: true
     }
 });
 
@@ -63,7 +67,7 @@ const deleteVideo = async () => {
                     </div>
                 </div>
                 </Link>
-                <div class="my-auto px-4 w-12 h-full font-semibold flex flex-col justify-center flex-grow pr-5" @click="deleteVideo">
+                <div v-if="props.editable" class="my-auto px-4 w-12 h-full font-semibold flex flex-col justify-center flex-grow pr-5" @click="deleteVideo">
                     <font-awesome-icon :icon="['fas', 'trash']" />
                 </div>
             </div>

@@ -163,7 +163,7 @@ onUnmounted(() => {
                         <div id="watch_player" :class="playerStore.players.length > 0 ? 'w-full h-full bg-black without-ring flex relative ' : 'opacity-0'"/>
 
                         <!--end screen-->
-                        <EndScreen v-if="ready && playerStore.players.length === 0" :item="item" class="h-full w-full"/>
+                        <!--<EndScreen v-if="ready && playerStore.players.length === 0" :item="item" class="h-full w-full"/>-->
 
                     </div>
                 </div>

@@ -19,6 +19,7 @@ const showShare = ref(false);
 import { vInfiniteScroll } from '@vueuse/components'; // don't remove this import
 import {throttle} from "lodash";
 import {useQueueStore} from "@/Stores/QueueStore";
+import {router} from "@inertiajs/vue3";
 onMounted(async () => {
     {
         //grab playlist id from url /playlist/{id}
@@ -32,15 +33,17 @@ onMounted(async () => {
 });
 
 // on scroll to bottom of the playlist_video_holder, load more videos
+const exhausted = ref(false);
 const loadMore = async () => {
-    if (videos.value.length === 0) return;
+    if (videos.value.length === 0 || exhausted.value) return;
     let newVideos = await usePlaylistModalStore().getPlaylist(playlist.value.slug, page.value, perPage.value);
     videos.value = videos.value.concat(newVideos[1]);
+    if (newVideos[1].length === 0) exhausted.value = true;
     page.value++;
 };
 
 //throttle laod more function
-const throttledLoadMore = throttle(loadMore, 500);
+const throttledLoadMore = throttle(loadMore, 1000);
 
 
 const editable = computed(() => {
@@ -66,9 +69,16 @@ const addPlaylistToQueue = async (shuffle = false) => {
     useQueueStore().playlist = playlist.value;
     useQueueStore().page = 2;
     useQueueStore().perPage = 20;
-    useQueueStore().items = videos.value;
+    useQueueStore().items = videos.value; //not needed because we are using the playlist store for the videos.vlaue anyway
+    if (shuffle) {
+        useQueueStore().items = useQueueStore().items.sort(() => Math.random() - 0.5)
+    }
     useQueueStore().shuffle = shuffle;
-    useQueueStore().changeIndex(0);
+
+    // redirect to watch page of first video in queue
+    // router.push({name: 'watch', params: {video: useQueueStore().items[0].slug}});
+    router.visit(route('watch.show', useQueueStore().items[0].slug));
+
 };
 
 
@@ -99,17 +109,17 @@ const playlistPageModal = ref(false);
                         </div>
                     </div>
 
-                    <PLaylistName :playlist="playlist"/>
+                    <PLaylistName :playlist="playlist" :editable="editable"/>
 
 
                     <div class=" space-y-1  px-1">
                         <p class="inline-flex mr-2" v-text="playlist.video_count + ' · ' + 'Updated ' + playlist.updated_at + ' · ' "></p>
-                        <PLaylistVisibility :playlist="playlist"/>
+                        <PLaylistVisibility :playlist="playlist" :editable="editable"/>
                     </div>
 
                     <OnClickOutside @trigger="playlistPageModal = false">
                         <div class="relative mt-3 mx-1 w-full flex flex-row space-x-4 " >
-                            <div class="m-0 p-0 flex flex-col">
+                            <div class="m-0 p-0 flex flex-col" @click="addPlaylistToQueue(true)">
                                 <font-awesome-icon :icon="['fas', 'shuffle']" class="w-4 mt-1 cursor-pointer"></font-awesome-icon>
                             </div>
                             <div class="m-0 p-0 flex flex-col" @click="share">
@@ -147,7 +157,7 @@ const playlistPageModal = ref(false);
                 <div id="playlist_video_holder" class=" w-full xs:bg-zinc-200 dark:xs:bg-zinc-900 ">
                     <div  v-infinite-scroll="throttledLoadMore" class="h-[calc(100vh-4rem)] overflow-y-auto flex flex-col pb-36">
 
-                        <PlaylistVideo v-if="videos.length > 0" @deleteVideo="videos.splice(index, 1)"
+                        <PlaylistVideo v-if="videos.length > 0" @deleteVideo="videos.splice(index, 1)" :editable="editable"
                             v-for="(video,index) in videos" :key="video.id" :video="video" :index="index" :playlist="playlist"/>
                     </div>
 

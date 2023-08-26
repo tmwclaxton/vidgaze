@@ -12,13 +12,11 @@ const props = defineProps({
     playlist: {
         type: Object,
         required: true
+    },
+    editable: {
+        type: Boolean,
+        default: true
     }
-});
-// computed property that returns true if the playlist is editable
-const editable = computed(() => {
-    if (!useAuthStore().user) return false;
-    // if playlist isn't server made and the user is the owner of the playlistX
-    return !props.playlist.server_made && props.playlist.creator.id === useAuthStore().user.creator.id;
 });
 const visibilityOptions = [
     { value: 'public', label: 'Public' },
@@ -38,7 +36,7 @@ watch(() => props.playlist.visibility, () => {
 <template>
     <div class="inline-flex flex-row gap-x-2  items-center"  >
         <PlaylistLock :visibility="playlist.visibility"/>
-        <SelectInput v-if="editable" class="dark:bg-zinc-900 w-36" v-model="playlist.visibility" name="visibility" title="Visibility" @update:model-value="value => playlist.visibility = value" :options="visibilityOptions" />
+        <SelectInput v-if="props.editable" class="dark:bg-zinc-900 w-36" v-model="playlist.visibility" name="visibility" title="Visibility" @update:model-value="value => playlist.visibility = value" :options="visibilityOptions" />
         <div v-if="!editable"  class=" relative cursor-pointer w-full -mb-1.5">
             <span class="capitalize select-none" v-text="playlist.visibility"></span>
         </div>
