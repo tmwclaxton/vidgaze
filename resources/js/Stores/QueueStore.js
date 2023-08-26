@@ -1,14 +1,19 @@
 import { defineStore } from 'pinia'
 import { usePlayerStore } from './PlayerStore.js'
 import {router, usePage} from "@inertiajs/vue3";
+import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
 export const useQueueStore = defineStore('QueueStore', {
     state: () => {
         return {
             items: [] ,
             index: 0,
+            // autoplay: false,
+            refreshMiniPlayer: "", // used to refresh some front end components
+
             playlist: null,
-            autoplay: false,
-            refreshMiniPlayer: "",
+            shuffle: false,
+            page: 1,
+            perPage: 20,
         }
     },
     getters: {
@@ -56,18 +61,24 @@ export const useQueueStore = defineStore('QueueStore', {
                 }
                 return true;
             }
-
-
         },
 
         removeAll() {
-            // do a full destroy for each item in the queue
-            for (let i = 0; i < this.items.length; i++) {
-                usePlayerStore().destroyPlayer(this.items[i].external_id, true).then(r =>  {
-                    this.items = [];
-                    this.index = 0;
-                });
-            }
+            // confirm that the user wants to close the mini player as it will destroy the queue
+            useConfirmModalStore().buttonOneText = 'Cancel';
+            useConfirmModalStore().buttonTwoText = 'Delete';
+            useConfirmModalStore().title = 'Are you sure, this will delete the queue?';
+            useConfirmModalStore().show = true;
+            useConfirmModalStore().continue = () => {
+                // do a full destroy for each item in the queue
+                for (let i = 0; i < this.items.length; i++) {
+                    usePlayerStore().destroyPlayer(this.items[i].external_id, true).then(r =>  {
+                        this.items = [];
+                        this.index = 0;
+                    });
+                }
+            };
+
         },
 
         remove(external_id) {

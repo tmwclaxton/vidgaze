@@ -5,6 +5,7 @@ use App\Enums\Kind;
 use App\Helpers\Tokens\TokenHelper;
 use App\Http\Controllers\Controller;
 use App\Models\LiveClient;
+use App\Models\PlaylistModels\Playlist;
 use App\Models\PodcastEpisodeModels\PodcastEpisode;
 use App\Models\StreamModels\Stream;
 use App\Models\VideoModels\Video;
@@ -13,6 +14,7 @@ use App\Models\VideoModels\VideoView;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ViewListenerController extends Controller
 {
@@ -123,6 +125,7 @@ class ViewListenerController extends Controller
             }
         }
 
+        // set view point
         if (Auth()->check()) {
             // check if view point is less than 1 minute from the end of the video
             if ($view_point > $this->video->duration - 60) {
@@ -135,11 +138,11 @@ class ViewListenerController extends Controller
             $view_point_recorded = false;
         }
 
-        //increment view count on video model
+        // increment view count and save to history
         if ($liveClient->view_counted === false) {
+            // if logged in increment view count threshold is lower
             if ($liveClient->viewer_id !== self::LOGGED_OUT_VIEWER_ID) {
-                // if logged in increment view count threshold is lower
-
+                $this->addVideoToHistory($item_id);
                 // Check if the video has been watched for long enough to count as a view
                 if ($watch_duration >= 5 || $watch_duration >= 0.1 * $this->video->duration) {
                     // Attempt to increment the view count
@@ -148,11 +151,8 @@ class ViewListenerController extends Controller
 
             } else {
                 // if not logged in increment view count threshold is higher
-
                 // Check if the video has been watched for long enough to count as a view
                 if ($watch_duration >= 15 || $watch_duration >= 0.3 * $this->video->duration) {
-                    // Attempt to increment the view count
-
                     $this->incrementViewCount($liveClient);
                 }
             }
@@ -289,5 +289,13 @@ class ViewListenerController extends Controller
             $liveClient->save();
 
         }
+    }
+
+    private function addVideoToHistory(string $item_id)
+    {
+        $playlistId = Auth::user()->creator->getServerMadePlaylist('History')->id;
+        $playlist = Playlist::findOrFail($playlistId);
+        $playlist->removeVideo(intval($item_id));
+        $playlist->addVideo(intval($item_id));
     }
 }

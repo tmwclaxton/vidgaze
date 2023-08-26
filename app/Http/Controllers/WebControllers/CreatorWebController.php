@@ -14,9 +14,12 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class CreatorWebController extends Controller
 {
-
-
+    public function show($request)
+    {
+        return Inertia::render('Viewer/Channel/Channel');
+    }
 }

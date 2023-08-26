@@ -20,20 +20,11 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             reportedContent: false,
             x: 0,
             y: 0,
-            // widthOfMenu: useAuthStore().user !== null ? 250 : 120,
+            widthOfMenu: useAuthStore().user !== null ? 250 : 120,
             heightOfMenu: 0,
         }
     },
-    getters: {
-        widthOfMenu() {
-            const authStore = useAuthStore();
-            if (authStore.user !== null) {
-                return 250;
-            } else {
-                return 120;
-            }
-        }
-    },
+    getters: {},
     actions: {
         setMenuShow(value) {
 
@@ -82,7 +73,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             if (this.item !== null && this.itemType === 'video' || this.itemType === 'short') {
                 const videoId = this.item.id;
                 try {
-                    const response = await axios.get(route('video.details', { videoId: videoId }));
+                    const response = await axios.get(route('api.video.details', { video_id: videoId }));
                     const data = response.data;
                     this.inWatchLater = data.inWatchLater;
                     this.itemDisinterest = data.videoDisinterest;
@@ -105,7 +96,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             if (this.item !== null && this.itemType === 'stream') {
                 const streamId = this.item.id;
                 try {
-                    const response = await axios.get(route('stream.details', { streamId: streamId }));
+                    const response = await axios.get(route('stream.details', { stream_id: streamId }));
                     const data = response.data;
                     this.reportedContent = data.reportedContent;
                     this.itemDisinterest = data.streamDisinterest;
@@ -119,9 +110,9 @@ export const useContentModalStore = defineStore('ContentModalStore', {
         async toggleItemDisinterest(item_id, toggle) {
             let url = ';'
             if (this.itemType === 'video' || this.itemType === 'short') {
-                url = route('video.disinterest.toggle', {videoId: item_id});
+                url = route('api.video.disinterest.toggle', {video_id: item_id});
             } else if (this.itemType === 'stream') {
-                url = route('stream.disinterest.toggle', {streamId: item_id});
+                url = route('api.stream.disinterest.toggle', {stream_id: item_id});
             }
             const method = 'post';
             let toastStore = useToastStore();
@@ -160,9 +151,9 @@ export const useContentModalStore = defineStore('ContentModalStore', {
         async reportContent(id) {
             let url = '';
             if ( this.itemType === 'video' || this.itemType === 'short') {
-                url = route('video.report.toggle', {videoId: id}); ///videos/{id}/report
+                url = route('api.video.report.toggle', {video_id: id}); ///videos/{id}/report
             } else if ( this.itemType === 'stream') {
-                url = route('stream.report.toggle', {streamId: id});
+                url = route('api.stream.report.toggle', {stream_id: id});
             }
             // this will hide the video and show the hidden content cover
             if (!this.reportedContent) {
@@ -211,7 +202,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
 
         async toggleChannelDisinterest(creator_id, toggle) {
             // const url = '/channels/' + creator_id + '/disinterest' ;
-            let url = route('channel.disinterest.toggle', {channelId: creator_id});
+            let url = route('api.creator.disinterest.toggle', {channelId: creator_id});
             const method = 'post';
             let toastStore = useToastStore();
 

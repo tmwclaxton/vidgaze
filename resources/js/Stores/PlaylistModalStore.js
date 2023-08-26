@@ -9,12 +9,14 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
             videoIds: [],
             playlists: [],
             showMenu: false,
+            createPage: false,
         }
     },
     actions: {
-        async getPlaylists() {
+        async getPlaylists(where = 'modal') {
             if (useAuthStore().user !== null) {
-                axios.post(route('api.playlist.modal.refresh', {
+                axios.get(route('api.playlist.index', {
+                    where: where,
                     video_ids:  this.videoIds.join()})
                 )
                     .then(response => {
@@ -24,13 +26,38 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                         console.log(error);
                     });
             }
-
         },
-        async addVideosToPlaylist(playlistId) {
+
+        async getPlaylist(playlist_slug, page = 1, perPage = 20) {
+            let playlist;
+            let videos;
+            await axios.get(route('api.playlist.videos.index'), {
+                params: {
+                    playlist_slug: playlist_slug,
+                    page: page,
+                    per_page: perPage
+                }
+            }).then(response => {
+                playlist = response.data.playlist;
+                videos = response.data.videos.data;
+            }).
+            catch(error => {
+                // console.log(error);
+                useToastStore().add({
+                    message: error.response.data.message,
+                    type: 'warning',
+                });
+            });
+
+            return [playlist, videos];
+        },
+
+
+        async addVideosToPlaylist(playlist_slug) {
             if (useAuthStore().user !== null) {
                 let toastStore = useToastStore();
                 axios.post(route('api.playlist.video.create', {
-                    playlist_id: playlistId,
+                    playlist_slug: playlist_slug,
                     video_ids: this.videoIds.join()
                 }))
                     .then(response => {
@@ -45,11 +72,11 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                     });
             }
         },
-        async removeVideosFromPlaylist(playlistId) {
+        async removeVideosFromPlaylist(playlist_slug) {
             if (useAuthStore().user !== null) {
                 let toastStore = useToastStore();
                 axios.delete(route('api.playlist.video.destroy', {
-                    playlist_id: playlistId,
+                    playlist_slug: playlist_slug,
                     video_ids: this.videoIds.join()
                 }))
                     .then(response => {
@@ -60,7 +87,11 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                         });
                     })
                     .catch(error => {
-                        console.log(error);
+                        // console.log(error);
+                        useToastStore().add({
+                            message: error.response.data.message,
+                            type: 'warning',
+                        });
                     });
              }
         },
@@ -73,9 +104,40 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                         visibility: visibility
                     } ))
                     .then(response => {
-                        this.getPlaylists();
+                        if (this.videoIds.length > 0) {
+                            this.getPlaylists();
+                        } else {
+                            this.getPlaylists('all')
+                        }
                         toastStore.add({
                             message:"Playlist created",
+                            type: 'success',
+                        });
+                    })
+                    .catch(error => {
+                        // console.log(error);
+                        useToastStore().add({
+                            message: error.response.data.message,
+                            type: 'warning',
+                        });
+                    });
+            }
+        },
+
+        async deletePlaylist(playlist_id) {
+            if (useAuthStore().user !== null) {
+                let toastStore = useToastStore();
+                axios.delete(route('api.playlist.destroy', {
+                    playlist_id: playlist_id,
+                }))
+                    .then(response => {
+                        if (this.videoIds.length > 0) {
+                            this.getPlaylists();
+                        } else {
+                            this.getPlaylists('all')
+                        }
+                        toastStore.add({
+                            message:"Playlist deleted",
                             type: 'success',
                         });
                     })
@@ -84,6 +146,27 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                     });
             }
         },
+
+        async updatePlaylist(playlist_id, name, visibility) {
+            if (useAuthStore().user !== null) {
+                let toastStore = useToastStore();
+                axios.patch(route('api.playlist.update', {
+                    playlist_id: playlist_id,
+                    name: name,
+                    visibility: visibility
+                }))
+                    .then(response => {
+                        this.getPlaylists();
+                        toastStore.add({
+                            message:"Playlist updated",
+                            type: 'success',
+                        });
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            }
+        }
 
 
     }

@@ -19,6 +19,7 @@ export default class Player {
     viewRecordDuration = 0;
 
     constructor(object, playerDiv, start_time = 0, autoplay = false, checkHistoryTime = false, short = false) {
+        this.seeked = false;
         this.object = object
         this.playerDiv = playerDiv;
         this.external_id = object.external_id;
@@ -47,19 +48,18 @@ export default class Player {
 
     // get the start time of the video by checking the history
     async getStartTimePlayer() {
-        if (useAuthStore().user === null || this.checkHistoryTime === false) {
-            return;
-        }
-        // get the view history for this video and set the start time to the last time they watched it
-        try {
-            const response = await axios.get(route('api.video.interaction', {video_id: this.object.id}));
-            const data = response.data;
-            if (data !== undefined && data.interaction !== null) {
-                this.start_time = data.interaction.view_point;
+        if (useAuthStore().user !== null && this.checkHistoryTime) {
+            // get the view history for this video and set the start time to the last time they watched it
+            try {
+                const response = await axios.get(route('api.video.interaction', {video_id: this.object.id}));
+                const data = response.data;
+                if (data !== undefined && data.interaction !== null) {
+                    this.start_time = data.interaction.view_point;
+                }
+            } catch (error) {
+                console.log(error);
+                this.start_time = 0;
             }
-        } catch (error) {
-            console.log(error);
-            this.start_time = 0;
         }
     }
 

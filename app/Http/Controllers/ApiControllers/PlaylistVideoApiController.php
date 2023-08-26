@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PlaylistResource;
+use App\Http\Resources\VideoCollection;
 use App\Models\PlaylistModels\Playlist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,26 +13,70 @@ use Illuminate\Support\Facades\Auth;
 class PlaylistVideoApiController extends Controller
 {
 
-    private function checkForReservedPlaylist($playlistId)
+    private function checkForReservedPlaylist($playlist_slug)
     {
 
-        switch ($playlistId) {
+        switch ($playlist_slug) {
             case "watch_later":
-                $playlistId = Auth::user()->creator->getServerMadePlaylist('Watch Later')->id;
+                $playlist_slug = Auth::user()->creator->getServerMadePlaylist('Watch Later')->slug;
                 break;
             case "liked_videos":
-                $playlistId = Auth::user()->creator->getServerMadePlaylist('Liked Videos')->id;
+                $playlist_slug = Auth::user()->creator->getServerMadePlaylist('Liked Videos')->slug;
                 break;
             case "history":
-                $playlistId = Auth::user()->creator->getServerMadePlaylist('History')->id;
+                $playlist_slug = Auth::user()->creator->getServerMadePlaylist('History')->slug;
                 break;
             case "disliked_videos":
-                $playlistId = Auth::user()->creator->getServerMadePlaylist('Disliked Videos')->id;
+                $playlist_slug = Auth::user()->creator->getServerMadePlaylist('Disliked Videos')->slug;
+                break;
+            default:
                 break;
         }
 
-        return $playlistId;
+        return $playlist_slug;
     }
+
+    /** index
+     * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function index(Request $request) {
+        $request->validate([
+            'playlist_slug' => 'required',
+            'page' => 'nullable|integer',
+            'per_page' => 'nullable|integer',
+        ]);
+        $playlist_slug = $request->playlist_slug;
+        $page = $request->page ?? 1;
+        $per_page = $request->per_page ?? 10;
+
+        // if not logged in and playlist is private or hidden
+        if (!Auth::check()) {
+            $playlist = Playlist::where([
+                ['slug', '=', $playlist_slug],
+                ['visibility', '=', 'public']
+            ])->first();
+        } else {
+            $playlist_slug = $this->checkForReservedPlaylist($playlist_slug);
+            $playlist = Playlist::where([
+                ['slug', '=', $playlist_slug],
+                ['creator_id', '=', Auth::user()->creator->id]
+            ])->first();
+        }
+        if (!$playlist) {
+            throw new \Exception('Playlist not found', 404);
+        }
+
+        // paginate in opposite order
+        $videos = $playlist->videos()->paginate($per_page, ['*'], 'page', $page);
+        return response()->json([
+            'playlist' => new PlaylistResource($playlist),
+            'videos' => $videos ? new VideoCollection($videos) : [],
+        ]);
+
+    }
+
 
     /** this creates a new playlist
      * @param Request $request
@@ -39,17 +85,20 @@ class PlaylistVideoApiController extends Controller
     public function create(Request $request)
     {
         $request->validate([
-            'playlist_id' => 'required', // because we pass History, Watch Later, etc
+            'playlist_slug' => 'required', // because we pass History, Watch Later, etc
             'video_ids' => 'regex:/^[0-9,]+$/|required',
         ]);
 
 
-        $playlistId = $request->playlist_id;
+        $playlist_slug = $request->playlist_slug;
         $videoIds = explode(',', $request->video_ids);
-        $playlistId = $this->checkForReservedPlaylist($playlistId);
+        $playlist_slug = $this->checkForReservedPlaylist($playlist_slug);
 
         // get playlist
-        $playlist = Playlist::findOrFail($playlistId);
+        $playlist = Playlist::where([
+            ['slug', '=', $playlist_slug],
+            ['creator_id', '=', Auth::user()->creator->id]
+        ])->first();
 
         // check playlist exists
         if (!$playlist) {
@@ -95,13 +144,13 @@ class PlaylistVideoApiController extends Controller
      */
     public function destroy(Request $request)
     {
-        $playlistId = $request->playlist_id;
+        $playlist_slug = $request->playlist_slug;
         $videoIds = explode(',', $request->video_ids);
 
-        $playlistId = $this->checkForReservedPlaylist($playlistId);
+        $playlist_slug = $this->checkForReservedPlaylist($playlist_slug);
 
         // check if user is the owner of the playlist
-        $playlist = Playlist::findOrFail($playlistId);
+        $playlist = Playlist::where('slug', $playlist_slug)->firstOrFail();
         if ($playlist->owner->id !== Auth::user()->creator->id) {
             return response()->json(
                 [

@@ -29,7 +29,7 @@ onMounted(async () => {
     <Head title="Studio Dashboard" />
 
     <ConsistentPadding class="-mt-4">
-        <Title :text="'Channel Dashboard'">
+        <Title :text="'Channel Dashboard'" class="my-4 mb-8">
             <StreamIcon class="w-6 h-6 my-auto"/>
         </Title>
 

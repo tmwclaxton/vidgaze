@@ -57,7 +57,7 @@ onMounted(() => {
 
 
         <div class="flex flex-col gap-y-2" v-if="streams.length > 0">
-            <TitleComponent text="Livestreams">
+            <TitleComponent text="Livestreams" class="my-4 mb-8">
                 <font-awesome-icon :icon="['fas', 'fire']" class="w-6 h-6 my-auto" />
             </TitleComponent>
 
@@ -68,7 +68,7 @@ onMounted(() => {
         </div>
 
         <div class="flex flex-col gap-y-2" v-if="videos.length > 0">
-            <TitleComponent text="Latest">
+            <TitleComponent text="Latest" class="my-4 mb-8">
                 <font-awesome-icon :icon="['fas', 'fire']" class="w-6 h-6 my-auto" />
             </TitleComponent>
 

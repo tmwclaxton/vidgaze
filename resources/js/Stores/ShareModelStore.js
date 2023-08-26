@@ -10,7 +10,6 @@ export const useShareModalStore = defineStore('ShareModalStore', {
     },
     actions: {
         async getShareLinks(link, title) {
-
             try {
                 const response = await axios.get(route("api.share.index"), { params: { link, title } });
                 this.links = response.data.links;

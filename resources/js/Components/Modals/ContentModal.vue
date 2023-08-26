@@ -12,6 +12,7 @@ import { useContentModalStore } from "@/Stores/ContentModalStore";
 import {onMounted, onUnmounted, ref, watch} from "vue";
 import { usePlaylistModalStore } from "@/Stores/PlaylistModalStore";
 import { useShareModalStore } from "@/Stores/ShareModelStore";
+import {useAuthStore} from "@/Stores/AuthStore";
 
 const contentModalStore = useContentModalStore();
 const playlistModalStore = usePlaylistModalStore();

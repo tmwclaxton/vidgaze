@@ -121,11 +121,12 @@ export const usePlayerStore = defineStore('PlayerStore', {
             }
 
             if (existingPlayer) {
-                console.log('player already exists');
+                // console.log('player already exists, start time: ' + startTime + ' autoplay: ' + autoplay + ' checkViewHistoryStartTime: ' + checkViewHistoryStartTime + ' short: ' + short);
                 existingPlayer.playerDiv = playerDiv;
                 existingPlayer.endScreen = false;
                 existingPlayer.checkHistoryTime = checkViewHistoryStartTime;
                 existingPlayer.start_time = startTime;
+                existingPlayer.seeked = false;
                 existingPlayer.create();
                 return;
             } else {
