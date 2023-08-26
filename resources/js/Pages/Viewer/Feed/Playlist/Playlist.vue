@@ -8,6 +8,7 @@ import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import PlaylistVideo from "@/Pages/Viewer/Feed/Playlist/Partials/PlaylistVideo.vue";
 import PLaylistName from "@/Pages/Viewer/Feed/Playlist/Partials/PLaylistName.vue";
 import PLaylistVisibility from "@/Pages/Viewer/Feed/Playlist/Partials/PLaylistVisibility.vue";
+import {useShareModalStore} from "@/Stores/ShareModelStore";
 
 const playlist = ref(null);
 const videos = ref([]);
@@ -25,6 +26,16 @@ onMounted(async () => {
 
     }
 });
+
+const showShare = ref(false);
+const share = () => {
+    if (showShare.value) {
+        showShare.value = false;
+    } else {
+        showShare.value = true;
+        useShareModalStore().getShareLinks(route('playlist', playlist.value.slug), "Check out this playlist on VidGaze: " + playlist.value.name);
+    }
+};
 
 </script>
 <template>
@@ -56,13 +67,13 @@ onMounted(async () => {
 
                     <div class="relative mt-3 mx-1 w-full flex flex-row space-x-4 ">
                         <div class="m-0 p-0 flex flex-col">
-                            <font-awesome-icon :icon="['fas', 'shuffle']" class="w-4 mt-1"></font-awesome-icon>
+                            <font-awesome-icon :icon="['fas', 'shuffle']" class="w-4 mt-1 cursor-pointer"></font-awesome-icon>
+                        </div>
+                        <div class="m-0 p-0 flex flex-col" @click="share">
+                            <font-awesome-icon :icon="['fas', 'share']" class="w-4 mt-1 cursor-pointer"></font-awesome-icon>
                         </div>
                         <div class="m-0 p-0 flex flex-col">
-                            <font-awesome-icon :icon="['fas', 'share']" class="w-4 mt-1"></font-awesome-icon>
-                        </div>
-                        <div class="m-0 p-0 flex flex-col">
-                            <font-awesome-icon :icon="['fas', 'ellipsis-h']" class="w-4 mt-1"></font-awesome-icon>
+                            <font-awesome-icon :icon="['fas', 'ellipsis-h']" class="w-4 mt-1 cursor-pointer"></font-awesome-icon>
                         </div>
                     </div>
 
