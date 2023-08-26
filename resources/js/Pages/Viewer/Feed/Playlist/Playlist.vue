@@ -13,23 +13,35 @@ import PlaylistPageModal from "@/Components/Modals/PlaylistPageModal.vue";
 import { OnClickOutside } from '@vueuse/components'
 const playlist = ref(null);
 const videos = ref([]);
-
+const page = ref(1);
+const perPage = ref(6);
 onMounted(async () => {
     {
         //grab playlist id from url /playlist/{id}
         let playlistId = window.location.pathname.split('/')[2];
-        [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,20);
+        [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,perPage.value);
         watch(() => useAuthStore().user, async () => {
-    [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,20);
+    [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,perPage.value);
             });
-
     }
 });
+
+// on scroll to bottom of the playlist_video_holder, load more videos
+const loadMore = async () => {
+    if (videos.value.length === 0) return;
+    let newVideos = await usePlaylistModalStore().getPlaylist(playlist.value.id, );
+    videos.value = videos.value.concat(newVideos[1]);
+};
+
+
+
+
+
 const editable = computed(() => {
-    if (!playlist.value) return false;
-    if (!useAuthStore().user) return false;
+    if (!playlist.value) return true;
+    if (!useAuthStore().user) return true;
     // if playlist isn't server made and the user is the owner of the playlistX
-    return !playlist.value.server_made && playlist.value.creator.id === useAuthStore().user.creator.id;
+    return !playlist.value.server_made && playlist.value.creator.id !== useAuthStore().user.creator.id;
 });
 
 const showShare = ref(false);
@@ -108,8 +120,8 @@ const playlistPageModal = ref(false);
                 </div>
 
                 <!--playlist videos-->
-                <div class=" w-full xs:bg-zinc-200 dark:xs:bg-zinc-900 ">
-                    <div class="h-[calc(100vh-4rem)] overflow-y-auto flex flex-col ">
+                <div id="playlist_video_holder" class=" w-full xs:bg-zinc-200 dark:xs:bg-zinc-900 ">
+                    <div class="h-[calc(100vh-4rem)] overflow-y-auto flex flex-col pb-96">
                         <PlaylistVideo v-if="videos.length > 0"
                             v-for="(video,index) in videos" :key="video.id" :video="video" :index="index" class="w-full"/>
                     </div>
