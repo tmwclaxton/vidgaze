@@ -87,7 +87,11 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                         });
                     })
                     .catch(error => {
-                        console.log(error);
+                        // console.log(error);
+                        useToastStore().add({
+                            message: error.response.data.message,
+                            type: 'warning',
+                        });
                     });
              }
         },
@@ -111,10 +115,54 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                         });
                     })
                     .catch(error => {
+                        // console.log(error);
+                        useToastStore().add({
+                            message: error.response.data.message,
+                            type: 'warning',
+                        });
+                    });
+            }
+        },
+
+        async deletePlaylist(playlist_id) {
+            if (useAuthStore().user !== null) {
+                let toastStore = useToastStore();
+                axios.delete(route('api.playlist.destroy', {
+                    playlist_id: playlist_id,
+                }))
+                    .then(response => {
+                        this.getPlaylists();
+                        toastStore.add({
+                            message:"Playlist deleted",
+                            type: 'success',
+                        });
+                    })
+                    .catch(error => {
                         console.log(error);
                     });
             }
         },
+
+        async updatePlaylist(playlist_id, name, visibility) {
+            if (useAuthStore().user !== null) {
+                let toastStore = useToastStore();
+                axios.patch(route('api.playlist.update', {
+                    playlist_id: playlist_id,
+                    name: name,
+                    visibility: visibility
+                }))
+                    .then(response => {
+                        this.getPlaylists();
+                        toastStore.add({
+                            message:"Playlist updated",
+                            type: 'success',
+                        });
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            }
+        }
 
 
     }

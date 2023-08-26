@@ -6,9 +6,13 @@ export const useQueueStore = defineStore('QueueStore', {
         return {
             items: [] ,
             index: 0,
+            // autoplay: false,
+            refreshMiniPlayer: "", // used to refresh some front end components
+
             playlist: null,
-            autoplay: false,
-            refreshMiniPlayer: "",
+            shuffle: false,
+            page: 1,
+            perPage: 20,
         }
     },
     getters: {

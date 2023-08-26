@@ -75,7 +75,8 @@ class PlaylistApiController extends Controller
     public function create(Request $request)
     {
         $request->validate([
-            'name' => 'required|max:100|min:3',
+            // if name isn't Watch Later, History, Liked Videos or Disliked Videos
+            'name' => 'required|max:100|min:3|not_in:Watch Later,History,Liked Videos,Disliked Videos',
             'visibility' => 'required|in:public,private,unlisted'
         ]);
 

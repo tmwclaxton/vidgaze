@@ -6,6 +6,7 @@ import PlaylistLock from "@/Components/Cards/PlaylistCard/Partials/PlaylistLock.
 import RowDivider from "@/Components/General/RowDivider.vue";
 import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import PlaylistVideo from "@/Pages/Viewer/Feed/Playlist/Partials/PlaylistVideo.vue";
+import PLaylistName from "@/Pages/Viewer/Feed/Playlist/Partials/PLaylistName.vue";
 
 const playlist = ref(null);
 const videos = ref([]);
@@ -16,10 +17,10 @@ onMounted(async () => {
         let playlistId = window.location.pathname.split('/')[2];
 
         if (useAuthStore().user !== null) {
-            [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,6);
+            [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,20);
         } else {
             watch(() => useAuthStore().user, async () => {
-                [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,6);
+                [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,20);
             });
         }
     }
@@ -27,13 +28,13 @@ onMounted(async () => {
 
 </script>
 <template>
-    <Head title="" />
+    <Head v-if="playlist != null" :title="playlist.name" />
 
 
-            <div class="flex flex-col xs:flex-row max-h-[calc(100vh-4rem)] overflow-hidden">
+            <div v-if="playlist != null" class="flex flex-col xs:flex-row max-h-[calc(100vh-4rem)] overflow-hidden">
 
                 <!--playlist details-->
-                <div v-if="playlist != null" class="w-full xs:w-72 md:w-96 flex-shrink-0 pt-5 px-5">
+                <div  class="w-full xs:w-72 md:w-96 flex-shrink-0 pt-5 px-5">
                     <div class="relative rounded-lg overflow-hidden aspect-video bg-vidgaze-blue w-full cursor-pointer ">
                         <img v-if="playlist.recent_video_image !== null" class="object-cover w-full h-full " v-bind:src="playlist.recent_video_image" />
                         <div class="absolute   overflow-hidden w-full bottom-0 right-0  ">
@@ -43,11 +44,8 @@ onMounted(async () => {
                             </a>
                         </div>
                     </div>
-                    <div class="flex flex-row p-1 -mb-2">
-                        <p class=" text-xl font-semibold" v-text="playlist.name"></p>
 
-
-                    </div>
+                    <PLaylistName :playlist="playlist"/>
 
 
                     <div class=" space-y-1  px-1">
@@ -67,6 +65,9 @@ onMounted(async () => {
                         </div>
                         <div class="m-0 p-0 flex flex-col">
                             <font-awesome-icon :icon="['fas', 'share']" class="w-4 mt-1"></font-awesome-icon>
+                        </div>
+                        <div class="m-0 p-0 flex flex-col">
+                            <font-awesome-icon :icon="['fas', 'ellipsis-h']" class="w-4 mt-1"></font-awesome-icon>
                         </div>
                     </div>
 
@@ -91,10 +92,10 @@ onMounted(async () => {
                 </div>
 
                 <!--playlist videos-->
-                <div class=" w-full min-h-screen h-full xs:bg-zinc-200 dark:xs:bg-zinc-900 ">
-                    <div class="h-full overflow-y-auto m-5 flex flex-col gap-y-5">
+                <div class=" w-full xs:bg-zinc-200 dark:xs:bg-zinc-900 ">
+                    <div class="h-[calc(100vh-4rem)] overflow-y-auto flex flex-col ">
                         <PlaylistVideo v-if="videos.length > 0"
-                            v-for="video in videos" :key="video.id" :video="video" class="w-full"/>
+                            v-for="(video,index) in videos" :key="video.id" :video="video" :index="index" class="w-full"/>
                     </div>
 
                 </div>
