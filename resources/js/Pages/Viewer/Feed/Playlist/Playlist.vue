@@ -7,6 +7,7 @@ import RowDivider from "@/Components/General/RowDivider.vue";
 import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import PlaylistVideo from "@/Pages/Viewer/Feed/Playlist/Partials/PlaylistVideo.vue";
 import PLaylistName from "@/Pages/Viewer/Feed/Playlist/Partials/PLaylistName.vue";
+import PLaylistVisibility from "@/Pages/Viewer/Feed/Playlist/Partials/PLaylistVisibility.vue";
 
 const playlist = ref(null);
 const videos = ref([]);
@@ -50,12 +51,7 @@ onMounted(async () => {
 
                     <div class=" space-y-1  px-1">
                         <p class="inline-flex mr-2" v-text="playlist.video_count + ' · ' + 'Updated ' + playlist.updated_at + ' · ' "></p>
-                        <PlaylistLock :visibility="playlist.visibility" class="inline-flex w-3 mx-1"/>
-                        <div class="inline-flex relative ml-1.5">
-                            <div class="inline-flex relative cursor-pointer w-full">
-                                <span class="capitalize select-none" v-text="playlist.visibility"></span>
-                            </div>
-                        </div>
+                        <PLaylistVisibility :playlist="playlist" class="inline-flex "/>
                     </div>
 
 

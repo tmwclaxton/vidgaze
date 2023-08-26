@@ -60,6 +60,7 @@ const createPlaylist = () => {
             class="p-2 block w-full px-4 py-1  font-semibold  text-zinc-700 dark:text-zinc-200
                 rounded-lg  bg-white dark:bg-zinc-900 placeholder-zinc-400 dark:placeholder-zinc-500 "
             v-model="playlistName" name="Enter playlist name..." title="Name" maxlength="100" placeholder="Enter playlist name..." ref="playlistNameInput" />
+
         <SelectInput class="dark:bg-zinc-900" v-model="playlistVisibility" name="visibility" title="Visibility" @update:model-value="value => playlistVisibility = value" :options="visibilityOptions" />
 
         <Option @click="createPlaylist" class="justify-center bg-zinc-100 dark:bg-vidgaze-blue/70 ">
