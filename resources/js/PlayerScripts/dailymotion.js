@@ -4,13 +4,12 @@ import {toRaw} from "vue";
 import {usePlayerStore} from "@/Stores/PlayerStore";
 
 export default class DailymotionPlayer extends Player {
-    seeked = false
     async create() {
         await this.getStartTimePlayer().then( () => {
             dailymotion.createPlayer(this.playerDiv.id, {
                 video: this.external_id,
                 params: {
-                    // startTime: this.startTime, // this doesn't work for some reason
+                    // startTime: this.start_time, // this doesn't work for some reason
                     autoplay: this.autoplay ? 1 : 0,
                     mute: false,
 
@@ -31,10 +30,13 @@ export default class DailymotionPlayer extends Player {
                     }
                 });
 
-                this.player.on(dailymotion.events.VIDEO_PLAY, () => {
+                this.player.on(dailymotion.events.VIDEO_PLAY, async () => {
                     if (!this.seeked) {
-                        this.player.seek(this.start_time);
                         this.seeked = true;
+                        setTimeout(async () => {
+                            console.log("seeking to " + this.start_time)
+                            await this.player.seek(this.start_time);
+                        }, 1000);
                     }
 
                     this.ready = true;

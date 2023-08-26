@@ -122,10 +122,8 @@ watch(item, async (newItem) => {
         // if not in queue build player like normal
         if (queueStore.items.length === 0 || queueStore.currentItem.external_id === null || queueStore.currentItem.external_id !== item.value.external_id) {
             await usePlayerStore().buildPlayer('watch_player', item.value, 0, true,true);
-            // remove all items from queue
-            // queueStore.removeAll();
         } else {
-            console.log('building queue player' + [useQueueStore().currentPlayer.currentTime]);
+            // console.log('building queue player' + [useQueueStore().currentPlayer.currentTime]);
             // if in queue build player with time
             await usePlayerStore().buildPlayer('watch_player', item.value, queueStore.currentPlayer.currentTime, true,true);
         }

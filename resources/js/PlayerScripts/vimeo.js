@@ -48,7 +48,7 @@ export default class VimeoPlayer extends Player {
         });
     }
 
-    async playerSetup() {
+    async  playerSetup() {
         let html_collection;
 
         // console.log("vimeo player ready");
