@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted, ref, watch} from "vue";
+import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import {useAuthStore} from "@/Stores/AuthStore";
 import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 import PlaylistLock from "@/Components/Cards/PlaylistCard/Partials/PlaylistLock.vue";
@@ -13,15 +13,17 @@ import PlaylistPageModal from "@/Components/Modals/PlaylistPageModal.vue";
 import { OnClickOutside } from '@vueuse/components'
 const playlist = ref(null);
 const videos = ref([]);
-const page = ref(1);
-const perPage = ref(6);
+const page = ref(2);
+const perPage = ref(20);
+const showShare = ref(false);
+import {throttle} from "lodash";
 onMounted(async () => {
     {
         //grab playlist id from url /playlist/{id}
         let playlistId = window.location.pathname.split('/')[2];
-        [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,perPage.value);
+        [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,1,perPage.value);
         watch(() => useAuthStore().user, async () => {
-    [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,perPage.value);
+    [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,1,perPage.value);
             });
     }
 });
@@ -29,12 +31,13 @@ onMounted(async () => {
 // on scroll to bottom of the playlist_video_holder, load more videos
 const loadMore = async () => {
     if (videos.value.length === 0) return;
-    let newVideos = await usePlaylistModalStore().getPlaylist(playlist.value.id, );
+    let newVideos = await usePlaylistModalStore().getPlaylist(playlist.value.slug, page.value, perPage.value);
     videos.value = videos.value.concat(newVideos[1]);
+    page.value++;
 };
 
-
-
+//throttle laod more function
+const throttledLoadMore = throttle(loadMore, 500);
 
 
 const editable = computed(() => {
@@ -44,7 +47,6 @@ const editable = computed(() => {
     return !playlist.value.server_made && playlist.value.creator.id !== useAuthStore().user.creator.id;
 });
 
-const showShare = ref(false);
 const share = () => {
     if (showShare.value) {
         showShare.value = false;
@@ -121,7 +123,7 @@ const playlistPageModal = ref(false);
 
                 <!--playlist videos-->
                 <div id="playlist_video_holder" class=" w-full xs:bg-zinc-200 dark:xs:bg-zinc-900 ">
-                    <div class="h-[calc(100vh-4rem)] overflow-y-auto flex flex-col pb-96">
+                    <div  v-infinite-scroll="throttledLoadMore" class="h-[calc(100vh-4rem)] overflow-y-auto flex flex-col pb-96">
                         <PlaylistVideo v-if="videos.length > 0"
                             v-for="(video,index) in videos" :key="video.id" :video="video" :index="index" class="w-full"/>
                     </div>
