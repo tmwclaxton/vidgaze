@@ -31,25 +31,25 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
         async getPlaylist(playlist_slug, page = 1, perPage = 20) {
             let playlist;
             let videos;
-            if (useAuthStore().user !== null) {
-                await axios.get(route('api.playlist.videos.index'), {
-                    params: {
-                        playlist_slug: playlist_slug,
-                        page: page,
-                        per_page: perPage
-                    }
-                }).then(response => {
-
-                    // console.log(response);
-                    playlist = response.data.playlist;
-                    videos = response.data.videos.data;
-                }).
-                catch(error => {
-                    console.log(error);
+            await axios.get(route('api.playlist.videos.index'), {
+                params: {
+                    playlist_slug: playlist_slug,
+                    page: page,
+                    per_page: perPage
+                }
+            }).then(response => {
+                playlist = response.data.playlist;
+                videos = response.data.videos.data;
+            }).
+            catch(error => {
+                // console.log(error);
+                useToastStore().add({
+                    message: error.response.data.message,
+                    type: 'warning',
                 });
+            });
 
-                return [playlist, videos];
-            }
+            return [playlist, videos];
         },
 
 

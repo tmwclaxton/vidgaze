@@ -14,6 +14,7 @@ const props = defineProps({
 });
 // computed property that returns true if the playlist is editable
 const editable = computed(() => {
+    if (!useAuthStore().user) return false;
     // if playlist isn't server made and the user is the owner of the playlistX
     return !props.playlist.server_made && props.playlist.creator.id === useAuthStore().user.creator.id;
 });

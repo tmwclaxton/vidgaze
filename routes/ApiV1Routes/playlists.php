@@ -5,10 +5,9 @@ use App\Http\Controllers\ApiControllers\PlaylistVideoApiController;
 
 Route::middleware(['throttle:60,1','auth:sanctum'])->prefix('playlist')->name('playlist.')->group(function () {
 
-    //get user playlists
-    Route::get('/index', [PlaylistApiController::class, 'index'])->name('index');
 
     //create playlist
+    Route::get('/index', [PlaylistApiController::class, 'index'])->name('index');
     Route::post('/create', [PlaylistApiController::class, 'create'])->name('create');
     Route::patch('/update', [PlaylistApiController::class, 'update'])->name('update');
     Route::delete('/destroy', [PlaylistApiController::class, 'delete'])->name('destroy');
@@ -20,10 +19,13 @@ Route::middleware(['throttle:60,1','auth:sanctum'])->prefix('playlist')->name('p
     Route::post('/videos/', [PlaylistVideoApiController::class, 'create'])
         ->name('video.create');
 
+
+});
+Route::middleware(['throttle:60,1','auth.sanctum.switch'])->prefix('playlist')->name('playlist.')->group(function () {
+    // get playlist, available to all and authenticated users
+    Route::get('show/{slug}', [PlaylistApiController::class, 'show'])->name('show');
     Route::get('videos/index', [PlaylistVideoApiController::class, 'index'])->name('videos.index');
 
 });
 
-// get playlist, available to all and authenticated users
-Route::get('playlist/show/{slug}', [PlaylistApiController::class, 'show'])->middleware('auth.sanctum.switch')->name('playlist.show');
 

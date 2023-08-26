@@ -16,14 +16,13 @@ onMounted(async () => {
     {
         //grab playlist id from url /playlist/{id}
         let playlistId = window.location.pathname.split('/')[2];
+        console.log(playlistId);
 
-        if (useAuthStore().user !== null) {
-            [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,20);
-        } else {
-            watch(() => useAuthStore().user, async () => {
-                [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,20);
+        [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,20);
+        watch(() => useAuthStore().user, async () => {
+    [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,20);
             });
-        }
+
     }
 });
 

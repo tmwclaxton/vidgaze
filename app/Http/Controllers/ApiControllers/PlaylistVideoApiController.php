@@ -39,6 +39,7 @@ class PlaylistVideoApiController extends Controller
     /** index
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function index(Request $request) {
         $request->validate([
@@ -49,11 +50,24 @@ class PlaylistVideoApiController extends Controller
         $playlist_slug = $request->playlist_slug;
         $page = $request->page ?? 1;
         $per_page = $request->per_page ?? 10;
-        $playlist_slug = $this->checkForReservedPlaylist($playlist_slug);
-        $playlist = Playlist::where([
-            ['slug', '=', $playlist_slug],
-            ['creator_id', '=', Auth::user()->creator->id]
-        ])->first();
+
+        // if not logged in and playlist is private or hidden
+        if (!Auth::check()) {
+            $playlist = Playlist::where([
+                ['slug', '=', $playlist_slug],
+                ['visibility', '=', 'public']
+            ])->first();
+        } else {
+            $playlist_slug = $this->checkForReservedPlaylist($playlist_slug);
+            $playlist = Playlist::where([
+                ['slug', '=', $playlist_slug],
+                ['creator_id', '=', Auth::user()->creator->id]
+            ])->first();
+        }
+        if (!$playlist) {
+            throw new \Exception('Playlist not found', 404);
+        }
+
         // paginate in opposite order
         $videos = $playlist->videos()->paginate($per_page, ['*'], 'page', $page);
         return response()->json([
