@@ -37,9 +37,8 @@ watch(() => props.playlist.visibility, () => {
 </script>
 <template>
     <div class="inline-flex flex-row gap-x-2  items-center"  >
-        <PlaylistLock :visibility="playlist.visibility" class=" w-3  "/>
+        <PlaylistLock :visibility="playlist.visibility"/>
         <SelectInput v-if="editable" class="dark:bg-zinc-900 w-36" v-model="playlist.visibility" name="visibility" title="Visibility" @update:model-value="value => playlist.visibility = value" :options="visibilityOptions" />
-
         <div v-if="!editable"  class=" relative cursor-pointer w-full -mb-1.5">
             <span class="capitalize select-none" v-text="playlist.visibility"></span>
         </div>

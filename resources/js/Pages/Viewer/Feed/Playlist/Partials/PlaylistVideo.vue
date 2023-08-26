@@ -68,6 +68,6 @@ const deleteVideo = async () => {
                 </div>
             </div>
     </div>
-            <hr class="flex border-1 border-zinc-300 dark:border-zinc-800" />
+    <hr class="flex border-1 border-zinc-300 dark:border-zinc-800" />
 
 </template>

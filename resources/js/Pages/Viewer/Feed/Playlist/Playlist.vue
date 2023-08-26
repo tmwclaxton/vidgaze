@@ -18,6 +18,7 @@ const perPage = ref(20);
 const showShare = ref(false);
 import { vInfiniteScroll } from '@vueuse/components'; // don't remove this import
 import {throttle} from "lodash";
+import {useQueueStore} from "@/Stores/QueueStore";
 onMounted(async () => {
     {
         //grab playlist id from url /playlist/{id}
@@ -59,6 +60,25 @@ const share = () => {
     }
 };
 
+
+// add playlist to queue
+const addPlaylistToQueue = async (shuffle = false) => {
+    useQueueStore().playlist = playlist.value;
+    useQueueStore().page = 2;
+    useQueueStore().perPage = 20;
+    useQueueStore().items = videos.value;
+    useQueueStore().shuffle = shuffle;
+    useQueueStore().changeIndex(0);
+};
+
+
+
+
+
+
+
+
+
 const playlistPageModal = ref(false);
 </script>
 <template>
@@ -69,13 +89,13 @@ const playlistPageModal = ref(false);
 
                 <!--playlist details-->
                 <div  class="w-full xs:w-72 md:w-96 flex-shrink-0 pt-5 px-5">
-                    <div class="relative rounded-lg overflow-hidden aspect-video bg-vidgaze-blue w-full cursor-pointer ">
+                    <div @click="addPlaylistToQueue()"
+                        class="relative rounded-lg overflow-hidden aspect-video bg-vidgaze-blue w-full cursor-pointer ">
                         <img v-if="playlist.recent_video_image !== null" class="object-cover w-full h-full " v-bind:src="playlist.recent_video_image" />
                         <div class="absolute   overflow-hidden w-full bottom-0 right-0  ">
-                            <a href="/watch"
-                               class="relative w-full text-white font-semibold bg-black opacity-80 px-auto flex flex-row  text-sm dark:text-zinc-200 justify-center">
+                            <div class="relative w-full text-white font-semibold bg-black opacity-80 px-auto flex flex-row  text-sm dark:text-zinc-200 justify-center">
                                 <p class="text-center py-2 uppercase">Play all</p>
-                            </a>
+                            </div>
                         </div>
                     </div>
 
@@ -84,7 +104,7 @@ const playlistPageModal = ref(false);
 
                     <div class=" space-y-1  px-1">
                         <p class="inline-flex mr-2" v-text="playlist.video_count + ' · ' + 'Updated ' + playlist.updated_at + ' · ' "></p>
-                        <PLaylistVisibility :playlist="playlist" class="inline-flex "/>
+                        <PLaylistVisibility :playlist="playlist"/>
                     </div>
 
                     <OnClickOutside @trigger="playlistPageModal = false">
