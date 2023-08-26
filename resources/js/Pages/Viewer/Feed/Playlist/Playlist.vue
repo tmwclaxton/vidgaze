@@ -65,7 +65,8 @@ const share = () => {
 
 
 // add playlist to queue
-const addPlaylistToQueue = async (shuffle = false) => {
+const addPlaylistToQueue = async (shuffle = false, index = 0) => {
+    useQueueStore().index = index;
     useQueueStore().playlist = playlist.value;
     useQueueStore().page = 2;
     useQueueStore().perPage = 20;
@@ -74,10 +75,9 @@ const addPlaylistToQueue = async (shuffle = false) => {
         useQueueStore().items = useQueueStore().items.sort(() => Math.random() - 0.5)
     }
     useQueueStore().shuffle = shuffle;
-
     // redirect to watch page of first video in queue
     // router.push({name: 'watch', params: {video: useQueueStore().items[0].slug}});
-    router.visit(route('watch.show', useQueueStore().items[0].slug));
+    router.visit(route('watch.show', useQueueStore().items[index].slug));
 
 };
 
@@ -157,7 +157,9 @@ const playlistPageModal = ref(false);
                 <div id="playlist_video_holder" class=" w-full xs:bg-zinc-200 dark:xs:bg-zinc-900 ">
                     <div  v-infinite-scroll="throttledLoadMore" class="h-[calc(100vh-4rem)] overflow-y-auto flex flex-col pb-36">
 
-                        <PlaylistVideo v-if="videos.length > 0" @deleteVideo="videos.splice(index, 1)" :editable="editable"
+                        <PlaylistVideo v-if="videos.length > 0"
+                                       @addPlaylistToQueue="addPlaylistToQueue(false, index)"
+                                       @deleteVideo="videos.splice(index, 1)" :editable="editable"
                             v-for="(video,index) in videos" :key="video.id" :video="video" :index="index" :playlist="playlist"/>
                     </div>
 
