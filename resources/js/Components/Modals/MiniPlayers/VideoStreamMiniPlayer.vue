@@ -144,15 +144,7 @@ watch(() => queueStore.index, (x, y) => {
 });
 
 const closeMiniPlayer = () => {
-    // confirm that the user wants to close the mini player as it will destroy the queue
-    confirmStore.buttonOneText = 'Cancel';
-    confirmStore.buttonTwoText = 'Delete';
-    confirmStore.title = 'Are you sure, this will delete the queue?';
-    confirmStore.show = true;
-    confirmStore.continue = () => {
-        playerStore.destroyPlayers();
-        queueStore.removeAll();
-    };
+    queueStore.removeAll();
 };
 
 </script>

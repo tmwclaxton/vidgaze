@@ -12,6 +12,7 @@ import ConfirmModal from "@/Components/Modals/ConfirmModal.vue";
 import {usePage} from "@inertiajs/vue3";
 import {usePlayerStore} from "@/Stores/PlayerStore";
 import {useAuthStore} from "@/Stores/AuthStore";
+import PlaylistPageModal from "@/Components/Modals/PlaylistPageModal.vue";
 const playerStore = usePlayerStore();
 const authStore = useAuthStore();
 const navStore = useNavStore();

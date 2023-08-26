@@ -9,7 +9,8 @@ import PlaylistVideo from "@/Pages/Viewer/Feed/Playlist/Partials/PlaylistVideo.v
 import PLaylistName from "@/Pages/Viewer/Feed/Playlist/Partials/PLaylistName.vue";
 import PLaylistVisibility from "@/Pages/Viewer/Feed/Playlist/Partials/PLaylistVisibility.vue";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
-
+import PlaylistPageModal from "@/Components/Modals/PlaylistPageModal.vue";
+import { OnClickOutside } from '@vueuse/components'
 const playlist = ref(null);
 const videos = ref([]);
 
@@ -17,8 +18,6 @@ onMounted(async () => {
     {
         //grab playlist id from url /playlist/{id}
         let playlistId = window.location.pathname.split('/')[2];
-        console.log(playlistId);
-
         [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,20);
         watch(() => useAuthStore().user, async () => {
     [playlist.value, videos.value] = await usePlaylistModalStore().getPlaylist(playlistId,0,20);
@@ -33,10 +32,12 @@ const share = () => {
         showShare.value = false;
     } else {
         showShare.value = true;
+        useShareModalStore().showMenu = true;
         useShareModalStore().getShareLinks(route('playlist', playlist.value.slug), "Check out this playlist on VidGaze: " + playlist.value.name);
     }
 };
 
+const playlistPageModal = ref(false);
 </script>
 <template>
     <Head v-if="playlist != null" :title="playlist.name" />
@@ -64,18 +65,21 @@ const share = () => {
                         <PLaylistVisibility :playlist="playlist" class="inline-flex "/>
                     </div>
 
-
-                    <div class="relative mt-3 mx-1 w-full flex flex-row space-x-4 ">
-                        <div class="m-0 p-0 flex flex-col">
-                            <font-awesome-icon :icon="['fas', 'shuffle']" class="w-4 mt-1 cursor-pointer"></font-awesome-icon>
+                    <OnClickOutside @trigger="playlistPageModal = false">
+                        <div class="relative mt-3 mx-1 w-full flex flex-row space-x-4 " >
+                            <div class="m-0 p-0 flex flex-col">
+                                <font-awesome-icon :icon="['fas', 'shuffle']" class="w-4 mt-1 cursor-pointer"></font-awesome-icon>
+                            </div>
+                            <div class="m-0 p-0 flex flex-col" @click="share">
+                                <font-awesome-icon :icon="['fas', 'share']" class="w-4 mt-1 cursor-pointer"></font-awesome-icon>
+                            </div>
+                            <div class="m-0 p-0 flex flex-col"  >
+                                <font-awesome-icon :icon="['fas', 'ellipsis-h']" class="w-4 mt-1 cursor-pointer"
+                                                   @click="playlistPageModal = !playlistPageModal"/>
+                                <PlaylistPageModal v-if="playlistPageModal" :playlist="playlist"/>
+                            </div>
                         </div>
-                        <div class="m-0 p-0 flex flex-col" @click="share">
-                            <font-awesome-icon :icon="['fas', 'share']" class="w-4 mt-1 cursor-pointer"></font-awesome-icon>
-                        </div>
-                        <div class="m-0 p-0 flex flex-col">
-                            <font-awesome-icon :icon="['fas', 'ellipsis-h']" class="w-4 mt-1 cursor-pointer"></font-awesome-icon>
-                        </div>
-                    </div>
+                    </OnClickOutside>
 
 
                     <p class="text text-sm px-1 " v-text="playlist.description"/>
