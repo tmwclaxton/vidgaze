@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useAuthStore} from "@/Stores/AuthStore";
 import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 import PlaylistLock from "@/Components/Cards/PlaylistCard/Partials/PlaylistLock.vue";
@@ -24,6 +24,12 @@ onMounted(async () => {
             });
 
     }
+});
+const editable = computed(() => {
+    if (!playlist.value) return false;
+    if (!useAuthStore().user) return false;
+    // if playlist isn't server made and the user is the owner of the playlistX
+    return !playlist.value.server_made && playlist.value.creator.id === useAuthStore().user.creator.id;
 });
 
 const showShare = ref(false);
@@ -73,7 +79,7 @@ const playlistPageModal = ref(false);
                             <div class="m-0 p-0 flex flex-col" @click="share">
                                 <font-awesome-icon :icon="['fas', 'share']" class="w-4 mt-1 cursor-pointer"></font-awesome-icon>
                             </div>
-                            <div class="m-0 p-0 flex flex-col"  >
+                            <div class="m-0 p-0 flex flex-col"  v-if="editable" >
                                 <font-awesome-icon :icon="['fas', 'ellipsis-h']" class="w-4 mt-1 cursor-pointer"
                                                    @click="playlistPageModal = !playlistPageModal"/>
                                 <PlaylistPageModal v-if="playlistPageModal" :playlist="playlist"/>

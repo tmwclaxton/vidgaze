@@ -131,7 +131,11 @@ export const usePlaylistModalStore = defineStore('PlaylistModalStore', {
                     playlist_id: playlist_id,
                 }))
                     .then(response => {
-                        this.getPlaylists();
+                        if (this.videoIds.length > 0) {
+                            this.getPlaylists();
+                        } else {
+                            this.getPlaylists('all')
+                        }
                         toastStore.add({
                             message:"Playlist deleted",
                             type: 'success',
