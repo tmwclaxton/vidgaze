@@ -115,14 +115,10 @@ onMounted(  () => {
 
 // watch item for changes
 watch(item, async (newItem) => {
+    ready.value = false;
     if (newItem !== null) {
-        ready.value = true;
         suggestions.value = await useContentRoutesStore().getVideos("popular", 10);
         showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
-
-        if (playerStore.findPlayer(item.value.external_id)) {
-            playerStore.findPlayer(item.value.external_id).endScreen = false;
-        }
 
         // if not in queue build player like normal
         if (queueStore.items.length === 0 || queueStore.currentItem.external_id === null || queueStore.currentItem.external_id !== item.value.external_id) {
@@ -132,12 +128,14 @@ watch(item, async (newItem) => {
             // if in queue build player with time
             await usePlayerStore().buildPlayer('watch_player', item.value, queueStore.currentPlayer.currentTime, true,true);
         }
+        ready.value = true;
     }
 });
 
 // watch current
 
 onUnmounted(() => {
+    ready.value = false;
     // if the queue has items destroy the players and rebuild the player with the current item in the mini player
     if (queueStore.items.length > 0) {
         playerStore.destroyPlayers().then(() => {

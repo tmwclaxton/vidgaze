@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { usePlayerStore } from './PlayerStore.js'
 import {router, usePage} from "@inertiajs/vue3";
 import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
+import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 export const useQueueStore = defineStore('QueueStore', {
     state: () => {
         return {
@@ -44,7 +45,8 @@ export const useQueueStore = defineStore('QueueStore', {
             if (this.items.length === 0) {
                 return "";
             }
-            return (this.index + 1) + ' / ' + this.items.length;
+            const itemLength = this.playlist !== null ? this.playlist.video_count : this.items.length;
+            return (this.index + 1) + ' / ' + itemLength;
         }
     },
     actions: {
@@ -169,6 +171,12 @@ export const useQueueStore = defineStore('QueueStore', {
             if (this.items.length === 0) {
                 return;
             }
+
+            // if second last item in queue and the queue is a playlist, paginate
+            if (this.playlist !== null && this.index === this.items.length - 2) {
+                this.paginate();
+            }
+
             usePlayerStore().destroyPlayers().then(r => {
                 if (route().current('watch.show')) {
                     router.visit(route('watch.show', {slug: this.items[this.index].slug}))
@@ -178,6 +186,16 @@ export const useQueueStore = defineStore('QueueStore', {
                         });
                 }
             });
+        },
+
+        async paginate() {
+            // if the playlist is not null and the page is less than the total pages
+            if (this.playlist !== null && this.items.length < this.playlist.video_count) {
+                this.page = this.page + 1;
+                let newItems = await usePlaylistModalStore().getPlaylist(this.playlist.slug, this.page, this.perPage);
+                this.items = this.items.concat(newItems);
+            }
         }
+
     }
 })

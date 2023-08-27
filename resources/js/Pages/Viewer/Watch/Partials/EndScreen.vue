@@ -1,13 +1,12 @@
 <script setup>
 import {usePlayerStore} from "@/Stores/PlayerStore";
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import SuggestionsScreen from "@/Pages/Viewer/Watch/Partials/SuggestionsScreen/SuggestionsScreen.vue";
 import {useQueueStore} from "@/Stores/QueueStore";
 import UpNextVideo from "@/Pages/Viewer/Watch/Partials/UpNextVideo.vue";
 const playerStore = usePlayerStore();
 const timer = ref(8);
 const myTimer = ref(null);
-
 const name = "EndScreen";
 
 const props = defineProps({
@@ -31,16 +30,16 @@ const resetPlayer = async () => {
 const nextUpScreen = ref(true);
 
 onMounted(() => {
-    console.log("mounted end screen");
+    // console.log("mounted end screen");
     myTimer.value = setInterval(() => {
         if (nextUpScreen.value === false || useQueueStore().nextItem === null) {
             clearInterval(myTimer.value);
-            console.log("cleared interval");
+            // console.log("cleared interval");
             return;
         }
         timer.value--;
         if (timer.value === 0) {
-            console.log("play next");
+            // console.log("play next");
             clearInterval(myTimer.value);
             playNext();
             return;
@@ -48,12 +47,17 @@ onMounted(() => {
     }, 1000);
 });
 
+onUnmounted(() => {
+    clearInterval(myTimer.value);
+});
+
+const nextItem = useQueueStore().nextItem;
 </script>
 
 <template>
     <div id="endScreen"
          class="w-full h-full  without-ring flex relative duration-600 transition ">
-        <div v-if="useQueueStore().nextItem && nextUpScreen"
+        <div v-if="nextItem && nextUpScreen"
             id="nextUpScreen"
              class=" mx-auto mt-5 sm:my-auto w-96  flex flex-col gap-y-3">
             <p class="text-left text text-zinc-400 font-bold ">Up next in
@@ -62,7 +66,7 @@ onMounted(() => {
             <div class="  ">
 
                 <!--nex video-->
-                <UpNextVideo v-if="useQueueStore().nextItem !== null" :item="useQueueStore().nextItem"/>
+                <UpNextVideo v-if="nextItem !== null" :item="nextItem"/>
 
             </div>
             <div id="buttons" class="  flex flex-row gap-x-4 select-none ">
