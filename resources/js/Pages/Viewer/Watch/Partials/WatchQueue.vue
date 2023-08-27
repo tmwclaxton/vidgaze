@@ -55,9 +55,10 @@ watch(() => props.ready, () => {
                     </Link>
                     <p v-else class="font-bold text-2xl" v-text="'Queue'"></p>
 
-                    <p v-if="useQueueStore().playlist" class="font-bold text-xs opacity-80 inline-flex flex-row ">
-                        <Link v-text="useQueueStore().playlist.creator.name" :href="route('channel.show', {slug: useQueueStore().playlist.creator.slug})"></Link>
-                        <span v-text=" ' · ' + useQueueStore().positionText" class="ml-1"/>
+                    <p class="font-bold text-xs opacity-80 inline-flex flex-row ">
+                        <Link v-if="useQueueStore().playlist" v-text="useQueueStore().playlist.creator.name" :href="route('channel.show', {slug: useQueueStore().playlist.creator.slug})"></Link>
+                        <span v-if="useQueueStore().playlist" v-text=" ' · '" class="mx-1"/>
+                        <span v-text="useQueueStore().positionText" class=" "/>
                     </p>
                 </div>
             </div>
