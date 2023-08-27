@@ -3,4 +3,4 @@
 use App\Http\Controllers\WebControllers\CreatorWebController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('channel/{creator:slug}', [CreatorWebController::class,'show'])->name("channel.show");
+Route::get('channel/{slug}', [CreatorWebController::class,'show'])->name("channel.show");

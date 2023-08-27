@@ -68,9 +68,12 @@ const share = () => {
 const addPlaylistToQueue = async (shuffle = false, index = 0) => {
     useQueueStore().index = index;
     useQueueStore().playlist = playlist.value;
+    useQueueStore().playlistLoading = true;
     useQueueStore().page = 2;
     useQueueStore().perPage = 20;
-    useQueueStore().items = videos.value; //not needed because we are using the playlist store for the videos.vlaue anyway
+    //not needed because we are using the playlist store for the videos.vlaue anyway
+    // grab first 20 videos in videos.value
+    useQueueStore().items = videos.value.slice(0, 20)
     if (shuffle) {
         useQueueStore().items = useQueueStore().items.sort(() => Math.random() - 0.5)
     }
@@ -78,7 +81,6 @@ const addPlaylistToQueue = async (shuffle = false, index = 0) => {
     // redirect to watch page of first video in queue
     // router.push({name: 'watch', params: {video: useQueueStore().items[0].slug}});
     router.visit(route('watch.show', useQueueStore().items[index].slug));
-
 };
 
 

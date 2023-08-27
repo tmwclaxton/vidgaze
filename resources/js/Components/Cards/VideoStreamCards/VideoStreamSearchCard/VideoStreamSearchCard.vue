@@ -101,7 +101,7 @@ const dotsIconShow = computed(() => {
                             <div class=" mt-1 flex-shrink-0">
                                 <!--profile picture-->
                                 <div v-if="!item.channel_page" class="flex-shrink-0 pr-2">
-                                    <Link class="without-ring " :href="route('channel.show', {creator: {slug: item.creator.slug}})">
+                                    <Link class="without-ring " :href="route('channel.show', {slug: item.creator.slug})">
                                         <img v-if="item.creator.avatar_url != null"
                                              class=" pointer-events-auto w-9 aspect-square rounded-full bg-zinc-800 "
                                              v-bind:src="item.creator.avatar_url">
@@ -112,7 +112,7 @@ const dotsIconShow = computed(() => {
                                 <div class="  flex flex-col gap-y-1 ">
 
                                     <!--channel name-->
-                                    <Link v-if="!item.channel_page" :href="route('channel.show', {creator: {slug: item.creator.slug}})"
+                                    <Link v-if="!item.channel_page" :href="route('channel.show', {slug: item.creator.slug})"
                                        class="w-max without-ring pointer-events-auto line-clamp-1 text-hover dark:text-hover-dark   ">
                                         <p class="text-sm sm:text-lg font-bold " v-text="item.creator.name"></p>
                                     </Link>

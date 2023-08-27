@@ -102,6 +102,8 @@ function shouldShowMoreDescriptionButton() {
 
 onMounted(  () => {
     usePlayerStore().destroyPlayers().then(async () => {
+        useQueueStore().playlistLoading = false; // this is used to stop miniplayer from showing up on the playlist page too soon
+
         // close sidebar
         NavStore.showingNavigationDropdown = false;
 

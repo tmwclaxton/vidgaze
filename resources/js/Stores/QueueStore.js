@@ -14,6 +14,7 @@ export const useQueueStore = defineStore('QueueStore', {
             shuffle: false,
             page: 1,
             perPage: 20,
+            playlistLoading: false,
         }
     },
     getters: {
@@ -31,7 +32,7 @@ export const useQueueStore = defineStore('QueueStore', {
             // For example, you can check if players array is not empty
             let queueStore = useQueueStore();
             // also depends on what page you are on ... // url doesn't contian shorts or watch
-            return queueStore.items !== undefined && queueStore.items.length > 0 && usePage().url !== '/shorts' && !route().current('watch.show');
+            return queueStore.items !== undefined && queueStore.items.length > 0 && usePage().url !== '/shorts' && !route().current('watch.show') && !queueStore.playlistLoading;
         }
     },
     actions: {
@@ -155,7 +156,7 @@ export const useQueueStore = defineStore('QueueStore', {
                 if (route().current('watch.show')) {
                     router.visit(route('watch.show', {slug: this.items[this.index].slug}))
                 } else {
-                        usePlayerStore().buildPlayer(playerDivHolderID, this.items[this.index], 0, true, true).then(r => {
+                    usePlayerStore().buildPlayer(playerDivHolderID, this.items[this.index], 0, true, true).then(r => {
                             console.log("miniplayer player built");
                         });
                 }

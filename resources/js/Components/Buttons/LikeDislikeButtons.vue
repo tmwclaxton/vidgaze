@@ -153,7 +153,7 @@ const dislikeButtonClasses = computed(() => ({
 
 onMounted(async () => {
     setTimeout(async () => {
-        if (useAuthStore().user !== null && props.item !== null && props.comment === null) {
+        if (useAuthStore().user !== null && props.item !== null && props.comment === null ) {
             const videoId = props.item.id;
             try {
                 const response = await axios.get(route('api.video.interaction', {video_id: videoId}));
