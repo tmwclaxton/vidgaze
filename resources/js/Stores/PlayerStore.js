@@ -4,6 +4,7 @@ import VimeoPlayer from "@/PlayerScripts/vimeo";
 import TwitchPlayer from "@/PlayerScripts/twitch";
 import DailymotionPlayer from "@/PlayerScripts/dailymotion";
 import {loadScript} from "vue-plugin-load-script";
+import {useQueueStore} from "@/Stores/QueueStore";
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
@@ -152,6 +153,10 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 await player.create().then(() => {
                     // add player to players array
                     this.players.push( player );
+
+                    // I need a place to put this so that it only runs one time // basically it checks if
+                    // it is the last 5 videos in a queue and a playlist is set and will paginate // dw the checks are done in the function
+                    useQueueStore().paginate();
                 });
             }
         },

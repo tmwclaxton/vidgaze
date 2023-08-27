@@ -172,11 +172,6 @@ export const useQueueStore = defineStore('QueueStore', {
                 return;
             }
 
-            // if second last item in queue and the queue is a playlist, paginate
-            if (this.playlist !== null && this.index === this.items.length - 2) {
-                this.paginate();
-            }
-
             usePlayerStore().destroyPlayers().then(r => {
                 if (route().current('watch.show')) {
                     router.visit(route('watch.show', {slug: this.items[this.index].slug}))
@@ -189,11 +184,11 @@ export const useQueueStore = defineStore('QueueStore', {
         },
 
         async paginate() {
-            // if the playlist is not null and the page is less than the total pages
-            if (this.playlist !== null && this.items.length < this.playlist.video_count) {
+            if (this.playlist !== null && this.index >= this.items.length - 5 && this.items.length === (this.page * this.perPage) ) {
+                // console.log("paginating " + this.page);
                 this.page = this.page + 1;
                 let newItems = await usePlaylistModalStore().getPlaylist(this.playlist.slug, this.page, this.perPage);
-                this.items = this.items.concat(newItems);
+                this.items = this.items.concat(newItems[1]);
             }
         }
 
