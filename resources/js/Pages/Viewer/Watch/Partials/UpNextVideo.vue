@@ -11,34 +11,28 @@ const props = defineProps({
 
 <template>
     <div class="relative flex   group z-0">
-        <div class="flex-shrink-0  relative rounded overflow-hidden h-24 aspect-video bg-vidgaze-blue  ">
+        <Link :href="route('watch.show', {slug: props.item.slug})">
+            <div class="flex-shrink-0  relative rounded overflow-hidden h-24 aspect-video bg-vidgaze-blue  ">
 
-            <!--thumbnail-->
-            <a :href="route('watch', [item.slug])">
-                <img class="object-cover w-full h-full bg-zinc-900" :src="item.thumbnail_url"
-                     alt="thumbnail">
-            </a>
+                <!--thumbnail-->
+                    <img class="object-cover w-full h-full bg-zinc-900" :src="props.item.thumbnail_url"
+                         alt="thumbnail">
 
-            <!--<x-duration :video="$video" minimised="true"/>-->
-        </div>
+            </div>
 
-        <div class="w-full ">
-            <a :href="route('watch', [item.slug])">
-                <div class="w-full flex align-bottom flex-col leading-none pl-2 ">
-                    <!--video title-->
-                    <p class="text text-white text-md font-bold leading-4 line-clamp-2 pr-2 break-words"
-                       v-text="item.title"></p>
-                    <!--creator name-->
-                    <a href="" class="text-sm text text-zinc-400 font-semibold w-max mt-1"
-                       v-text="item.creator.name"></a>
+            <div class="w-full ">
+                    <div class="w-full flex align-bottom flex-col leading-none pl-2 ">
+                        <!--video title-->
+                        <p class="text text-white text-md font-bold leading-4 line-clamp-2 pr-2 break-words"
+                           v-text="props.item.title"></p>
+                        <!--creator name-->
+                        <p class="text-sm text text-zinc-400 font-semibold w-max mt-1"
+                           v-text="props.item.creator.name"></p>
 
-
-                </div>
-            </a>
-        </div>
-
+                    </div>
+            </div>
+        </Link>
     </div>
-
 </template>
 
 

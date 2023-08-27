@@ -49,7 +49,7 @@ const showCommentSection = ref(false);
 const playlistToggled = ref(false); // can't seem to get it work directly with the store
 const showShare = ref(false);
 const showMoreDescriptionButton = ref(false);
-const suggestedVideos = ref(null);
+const suggestions = ref(null);
 const ready = ref(false);
 
 const props = defineProps({
@@ -117,8 +117,13 @@ onMounted(  () => {
 watch(item, async (newItem) => {
     if (newItem !== null) {
         ready.value = true;
-        suggestedVideos.value = await useContentRoutesStore().getVideos("popular", 10);
+        suggestions.value = await useContentRoutesStore().getVideos("popular", 10);
         showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
+
+        if (playerStore.findPlayer(item.value.external_id)) {
+            playerStore.findPlayer(item.value.external_id).endScreen = false;
+        }
+
         // if not in queue build player like normal
         if (queueStore.items.length === 0 || queueStore.currentItem.external_id === null || queueStore.currentItem.external_id !== item.value.external_id) {
             await usePlayerStore().buildPlayer('watch_player', item.value, 0, true,true);
@@ -163,8 +168,8 @@ onUnmounted(() => {
                     <div :class="[ theatre ? 'aspect-video  h-full w-full' : 'w-full aspect-video max-h-screen']">
                         <!--video player-->
                         <div id="watch_player"
-                             v-if="ready && !playerStore.findPlayer(item.external_id).endScreen"
-                             :class="playerStore.players.length > 0 ? 'w-full h-full bg-black without-ring flex relative ' : 'opacity-0'"/>
+                             :class="(playerStore.players.length > 0 && !playerStore.findPlayer(item.external_id).endScreen)
+                        ? 'w-full h-full bg-black without-ring flex relative ' : 'opacity-0'"/>
 
                         <!--end screen-->
                         <EndScreen v-if="ready && playerStore.findPlayer(item.external_id).endScreen" :item="item" class="h-full w-full"/>
@@ -276,9 +281,9 @@ onUnmounted(() => {
                     </QuaternaryButton>
                 </div>
 
-                <div v-if="suggestedVideos && suggestedVideos.length > 0">
+                <div v-if="suggestions && suggestions.length > 0">
                     <div id="miniPlayerItemsHolder" class="relative flex flex-col pb-1 max-h-48 overflow-y-auto">
-                        <div v-for="(item, index) in suggestedVideos">
+                        <div v-for="(item, index) in suggestions">
                         </div>
                     </div>
                 </div>

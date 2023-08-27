@@ -91,9 +91,9 @@ export default class Player {
         }
 
         // if watch page
-        if (useQueueStore().items.length > useQueueStore().index + 1) {
-            this.endScreenNext = useQueueStore().changeIndex(useQueueStore().index + 1);
-        }
+        // if (useQueueStore().items.length > useQueueStore().index + 1) {
+            // if we change index here then we can't do a countdown in the end screen
+        // }
         this.removePlayer();
         usePlayerStore().refreshFrontEndComponent = Math.random().toString(36).substring(7);
 
