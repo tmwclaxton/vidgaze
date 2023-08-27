@@ -21,6 +21,12 @@ export const useQueueStore = defineStore('QueueStore', {
         currentItem() {
             return this.items[this.index];
         },
+        nextItem() {
+            if (this.items.length === 0 || this.items.length === this.index + 1) {
+                return null;
+            }
+            return this.items[this.index + 1];
+        },
         currentPlayer() {
             if (this.currentItem === undefined) {
                 return null;

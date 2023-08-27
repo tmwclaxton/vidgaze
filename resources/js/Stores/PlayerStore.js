@@ -7,7 +7,7 @@ import {loadScript} from "vue-plugin-load-script";
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
-            // scriptsLoaded: false,
+            refreshFrontEndComponent: "",
             players: [],
         }
     },

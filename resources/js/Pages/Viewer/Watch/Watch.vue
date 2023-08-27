@@ -21,8 +21,6 @@ import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
 import CommentSection from "@/Components/CommentSection/CommentSection.vue";
 import FeatureCreatorButton from "@/Components/Buttons/FeatureCreatorButton.vue";
 import {useNavStore} from "@/Stores/NavStore";
-import QueueItem from "@/Components/Modals/MiniPlayers/Partials/QueueItem.vue";
-import SuggestionsScreen from "@/Pages/Viewer/Watch/Partials/SuggestionsScreen/SuggestionsScreen.vue";
 
 import EndScreen from "@/Pages/Viewer/Watch/Partials/EndScreen.vue";
 import {useAuthStore} from "@/Stores/AuthStore";
@@ -132,6 +130,8 @@ watch(item, async (newItem) => {
     }
 });
 
+// watch current
+
 onUnmounted(() => {
     // if the queue has items destroy the players and rebuild the player with the current item in the mini player
     if (queueStore.items.length > 0) {
@@ -149,7 +149,6 @@ onUnmounted(() => {
 
 
 
-
 </script>
 
 <template>
@@ -159,13 +158,16 @@ onUnmounted(() => {
             <!--player with theatre mode-->
             <div :class="[theatre ? 'col-span-12   w-full ' : ' col-span-12 lg:col-span-8  ']" class=" w-full  relative flex flex-col gap-y-4">
 
-                <div :class="[theatre ? '   ' : ' rounded-lg ']" class="bg-black max-h-[calc(100vh-10rem)] overflow-hidden">
-                    <div   :class="[ theatre ? 'aspect-video  h-full w-full' : 'w-full aspect-video max-h-screen']">
+                <div v-bind:id="usePlayerStore().refreshFrontEndComponent"
+                     :class="[theatre ? '   ' : ' rounded-lg ']" class="bg-black max-h-[calc(100vh-10rem)] overflow-hidden">
+                    <div :class="[ theatre ? 'aspect-video  h-full w-full' : 'w-full aspect-video max-h-screen']">
                         <!--video player-->
-                        <div id="watch_player" :class="playerStore.players.length > 0 ? 'w-full h-full bg-black without-ring flex relative ' : 'opacity-0'"/>
+                        <div id="watch_player"
+                             v-if="ready && !playerStore.findPlayer(item.external_id).endScreen"
+                             :class="playerStore.players.length > 0 ? 'w-full h-full bg-black without-ring flex relative ' : 'opacity-0'"/>
 
                         <!--end screen-->
-                        <!--<EndScreen v-if="ready && playerStore.players.length === 0" :item="item" class="h-full w-full"/>-->
+                        <EndScreen v-if="ready && playerStore.findPlayer(item.external_id).endScreen" :item="item" class="h-full w-full"/>
 
                     </div>
                 </div>
