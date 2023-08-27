@@ -10,16 +10,16 @@ Route::get('/feed/subscriptions', [FeedWebController::class, 'subscriptions'])->
 Route::get('feed/channels', [FeedWebController::class, 'channels'])->name("feed.channels");
 
 Route::get('/feed/watch_later', function () {
-    return redirect()->route('playlist', ['slug' => 'watch_later']);
+    return redirect()->route('playlist.show', ['slug' => 'watch_later']);
 })->name("feed.watch-later");
 
 Route::get('/feed/liked_videos', function () {
-    return redirect()->route('playlist', ['slug' => 'liked_videos']);
+    return redirect()->route('playlist.show', ['slug' => 'liked_videos']);
 })->name("feed.liked-videos");
 
 Route::get('/feed/history', function () {
-    return redirect()->route('playlist', ['slug' => 'history']);
+    return redirect()->route('playlist.show', ['slug' => 'history']);
 })->name("feed.history");
 
-Route::get('/playlist/{slug}', [PlaylistWebController::class, 'show'])->name("playlist");
+Route::get('/playlist/{slug}', [PlaylistWebController::class, 'show'])->name("playlist.show");
 

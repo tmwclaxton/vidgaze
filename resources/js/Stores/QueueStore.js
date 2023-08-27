@@ -33,6 +33,12 @@ export const useQueueStore = defineStore('QueueStore', {
             let queueStore = useQueueStore();
             // also depends on what page you are on ... // url doesn't contian shorts or watch
             return queueStore.items !== undefined && queueStore.items.length > 0 && usePage().url !== '/shorts' && !route().current('watch.show') && !queueStore.playlistLoading;
+        },
+        positionText() {
+            if (this.items.length === 0) {
+                return "";
+            }
+            return (this.index + 1) + ' / ' + this.items.length;
         }
     },
     actions: {
@@ -76,6 +82,11 @@ export const useQueueStore = defineStore('QueueStore', {
                     usePlayerStore().destroyPlayer(this.items[i].external_id, true).then(r =>  {
                         this.items = [];
                         this.index = 0;
+                        this.playlist = null;
+                        this.shuffle = false;
+                        this.page = 1;
+                        this.perPage = 20;
+                        this.playlistLoading = false;
                     });
                 }
             };

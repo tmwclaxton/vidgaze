@@ -59,7 +59,7 @@ const share = () => {
     } else {
         showShare.value = true;
         useShareModalStore().showMenu = true;
-        useShareModalStore().getShareLinks(route('playlist', playlist.value.slug), "Check out this playlist on VidGaze: " + playlist.value.name);
+        useShareModalStore().getShareLinks(route('playlist.show', playlist.value.slug), "Check out this playlist on VidGaze: " + playlist.value.name);
     }
 };
 
