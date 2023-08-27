@@ -6,7 +6,7 @@ import {useQueueStore} from "@/Stores/QueueStore";
 import UpNextVideo from "@/Pages/Viewer/Watch/Partials/UpNextVideo.vue";
 const playerStore = usePlayerStore();
 const timer = ref(8);
-
+const myTimer = ref(null);
 
 const name = "EndScreen";
 
@@ -31,15 +31,19 @@ const resetPlayer = async () => {
 const nextUpScreen = ref(true);
 
 onMounted(() => {
-    let myTimer = setInterval(() => {
-        if (nextUpScreen.value === false) {
-            clearInterval(myTimer);
+    console.log("mounted end screen");
+    myTimer.value = setInterval(() => {
+        if (nextUpScreen.value === false || useQueueStore().nextItem === null) {
+            clearInterval(myTimer.value);
+            console.log("cleared interval");
             return;
         }
         timer.value--;
         if (timer.value === 0) {
-            clearInterval(myTimer);
+            console.log("play next");
+            clearInterval(myTimer.value);
             playNext();
+            return;
         }
     }, 1000);
 });
