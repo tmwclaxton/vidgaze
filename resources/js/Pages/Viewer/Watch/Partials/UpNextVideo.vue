@@ -10,8 +10,8 @@ const props = defineProps({
 
 
 <template>
+    <Link :href="route('watch.show', {slug: props.item.slug})">
     <div class="relative flex   group z-0">
-        <Link :href="route('watch.show', {slug: props.item.slug})">
             <div class="flex-shrink-0  relative rounded overflow-hidden h-24 aspect-video bg-vidgaze-blue  ">
 
                 <!--thumbnail-->
@@ -31,8 +31,8 @@ const props = defineProps({
 
                     </div>
             </div>
-        </Link>
     </div>
+    </Link>
 </template>
 
 

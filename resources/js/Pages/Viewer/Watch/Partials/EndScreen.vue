@@ -19,9 +19,7 @@ const props = defineProps({
 
 
 const playNext = () => {
-    // playerStore.playNext();
-    // nextUpScreen.value = true;
-    // readyForNextVideo.value = false;
+    useQueueStore().changeIndex(useQueueStore().index + 1);
 }
 
 const resetPlayer = async () => {
@@ -30,17 +28,33 @@ const resetPlayer = async () => {
     });
 }
 
+const nextUpScreen = ref(true);
+
+onMounted(() => {
+    let myTimer = setInterval(() => {
+        if (nextUpScreen.value === false) {
+            clearInterval(myTimer);
+            return;
+        }
+        timer.value--;
+        if (timer.value === 0) {
+            clearInterval(myTimer);
+            playNext();
+        }
+    }, 1000);
+});
 
 </script>
 
 <template>
     <div id="endScreen"
          class="w-full h-full  without-ring flex relative duration-600 transition ">
-        <div v-if="useQueueStore().nextItem"
+        <div v-if="useQueueStore().nextItem && nextUpScreen"
             id="nextUpScreen"
              class=" mx-auto mt-5 sm:my-auto w-96  flex flex-col gap-y-3">
-            <p class="text-left text text-zinc-400 font-bold ">Up next in <span
-                class="text-white" id="myTimer"></span></p>
+            <p class="text-left text text-zinc-400 font-bold ">Up next in
+                <span class="text-white" id="myTimer" v-text="timer"></span>
+            </p>
             <div class="  ">
 
                 <!--nex video-->
@@ -49,7 +63,7 @@ const resetPlayer = async () => {
             </div>
             <div id="buttons" class="  flex flex-row gap-x-4 select-none ">
 
-                <div @click="playerStore.findPlayer(props.item.external_id).endScreenNext = null;"
+                <div @click="nextUpScreen = false"
                      class="bg-zinc-900 rounded-full p-2 px-14 w-max cursor-pointer image-wrapper shine">
                     <p class="   uppercase text-white text-sm font-bold">
                         Cancel
