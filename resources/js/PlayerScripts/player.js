@@ -14,6 +14,7 @@ export default class Player {
     ready = false;
     player = null;
     endScreen = false;
+    endScreenNext = null;
     isViewRecording = false;
     viewRecordTimer = null;
     viewRecordDuration = 0;
@@ -64,27 +65,39 @@ export default class Player {
     }
 
     endVideo() {
+        console.log('end view record: ' + this.external_id);
         this.endScreen = true;
         this.playing = false;
         // random string to force the player to re-render
         useQueueStore().refreshMiniPlayer = Math.random().toString(36).substring(7);
         this.stopViewRecord();
 
+        // if a short
         if (this.short) {
-            this.safeTogglePlay();
+            this.togglePlay();
             return;
         }
 
-        console.log('end view record: ' + this.external_id);
-        // check if queue has an item after this one
-        // wait 1 - as if we are deleting the item from the queue it will take a second to update
-        if (useQueueStore().items.length > useQueueStore().index + 1) {
-            // console.log('end video: next video in queue');
-            useQueueStore().changeIndex(useQueueStore().index + 1);
-        } else {
-            // console.log('end video: no more videos in queue');
-            this.removePlayer();
+        // if the mini player is showing
+        if (useQueueStore().showMiniPlayer) {
+            // check if queue has an item after this one
+            // wait 1 - as if we are deleting the item from the queue it will take a second to update
+            if (useQueueStore().items.length > useQueueStore().index + 1) {
+                useQueueStore().changeIndex(useQueueStore().index + 1);
+            } else {
+                this.removePlayer();
+            }
+            return;
         }
+
+        // if watch page
+        // if (useQueueStore().items.length > useQueueStore().index + 1) {
+            // if we change index here then we can't do a countdown in the end screen
+        // }
+        this.removePlayer();
+        usePlayerStore().refreshFrontEndComponent = Math.random().toString(36).substring(7);
+
+
     }
 
     startViewRecord() {

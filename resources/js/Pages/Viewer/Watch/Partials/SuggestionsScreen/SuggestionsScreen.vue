@@ -11,11 +11,9 @@ let suggestions = ref([]);
 
 // grab suggestions using axios and ziggy
 onMounted(async () => {
-    if (playerStore.endScreen ) {
-        await contentRoutesStore.getVideos("random", 6).then((response) => {
+    await contentRoutesStore.getVideos("random", 6).then((response) => {
             suggestions.value = response;
         });
-    }
 });
 </script>
 <template>

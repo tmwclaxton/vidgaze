@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { usePlayerStore } from './PlayerStore.js'
 import {router, usePage} from "@inertiajs/vue3";
 import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
+import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 export const useQueueStore = defineStore('QueueStore', {
     state: () => {
         return {
@@ -21,6 +22,12 @@ export const useQueueStore = defineStore('QueueStore', {
         currentItem() {
             return this.items[this.index];
         },
+        nextItem() {
+            if (this.items.length === 0 || this.items.length === this.index + 1) {
+                return null;
+            }
+            return this.items[this.index + 1];
+        },
         currentPlayer() {
             if (this.currentItem === undefined) {
                 return null;
@@ -33,6 +40,13 @@ export const useQueueStore = defineStore('QueueStore', {
             let queueStore = useQueueStore();
             // also depends on what page you are on ... // url doesn't contian shorts or watch
             return queueStore.items !== undefined && queueStore.items.length > 0 && usePage().url !== '/shorts' && !route().current('watch.show') && !queueStore.playlistLoading;
+        },
+        positionText() {
+            if (this.items.length === 0) {
+                return "";
+            }
+            const itemLength = this.playlist !== null ? this.playlist.video_count : this.items.length;
+            return (this.index + 1) + ' / ' + itemLength;
         }
     },
     actions: {
@@ -76,6 +90,11 @@ export const useQueueStore = defineStore('QueueStore', {
                     usePlayerStore().destroyPlayer(this.items[i].external_id, true).then(r =>  {
                         this.items = [];
                         this.index = 0;
+                        this.playlist = null;
+                        this.shuffle = false;
+                        this.page = 1;
+                        this.perPage = 20;
+                        this.playlistLoading = false;
                     });
                 }
             };
@@ -152,6 +171,7 @@ export const useQueueStore = defineStore('QueueStore', {
             if (this.items.length === 0) {
                 return;
             }
+
             usePlayerStore().destroyPlayers().then(r => {
                 if (route().current('watch.show')) {
                     router.visit(route('watch.show', {slug: this.items[this.index].slug}))
@@ -161,6 +181,16 @@ export const useQueueStore = defineStore('QueueStore', {
                         });
                 }
             });
+        },
+
+        async paginate() {
+            if (this.playlist !== null && this.index >= this.items.length - 5 && this.items.length === (this.page * this.perPage) ) {
+                // console.log("paginating " + this.page);
+                this.page = this.page + 1;
+                let newItems = await usePlaylistModalStore().getPlaylist(this.playlist.slug, this.page, this.perPage);
+                this.items = this.items.concat(newItems[1]);
+            }
         }
+
     }
 })

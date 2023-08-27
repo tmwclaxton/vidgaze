@@ -147,6 +147,7 @@ const closeMiniPlayer = () => {
     queueStore.removeAll();
 };
 
+
 </script>
 
 <template>
@@ -197,8 +198,14 @@ const closeMiniPlayer = () => {
             <div class="flex flex-row justify-between">
                 <!--video title-->
                 <div class="flex flex-col">
-                    <p class="text-sm font-semibold text-left" v-text="queueStore.items[queueStore.index].title"></p>
-                    <p class="text-xs font-normal text-left" >Queue · <span v-text="(queueStore.index) + 1 + ' / ' + queueStore.items.length"></span></p>
+                    <Link :href="route('watch.show', {slug: queueStore.items[queueStore.index].slug})"
+                        class="text-sm font-semibold text-left" >
+                        <p v-text="queueStore.items[queueStore.index].title"></p>
+                    </Link>
+                    <Link v-if="useQueueStore().playlist" :href="route('playlist.show', {slug: useQueueStore().playlist.slug})">
+                        <p class="text-xs font-normal text-left" v-text="useQueueStore().playlist.name + ' · ' + useQueueStore().positionText"></p>
+                    </Link>
+                    <p v-else class="text-xs font-normal text-left" v-text="'Queue' + ' · ' + useQueueStore().positionText"></p>
                 </div>
                 <!--expand queue button-->
                 <div @click="toggleExpandQueue" class="my-auto mr-2">
