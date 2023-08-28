@@ -63,9 +63,12 @@ class AuthWebController extends Controller
     /**
      * show verifying email page
      */
-    public function VerifyEmailRedirect(Request $request): Response
+    public function VerifyEmailRedirect($id,$hash): Response
     {
-        return Inertia::render('Auth/VerifyingEmail');
+        return Inertia::render('Auth/VerifyingEmail', [
+            'id' => $id,
+            'hash' => $hash,
+        ]);
     }
 
     /**

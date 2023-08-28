@@ -4,21 +4,54 @@ import InputLabel from '@/Components/Inputs/InputLabel.vue';
 import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
 import TextInput from '@/Components/Inputs/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
+import {useAuthStore} from "@/Stores/AuthStore";
+import {useToastStore} from "@/Stores/ToastStore";
+import {reactive, ref} from "vue";
 
 
 const props = defineProps({
     mustVerifyEmail: Boolean,
-    status: String,
 });
 
 const user = useAuthStore().user;
 
-const form = useForm({
-    first_name: user.first_name,
-    last_name: user.last_name,
-    dob: user.dob,
-    email: user.email,
+const form = reactive({
+    data: {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        dob: user.dob,
+        email: user.email,
+        processing: false,
+    },
+    errors: {},
 });
+
+const save =() => {
+    form.processing = true;
+
+    axios.patch(route('api.profile.update',{
+        first_name: form.data.first_name,
+        last_name: form.data.last_name,
+        email: form.data.email,
+    })).then(() => {
+        useToastStore().add({
+            message: 'Profile updated.',
+            type: 'success',
+        });
+        form.processing = false;
+    });
+}
+
+const sendVerificationEmail = () => {
+
+    axios.post(route('api.verification.send', {email: user.email})).then(() => {
+        useToastStore().add({
+            message: 'A new verification link has been sent to your email address.',
+            type: 'success',
+        });
+    });
+};
+
 </script>
 
 <template>
@@ -31,7 +64,7 @@ const form = useForm({
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('profile.update'))" class="mt-6 space-y-6">
+        <div class="mt-6 space-y-6">
             <div>
                 <InputLabel for="first_name" value="First Name" />
 
@@ -39,7 +72,7 @@ const form = useForm({
                     id="first_name"
                     type="text"
                     class="mt-1 block w-full"
-                    v-model="form.first_name"
+                    v-model="form.data.first_name"
                     required
                     autofocus
                     autocomplete="given-name"
@@ -54,7 +87,7 @@ const form = useForm({
                     id="last_name"
                     type="text"
                     class="mt-1 block w-full"
-                    v-model="form.last_name"
+                    v-model="form.data.last_name"
                     required
                     autofocus
                     autocomplete="family-name"
@@ -69,7 +102,7 @@ const form = useForm({
                     id="email"
                     type="email"
                     class="mt-1 block w-full"
-                    v-model="form.email"
+                    v-model="form.data.email"
                     required
                     autocomplete="username"
                 />
@@ -80,31 +113,21 @@ const form = useForm({
             <div v-if="props.mustVerifyEmail && user.email_verified_at === null">
                 <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
                     Your email address is unverified.
-                    <Link
-                        :href="route('verification.send')"
-                        method="post"
-                        as="button"
-                        class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                    <span @click="sendVerificationEmail"
+                        class="select-none cursor-pointer underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                     >
                         Click here to re-send the verification email.
-                    </Link>
+                    </span>
                 </p>
-
-                <div
-                    v-show="props.status === 'verification-link-sent'"
-                    class="mt-2 font-medium text-sm text-green-600 dark:text-green-400"
-                >
-                    A new verification link has been sent to your email address.
-                </div>
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <PrimaryButton @click="save" :disabled="form.data.processing">Save</PrimaryButton>
 
-                <Transition enter-from-class="opacity-0" leave-to-class="opacity-0" class="transition ease-in-out">
-                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>
-                </Transition>
+                <!--<Transition enter-from-class="opacity-0" leave-to-class="opacity-0" class="transition ease-in-out">-->
+                <!--    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>-->
+                <!--</Transition>-->
             </div>
-        </form>
+        </div>
     </section>
 </template>

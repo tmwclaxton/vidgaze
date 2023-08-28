@@ -12,7 +12,7 @@ const props = defineProps({
 const form = useForm({});
 
 const submit = () => {
-    form.post(route('verification.send'));
+    form.post(route('api.verification.send'));
 };
 
 const verificationLinkSent = computed(() => props.status === 'verification-link-sent');
