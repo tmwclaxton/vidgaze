@@ -144,7 +144,7 @@ watch(() => queueStore.index, (x, y) => {
 });
 
 const closeMiniPlayer = () => {
-    queueStore.removeAll();
+    queueStore.removeAll(true);
 };
 
 

@@ -47,10 +47,10 @@ const throttledLoadMore = throttle(loadMore, 1000);
 
 
 const editable = computed(() => {
-    if (!playlist.value) return true;
-    if (!useAuthStore().user) return true;
+    if (!playlist.value) return false;
+    if (!useAuthStore().user) return false;
     // if playlist isn't server made and the user is the owner of the playlistX
-    return !playlist.value.server_made && playlist.value.creator.id !== useAuthStore().user.creator.id;
+    return !playlist.value.server_made && playlist.value.creator.id === useAuthStore().user.creator.id;
 });
 
 const share = () => {

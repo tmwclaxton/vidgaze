@@ -41,14 +41,17 @@ watch(() => props.ready, () => {
 
 });
 
+const closeMiniPlayer = () => {
+    useQueueStore().removeAll();
+};
 
 
 </script>
 <template>
     <consistent-content-holder v-if="useQueueStore().items.length > 0">
-        <div >
+        <div class="flex flex-row justify-between">
             <div class="flex-col mb-1   border-b border-zinc-200 dark:border-zinc-700">
-                <div class="p-2 generic-background   dark:bg-zinc-900">
+                <div class="p-2 generic-background select-none  dark:bg-zinc-900">
 
                     <Link v-if="useQueueStore().playlist" :href="route('playlist.show', {slug: useQueueStore().playlist.slug})">
                         <p class="font-bold text-2xl" v-text="useQueueStore().playlist.name"></p>
@@ -61,12 +64,15 @@ watch(() => props.ready, () => {
                         <span v-text="useQueueStore().positionText" class=" "/>
                     </p>
                 </div>
-            </div>
 
-            <div id="miniPlayerItemsHolder" class="relative flex flex-col pb-1 max-h-96 overflow-y-auto">
-                <div v-for="(item, index) in useQueueStore().items">
-                    <QueueItem :item="item" :index="index" :key="index"/>
-                </div>
+            </div>
+            <!--exit button-->
+            <font-awesome-icon class="cursor-pointer my-auto px-5 h-5 aspect-square " :icon="['fas', 'times']" @click="closeMiniPlayer" />
+        </div>
+
+        <div id="miniPlayerItemsHolder" class="relative flex flex-col pb-1 max-h-96 overflow-y-auto">
+            <div v-for="(item, index) in useQueueStore().items">
+                <QueueItem :item="item" :index="index" :key="index"/>
             </div>
         </div>
 

@@ -78,7 +78,7 @@ export const useQueueStore = defineStore('QueueStore', {
             }
         },
 
-        removeAll() {
+        removeAll(fullDestroy = false) {
             // confirm that the user wants to close the mini player as it will destroy the queue
             useConfirmModalStore().buttonOneText = 'Cancel';
             useConfirmModalStore().buttonTwoText = 'Delete';
@@ -87,18 +87,25 @@ export const useQueueStore = defineStore('QueueStore', {
             useConfirmModalStore().continue = () => {
                 // do a full destroy for each item in the queue
                 for (let i = 0; i < this.items.length; i++) {
-                    usePlayerStore().destroyPlayer(this.items[i].external_id, true).then(r =>  {
-                        this.items = [];
-                        this.index = 0;
-                        this.playlist = null;
-                        this.shuffle = false;
-                        this.page = 1;
-                        this.perPage = 20;
-                        this.playlistLoading = false;
-                    });
+                    if (fullDestroy) {
+                        usePlayerStore().destroyPlayer(this.items[i].external_id, true).then(r =>  {
+                            this.clearQueue();
+                        });
+                    } else {
+                        this.clearQueue();
+                    }
                 }
             };
+        },
 
+        clearQueue() {
+            this.items = [];
+            this.index = 0;
+            this.playlist = null;
+            this.shuffle = false;
+            this.page = 1;
+            this.perPage = 20;
+            this.playlistLoading = false;
         },
 
         remove(external_id) {
