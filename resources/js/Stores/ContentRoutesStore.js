@@ -77,6 +77,15 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
             return response.data.categories.data;
         },
 
+        // get category
+        async getCategory(slug) {
+            const response = await axios.get(route('api.category.show', {slug: slug}))
+                .catch(error => {
+                    console.log(error);
+                })
+            return response.data.category;
+        }
+
 
 
     },
