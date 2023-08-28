@@ -69,6 +69,10 @@ export const useQueueStore = defineStore('QueueStore', {
             if (isItemInArray) {
                 return false;
             } else {
+                // if your adding a video on the watch page you want to finish the current video before playing the next one
+                if (route().current('watch.show') && usePlayerStore().players.length === 1) {
+                   this.items.push(usePlayerStore().players[0].object);
+                }
                 this.items.push(item);
                 // if this is the first item in the queue, play it
                 if (this.items.length === 1) {

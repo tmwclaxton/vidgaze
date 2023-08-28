@@ -42,26 +42,30 @@ watch(mode, () => {
 </script>
 
 <template>
-    <div class="flex flex-row flex-wrap">
-        <QuaternaryButton class="mr-2" @click="mode = 'recommended'">
-            <font-awesome-icon :icon="['fas', 'fire']" class="my-auto"/>
-            <span class="font-semibold">Random</span>
-        </QuaternaryButton>
-        <QuaternaryButton class="mr-2" @click="mode = 'channel'">
-            <font-awesome-icon :icon="['fas', 'heart']" class="my-auto"/>
-            <span class="font-semibold">Channel</span>
-        </QuaternaryButton>
-    </div>
-
-    <div v-if="suggestions && suggestions.length > 0">
-        <div class="relative flex flex-col pb-1 overflow-y-auto gap-y-2" >
-            <VideoStreamSuggestionCard v-for="(item, index) in suggestions" :item="item" :key="index"/>
+    <div class="">
+        <div class="flex flex-row flex-wrap">
+            <QuaternaryButton class="mr-2" @click="mode = 'recommended'">
+                <font-awesome-icon :icon="['fas', 'fire']" class="my-auto"/>
+                <span class="font-semibold">Random</span>
+            </QuaternaryButton>
+            <QuaternaryButton class="mr-2" @click="mode = 'channel'">
+                <font-awesome-icon :icon="['fas', 'heart']" class="my-auto"/>
+                <span class="font-semibold">Channel</span>
+            </QuaternaryButton>
         </div>
-    </div>
 
-    <div v-if="suggestions && suggestions.length > 0" @click="loadMore" class="right-aligned font-bold focus:ring-2 focus:outline-none  rounded-sm text-sm
-                                py-2.5  mb-2 uppercase w-full generic_button_2 dark:generic_button-dark_2  shine px-0">
-        <p  class="text-center select-none">Load More Videos</p>
+        <div v-if="suggestions && suggestions.length > 0">
+            <div class="relative flex flex-col pb-1 overflow-y-auto gap-y-2 mt-3" >
+                <VideoStreamSuggestionCard v-for="(item, index) in suggestions" :item="item" :key="index"/>
+            </div>
+        </div>
+
+        <div v-if="suggestions && suggestions.length > 0" @click="loadMore">
+            <QuaternaryButton @click="loadMore" class="font-bold rounded-sm text-sm py-2.5 mb-2 w-full shine px-0">
+                <p  class="text-center select-none">Load More Videos</p>
+            </QuaternaryButton>
+        </div>
+
     </div>
 </template>
 
