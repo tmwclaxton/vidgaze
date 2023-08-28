@@ -30,6 +30,7 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
 import WatchQueue from "@/Pages/Viewer/Watch/Partials/WatchQueue.vue";
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
+import SuggestedVideos from "@/Pages/Viewer/Watch/Partials/SuggestedVideos.vue";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -117,7 +118,6 @@ onMounted(  () => {
 watch(item, async (newItem) => {
     ready.value = false;
     if (newItem !== null) {
-        suggestions.value = await useContentRoutesStore().getVideos("popular", 10);
         showMoreDescriptionButton.value = shouldShowMoreDescriptionButton();
 
         // if not in queue build player like normal
@@ -268,23 +268,7 @@ onUnmounted(() => {
                 <WatchQueue :item="item" :ready="ready"/>
 
                 <!--suggested videos-->
-                <div class="flex flex-row flex-wrap">
-                    <QuaternaryButton class="mr-2" @click="">
-                        <font-awesome-icon :icon="['fas', 'fire']" class="my-auto"/>
-                        <span class="font-semibold">Recommended</span>
-                    </QuaternaryButton>
-                    <QuaternaryButton class="mr-2" @click="">
-                        <font-awesome-icon :icon="['fas', 'heart']" class="my-auto"/>
-                        <span class="font-semibold">Channel</span>
-                    </QuaternaryButton>
-                </div>
-
-                <div v-if="suggestions && suggestions.length > 0">
-                    <div id="miniPlayerItemsHolder" class="relative flex flex-col pb-1 max-h-48 overflow-y-auto">
-                        <div v-for="(item, index) in suggestions">
-                        </div>
-                    </div>
-                </div>
+                <SuggestedVideos :video="item"/>
             </div>
         </div>
 </template>

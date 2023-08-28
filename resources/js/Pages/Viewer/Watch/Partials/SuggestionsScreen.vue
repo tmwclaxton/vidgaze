@@ -2,7 +2,7 @@
 import {onMounted, ref} from "vue";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 import {usePlayerStore} from "@/Stores/PlayerStore";
-import EndScreenSuggestion from "@/Pages/Viewer/Watch/Partials/SuggestionsScreen/EndScreenSuggestion.vue";
+import EndScreenSuggestion from "@/Components/Cards/VideoStreamCards/VideoStreamEndscreenCard/EndScreenSuggestion.vue";
 const contentRoutesStore = useContentRoutesStore();
 const playerStore = usePlayerStore();
 const name = 'SuggestionsScreen';
