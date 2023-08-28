@@ -22,8 +22,8 @@ const props = defineProps({
 const name = 'FeatureCreatorButton';
 
 const featureCreator = () => {
-    console.log(props.creator_id)
-    axios.post(route('creator.featured.toggle'), {
+    // console.log(props.creator_id)
+    axios.post(route('api.creator.feature.toggle'), {
         creator_id: props.creator_id
     })
         .then(response => {

@@ -6,21 +6,18 @@ use App\Http\Controllers\ApiControllers\CreatorInteractionApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('creator')->name('creator.')->group(function () {
-
     //creator routes
-        Route::get('index', [CreatorApiController::class, 'index'])->name("index");
-        Route::get('{slug}', [CreatorApiController::class, 'show'])->name("show");
+    Route::get('index', [CreatorApiController::class, 'index'])->name("index");
+    Route::get('{slug}', [CreatorApiController::class, 'show'])->name("show");
 
     // toggle featured creator
-        Route::middleware(['auth:sanctum'])->group(function () {
-            Route::post('/feature', [CreatorApiController::class, 'toggleFeatured'])
-                ->name('feature.toggle');
-        });
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::post('/feature', [CreatorApiController::class, 'toggleFeatured'])
+            ->name('feature.toggle');
+    });
 
-
-// interaction routes
+    // interaction routes
     Route::middleware(['throttle:60,1', 'auth:sanctum'])->group(function () {
-
         // this allows users to toggle a channel disinterest on a creatorinteraction record
         Route::post('/{channelId}/disinterest', [CreatorInteractionApiController::class, 'toggleDisinterest'])
             ->name('disinterest.toggle');
@@ -31,7 +28,5 @@ Route::prefix('creator')->name('creator.')->group(function () {
 
         Route::post('/{channelId}/report', [CreatorInteractionApiController::class, 'toggleReport'])
             ->name('subscription.report');
-
     });
-
 });
