@@ -5,35 +5,56 @@ import InputLabel from '@/Components/Inputs/InputLabel.vue';
 import Modal from '@/Components/Modals/Modal.vue';
 import SecondaryButton from '@/Components/Buttons/SecondaryButton.vue';
 import TextInput from '@/Components/Inputs/TextInput.vue';
-import { useForm } from '@inertiajs/vue3';
-import { nextTick, ref } from 'vue';
+import {router, useForm} from '@inertiajs/vue3';
+import {nextTick, reactive, ref} from 'vue';
+import {useToastStore} from "@/Stores/ToastStore";
+import {useAuthStore} from "@/Stores/AuthStore";
 
 const confirmingUserDeletion = ref(false);
 const passwordInput = ref(null);
 
-const form = useForm({
-    password: '',
+const form = reactive({
+    data: {
+        password: '',
+        processing: false,
+    },
+    errors: {},
 });
 
 const confirmUserDeletion = () => {
     confirmingUserDeletion.value = true;
-
     nextTick(() => passwordInput.value.focus());
 };
 
 const deleteUser = () => {
-    form.delete(route('profile.destroy'), {
-        preserveScroll: true,
-        onSuccess: () => closeModal(),
-        onError: () => passwordInput.value.focus(),
-        onFinish: () => form.reset(),
+    axios.delete(route('api.profile.destroy', {password: form.data.password})).then((response) => {
+        useToastStore().add({
+            message: 'Your account has been deleted.',
+            type: 'success',
+        });
+        router.visit(route('home'));
+        useAuthStore().clearBrowserStorage();
+    }).catch((errors) => {
+        useToastStore().add({
+            message: 'Your account could not be deleted.',
+            type: 'warning',
+        });
+        form.errors = errors.response.data.errors;
+        passwordInput.value.focus();
+    }).finally(() => {
+        form.processing = false;
     });
 };
 
 const closeModal = () => {
     confirmingUserDeletion.value = false;
+    resetForm();
+};
 
-    form.reset();
+const resetForm = () => {
+    form.errors = {};
+    form.processing = false;
+    form.data.password = '';
 };
 </script>
 
@@ -67,7 +88,7 @@ const closeModal = () => {
                     <TextInput
                         id="password"
                         ref="passwordInput"
-                        v-model="form.password"
+                        v-model="form.data.password"
                         type="password"
                         class="mt-1 block w-3/4"
                         placeholder="Password"
@@ -82,8 +103,8 @@ const closeModal = () => {
 
                     <DangerButton
                         class="ml-3"
-                        :class="{ 'opacity-25': form.processing }"
-                        :disabled="form.processing"
+                        :class="{ 'opacity-25': form.data.processing }"
+                        :disabled="form.data.processing"
                         @click="deleteUser"
                     >
                         Delete Account

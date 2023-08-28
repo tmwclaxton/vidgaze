@@ -318,6 +318,13 @@ class AuthApiController extends Controller
 
         $user = $request->user();
 
+        // check if password is correct
+        if (! Hash::check($request->current_password, $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['The provided password is incorrect.'],
+            ]);
+        }
+
         $user->forceFill([
             'password' => Hash::make($request->password)
         ])->setRememberToken(Str::random(60));
