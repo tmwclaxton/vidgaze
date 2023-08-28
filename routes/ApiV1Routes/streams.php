@@ -13,16 +13,16 @@ Route::prefix('/stream')->name('stream.')->group(function () {
 
     Route::middleware(['throttle:30,1', 'auth:sanctum'])->group(function () {
 
-        Route::post('/{streamId}/disinterest', [StreamInteractionApiController::class, 'toggleDisinterest'])
+        Route::post('/{stream_id}/disinterest', [StreamInteractionApiController::class, 'toggleDisinterest'])
             ->name('disinterest.toggle');
 
-        Route::post('/{streamId}/report', [StreamInteractionApiController::class, 'toggleReport'])
+        Route::post('/{stream_id}/report', [StreamInteractionApiController::class, 'toggleReport'])
             ->name('report.toggle');
 
-        Route::get('/{streamId}/details', [StreamInteractionApiController::class, "modalDetails"])->name('details');
+        Route::get('/{stream_id}/details', [StreamInteractionApiController::class, "modalDetails"])->name('details');
 
         // if we need to get the interaction details for a stream down the road
-        Route::get('/{streamId}/interaction', [StreamInteractionApiController::class,"getStreamInteraction"])->name('interaction');
+        Route::get('/{stream_id}/interaction', [StreamInteractionApiController::class,"getStreamInteraction"])->name('interaction');
 
     });
 });

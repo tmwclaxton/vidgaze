@@ -15,12 +15,12 @@ class StreamInteractionApiController extends Controller
 {
 
     /** get stream and interaction
-     * @param $streamId
+     * @param $stream_id
      * @return array
      */
-    private function getStreamAndInteraction($streamId)
+    private function getStreamAndInteraction($stream_id)
     {
-        $stream = Stream::findOrFail($streamId);
+        $stream = Stream::findOrFail($stream_id);
 
         if (!$stream) {
             return null;
@@ -46,14 +46,14 @@ class StreamInteractionApiController extends Controller
 
 
     /** get stream interaction
-     * @param $streamId
+     * @param $stream_id
      * @return JsonResponse
      */
-    public function getStreamInteraction($streamId) {
+    public function getStreamInteraction($stream_id) {
 
         $creatorId = Auth::user()->creator->id;
         // check if user has liked video
-        $VideoViewInfo = StreamInteraction::where('viewer_id', $creatorId)->where('stream_id', $streamId)->first() ?? null;
+        $VideoViewInfo = StreamInteraction::where('viewer_id', $creatorId)->where('stream_id', $stream_id)->first() ?? null;
 
         $VideoViewInfo = new StreamInteractionResource($VideoViewInfo);
 
@@ -63,13 +63,13 @@ class StreamInteractionApiController extends Controller
     }
 
     /** toggle stream report
-     * @param $streamId
+     * @param $stream_id
      * @return JsonResponse
      */
-    public function toggleReport($streamId)
+    public function toggleReport($stream_id)
     {
 
-        [$stream, $interaction] = $this->getStreamAndInteraction($streamId);
+        [$stream, $interaction] = $this->getStreamAndInteraction($stream_id);
 
         $interaction->reported = !$interaction->reported;
         if ($interaction->reported) {
@@ -90,12 +90,12 @@ class StreamInteractionApiController extends Controller
     }
 
     /** toggle stream disinterest
-     * @param $streamId
+     * @param $stream_id
      * @return JsonResponse
      */
-    public function toggleDisinterest($streamId)
+    public function toggleDisinterest($stream_id)
     {
-        [$stream, $interaction] = $this->getStreamAndInteraction($streamId);
+        [$stream, $interaction] = $this->getStreamAndInteraction($stream_id);
 
 
         $interaction->disinterested = !$interaction->disinterested;
@@ -115,12 +115,12 @@ class StreamInteractionApiController extends Controller
 
 
     /** get stream interaction details
-     * @param $streamId
+     * @param $stream_id
      * @return JsonResponse
      */
-    public function modalDetails($streamId)
+    public function modalDetails($stream_id)
     {
-        [$stream, $interaction] = $this->getStreamAndInteraction($streamId);
+        [$stream, $interaction] = $this->getStreamAndInteraction($stream_id);
 
         $creatorId = Auth::user()->creator->id;
 

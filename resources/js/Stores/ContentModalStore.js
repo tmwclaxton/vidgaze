@@ -96,7 +96,7 @@ export const useContentModalStore = defineStore('ContentModalStore', {
             if (this.item !== null && this.itemType === 'stream') {
                 const streamId = this.item.id;
                 try {
-                    const response = await axios.get(route('stream.details', { stream_id: streamId }));
+                    const response = await axios.get(route('api.stream.details', { stream_id: streamId }));
                     const data = response.data;
                     this.reportedContent = data.reportedContent;
                     this.itemDisinterest = data.streamDisinterest;

@@ -11,7 +11,7 @@ const category = ref(null);
 const streams = ref([]);
 const props = defineProps({
     slug: {
-        type: Object,
+        type: String,
         required: true,
     },
 });
