@@ -33,21 +33,32 @@ const save =() => {
         first_name: form.data.first_name,
         last_name: form.data.last_name,
         email: form.data.email,
-    })).then(() => {
+    })).then((response) => {
         useToastStore().add({
             message: 'Profile updated.',
             type: 'success',
         });
+    }).catch((errors) => {
+        useToastStore().add({
+            message: 'Profile could not be updated.',
+            type: 'error',
+        });
+        form.errors = errors.response.data.errors;
+    }).finally(() => {
         form.processing = false;
     });
 }
 
 const sendVerificationEmail = () => {
-
     axios.post(route('api.verification.send', {email: user.email})).then(() => {
         useToastStore().add({
             message: 'A new verification link has been sent to your email address.',
             type: 'success',
+        }).catch(() => {
+            useToastStore().add({
+                message: 'Verification link could not be sent.',
+                type: 'error',
+            });
         });
     });
 };

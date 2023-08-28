@@ -26,8 +26,6 @@ const submit = () => {
 </script>
 
 <template>
-    <!--    <Head title="Landing" />-->
-    <AuthenticatedLayout>
         <div class="-mt-16 "></div>
                 <div class=" ">
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -64,8 +62,5 @@ const submit = () => {
 
                         </div>
                     </div>
-                </div>
-
-
-    </AuthenticatedLayout>
+                </div> 
 </template>
