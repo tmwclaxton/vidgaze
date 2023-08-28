@@ -14,12 +14,10 @@ class SupportWebController extends Controller
     {
         return Inertia::render('Viewer/Home/Homepage');
     }
-
     public function about()
     {
         return Inertia::render('Viewer/Landing/Landing');
     }
-
     public function terms()
     {
         return Inertia::render('Legal/Terms');
@@ -32,5 +30,8 @@ class SupportWebController extends Controller
     {
         return Inertia::render('Legal/Support');
     }
-
+    public function marketplace()
+    {
+        return Inertia::render('Marketplace/Marketplace');
+    }
 }

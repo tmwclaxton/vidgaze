@@ -2,10 +2,10 @@
     <div class="p-4 w-full   sm:p-6 sm:px-10  ">
         <div class="md:flex md:justify-between">
             <div class="mb-6 md:mb-0">
-                <a href="{{route('home')}}" class="flex items-center">
+                <Link :href="route('home')" class="flex items-center">
                     <img src="/images/logos/vidgaze/logosquare.png" class="mr-3 h-8" alt="VidGaze Logo">
                     <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">VidGaze</span>
-                </a>
+                </Link>
             </div>
             <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
                 <div>
@@ -34,10 +34,10 @@
                     <h2 class="mb-6 text-sm font-semibold text-zinc-900 uppercase dark:text-white">Legal</h2>
                     <ul class="text-zinc-600 dark:text-zinc-200">
                         <li class="mb-4">
-                            <a v-bind:href="route('privacy')" class="hover:underline">Privacy Policy</a>
+                            <Link v-bind:href="route('privacy')" class="hover:underline">Privacy Policy</Link>
                         </li>
                         <li>
-                            <a v-bind:href="route('terms')" class="hover:underline">Terms of Service</a>
+                            <Link v-bind:href="route('terms')" class="hover:underline">Terms of Service</Link>
                         </li>
                     </ul>
                 </div>

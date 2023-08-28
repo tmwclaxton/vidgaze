@@ -1,20 +1,12 @@
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import PaddingLayout from "@/Layouts/Partials/ConsistentPadding.vue";
-export default {
-    components: {PaddingLayout},
-    layout: AuthenticatedLayout,
-
-};
-</script>
 <script setup>
 import axios from "axios";
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import CreatorSearchCard from "@/Components/Cards/CreatorSearchCard/CreatorSearchCard.vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 import CreatorSearchSkeleton from "@/Components/Cards/CreatorSearchCard/CreatorSearchSkeleton.vue";
 import VideoStreamSearchCard from "@/Components/Cards/VideoStreamCards/VideoStreamSearchCard/VideoStreamSearchCard.vue";
 import VideoStreamSearchSkeleton from "@/Components/Cards/VideoStreamCards/VideoStreamSearchCard/VideoStreamSearchSkeleton.vue";
+import ErrorMessage from "@/Components/Errors/ErrorMessage.vue";
 
 const props = defineProps({
     searchQuery: String,
@@ -37,7 +29,10 @@ const toggleVisibleCreators = () => {
 };
 
 
-search(searchQuery,1);
+
+
+
+const loaded = ref(false);
 const loading = ref(true);
 const creators = ref([]);
 const videos = ref([]);
@@ -83,6 +78,10 @@ function search(searchQuery,page = 1) {
 
 }
 
+onMounted(() => {
+    search(searchQuery,1);
+    loaded.value = true;
+});
 
 
 
@@ -183,6 +182,10 @@ function search(searchQuery,page = 1) {
                             <VideoStreamSearchCard v-if="videos.length > 0  && !loading" v-for="video in videos" :item="video"/>
                             <VideoStreamSearchSkeleton v-else v-for="i in 8" v-if="loading"/>
 
+                        </div>
+
+                        <div class="mt-20" v-if="loaded && videos.length == 0 && creators.length == 0">
+                            <ErrorMessage :message="'Whoops we couldn\'t find any content'"/>
                         </div>
 
                     </section>

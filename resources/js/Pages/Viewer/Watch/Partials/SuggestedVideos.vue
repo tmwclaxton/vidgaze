@@ -55,7 +55,7 @@ watch(mode, () => {
         </div>
 
         <div v-if="suggestions && suggestions.length > 0">
-            <div class="relative flex flex-col pb-1 overflow-y-auto gap-y-2 mt-3" >
+            <div class="relative flex flex-col pb-1 overflow-y-auto gap-y-2 mt-3 overflow-hidden" >
                 <VideoStreamSuggestionCard v-for="(item, index) in suggestions" :item="item" :key="index"/>
             </div>
         </div>
@@ -65,7 +65,6 @@ watch(mode, () => {
                 <p  class="text-center select-none">Load More Videos</p>
             </QuaternaryButton>
         </div>
-
     </div>
 </template>
 

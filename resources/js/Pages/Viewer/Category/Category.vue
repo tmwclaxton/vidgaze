@@ -5,7 +5,8 @@ import VideoStreamCard from "@/Components/Cards/VideoStreamCards/VideoStreamCard
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import {debounce} from "lodash";
-
+import ErrorMessage from "@/Components/Errors/ErrorMessage.vue";
+const loaded = ref(false);
 const name = 'Category';
 const category = ref(null);
 const streams = ref([]);
@@ -22,6 +23,7 @@ onMounted(async () => {
     }).then(() => {
         getStreams();
         window.addEventListener('scroll', handleScroll);
+        loaded.value = true;
 
     });
 });
@@ -77,6 +79,10 @@ onUnmounted(() => {
                 <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                         <VideoStreamCard v-for="stream in streams" :key="stream.id" :item="stream" :category_page="true"/>
                 </div>
+            </div>
+
+            <div class="" v-if="loaded && streams.length === 0">
+                <ErrorMessage :message="'Whoops we couldn\'t find any streams'"/>
             </div>
 
         </div>

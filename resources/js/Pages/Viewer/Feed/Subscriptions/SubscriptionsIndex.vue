@@ -1,16 +1,8 @@
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import PaddingLayout from "@/Layouts/Partials/ConsistentPadding.vue";
-export default {
-    components: {PaddingLayout},
-    layout: AuthenticatedLayout,
-
-};
-</script>
 <script setup>
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import SubscriptionsIcon from '~/images/icons/subscriptions.svg';
 import RowDivider from "@/Components/General/RowDivider.vue";
+import ErrorMessage from "@/Components/Errors/ErrorMessage.vue";
 import {onMounted, ref} from "vue";
 import TitleComponent from "@/Components/General/Title.vue";
 import VideoStreamCard from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamCard.vue";
@@ -20,13 +12,14 @@ const name = 'Subscriptions';
 const videos = ref([]);
 const streams = ref([]);
 const podcasts = ref([]);
-
+const loaded = ref(false);
 
 // on mounted grab subscriptions using axios and ziggy
 onMounted(() => {
     axios.get(route('api.feed.subscriptions')).then((response) => {
         videos.value = response.data.videos.data;
         streams.value = response.data.streams.data;
+        loaded.value = true;
     });
 });
 
@@ -78,11 +71,8 @@ onMounted(() => {
             </div>
         </div>
 
-        <!--@endif-->
-        <!---->
-        <!--@if($streams->count() + $videos->count() < 1)-->
-        <div class="mt-20">
-            <!--<x-error-message :import="false" :explore="true" text="Whoops you have no new content"/>-->
+        <div class="mt-20" v-if="loaded && videos.length === 0 && streams.length === 0 ">
+            <ErrorMessage :message="'Whoops you have no new content'"/>
         </div>
 
     </ConsistentPadding>

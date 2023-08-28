@@ -79,7 +79,7 @@ function redirect(which) {
 
                     <!--Buy Vidcoins button-->
                     <div v-if="!navStore.showingStudioLinks" class="hidden 2xl:flex sm:items-center mr-2 flex-shrink-0 group">
-                        <Link :href="route('login')"  >
+                        <Link :href="route('marketplace')"  >
 
                             <TopNavButton>
                                 <img src="/images/vidcoins/coins/PileofCoins2.png" alt="VidCoins"

@@ -50,7 +50,7 @@ class HandleInertiaRequests extends Middleware
             'password.confirm',
         ];
 
-        if ($request->routeIs('about') || $request->routeIs('watch.*') || $request->routeIs('landing')) {
+        if ($request->routeIs('about') || $request->routeIs('watch.*') || $request->routeIs('landing') || $request->routeIs('marketplace')) {
             $layoutDisplay = 'wide';
         } elseif (in_array($request->route()->getName(), $listOfAuthRoutes)) {
             $layoutDisplay = 'auth';
