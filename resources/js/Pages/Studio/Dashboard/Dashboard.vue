@@ -11,13 +11,12 @@ import LatestComment from "@/Pages/Studio/Dashboard/Partials/LatestComment.vue";
 import ChannelOverview from "@/Pages/Studio/Dashboard/Partials/ChannelOverview.vue";
 import StreamIcon from '#icons/livestreams.svg';
 
-import {defineProps} from "vue";
-import {onMounted, ref} from "vue";
+import {onBeforeMount, ref} from "vue";
 
 
 let claimedPlatforms = ref({});
 
-onMounted(async () => {
+onBeforeMount(async () => {
     claimedPlatforms.value = await axios.get(route("api.my.creator.sources")).then((response) => {
         return response.data.sources;
     });
