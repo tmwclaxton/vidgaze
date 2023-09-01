@@ -68,6 +68,15 @@ class ContentDTO
         };
     }
 
+    public static function saveAll(array $content_dtos, $creator_id) : array
+    {
+        $models = [];
+        foreach ($content_dtos as $content_dto){
+            $models[] = $content_dto->save($creator_id);
+        }
+        return $models;
+    }
+
 
     public function saveVideo($creator_id): Video
     {

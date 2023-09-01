@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers\ApiControllers;
 
+use App\Enums\Platform;
+use App\Helpers\ContentDTO;
+use App\Helpers\PlatformAPIs\Dailymotion;
+use App\Helpers\PlatformAPIs\YouTube;
+use App\Helpers\ResultDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CreatorCollection;
 use App\Models\CreatorModels\Creator;
 use App\Models\PodcastModels\Podcast;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -63,19 +69,16 @@ class CreatorApiController extends Controller
      * @return JsonResponse
      */
     public function show($slug) {
-
-        $creator = Creator::where('slug','=',$slug)->first();
-
-        if(!$creator){
+        $creator = Creator::where('slug', $slug)->firstOr(function(){
             return response()->json([
                 'toastType' => 'warning',
                 'message' => 'Creator not found'
-            ]);
-        }
+            ], 404);
+        });
 
-        return response()->json([
+        return [
             'creator' => $creator,
-        ]);
+        ];
     }
 
     /** Toggle the featured status of a creator
@@ -114,5 +117,47 @@ class CreatorApiController extends Controller
             'toastType' => $creator->featured ? 'success' : 'warning',
             'message' => $message
         ]);
+    }
+
+
+    public function videos($slug){
+        $perPage = request()->perPage ?? 50;
+        if($perPage > 50) $perPage = 50;
+
+        $creator = Creator::where('slug', $slug)->firstOr(function(){
+            return response()->json([
+                'toastType' => 'warning',
+                'message' => 'Creator not found'
+            ], 404);
+        });
+
+        $videos = [];
+        $next = null;
+        $hasNext = null;
+        if($creator->isGhostChannel()){
+            $page = request()->page ?? null;
+            $source = $creator->sources()->first();
+            $response = match(Platform::fromValue($source->source_name))
+            {
+                Platform::YouTube => YouTube::getCreatorVideosBeforeDate($source->external_channel_id, Carbon::create($page), $perPage),
+//                Platform::Dailymotion => Dailymotion::getCreatorVideosBeforeDate($creator->sources()->first()->external_channel_id, $page),
+//                Platform::Vimeo => Vimeo::getCreatorVideosBeforeDate($creator->sources()->first()->external_channel_id, $page),
+                default => []
+            };
+            $videos = ContentDTO::saveAll($response['results'], $creator->id);
+            $next = $response['next'];
+            $hasNext = $response['hasNext'];
+
+        } else {
+            $videos = $creator->videos()->orderBy('time_published','desc')->paginate($perPage, ['*'], 'page', request()->page ?? 1);
+            $next = $videos->nextPageUrl();
+            $hasNext = $videos->hasMorePages();
+        }
+
+        return [
+            'next' => $next,
+            'hasNext' => $hasNext,
+            'videos' => $videos,
+        ];
     }
 }

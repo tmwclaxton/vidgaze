@@ -10,6 +10,8 @@ Route::prefix('creator')->name('creator.')->group(function () {
     Route::get('index', [CreatorApiController::class, 'index'])->name("index");
     Route::get('{slug}', [CreatorApiController::class, 'show'])->name("show");
 
+    Route::get('{slug}/videos', [CreatorApiController::class, 'videos'])->name("videos");
+
     // toggle featured creator
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/feature', [CreatorApiController::class, 'toggleFeatured'])
