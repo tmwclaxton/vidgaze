@@ -224,10 +224,17 @@ class AuthApiController extends Controller
      * Get authenticated user details
     */
     public function getAuthenticatedUser(Request $request) {
+        $sources = [];
+        auth()->user()->creator()->with('sources')->first()->sources()->get(['source_name', 'external_channel_id'])->each(
+            function ($source) use (&$sources){
+                $sources[$source->source_name] = $source->external_channel_id;
+            }
+        );
         return response()->json([
             'user' => new UserResource($request->user()),
             'subscription_ids' => $request->user()->creator->subscriptions->pluck('id')->toArray(),
-            'admin' => $request->user()->isAdmin()
+            'admin' => $request->user()->isAdmin(),
+            'sources' => $sources
         ]);
     }
 

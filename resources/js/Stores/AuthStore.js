@@ -9,6 +9,7 @@ export const useAuthStore = defineStore('AuthStore', {
             'user': null,
             'admin': false,
             'subscription_ids': [],
+            'sources': [],
         }
     },
 
@@ -22,6 +23,7 @@ export const useAuthStore = defineStore('AuthStore', {
                     this.user = response.data.user
                     this.admin = response.data.admin
                     this.subscription_ids = response.data.subscription_ids
+                    this.sources = response.data.sources
                     if (toast) {
                         toastStore.add({
                             message: 'Login successful.',

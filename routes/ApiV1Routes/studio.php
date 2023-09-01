@@ -18,6 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('studio/login/{platform}', [LinkingApiController::class, 'logIn'])->name('studio.login');
     Route::get('studio/link/{platform}', [LinkingApiController::class, 'link'])->name('studio.link');
+    Route::delete('studio/unlink/{platform}', [LinkingApiController::class, 'unlink'])->name('studio.unlink');
 
-    Route::get('my/creator/sources', [LinkingApiController::class,'myCreatorSources'])->name('my.creator.sources');
+    //Route::get('my/creator/sources', [LinkingApiController::class,'myCreatorSources'])->name('my.creator.sources'); this is now in getAuthenticatedUser in AuthApiController
 });

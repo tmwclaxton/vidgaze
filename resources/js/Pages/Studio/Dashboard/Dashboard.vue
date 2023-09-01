@@ -15,15 +15,6 @@ import {defineProps} from "vue";
 import {onMounted, ref} from "vue";
 
 
-let claimedPlatforms = ref({});
-
-onMounted(async () => {
-    claimedPlatforms.value = await axios.get(route("api.my.creator.sources")).then((response) => {
-        return response.data.sources;
-    });
-});
-
-
 </script>
 <template>
     <Head title="Studio Dashboard" />
@@ -42,7 +33,7 @@ onMounted(async () => {
             <!--connect channels-->
             <div class="col-span-4 row-span-1">
                 <ConsistentContentHolder class="p-5 h-full">
-                    <ConnectChannels :claimed_platforms="claimedPlatforms"/>
+                    <ConnectChannels/>
                 </ConsistentContentHolder>
             </div>
 
