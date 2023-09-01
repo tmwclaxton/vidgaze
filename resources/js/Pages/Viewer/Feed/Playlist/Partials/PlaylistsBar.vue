@@ -1,7 +1,7 @@
 <script setup>
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
-import Title from "@/Components/General/Title.vue";
+import Title from "@/Components/General/TitleComponent.vue";
 import HistoryIcon from '~/images/icons/subscriptions.svg';
 import {onMounted, ref, watch} from "vue";
 import PlaylistCard from "@/Components/Cards/PlaylistCard/PlaylistCard.vue";

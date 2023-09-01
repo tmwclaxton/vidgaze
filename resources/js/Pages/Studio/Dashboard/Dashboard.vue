@@ -1,6 +1,6 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
-import Title from "@/Components/General/Title.vue";
+import Title from "@/Components/General/TitleComponent.vue";
 
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";

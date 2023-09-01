@@ -1,6 +1,6 @@
 <script setup>
 
-import Title from "@/Components/General/Title.vue";
+import Title from "@/Components/General/TitleComponent.vue";
 
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
