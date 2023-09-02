@@ -63,20 +63,20 @@ const submit = async () => {
     <GuestLayout>
         <Head title="Register" />
 
-        <p class="font-bold text-xl text dark:textDark mb-6">Create your VidGaze Account</p>
+        <!--<p class="font-bold text-xl text dark:textDark mb-6">Create your VidGaze Account</p>-->
 
-        <div class="flex flex-row justify-between w-full px-1">
-            <GoogleButton >
-                Sign up with Google
-            </GoogleButton>
-            <AppleButton >
-                Sign up with Apple
-            </AppleButton>
+        <!--<div class="flex flex-row justify-between w-full px-1">-->
+        <!--    <GoogleButton >-->
+        <!--        Sign up with Google-->
+        <!--    </GoogleButton>-->
+        <!--    <AppleButton >-->
+        <!--        Sign up with Apple-->
+        <!--    </AppleButton>-->
 
-        </div>
+        <!--</div>-->
 
 
-        <HorizontalLineText text="or" class="select-none"/>
+        <!--<HorizontalLineText text="or" class="select-none"/>-->
 
         <form @submit.prevent="submit">
             <div>

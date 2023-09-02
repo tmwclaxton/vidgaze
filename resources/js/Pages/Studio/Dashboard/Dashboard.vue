@@ -1,6 +1,6 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
-import Title from "@/Components/General/Title.vue";
+import Title from "@/Components/General/TitleComponent.vue";
 
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
@@ -9,18 +9,7 @@ import ConnectChannels from "@/Pages/Studio/Dashboard/Partials/ConnectChannels.v
 import ItemPerformance from "@/Pages/Studio/Dashboard/Partials/ItemPerformance.vue";
 import LatestComment from "@/Pages/Studio/Dashboard/Partials/LatestComment.vue";
 import ChannelOverview from "@/Pages/Studio/Dashboard/Partials/ChannelOverview.vue";
-import StreamIcon from '#icons/livestreams.svg';
 
-import {onBeforeMount, ref} from "vue";
-
-
-let claimedPlatforms = ref({});
-
-onBeforeMount(async () => {
-    claimedPlatforms.value = await axios.get(route("api.my.creator.sources")).then((response) => {
-        return response.data.sources;
-    });
-});
 
 
 </script>
@@ -41,7 +30,7 @@ onBeforeMount(async () => {
             <!--connect channels-->
             <div class="col-span-4 row-span-1">
                 <ConsistentContentHolder class="p-5 h-full">
-                    <ConnectChannels :claimed_platforms="claimedPlatforms"/>
+                    <ConnectChannels/>
                 </ConsistentContentHolder>
             </div>
 

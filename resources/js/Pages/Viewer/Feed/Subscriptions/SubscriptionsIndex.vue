@@ -4,7 +4,7 @@ import SubscriptionsIcon from '~/images/icons/subscriptions.svg';
 import RowDivider from "@/Components/General/RowDivider.vue";
 import ErrorMessage from "@/Components/Errors/ErrorMessage.vue";
 import {onMounted, ref} from "vue";
-import TitleComponent from "@/Components/General/Title.vue";
+import TitleComponent from "@/Components/General/TitleComponent.vue";
 import VideoStreamCard from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamCard.vue";
 
 const name = 'Subscriptions';

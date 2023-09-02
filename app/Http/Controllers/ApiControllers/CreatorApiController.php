@@ -9,6 +9,7 @@ use App\Models\PodcastModels\Podcast;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class CreatorApiController extends Controller
 {
@@ -115,4 +116,82 @@ class CreatorApiController extends Controller
             'message' => $message
         ]);
     }
+
+    /** Update a creator
+     * @param Request $request
+     * @return string[]
+     */
+    public function update(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:60|min:5|regex:/^[a-zA-Z0-9\s]+$/',
+            'bio' => 'nullable|string|max:1000|min:5',
+            'contact_email' => 'nullable|email',
+        ]);
+
+        Auth::user()->creator->name = $request->name;
+        Auth::user()->creator->bio = json_encode($request->bio);
+        Auth::user()->creator->contact_email = $request->contact_email;
+        Auth::user()->creator->save();
+
+        return [
+            'toastType' => 'success',
+            'message' => 'Channel updated successfully'
+        ];
+    }
+
+    public function updateProfilePicture(Request $request) {
+
+        $request->validate([
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp|max:4096||dimensions:min_width=98,min_height=98,max_width=1000,max_height=1000',
+        ]);
+
+        if ($request->hasFile('image')) {
+            if (Auth::user()->creator->avatar_url && Storage::exists(Auth::user()->creator->avatar_url)) {
+                Storage::delete(Auth::user()->creator->avatar_url);
+            }
+
+            // store the image and get the path that is available to the public
+            $url = Storage::url($request->file('image')->store('public/profile_pictures'));
+        } else {
+            $url = "https://api.dicebear.com/5.x/bottts-neutral/svg?seed=". generateRandomString(10) . "&scale=80&eyes=eva,frame1,frame2,robocop,roundFrame01,roundFrame02,shade01";
+        }
+
+        // update the user's profile picture
+        Auth::user()->creator->avatar_url = $url;
+        Auth::user()->creator->save();
+
+        return [
+            'toastType' => 'success',
+            'message' => 'Profile picture updated successfully'
+        ];
+    }
+
+    public function updateProfileBanner(Request $request) {
+        $request->validate([
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp|nullable|max:6144||dimensions:min_width=1024,min_height=256,max_width=4096,max_height=4096',
+        ]);
+
+        if ($request->hasFile('image')) {
+            if (Auth::user()->creator->banner_url && Storage::exists(Auth::user()->creator->banner_url)) {
+                Storage::delete(Auth::user()->creator->banner_url);
+            }
+
+            // store the image and get the path that is available to the public
+            $url = Storage::url($request->file('image')->store('public/profile_banners'));
+        } else {
+            $url = null;
+        }
+
+        // update the user's profile banner
+        Auth::user()->creator->banner_url = $url;
+        Auth::user()->creator->save();
+
+        return [
+            'toastType' => 'success',
+            'message' => 'Profile banner updated successfully'
+        ];
+
+    }
+
 }

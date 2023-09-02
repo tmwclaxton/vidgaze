@@ -25,7 +25,7 @@ import {useNavStore} from "@/Stores/NavStore";
 import EndScreen from "@/Pages/Viewer/Watch/Partials/EndScreen.vue";
 import {useAuthStore} from "@/Stores/AuthStore";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
-import Title from "@/Components/General/Title.vue";
+import Title from "@/Components/General/TitleComponent.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
 import WatchQueue from "@/Pages/Viewer/Watch/Partials/WatchQueue.vue";

@@ -22,19 +22,6 @@ use Illuminate\Support\Facades\Auth;
 class LinkingApiController extends Controller
 {
 
-    public function myCreatorSources()
-    {
-        $sources = [];
-        auth()->user()->creator()->with('sources')->first()->sources()->get(['source_name', 'external_channel_id'])->each(
-            function ($source) use (&$sources){
-                $sources[$source->source_name] = $source->external_channel_id;
-            }
-        );
-
-        return ["sources" => $sources];
-    }
-
-
     public function link(string $platform)
     {
         $code = request('code');
@@ -182,6 +169,19 @@ class LinkingApiController extends Controller
             default:
                 abort(400);
         }
+    }
+
+    public function unlink(string $platform) {
+        $source = CreatorSource::where('creator_id', Auth::user()->creator->id)
+            ->where('source_name', $platform)->first();
+
+        if(!$source) {
+            abort(404);
+        }
+
+        $source->delete();
+
+        return response()->json(['message' => 'success']);
     }
 
     private static function breakIfChannelClaimed(string $externalChannelID, Platform $source)

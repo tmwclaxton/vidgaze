@@ -52,15 +52,15 @@ const submit = async () => {
 
         <p class="font-bold text-xl text dark:textDark mb-6">Welcome back to VidGaze</p>
 
-        <div class="flex flex-row justify-between w-full px-1">
-            <GoogleButton >
-                Sign in with Google
-            </GoogleButton>
-            <AppleButton >
-                Sign in with Apple
-            </AppleButton>
-        </div>
-        <HorizontalLineText text="or" class="select-none"/>
+        <!--<div class="flex flex-row justify-between w-full px-1">-->
+        <!--    <GoogleButton >-->
+        <!--        Sign in with Google-->
+        <!--    </GoogleButton>-->
+        <!--    <AppleButton >-->
+        <!--        Sign in with Apple-->
+        <!--    </AppleButton>-->
+        <!--</div>-->
+        <!--<HorizontalLineText text="or" class="select-none"/>-->
 
         <form @submit.prevent="submit">
             <div>

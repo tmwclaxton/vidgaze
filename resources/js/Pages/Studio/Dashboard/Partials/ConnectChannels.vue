@@ -4,16 +4,24 @@
     <div class="border-t border-zinc-200 dark:border-zinc-600 my-2 mb-3"></div>
 
     <div class="flex flex-row flex-wrap gap-2 ">
-        <StudioLinkButton v-if="!claimed_platforms.youtube" :platform="'youtube'" text="Sign in with YouTube" buttonClasses="bg-red-200 hover:bg-red-300">
+        <StudioLinkButton :platform="'youtube'" :external_id="useAuthStore().sources.youtube"
+                          :text="!useAuthStore().sources.youtube ? 'Sign in with YouTube' : useAuthStore().sources.youtube"
+                          buttonClasses="bg-red-200 hover:bg-red-300">
             <YouTubeIcon class="w-6 h-6 my-auto text-zinc-200"/>
         </StudioLinkButton>
-        <StudioLinkButton v-if="!claimed_platforms.dailymotion" platform="dailymotion" text="Sign in with Dailymotion" buttonClasses="bg-zinc-200 hover:bg-zinc-300">
+        <StudioLinkButton platform="dailymotion" :external_id="useAuthStore().sources.dailymotion"
+                          :text="!useAuthStore().sources.dailymotion ? 'Sign in with Dailymotion' : useAuthStore().sources.dailymotion"
+                          buttonClasses="bg-zinc-200 hover:bg-zinc-300">
             <DailyMotionIcon class="w-6 h-6 my-auto  "/>
         </StudioLinkButton>
-        <StudioLinkButton v-if="!claimed_platforms.twitch" platform="twitch" text="Sign in with Twitch" buttonClasses="bg-purple-200 hover:bg-purple-300">
+        <StudioLinkButton platform="twitch" :external_id="useAuthStore().sources.twitch"
+                          :text="!useAuthStore().sources.twitch ? 'Sign in with Twitch' : useAuthStore().sources.twitch"
+                          buttonClasses="bg-purple-200 hover:bg-purple-300">
             <TwitchIcon class="w-6 h-6 my-auto "/>
         </StudioLinkButton>
-        <StudioLinkButton v-if="!claimed_platforms.vimeo" platform="vimeo" text="Sign in with Vimeo" buttonClasses="bg-blue-200 hover:bg-blue-300">
+        <StudioLinkButton platform="vimeo" :external_id="useAuthStore().sources.vimeo"
+                          :text="!useAuthStore().sources.vimeo ? 'Sign in with Vimeo' : useAuthStore().sources.vimeo"
+                          buttonClasses="bg-blue-200 hover:bg-blue-300">
             <VimeoIcon class="w-6 h-6 my-auto "/>
         </StudioLinkButton>
 
@@ -26,14 +34,10 @@ import YouTubeIcon from '#icons/youtube.svg';
 import TwitchIcon from '#icons/twitch.svg';
 import DailyMotionIcon from '#icons/dailymotion.svg';
 import VimeoIcon from '#icons/vimeo.svg';
+import {useAuthStore} from "@/Stores/AuthStore";
 
 const name = 'ConnectChannels';
 
-const props = defineProps({
-    claimed_platforms: {
-        type: Object,
-        required: true
-    }
-});
+
 
 </script>

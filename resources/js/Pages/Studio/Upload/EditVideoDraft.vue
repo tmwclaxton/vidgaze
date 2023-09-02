@@ -6,7 +6,7 @@ import InputLabel from "@/Components/Inputs/InputLabel.vue";
 import TextInput from "@/Components/Inputs/TextInput.vue";
 import InputError from "@/Components/Inputs/InputError.vue";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
-import Title from "@/Components/General/Title.vue";
+import Title from "@/Components/General/TitleComponent.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import TextArea from "@/Components/Inputs/TextArea.vue";
 import TagInput from "@/Components/Inputs/TagInput.vue";
