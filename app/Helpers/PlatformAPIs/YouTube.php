@@ -22,7 +22,7 @@ use Google\Service\YouTube\ThumbnailDetails;
 use Google_Service_YouTube;
 use Laravel\Octane\Facades\Octane;
 
-class YouTube implements iSearchable, iIsPlatform, iHaveVideos
+class YouTube implements iSearchable, iIsPlatform
 {
     public Google_Service_YouTube $client;
     public Client $google_client;
@@ -181,12 +181,12 @@ class YouTube implements iSearchable, iIsPlatform, iHaveVideos
 
         $response = $api->client->search->listSearch(['snippet'], $queryParams);
         $items = $response->getItems();
-        $results = self::getVideoOrStream(array_map(fn($item)=>$item->id->videoId, $items),true);
+        $results = self::getVideoOrStream(array_map(fn($item)=>$item->id->videoId, $items));
 
         return [
-            'next' => Carbon::make(end($items)->getSnippet()->publishedAt),
+            'next' => end($items) ? Carbon::make(end($items)->getSnippet()->publishedAt) : null, // ISO string
             'hasNext' => boolval($response->nextPageToken),
-            'results' => $results,
+            'results' => $results, // ContentDTO
         ];
     }
 

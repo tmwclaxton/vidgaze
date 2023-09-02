@@ -28,17 +28,23 @@ class JoshPing
     public static function ping()
     {
 
+
 //        ddd(Carbon::create("2022-12-27T16:33:35.000000Z")->toDate());
-        $creator = Creator::where('slug', 'yt_UCL_f53ZEJxp8TtlOkHwMV9Q')->firstOrFail();
-        $isGhostChannel = $creator->user()->first() === null;
+        $creator = Creator::where('slug', 'dm_x685s6')->firstOrFail();
+//        $isGhostChannel = $creator->user()->first() === null;
 
 //        dd($isGhostChannel);
-        $video_titles = $creator->videos()->orderBy('time_published', 'desc')->pluck('time_published');
-        ddd($video_titles);
+//        ddd($creator);
+        $video_titles = $creator->videos()->orderBy('time_published', 'desc')->pluck('title');
+//        ddd($video_titles);
         $video_published_times = $creator->videos()->orderBy('time_published', 'desc')->pluck('time_published');
 
-        $yt_vids = YouTube::getCreatorVideosBeforeDate('UCL_f53ZEJxp8TtlOkHwMV9Q');
-        ddd($yt_vids, $video_titles, $video_published_times, $creator);
+//        ddd($video_published_times, $video_titles);
+
+
+        $dm_vids = Dailymotion::getCreatorVideosBeforeDate('x685s6', null, 5);
+        ddd($dm_vids);
+//        ddd($yt_vids, $video_titles, $video_published_times, $creator);
 
 //        $creator = auth()->user()->creator()->first();
 //

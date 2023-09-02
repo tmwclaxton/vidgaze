@@ -140,10 +140,11 @@ class CreatorApiController extends Controller
             $response = match(Platform::fromValue($source->source_name))
             {
                 Platform::YouTube => YouTube::getCreatorVideosBeforeDate($source->external_channel_id, Carbon::create($page), $perPage),
-//                Platform::Dailymotion => Dailymotion::getCreatorVideosBeforeDate($creator->sources()->first()->external_channel_id, $page),
+                Platform::Dailymotion => Dailymotion::getCreatorVideosBeforeDate($source->external_channel_id, $page == null ? null : Carbon::createFromTimestamp($page), $perPage),
 //                Platform::Vimeo => Vimeo::getCreatorVideosBeforeDate($creator->sources()->first()->external_channel_id, $page),
                 default => []
             };
+            return [$response];
             $videos = ContentDTO::saveAll($response['results'], $creator->id);
             $next = $response['next'];
             $hasNext = $response['hasNext'];
