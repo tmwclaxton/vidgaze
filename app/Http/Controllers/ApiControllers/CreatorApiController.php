@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CreatorCollection;
+use App\Http\Resources\CreatorResource;
 use App\Models\CreatorModels\Creator;
 use App\Models\PodcastModels\Podcast;
 use Illuminate\Http\JsonResponse;
@@ -75,7 +76,7 @@ class CreatorApiController extends Controller
         }
 
         return response()->json([
-            'creator' => $creator,
+            'creator' => new CreatorResource($creator),
         ]);
     }
 

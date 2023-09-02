@@ -10,7 +10,6 @@ Route::prefix('creator')->name('creator.')->group(function () {
     Route::get('index', [CreatorApiController::class, 'index'])->name("index");
     Route::get('{slug}', [CreatorApiController::class, 'show'])->name("show");
 
-
     // interaction routes
     Route::middleware(['throttle:60,1', 'auth:sanctum'])->group(function () {
         // toggle featured creator
