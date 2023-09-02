@@ -16,7 +16,7 @@ import StudioImageInput from "@/Pages/Studio/Customise/Partials/StudioImageInput
 
 
 const updateChannelDetails = () => {
-    axios.patch(route('api.creator.update',useAuthStore().user.creator.slug),{
+    axios.patch(route('api.creator.update'),{
         name: useAuthStore().user.creator.name,
         bio: useAuthStore().user.creator.bio,
         contact_email: useAuthStore().user.creator.contact_email,
@@ -32,16 +32,15 @@ const updateChannelDetails = () => {
         });
     });
 }
-
 </script>
 
 <template>
     <div  v-if="useAuthStore().user != null">
             <div class=" flex flex-col sm:flex-row-reverse ">
-                <div class="display:initial  mt-8 mx-8 sm:mr-8 sm:ml-0">
-                    <div class="sticky top-5 w-full sm:w-56">
-                        <consistent-content-holder>
-                            <div class="pb-3 overflow-hidden rounded w-full  mb-2 sm:ml-0 ">
+                <div class="display:initial   mx-8 sm:mr-8 sm:ml-0">
+                    <div class="sticky top-36 pt-3 w-full sm:w-56">
+                        <consistent-content-holder class="">
+                            <div class="pb-3  overflow-hidden rounded w-full  mb-2 sm:ml-0 ">
                                 <div class="mx-12 my-4  flex justify-center">
                                     <img class="w-1/2 sm:w-full aspect-square rounded-full "
                                             :src="useAuthStore().user.creator.avatar_url"
@@ -61,9 +60,6 @@ const updateChannelDetails = () => {
                                     </div>
                                 </div>
                             </div>
-                            <quaternary-button class="m-2">
-                                Save
-                            </quaternary-button>
                         </consistent-content-holder>
                     </div>
                 </div>
@@ -97,8 +93,7 @@ const updateChannelDetails = () => {
 
                         <!--channel profile image-->
                         <StudioImageInput :value="useAuthStore().user.creator.avatar_url"
-                                          @update:model-value="useAuthStore().user.creator.avatar_url = $event"
-                                          @submit="updateChannelDetails()"
+                                          :endpoint="route('api.creator.update.avatar')"
                                           label="Channel Profile Image"
                                           description="Your profile picture will appear where your channel is presented on VidGaze, like next to your videos and comments."
                                           recommendation="We recommend using a square image (1:1 aspect ratio) with a minimum resolution of 98x98 pixels and a maximum file size of 4MB."
@@ -114,8 +109,7 @@ const updateChannelDetails = () => {
 
                         <!--channel banner image-->
                         <StudioImageInput :value="useAuthStore().user.creator.banner_url"
-                                          @update:model-value="useAuthStore().user.creator.banner_url = $event"
-                                          @submit="updateChannelDetails()"
+                                            :endpoint="route('api.creator.update.banner')"
                                           label="Channel Profile Banner"
                                           description="Your banner will appear at the top of your channel page."
                                           recommendation="We recommend using a 16:9 aspect ratio image with a minimum resolution of 2048x1152 pixels and a maximum file size of 6MB."

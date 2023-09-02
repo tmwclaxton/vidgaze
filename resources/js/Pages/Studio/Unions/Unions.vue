@@ -38,10 +38,9 @@ async function getUnions() {
     <Head :title="`Unions`" />
     <ConsistentPadding>
             <div class=" mx-auto">
-                <div class="flex flex-row gap-x-2">
-                    <font-awesome-icon icon="users" class="mr-2 my-auto h-8"/>
-                    <p class=" font-bold text-4xl  m-0">Join a union today!</p>
-                </div>
+                <TitleComponent :text="'Join a union today!'" class="  mb-8">
+                    <font-awesome-icon icon="users" class="w-6 h-6 my-auto"/>
+                </TitleComponent>
                 <p class="my-2  mb-6  text-sm   text-justify">
                     By being a part of a union, you give that union the power to change the primary source of your
                     videos and/or streams and also the ability to prevent you from uploading/streaming to certain

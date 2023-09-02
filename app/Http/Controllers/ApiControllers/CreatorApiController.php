@@ -143,15 +143,19 @@ class CreatorApiController extends Controller
     public function updateProfilePicture(Request $request) {
 
         $request->validate([
-            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,svg,webp|max:4096||dimensions:min_width=98,min_height=98,max_width=1000,max_height=1000',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp|max:4096||dimensions:min_width=98,min_height=98,max_width=1000,max_height=1000',
         ]);
 
-        if (Auth::user()->creator->avatar_url && Storage::exists(Auth::user()->creator->avatar_url)) {
-            Storage::delete(Auth::user()->creator->avatar_url);
-        }
+        if ($request->hasFile('image')) {
+            if (Auth::user()->creator->avatar_url && Storage::exists(Auth::user()->creator->avatar_url)) {
+                Storage::delete(Auth::user()->creator->avatar_url);
+            }
 
-        // store the image and get the path that is available to the public
-        $url = Storage::url($request->file('profile_picture')->store('public/profile_pictures'));
+            // store the image and get the path that is available to the public
+            $url = Storage::url($request->file('image')->store('public/profile_pictures'));
+        } else {
+            $url = "https://api.dicebear.com/5.x/bottts-neutral/svg?seed=". generateRandomString(10) . "&scale=80&eyes=eva,frame1,frame2,robocop,roundFrame01,roundFrame02,shade01";
+        }
 
         // update the user's profile picture
         Auth::user()->creator->avatar_url = $url;
@@ -165,15 +169,19 @@ class CreatorApiController extends Controller
 
     public function updateProfileBanner(Request $request) {
         $request->validate([
-            'banner_url' => 'required|image|mimes:jpeg,png,jpg,svg,webp|nullable|max:6144||dimensions:min_width=1024,min_height=256,max_width=4096,max_height=4096',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp|nullable|max:6144||dimensions:min_width=1024,min_height=256,max_width=4096,max_height=4096',
         ]);
 
-        if (Auth::user()->creator->banner_url && Storage::exists(Auth::user()->creator->banner_url)) {
-            Storage::delete(Auth::user()->creator->banner_url);
-        }
+        if ($request->hasFile('image')) {
+            if (Auth::user()->creator->banner_url && Storage::exists(Auth::user()->creator->banner_url)) {
+                Storage::delete(Auth::user()->creator->banner_url);
+            }
 
-        // store the image and get the path that is available to the public
-        $url = Storage::url($request->file('banner_url')->store('public/profile_banners'));
+            // store the image and get the path that is available to the public
+            $url = Storage::url($request->file('image')->store('public/profile_banners'));
+        } else {
+            $url = null;
+        }
 
         // update the user's profile banner
         Auth::user()->creator->banner_url = $url;
