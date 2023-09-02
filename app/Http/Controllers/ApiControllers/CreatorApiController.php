@@ -9,6 +9,7 @@ use App\Models\PodcastModels\Podcast;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class CreatorApiController extends Controller
 {
@@ -135,15 +136,53 @@ class CreatorApiController extends Controller
 
         return [
             'toastType' => 'success',
-            'message' => 'Creator updated successfully'
+            'message' => 'Channel updated successfully'
         ];
     }
 
-    public function updateProfilePicture() {
+    public function updateProfilePicture(Request $request) {
 
+        $request->validate([
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,svg,webp|max:4096||dimensions:min_width=98,min_height=98,max_width=1000,max_height=1000',
+        ]);
+
+        if (Auth::user()->creator->avatar_url && Storage::exists(Auth::user()->creator->avatar_url)) {
+            Storage::delete(Auth::user()->creator->avatar_url);
+        }
+
+        // store the image and get the path that is available to the public
+        $url = Storage::url($request->file('profile_picture')->store('public/profile_pictures'));
+
+        // update the user's profile picture
+        Auth::user()->creator->avatar_url = $url;
+        Auth::user()->creator->save();
+
+        return [
+            'toastType' => 'success',
+            'message' => 'Profile picture updated successfully'
+        ];
     }
 
-    public function updateProfileBanner() {
+    public function updateProfileBanner(Request $request) {
+        $request->validate([
+            'banner_url' => 'required|image|mimes:jpeg,png,jpg,svg,webp|nullable|max:6144||dimensions:min_width=1024,min_height=256,max_width=4096,max_height=4096',
+        ]);
+
+        if (Auth::user()->creator->banner_url && Storage::exists(Auth::user()->creator->banner_url)) {
+            Storage::delete(Auth::user()->creator->banner_url);
+        }
+
+        // store the image and get the path that is available to the public
+        $url = Storage::url($request->file('banner_url')->store('public/profile_banners'));
+
+        // update the user's profile banner
+        Auth::user()->creator->banner_url = $url;
+        Auth::user()->creator->save();
+
+        return [
+            'toastType' => 'success',
+            'message' => 'Profile banner updated successfully'
+        ];
 
     }
 

@@ -1,12 +1,10 @@
 
 <script setup>
 
+import {onMounted, ref, watch} from "vue";
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
-import {computed, onMounted, ref, watch} from "vue";
+import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 
-const name = 'StudioTextInput';
-const textarea = ref(null);
-const remaining = ref(0);
 const props = defineProps({
     maxlength: {
         type: Number,
@@ -16,15 +14,11 @@ const props = defineProps({
         type: String,
         default: ''
     },
-    placeholder: {
-        type: String,
-        default: ''
-    },
     label: {
         type: String,
         default: ''
     },
-    for: {
+    description: {
         type: String,
         default: ''
     },
@@ -32,60 +26,69 @@ const props = defineProps({
         type: String,
         default: ''
     },
-    enterSubmit: {
+    recommendation: {
+        type: String,
+        default: ''
+    },
+    rounded: {
         type: Boolean,
         default: true
     },
 });
-const resizeTextarea = () => {
-    textarea.value.style.height = '5px';
-    textarea.value.style.height = textarea.value.scrollHeight + 'px';
-
-}
-
-const originalText = ref('');
-onMounted(() => {
-    resizeTextarea();
-    originalText.value = props.value;
-});
-
-const calculateRemaining = () => {
-    remaining.value = props.value ? props.maxlength - props.value.length : props.maxlength;
-}
-
-watch(() => props.value, () => {
-    calculateRemaining();
-});
 
 const emits = defineEmits(['update:modelValue','submit']);
+const saved = ref(true);
+const fileInput = ref(null);
+const file = ref(null);
+const open = () => {
+    fileInput.value.click();
 
-const submit = () => {
-    if (props.value === originalText.value) {
-        return;
-    }
-    emits('submit');
-    originalText.value = props.value;
 }
 
+const previewFiles = () => {
+    console.log("previewFiles");
+    saved.value = false;
+    file.value = fileInput.value.files[0];
+}
+
+const removeFile = () => {
+    file.value = null;
+    saved.value = true;
+}
 </script>
 
 <template>
     <consistent-content-holder class="rounded p-2 focus:ring">
         <p class="text-xs font-bold" v-text="props.label"></p>
-        <textarea ref="textarea"
-            :maxlength="props.maxlength"
-            @input="resizeTextarea(); $emit('update:modelValue', $event.target.value); calculateRemaining();"
-            @focusout="submit"
-            @keydown.enter.prevent="() => { if (props.enterSubmit) { submit(); } else { $refs.textarea.value += '\n'; resizeTextarea();} }"
-            :value="props.value"
-            :name="props.name"
-            :placeholder="props.placeholder"
-            autocomplete="off"
-            class="mt-1 w-full block p-1 resize-none text-sm bg-transparent
-            without-ring border-t-0 border-x-0 border-b-1 border-zinc-300 focus:border-zinc-500 dark:border-zinc-700 focus:dark:border-zinc-500 focus:border-b "/>
-        <p id="remaining" class="mt-1 text-right text-xs">
-            <span v-text="remaining"></span> / <span v-text="props.maxlength"></span>
-        </p>
+        <p class="text-xs mx-2 my-1" v-text="props.description"></p>
+        <div class="flex flex-col md:flex-row mx-2  my-3">
+                <div @click="open"
+                     class="w-full  aspect-21/12 md:w-52 flex-shrink-0 bg-zinc-50 dark:bg-zinc-800 rounded h-min cursor-pointer">
+                    <div class="flex flex-col w-full h-full py-auto align-items-center">
+
+                            <img class="w-full   my-auto" :src="props.value" :class="[props.rounded ? 'rounded-full aspect-square w-28  m-auto' : ' ']" alt="Profile picture">
+
+                    </div>
+                </div>
+                <div class="flex flex-col mx-2 w-full">
+                    <p class="mt-4 md:mt-0 text-xs  flex-shrink" v-text="props.recommendation"></p>
+                    <p class="text-xs flex-shrink text-red-500 mt-2" v-text="saved ? '' : 'Not saved'"></p>
+                    <div class="flex flex-row ml-auto gap-x-2 my-2 ">
+                        <div class="relative cursor-pointer">
+                            <input ref="fileInput" type="file" accept="image/*" @change="previewFiles"
+                                   class="cursor-pointer absolute inset-0 z-10 m-0 p-0 w-full h-full outline-none opacity-0"/>
+                        </div>
+                        <quaternary-button class="float-right " @click="open">
+                            Change
+                        </quaternary-button>
+                        <quaternary-button class="float-right" @click="removeFile">
+                            Remove
+                        </quaternary-button>
+                    </div>
+                </div>
+
+            </div>
+
     </consistent-content-holder>
 </template>
 

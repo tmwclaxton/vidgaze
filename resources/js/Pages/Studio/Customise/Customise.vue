@@ -10,6 +10,7 @@ import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import TextInput from "@/Components/Inputs/TextInput.vue";
 import StudioTextInput from "@/Pages/Studio/Customise/Partials/StudioTextInput.vue";
 import {useToastStore} from "@/Stores/ToastStore";
+import StudioImageInput from "@/Pages/Studio/Customise/Partials/StudioImageInput.vue";
 
 
 
@@ -37,7 +38,7 @@ const updateChannelDetails = () => {
 <template>
     <div  v-if="useAuthStore().user != null">
             <div class=" flex flex-col sm:flex-row-reverse ">
-                <div class="display:initial  mt-8 mr-6 ">
+                <div class="display:initial  mt-8 mx-8 sm:mr-8 sm:ml-0">
                     <div class="sticky top-5 w-full sm:w-56">
                         <consistent-content-holder>
                             <div class="pb-3 overflow-hidden rounded w-full  mb-2 sm:ml-0 ">
@@ -68,7 +69,7 @@ const updateChannelDetails = () => {
                 </div>
 
 
-                <consistent-padding class=" sm:mr-4 flex-grow h-full">
+                <consistent-padding class=" flex-grow h-full">
                     <TitleComponent :text="'Customise your channel'" class="  mb-8">
                         <font-awesome-icon icon="user-cog" class="w-6 h-6 my-auto"/>
                     </TitleComponent>
@@ -95,9 +96,38 @@ const updateChannelDetails = () => {
                         />
 
                         <!--channel profile image-->
+                        <StudioImageInput :value="useAuthStore().user.creator.avatar_url"
+                                          @update:model-value="useAuthStore().user.creator.avatar_url = $event"
+                                          @submit="updateChannelDetails()"
+                                          label="Channel Profile Image"
+                                          description="Your profile picture will appear where your channel is presented on VidGaze, like next to your videos and comments."
+                                          recommendation="We recommend using a square image (1:1 aspect ratio) with a minimum resolution of 98x98 pixels and a maximum file size of 4MB."
+                                          placeholder="Channel Profile Image"
+                                          for="channel-profile-image"
+                                          :enter-submit="false"
+                                          :max-file-size="4"
+                                          :max-width="98"
+                                          :max-height="98"
+                                          :aspect-ratio="1"
+                                          :file-type="['image/png','image/jpeg']"
+                        />
 
                         <!--channel banner image-->
-
+                        <StudioImageInput :value="useAuthStore().user.creator.banner_url"
+                                          @update:model-value="useAuthStore().user.creator.banner_url = $event"
+                                          @submit="updateChannelDetails()"
+                                          label="Channel Profile Banner"
+                                          description="Your banner will appear at the top of your channel page."
+                                          recommendation="We recommend using a 16:9 aspect ratio image with a minimum resolution of 2048x1152 pixels and a maximum file size of 6MB."
+                                          placeholder="Channel Profile Banner"
+                                          for="channel-profile-banner"
+                                          :rounded="false"
+                                          :max-file-size="6"
+                                          :max-width="4096"
+                                          :max-height="4096"
+                                          :aspect-ratio="16/9"
+                                          :file-type="['image/png','image/jpeg']"
+                        />
                         <!--channel contact email-->
                         <StudioTextInput :value="useAuthStore().user.creator.contact_email"
                                          @update:model-value="useAuthStore().user.creator.contact_email = $event"

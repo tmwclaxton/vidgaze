@@ -21,6 +21,14 @@ Route::prefix('creator')->name('creator.')->group(function () {
         Route::patch('/update', [CreatorApiController::class, 'update'])
             ->name('update');
 
+        //update creator profile picture
+        Route::patch('/update/avatar', [CreatorApiController::class, 'updateProfilePicture'])
+            ->name('update.avatar');
+
+        //update creator banner picture
+        Route::patch('/update/banner', [CreatorApiController::class, 'updateProfileBanner'])
+            ->name('update.banner');
+
         // this allows users to toggle a channel disinterest on a creatorinteraction record
         Route::post('/{channelId}/disinterest', [CreatorInteractionApiController::class, 'toggleDisinterest'])
             ->name('disinterest.toggle');

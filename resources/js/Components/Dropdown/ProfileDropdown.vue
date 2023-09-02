@@ -25,8 +25,8 @@ const authStore = useAuthStore();
                         type="button"
                         class="inline-flex items-center h-full border border-transparent  rounded-md bg-transparent hover:text-zinc-300 focus:outline-none transition ease-in-out duration-150"
                     >
-                        <img class="w-full   "
-                             v-bind:src="authStore.user.creator.banner_url">
+                        <!--<img class="w-full   "-->
+                        <!--     v-bind:src="authStore.user.creator.banner_url">-->
                         <img class="h-8 aspect-square rounded-full bg-zinc-800 aspect-square  "
                              v-bind:src="authStore.user.creator.avatar_url">
 
