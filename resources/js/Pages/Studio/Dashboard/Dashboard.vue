@@ -9,10 +9,7 @@ import ConnectChannels from "@/Pages/Studio/Dashboard/Partials/ConnectChannels.v
 import ItemPerformance from "@/Pages/Studio/Dashboard/Partials/ItemPerformance.vue";
 import LatestComment from "@/Pages/Studio/Dashboard/Partials/LatestComment.vue";
 import ChannelOverview from "@/Pages/Studio/Dashboard/Partials/ChannelOverview.vue";
-import StreamIcon from '#icons/livestreams.svg';
 
-import {defineProps} from "vue";
-import {onMounted, ref} from "vue";
 
 
 </script>

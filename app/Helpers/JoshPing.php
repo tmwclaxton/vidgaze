@@ -16,6 +16,8 @@ use App\Helpers\PlatformAPIs\Vimeo;
 use App\Helpers\PlatformAPIs\YouTube;
 use App\Models\CreatorModels\Creator;
 use App\Models\CreatorModels\CreatorSource;
+use App\Models\VideoModels\Video;
+use Carbon\Carbon;
 use Google_Service_YouTube;
 use GuzzleHttp\Client;
 use Laravel\Octane\Facades\Octane;
@@ -25,6 +27,10 @@ class JoshPing
 
     public static function ping()
     {
+
+        $time = Video::where('slug', 'hpE4bbYdsS4HsGHy')->first()->time_published;
+        dd($time);
+        dd(Carbon::create($time)->format('j M Y'));
         $access_token = auth()->user()->creator()->first()->sources()->where('source_name', Platform::Vimeo)->first()->access_token;
         $v = new AuthVimeo($access_token);
         // Include the tags as a JSON array as the body of the request with the name field, like this: [{ "name": "funny"}, {"name": "concert" }]

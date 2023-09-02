@@ -147,6 +147,7 @@ class VideoDraftApiController extends Controller
             'region' => request()->region,
             'audience' => request()->audience,
             'category_id' => request()->category_id,
+            'time_published' => $publish_time,
         ]);
 
 

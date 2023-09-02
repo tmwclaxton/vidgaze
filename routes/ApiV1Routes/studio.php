@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApiControllers\LinkingApiController;
+use App\Http\Controllers\ApiControllers\StudioContentApiController;
 use App\Http\Controllers\ApiControllers\VideoDraftApiController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,5 +21,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('studio/link/{platform}', [LinkingApiController::class, 'link'])->name('studio.link');
     Route::delete('studio/unlink/{platform}', [LinkingApiController::class, 'unlink'])->name('studio.unlink');
 
+    Route::get('studio/content', [StudioContentApiController::class, 'index'])->name('studio.content');
     //Route::get('my/creator/sources', [LinkingApiController::class,'myCreatorSources'])->name('my.creator.sources'); this is now in getAuthenticatedUser in AuthApiController
 });
