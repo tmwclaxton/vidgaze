@@ -17,7 +17,7 @@ const name = "Marketplace"
         <!-- Page header -->
         <div class="relative h-screen w-screen     flex flex-col py-auto justify-center align-middle   px-4 sm:px-6 lg:px-8">
 
-            <div class="flex flex-col md:flex-row">
+            <div class="flex flex-col md:flex-row text-white">
                 <div class="w-full lg:w-3/4 lg:pl-6 flex flex-col justify-center ">
                     <p class="text-6xl md:text-8xl font-bold mb-6 text-center md:text-left lg:ml-8">VidCoins</p>
                     <p class="text-2xl font-semibold w-full md:w-4/5 lg:w-3/5 mb-10 lg:ml-8
