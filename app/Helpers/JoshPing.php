@@ -30,7 +30,7 @@ class JoshPing
 
 
 //        ddd(Carbon::create("2022-12-27T16:33:35.000000Z")->toDate());
-        $creator = Creator::where('slug', 'dm_x685s6')->firstOrFail();
+        $creator = Creator::where('slug', 'vm_17945677')->firstOrFail();
 //        $isGhostChannel = $creator->user()->first() === null;
 
 //        dd($isGhostChannel);
@@ -39,10 +39,10 @@ class JoshPing
 //        ddd($video_titles);
         $video_published_times = $creator->videos()->orderBy('time_published', 'desc')->pluck('time_published');
 
-//        ddd($video_published_times, $video_titles);
+        ddd($video_published_times, $video_titles);
 
 
-        $dm_vids = Dailymotion::getCreatorVideosBeforeDate('x685s6', null, 5);
+        $dm_vids = Vimeo::getCreatorlVideos('17945677', null, 3);
         ddd($dm_vids);
 //        ddd($yt_vids, $video_titles, $video_published_times, $creator);
 

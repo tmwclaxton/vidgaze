@@ -152,6 +152,8 @@ class Dailymotion implements iSearchable, iIsPlatform
 
     public static function getCreatorVideosBeforeDate(string $id, Carbon $date = null, $maxResults = 100): array
     {
+        if($maxResults > 100) throw new \Exception('Max results cannot be greater than 100');
+
         $api = new Dailymotion();
         $queryParams = [
             'fields' => self::$searchFields,

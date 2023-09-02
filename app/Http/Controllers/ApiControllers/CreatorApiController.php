@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ApiControllers;
 use App\Enums\Platform;
 use App\Helpers\ContentDTO;
 use App\Helpers\PlatformAPIs\Dailymotion;
+use App\Helpers\PlatformAPIs\Vimeo;
 use App\Helpers\PlatformAPIs\YouTube;
 use App\Helpers\ResultDTO;
 use App\Http\Controllers\Controller;
@@ -141,10 +142,9 @@ class CreatorApiController extends Controller
             {
                 Platform::YouTube => YouTube::getCreatorVideosBeforeDate($source->external_channel_id, Carbon::create($page), $perPage),
                 Platform::Dailymotion => Dailymotion::getCreatorVideosBeforeDate($source->external_channel_id, $page == null ? null : Carbon::createFromTimestamp($page), $perPage),
-//                Platform::Vimeo => Vimeo::getCreatorVideosBeforeDate($creator->sources()->first()->external_channel_id, $page),
-                default => []
+                Platform::Vimeo => Vimeo::getCreatorVideos($creator->sources()->first()->external_channel_id, $page, $perPage),
+                default => throw new \Exception('Platform not supported')
             };
-            return [$response];
             $videos = ContentDTO::saveAll($response['results'], $creator->id);
             $next = $response['next'];
             $hasNext = $response['hasNext'];
