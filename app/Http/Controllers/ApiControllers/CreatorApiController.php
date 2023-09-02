@@ -115,4 +115,36 @@ class CreatorApiController extends Controller
             'message' => $message
         ]);
     }
+
+    /** Update a creator
+     * @param Request $request
+     * @return string[]
+     */
+    public function update(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:60|min:5|regex:/^[a-zA-Z0-9\s]+$/',
+            'bio' => 'nullable|string|max:1000|min:5',
+            'contact_email' => 'nullable|email',
+        ]);
+
+        Auth::user()->creator->name = $request->name;
+        Auth::user()->creator->bio = json_encode($request->bio);
+        Auth::user()->creator->contact_email = $request->contact_email;
+        Auth::user()->creator->save();
+
+        return [
+            'toastType' => 'success',
+            'message' => 'Creator updated successfully'
+        ];
+    }
+
+    public function updateProfilePicture() {
+
+    }
+
+    public function updateProfileBanner() {
+
+    }
+
 }

@@ -20,7 +20,7 @@ class CreatorResource extends JsonResource
             'id' => $this->id,
             'slug' => $this->slug,
             'name' => $this->name,
-            'bio' => $this->bio,
+            'bio' => json_decode($this->bio),
             'avatar_url' => $this->avatar_url,
             'banner_url' => $this->banner_url,
             'karma' => number_format_short($this->karma),
