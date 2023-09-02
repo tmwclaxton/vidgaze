@@ -8,6 +8,7 @@ use App\Jobs\SearchPlatform;
 use App\Models\CreatorModels\Creator;
 use App\Models\StreamModels\Stream;
 use App\Models\VideoModels\Video;
+use AWS\CRT\Log;
 use Carbon\Carbon;
 
 class ResultDTO

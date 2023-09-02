@@ -181,4 +181,9 @@ class Creator extends Model
         return $this->hasMany(VideoDraft::class);
     }
 
+    public function isGhostChannel(): bool
+    {
+        return $this->user()->first() === null;
+    }
+
 }
