@@ -105,6 +105,12 @@ export default class Player {
             console.log('STARTVIEWRECORD: Error: View recording already started: ' + this.external_id);
             return;
         }
+        // pause all other players in player store
+        for (const player of usePlayerStore().players) {
+            if (player.external_id !== this.external_id && player.ready) {
+                player.togglePause();
+            }
+        }
 
         // console.log('start view record' + this.external_id);
         const interval = 2.5;
@@ -179,6 +185,16 @@ export default class Player {
         } else {
             setTimeout(() => {
                 this.safeTogglePause();
+            }, 1000);
+        }
+    }
+
+    safeRemovePlayer() {
+        if (usePlayerStore().scriptsLoaded && this.built && this.ready) {
+            this.removePlayer();
+        } else {
+            setTimeout(() => {
+                this.safeRemovePlayer();
             }, 1000);
         }
     }
