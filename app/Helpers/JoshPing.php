@@ -28,16 +28,24 @@ class JoshPing
     public static function ping()
     {
 
-        $time = Video::where('slug', 'hpE4bbYdsS4HsGHy')->first()->time_published;
-        dd($time);
-        dd(Carbon::create($time)->format('j M Y'));
-        $access_token = auth()->user()->creator()->first()->sources()->where('source_name', Platform::Vimeo)->first()->access_token;
-        $v = new AuthVimeo($access_token);
-        // Include the tags as a JSON array as the body of the request with the name field, like this: [{ "name": "funny"}, {"name": "concert" }]
 
-        $thumbnail_path = 'public/thumbnails/xTkmSv3xdpQr8NKsp9kB7SX1tTwoVUX6vatAhcxp.jpg';
-        $response = $v->setThumbnail('855459884', $thumbnail_path);
-        return [$response];
+//        ddd(Carbon::create("2022-12-27T16:33:35.000000Z")->toDate());
+        $creator = Creator::where('slug', 'vm_17945677')->firstOrFail();
+//        $isGhostChannel = $creator->user()->first() === null;
+
+//        dd($isGhostChannel);
+//        ddd($creator);
+        $video_titles = $creator->videos()->orderBy('time_published', 'desc')->pluck('title');
+//        ddd($video_titles);
+        $video_published_times = $creator->videos()->orderBy('time_published', 'desc')->pluck('time_published');
+
+        ddd($video_published_times, $video_titles);
+
+
+        $dm_vids = Vimeo::getCreatorlVideos('17945677', null, 3);
+        ddd($dm_vids);
+//        ddd($yt_vids, $video_titles, $video_published_times, $creator);
+
 //        $creator = auth()->user()->creator()->first();
 //
 //        $yt = new YouTube(null, $creator->sources()->where('source_name', Platform::YouTube)->first()->access_token);

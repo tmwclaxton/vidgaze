@@ -110,4 +110,46 @@ class Vimeo implements iSearchable, iIsPlatform
 
 
     }
+
+    public static function getCreatorVideos(string $id, int $page = null, $maxResults = 100): array //SearchResultDTO
+    {
+        if($maxResults > 100) throw new \Exception('Max results cannot be greater than 100');
+
+        $page = $page ?? 1;
+        $api = new Vimeo();
+        $response = $api->client->request('/users/' . $id . '/videos',[
+            'sort'=>'date',
+            'per_page' => $maxResults,
+            'page' => $page,
+            'fields' => 'uri,name,description,duration,release_time,pictures,tags,user',
+        ])['body'];
+
+        if(!isset($response['data'])) {
+            return [
+                'next' => $page + 1,
+                'hasNext' => false,
+                'results' => [], // ContentDTO
+            ];
+        }
+
+        $results = array_map(function($value){
+            $contentDTO = new ContentDTO(Platform::Vimeo, Kind::Video,  str_replace("/videos/", "", $value['uri']));
+
+            $contentDTO->kind = Kind::Video;
+            $contentDTO->name = $value['name'];
+            $contentDTO->duration = $value['duration'];
+            $contentDTO->publish_time = Carbon::make($value['release_time']);
+            $contentDTO->thumbnail_url = $value['pictures']['base_link'];
+            $contentDTO->creator_id = str_replace("/users/", "", $value['user']['uri']);
+            $contentDTO->tags = array_map(fn($item)=>$item['name'],$value['tags']);
+
+            return $contentDTO;
+        }, $response['data']);
+
+        return [
+            'next' => $page + 1,
+            'hasNext' => boolval($response['paging']['next']),
+            'results' => $results, // ContentDTO
+        ];
+    }
 }

@@ -8,6 +8,7 @@ use App\Enums\Platform;
 use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iCanUpload;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\iHaveVideos;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iCanLogin;
@@ -161,5 +162,46 @@ class YouTube implements iSearchable, iIsPlatform
         $creatorDTO->region = $data->snippet->country ?? null;
         $creatorDTO->language = $data->snippet->defaultLanguage ?? null;
         return $creatorDTO;
+    }
+
+    public static function getCreatorVideosBeforeDate(string $id, Carbon $date = null, $maxResults = 50, bool $includeStreams = true, bool $onlyStreams = false): array
+    {
+        if($maxResults > 50) throw new \Exception('Max results cannot be greater than 50');
+        $api = new YouTube();
+
+        $queryParams = [
+            'channelId' => $id,
+            'maxResults' => $maxResults,
+            'pageToken' => null,
+            'order' => 'date',
+            'publishedBefore' => $date?->toISOString(),
+            'type' => 'video',
+            'eventType' => !$includeStreams? $event = 'completed' : ($onlyStreams? $event = 'live' : null),
+        ];
+
+        $response = $api->client->search->listSearch(['snippet'], $queryParams);
+        $items = $response->getItems();
+        $results = self::getVideoOrStream(array_map(fn($item)=>$item->id->videoId, $items));
+
+        return [
+            'next' => end($items) ? Carbon::make(end($items)->getSnippet()->publishedAt) : null, // ISO string
+            'hasNext' => boolval($response->nextPageToken),
+            'results' => $results, // ContentDTO
+        ];
+    }
+
+    public static function getAllCreatorVideos(string $id) : array //SearchResultDTO
+    {
+        $hasNext = true;
+        $lastPublishedAt = null;
+        $results = [];
+        while($hasNext)
+        {
+            $content = self::getreatorVideosBeforeDate($id,$lastPublishedAt);
+            $results = array_unique(array_merge($results, $content['results']),SORT_REGULAR);
+            $lastPublishedAt = $content['lastPublishedAt'];
+            $hasNext = $content['hasNext'];
+        }
+        return $results;
     }
 }

@@ -20,27 +20,27 @@ class Dailymotion implements iSearchable, iIsPlatform
     public DailymotionSDK $client;
 
     private static array $searchFields = array(
-            'id',
-            'owner.id',
-            'owner.screenname',
-            'item_type',
-            'title',
-            'thumbnail_720_url',
-            'created_time',
-            'duration',
-            'views_total',
-            'likes_total',
-            'channel',
-            'description',
-            'channel.description',
-            'channel.name',
-            'owner.description',
-            'owner.country',
-            'owner.language',
-            'owner.avatar_720_url',
-            'owner.cover_url',
+        'id',
+        'owner.id',
+        'owner.screenname',
+        'item_type',
+        'title',
+        'thumbnail_720_url',
+        'created_time',
+        'duration',
+        'views_total',
+        'likes_total',
+        'channel',
+        'description',
+        'channel.description',
+        'channel.name',
+        'owner.description',
+        'owner.country',
+        'owner.language',
+        'owner.avatar_720_url',
+        'owner.cover_url',
 
-        );
+    );
     public function __construct()
     {
         $dailymotion_client = new DailymotionSDK();
@@ -99,45 +99,44 @@ class Dailymotion implements iSearchable, iIsPlatform
 
         $dm = new self();
 //        try {
-            $response = $dm->client->get('/videos/',
-                [
-                    'search' => $searchQuery->query,
-                    'fields' => self::$searchFields,
-                    'limit' => ($searchQuery->max_results <= 100) ? $searchQuery->max_results : 100,
+        $response = $dm->client->get('/videos/',
+            [
+                'search' => $searchQuery->query,
+                'fields' => self::$searchFields,
+                'limit' => ($searchQuery->max_results <= 100) ? $searchQuery->max_results : 100,
 //                    'page' => $pageToken
-                ]
-            );
+            ]
+        );
 
 //            dd($response);
-            return Arr::map($response['list'], function ($item){
-                $resultDTO = new ResultDTO(Platform::Dailymotion, Kind::Video);
+        return Arr::map($response['list'], function ($item){
+            $resultDTO = new ResultDTO(Platform::Dailymotion, Kind::Video);
 
-                $contentDTO = new ContentDTO(Platform::Dailymotion, Kind::Video, $item['id']);
-                $contentDTO->name = $item['title'];
-                $contentDTO->description = $item['description'];
-                $contentDTO->thumbnail_url = $item['thumbnail_720_url'];
-                $contentDTO->duration = $item['duration'];
-                $contentDTO->views = $item['views_total'];
-                $contentDTO->likes = $item['likes_total'];
-                $contentDTO->kind = Kind::Video;
-                $contentDTO->publish_time = Carbon::parse($item['created_time']);
+            $contentDTO = new ContentDTO(Platform::Dailymotion, Kind::Video, $item['id']);
+            $contentDTO->name = $item['title'];
+            $contentDTO->description = $item['description'];
+            $contentDTO->thumbnail_url = $item['thumbnail_720_url'];
+            $contentDTO->duration = $item['duration'];
+            $contentDTO->views = $item['views_total'];
+            $contentDTO->likes = $item['likes_total'];
+            $contentDTO->publish_time = Carbon::parse($item['created_time']);
 
-                $creatorDTO = new CreatorDTO(Platform::Dailymotion, $item['owner.id']);
-                $creatorDTO->name = $item['owner.screenname'];
-                $creatorDTO->description = $item['owner.description'];
-                $creatorDTO->region = $item['owner.country'];
-                $creatorDTO->language = $item['owner.language'];
-                $creatorDTO->avatar_url = $item['owner.avatar_720_url'];
-                $creatorDTO->banner_url = $item['owner.cover_url'];
+            $creatorDTO = new CreatorDTO(Platform::Dailymotion, $item['owner.id']);
+            $creatorDTO->name = $item['owner.screenname'];
+            $creatorDTO->description = $item['owner.description'];
+            $creatorDTO->region = $item['owner.country'];
+            $creatorDTO->language = $item['owner.language'];
+            $creatorDTO->avatar_url = $item['owner.avatar_720_url'];
+            $creatorDTO->banner_url = $item['owner.cover_url'];
 
 //                $creatorDTO->avatar_url = $item['owner.avatar_720_url'];
 //                $creatorDTO->banner_url = $item['owner.cover_url'];
 
 //                DTO->description = $item['channel.description'];
-                $resultDTO->content = $contentDTO;
-                $resultDTO->creator = $creatorDTO;
-                return $resultDTO;
-            });
+            $resultDTO->content = $contentDTO;
+            $resultDTO->creator = $creatorDTO;
+            return $resultDTO;
+        });
 //            return [
 //                "pageTokenInfo" => self::getPageTokenInfo($response, $pageToken),
 //                "results" => self::convertResponseToDTOs($response['list'])
@@ -151,4 +150,39 @@ class Dailymotion implements iSearchable, iIsPlatform
 //        }
     }
 
+    public static function getCreatorVideosBeforeDate(string $id, Carbon $date = null, $maxResults = 100): array
+    {
+        if($maxResults > 100) throw new \Exception('Max results cannot be greater than 100');
+
+        $api = new Dailymotion();
+        $queryParams = [
+            'fields' => self::$searchFields,
+            'created_before' => $date?->timestamp,
+            'limit' => $maxResults
+        ];
+        $response = $api->client->get('/user/'.$id.'/videos', $queryParams);
+
+        $results = Arr::map( $response['list'], function($value){
+            $contentDTO = new ContentDTO(Platform::Dailymotion, Kind::Video, $value['id']);
+
+            $contentDTO->name = $value['title'];
+            $contentDTO->duration = $value['duration'];
+            $contentDTO->publish_time = Carbon::createFromTimestamp($value['created_time']);
+            $contentDTO->thumbnail_url = $value['thumbnail_720_url'];
+            $contentDTO->views = $value['views_total'];
+            $contentDTO->likes = $value['likes_total']?:0;
+            $contentDTO->creator_id = $value['owner.id'];
+            $contentDTO->description = $value['description'];
+
+
+            return $contentDTO;
+        });
+
+        return [
+            'next' => end($response['list'])['created_time'] ?? null, // timestamp
+            'hasNext' => boolval($response['has_more']),
+            'results' => $results,  // ContentDTO
+        ];
     }
+
+}

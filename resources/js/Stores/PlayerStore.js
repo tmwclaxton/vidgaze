@@ -53,15 +53,33 @@ export const usePlayerStore = defineStore('PlayerStore', {
         isScriptLoaded(platform) {
             // this is so if one scripts takes longer to load or fails to load it doesn't stop the others from loading
             // but still prevents the player from being built until the script is loaded
-            switch (platform) {
-                case 'YouTube':
-                    return window.YT !== undefined && window.YT.Player !== undefined;
-                case 'Vimeo':
-                    return Vimeo !== undefined;
-                case 'Twitch':
-                    return Twitch !== undefined;
-                case 'Dailymotion':
-                    return dailymotion !== undefined;
+            // if chrome
+            if (window.chrome) {
+                switch (platform) {
+                    case 'YouTube':
+                        console.log(["YT", typeof window.YT != 'undefined']);
+                        return (typeof window.YT != 'undefined' && typeof window.YT.Player != 'undefined');
+                    case 'Vimeo':
+                        console.log(["VM", typeof Vimeo != 'undefined']);
+                        return (typeof Vimeo != 'undefined')
+                    case 'Twitch':
+                        console.log(["TW", typeof Twitch != 'undefined']);
+                        return (typeof Twitch != 'undefined')
+                    case 'Dailymotion':
+                        console.log(["DM", typeof dailymotion != 'undefined']);
+                        return (typeof dailymotion != 'undefined')
+                }
+            } else {
+                switch (platform) {
+                    case 'YouTube':
+                        return window.YT !== undefined && window.YT.Player !== undefined;
+                    case 'Vimeo':
+                        return Vimeo !== undefined;
+                    case 'Twitch':
+                        return Twitch !== undefined;
+                    case 'Dailymotion':
+                        return dailymotion !== undefined;
+                }
             }
         },
 
@@ -185,7 +203,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             }
 
             if (player) {
-                player.removePlayer();
+                player.safeRemovePlayer();
             }
             if (fullDestroy) {
                 this.players = this.players.filter(player => player.external_id !== external_id);
