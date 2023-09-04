@@ -203,10 +203,15 @@ export default class Player {
     }
 
     safeRemovePlayer() {
-        if (usePlayerStore().scriptsLoaded && this.built && this.ready) {
+        if (this.player === null ) {
+            return;
+        }
+        // console.log('safe remove player' + this.external_id);
+        if (usePlayerStore().scriptsLoaded && this.ready) {
             this.removePlayer();
         } else {
             setTimeout(() => {
+                // console.log('safe remove player recall ' + this.external_id);
                 this.safeRemovePlayer();
             }, 1000);
         }
