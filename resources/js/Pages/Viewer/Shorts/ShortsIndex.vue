@@ -23,7 +23,7 @@ onMounted(async () => {
     // forget page position i.e. scroll to top
     window.history.scrollRestoration = 'manual';
 
-    // destroy all players this doesn't remove the metadata as full destroy is false
+    // destroy all players this doesn't remove the metadata meaning we can rebuild queue without losing data
     await usePlayerStore().destroyPlayers(false).then(async () => {
         // if short slug is in url, play that short
         const urlParams = new URLSearchParams(window.location.search);
@@ -73,6 +73,7 @@ async function watchAction(index, i = 0) {
         return;
     }
     await buildPlayers().then(() => {
+        console.log('built players');
         playFullyVisiblePlayer();
     });
 }
@@ -148,14 +149,21 @@ async function buildPlayers() {
     }
 }
 
-function playFullyVisiblePlayer() {
+function playFullyVisiblePlayer(i = 0) {
+    if (i === 3) {
+        console.log('tried to play fully visible player 3 times');
+        return;
+    }
     let player;
     player = usePlayerStore().findPlayer(shorts.value[fullyVisibleIndex.value].external_id);
     if (player) {
         console.log('PLAYING VISIBLE PLAYER ' + player.external_id);
         player.safeTogglePlay();
     } else {
-        console.log('player not found');
+        console.log('redundancy handler for player not found ' + shorts.value[fullyVisibleIndex.value].external_id);
+        setTimeout(() => {
+            playFullyVisiblePlayer(i + 1);
+        }, 2000);
     }
 }
 

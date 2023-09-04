@@ -57,13 +57,17 @@ export const usePlayerStore = defineStore('PlayerStore', {
             if (window.chrome) {
                 switch (platform) {
                     case 'YouTube':
-                        return window.YT != null && window.YT.Player != null
+                        console.log(["YT", typeof window.YT != 'undefined']);
+                        return (typeof window.YT != 'undefined' && typeof window.YT.Player != 'undefined');
                     case 'Vimeo':
-                        return Vimeo != null;
+                        console.log(["VM", typeof Vimeo != 'undefined']);
+                        return (typeof Vimeo != 'undefined')
                     case 'Twitch':
-                        return Twitch != null;
+                        console.log(["TW", typeof Twitch != 'undefined']);
+                        return (typeof Twitch != 'undefined')
                     case 'Dailymotion':
-                        return dailymotion != null;
+                        console.log(["DM", typeof dailymotion != 'undefined']);
+                        return (typeof dailymotion != 'undefined')
                 }
             } else {
                 switch (platform) {

@@ -169,22 +169,35 @@ export default class Player {
         }
     }
 
+    playLock = null;
     safeTogglePlay() {
+        this.playLock = "play";
         if (usePlayerStore().scriptsLoaded && this.built && this.ready) {
             this.togglePlay();
+            this.playLock = null;
         } else {
             setTimeout(() => {
-                this.safeTogglePlay();
+                if (this.playLock !== "pause") {
+                    this.safeTogglePlay();
+                } else {
+                    console.log('playlock prevented bad state');
+                }
             }, 1000);
         }
     }
 
     safeTogglePause() {
+        this.playLock = "pause";
         if (usePlayerStore().scriptsLoaded && this.built && this.ready) {
             this.togglePause();
+            this.playLock = null;
         } else {
             setTimeout(() => {
-                this.safeTogglePause();
+                if (this.playLock !== "play") {
+                    this.safeTogglePause();
+                } else {
+                    console.log('playlock prevented bad state');
+                }
             }, 1000);
         }
     }
