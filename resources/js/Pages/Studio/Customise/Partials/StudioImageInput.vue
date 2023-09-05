@@ -136,13 +136,12 @@ const save = () => {
         <p class="text-xs mx-2 my-1" v-text="props.description"></p>
         <div class="flex flex-col md:flex-row mx-2  my-3">
                 <div @click="open"
-                     class="w-full  overflow-hidden aspect-21/12 md:w-52 flex-shrink-0 bg-zinc-50 dark:bg-zinc-800 rounded h-min cursor-pointer">
-                    <div class="flex flex-col w-full h-full ">
+                     class="w-full  overflow-hidden aspect-21/12 md:w-52 flex-shrink-0 bg-zinc-50 dark:bg-zinc-800 rounded h-min cursor-pointer py-2">
+                    <div class="flex flex-col h-full align-middle justify-middle "  :class="[props.rounded ? 'rounded-full overflow-hidden aspect-square  mx-auto w-max' : 'w-full']">
 
-                            <img class="w-full my-auto "
+                            <img class="w-full  " :class="[props.rounded ? 'h-full ' : 'my-auto']"
                                  v-if="imageUrl || props.value"
-                                 :src="imageUrl ? imageUrl : props.value"
-                                 :class="[props.rounded ? 'rounded-full aspect-square w-28  mx-auto my-2' : ' ']"  >
+                                 :src="imageUrl ? imageUrl : props.value">
 
                     </div>
                 </div>

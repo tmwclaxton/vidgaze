@@ -99,6 +99,7 @@ const updateChannelDetails = () => {
                                           recommendation="We recommend using a square image (1:1 aspect ratio) with a minimum resolution of 98x98 pixels and a maximum file size of 4MB."
                                           placeholder="Channel Profile Image"
                                           for="channel-profile-image"
+                                          :rounded="true"
                                           :enter-submit="false"
                                           :max-file-size="4"
                                           :max-width="98"
