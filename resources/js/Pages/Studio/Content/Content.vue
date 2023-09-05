@@ -4,7 +4,7 @@ import {onBeforeMount, ref} from "vue";
 import {Head} from "@inertiajs/vue3";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import TitleComponent from "@/Components/General/TitleComponent.vue";
-import LikeDislikeBar from "@/Pages/Studio/Partials/LikeDislikeBar.vue";
+import LikeDislikeBar from "@/Pages/Studio/Content/Partials/LikeDislikeBar.vue";
 
 let content = ref({});
 
