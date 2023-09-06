@@ -21,7 +21,12 @@ return [
 
     'allowed_origins' => ['*'],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        "https://play.google.com/log",
+        "https://www.google-analytics.com",
+        "https://googleads.g.doubleclick.net",
+
+    ],
 
     'allowed_headers' => ['*'],
 

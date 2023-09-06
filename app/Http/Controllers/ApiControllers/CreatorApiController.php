@@ -10,6 +10,8 @@ use App\Helpers\PlatformAPIs\YouTube;
 use App\Helpers\ResultDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CreatorCollection;
+use App\Http\Resources\CreatorResource;
+use App\Http\Resources\VideoCollection;
 use App\Models\CreatorModels\Creator;
 use App\Models\PodcastModels\Podcast;
 use Carbon\Carbon;
@@ -79,7 +81,7 @@ class CreatorApiController extends Controller
         });
 
         return [
-            'creator' => $creator,
+            'creator' => new CreatorResource($creator),
         ];
     }
 
@@ -159,7 +161,7 @@ class CreatorApiController extends Controller
         return [
             'next' => $next,
             'hasNext' => $hasNext,
-            'videos' => $videos,
+            'videos' => new VideoCollection($videos),
         ];
     }
 

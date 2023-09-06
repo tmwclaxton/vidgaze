@@ -18,8 +18,10 @@ use Inertia\Inertia;
 
 class CreatorWebController extends Controller
 {
-    public function show($request)
+    public function show($slug)
     {
-        return Inertia::render('Viewer/Channel/Channel');
+        return Inertia::render('Viewer/Channel/Channel', [
+            'slug' => $slug,
+        ]);
     }
 }

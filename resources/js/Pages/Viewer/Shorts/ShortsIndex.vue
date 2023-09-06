@@ -2,7 +2,7 @@
 import { Head } from '@inertiajs/vue3';
 import ShortsPlayer from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayer.vue";
 import ShortsPlayerSkeleton from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayerSkeleton.vue";
-import {onMounted, onUnmounted, ref, watch} from "vue";
+import {nextTick, onBeforeMount, onBeforeUnmount, onMounted, onUnmounted, ref, watch} from "vue";
 import { useInfiniteScroll, useVirtualList } from '@vueuse/core';
 
 import {usePlayerStore} from "@/Stores/PlayerStore";
@@ -13,29 +13,17 @@ const name = 'Shorts'
 const shorts = ref([]);
 // this is the index of the short that is fully visible
 const fullyVisibleIndex = ref(0);
-const { list, containerProps, wrapperProps } = useVirtualList(shorts, {
-    itemHeight: window.innerHeight - 64,
-    itemWidth: 400,
-});
 const UpdateFullyVisibleIndex = (index) => {
     fullyVisibleIndex.value = index;
 };
 
-useInfiniteScroll(
-    containerProps.ref,
-    async () => {
-        await fetchShorts();
-    },
-    {
-        distance: 2 * (window.innerHeight - 64), // load more when scrolled to within 2 shorts from the bottom
-    }
-)
+
 
 onMounted(async () => {
     // forget page position i.e. scroll to top
     window.history.scrollRestoration = 'manual';
 
-    // destroy all players this doesn't remove the metadata as full destroy is false
+    // destroy all players this doesn't remove the metadata meaning we can rebuild queue without losing data
     await usePlayerStore().destroyPlayers(false).then(async () => {
         // if short slug is in url, play that short
         const urlParams = new URLSearchParams(window.location.search);
@@ -64,6 +52,10 @@ const fetchShorts = async (first_video_slug = null) => {
 watch(fullyVisibleIndex, (index) => {
     // console.log(['current short: ', index])
     watchAction(index);
+    // if fullyVisibleIndex is above last 3 shorts, fetch more shorts
+    if (index >= shorts.value.length - 3) {
+        fetchShorts();
+    }
 });
 
 
@@ -81,6 +73,7 @@ async function watchAction(index, i = 0) {
         return;
     }
     await buildPlayers().then(() => {
+        console.log('built players');
         playFullyVisiblePlayer();
     });
 }
@@ -156,14 +149,21 @@ async function buildPlayers() {
     }
 }
 
-function playFullyVisiblePlayer() {
+function playFullyVisiblePlayer(i = 0) {
+    if (i === 3) {
+        console.log('tried to play fully visible player 3 times');
+        return;
+    }
     let player;
     player = usePlayerStore().findPlayer(shorts.value[fullyVisibleIndex.value].external_id);
     if (player) {
         console.log('PLAYING VISIBLE PLAYER ' + player.external_id);
         player.safeTogglePlay();
     } else {
-        console.log('player not found');
+        console.log('redundancy handler for player not found ' + shorts.value[fullyVisibleIndex.value].external_id);
+        setTimeout(() => {
+            playFullyVisiblePlayer(i + 1);
+        }, 2000);
     }
 }
 
@@ -181,18 +181,15 @@ onUnmounted(() => {
     <div>
         <Head title="VidGaze Shorts" />
 
-        <div v-bind="containerProps" class="max-h-[calc(100vh-4rem)] duration-75  overflow-y-scroll snap snap-y snap-mandatory ease-in-out" v>
-            <div v-bind="wrapperProps">
-                <div id="shortsScrollArea" class=" w-full ">
-                    <template v-if="list.length > 0" v-for="{index, data} in list" :key="index" >
-                        <ShortsPlayer :video="data" :index="index" v-if="data !== undefined" @UpdateFullyVisibleIndex="UpdateFullyVisibleIndex(index)" :key="index"/>
+            <div id="customScrollDiv" class="max-h-[calc(100vh-4rem)] overflow-hidden duration-75  overflow-y-scroll  snap snap-y snap-mandatory ease-in-out">
+                    <template v-if="shorts.length > 0">
+                        <ShortsPlayer  v-for="(data, index) in shorts" :video="data" :index="index"
+                                      @UpdateFullyVisibleIndex="UpdateFullyVisibleIndex(index)" :key="index"/>
                     </template>
                     <template v-else>
-                        <ShortsPlayerSkeleton />
+                        <ShortsPlayerSkeleton/>
                     </template>
-                </div>
             </div>
-        </div>
 
     </div>
 </template>

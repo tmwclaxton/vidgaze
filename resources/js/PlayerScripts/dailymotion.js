@@ -12,7 +12,7 @@ export default class DailymotionPlayer extends Player {
                     // startTime: this.start_time, // this doesn't work for some reason
                     autoplay: this.autoplay ? 1 : 0,
                     mute: false,
-
+                    loop: this.short,
                 }
             }).then((resolvedPlayer) => {
                 this.player = resolvedPlayer;
@@ -34,7 +34,7 @@ export default class DailymotionPlayer extends Player {
                     if (!this.seeked) {
                         this.seeked = true;
                         setTimeout(async () => {
-                            // console.log("seeking to " + this.start_time)
+                            // console.log("dm seeking to " + this.start_time)
                             await this.player.seek(this.start_time);
                         }, 1000);
                     }

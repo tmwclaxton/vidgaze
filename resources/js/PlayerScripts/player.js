@@ -105,6 +105,12 @@ export default class Player {
             console.log('STARTVIEWRECORD: Error: View recording already started: ' + this.external_id);
             return;
         }
+        // pause all other players in player store
+        for (const player of usePlayerStore().players) {
+            if (player.external_id !== this.external_id && player.ready) {
+                player.togglePause();
+            }
+        }
 
         // console.log('start view record' + this.external_id);
         const interval = 2.5;
@@ -163,22 +169,50 @@ export default class Player {
         }
     }
 
+    playLock = null;
     safeTogglePlay() {
+        this.playLock = "play";
         if (usePlayerStore().scriptsLoaded && this.built && this.ready) {
             this.togglePlay();
+            this.playLock = null;
         } else {
             setTimeout(() => {
-                this.safeTogglePlay();
+                if (this.playLock !== "pause") {
+                    this.safeTogglePlay();
+                } else {
+                    console.log('playlock prevented bad state');
+                }
             }, 1000);
         }
     }
 
     safeTogglePause() {
+        this.playLock = "pause";
         if (usePlayerStore().scriptsLoaded && this.built && this.ready) {
             this.togglePause();
+            this.playLock = null;
         } else {
             setTimeout(() => {
-                this.safeTogglePause();
+                if (this.playLock !== "play") {
+                    this.safeTogglePause();
+                } else {
+                    console.log('playlock prevented bad state');
+                }
+            }, 1000);
+        }
+    }
+
+    safeRemovePlayer() {
+        if (this.player === null ) {
+            return;
+        }
+        // console.log('safe remove player' + this.external_id);
+        if (usePlayerStore().scriptsLoaded && this.ready) {
+            this.removePlayer();
+        } else {
+            setTimeout(() => {
+                // console.log('safe remove player recall ' + this.external_id);
+                this.safeRemovePlayer();
             }, 1000);
         }
     }
