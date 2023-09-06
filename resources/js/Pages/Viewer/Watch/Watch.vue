@@ -263,12 +263,12 @@ onUnmounted(() => {
             </div>
 
             <!--video suggestions-->
-            <div class=" relative w-full gap-4 flex flex-col " :class="[theatre ? 'col-span-12' : 'col-span-12 lg:col-span-4  ']">
+            <div class=" relative w-full gap-4 flex flex-col min-h-screen" :class="[theatre ? 'col-span-12 p-4 md:px-10 -mt-8 ' : 'col-span-12 lg:col-span-4 ']" >
                 <!--playlist-->
                 <WatchQueue :item="item" :ready="ready"/>
 
                 <!--suggested videos-->
-                <SuggestedVideos :video="item"/>
+                <SuggestedVideos :video="item" :creator="item.creator" :ready="ready"/>
             </div>
         </div>
 </template>
