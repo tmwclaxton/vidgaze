@@ -1,5 +1,6 @@
 <template>
-    <div @click="subscribe" :class="buttonClasses" class="w-max h-max cursor-pointer rounded-lg px-4 py-1 text-xs font-bold border ring-0 select-none">
+    <div v-if="!useAuthStore().user || useAuthStore().user.creator.slug !== props.channel.slug"
+        @click="subscribe" :class="buttonClasses" class="w-max h-max cursor-pointer rounded-lg px-4 py-1 text-xs font-bold border ring-0 select-none">
         <p v-text="text" class=""></p>
     </div>
 </template>

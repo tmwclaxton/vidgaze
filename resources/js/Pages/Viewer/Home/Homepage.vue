@@ -9,7 +9,7 @@ import {debounce} from "lodash";
 import TopStreamsRow from "@/Components/ContentRows/TopStreamsRow.vue";
 import TopShortsRow from "@/Components/ContentRows/TopShortsRow.vue";
 
-import TrendingVideosRow from "@/Components/ContentRows/TrendingVideosRow.vue";
+import VideosRow from "@/Components/ContentRows/VideosRow.vue";
 import InfiniteVideos from "@/Components/ContentRows/InfiniteVideos.vue";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 const contentRoutesStore = useContentRoutesStore();
@@ -95,7 +95,9 @@ const fetchVideos = async (videoArray) => {
 
         <ConsistentPadding class="-mt-4">
 
-            <TrendingVideosRow :trending_videos="trending_videos"/>
+            <VideosRow :videos="trending_videos" title="Trending Videos">
+                <font-awesome-icon :icon="['fas', 'burst']" class="my-auto h-6"/>
+            </VideosRow>
 
             <TopStreamsRow/>
 

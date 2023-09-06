@@ -7,6 +7,13 @@ import {useShareModalStore} from "@/Stores/ShareModelStore";
 import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import ChannelButton from "@/Pages/Viewer/Channel/Partials/ChannelButton.vue";
 import ChannelHome from "@/Pages/Viewer/Channel/Partials/ChannelHome.vue";
+import ChannelVideos from "@/Pages/Viewer/Channel/Partials/ChannelVideos.vue";
+import _, {debounce} from "lodash";
+import ChannelPlaylists from "@/Pages/Viewer/Channel/Partials/ChannelPlaylists.vue";
+import ChannelAbout from "@/Pages/Viewer/Channel/Partials/ChannelAbout.vue";
+import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
+import StudioLink from "@/Pages/Viewer/Channel/Partials/StudioLink.vue";
+import {useAuthStore} from "@/Stores/AuthStore";
 
 const name = 'Channel';
 const channel = ref(null);
@@ -19,7 +26,7 @@ const props = defineProps({
 });
 
 const fetchChannel = async () => {
-    console.log('fetching channel');
+    // console.log('fetching channel');
     channelLoading.value = true;
     axios.get(route('api.creator.show', {slug: props.slug}))
         .then((response) => {
@@ -33,7 +40,9 @@ const fetchChannel = async () => {
 
 onMounted(() => {
     fetchChannel().then(() => {
-        fetchVideos();
+        setTimeout(() => {
+            fetchVideos();
+        }, 1000);
     });
 });
 
@@ -49,20 +58,24 @@ function share() {
     }
     showShare.value = !showShare.value;
 };
-const page = ref('home');
+const tab = ref('home');
 
 // make axios request to channel videos api
-const videos = ref(null);
-
+const videos = ref([]);
+const page = ref(null);
 const fetchVideos = async () => {
-    console.log('fetching videos');
-    axios.get(route('api.creator.videos', {slug: props.slug}))
-        .then((response) => {
-            videos.value = response.data.videos.data
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+    // console.log(page.value)
+    const result = await useContentRoutesStore().getChannelVideos(channel.value, 30, page.value);
+    if (result.videos.length === 0) {
+        return;
+    }
+
+    // treat videos as a set, so no duplicates
+    const videoIds = videos.value.map(video => video.id);
+    result.videos = result.videos.filter(video => !videoIds.includes(video.id));
+
+    videos.value = [...videos.value, ...result.videos];
+    page.value = result.nextPage;
 };
 
 </script>
@@ -84,6 +97,7 @@ const fetchVideos = async () => {
                         <font-awesome-icon :icon="['fas', 'share-alt']" class="w-4 text-white my-auto"/>
                         <p class="hidden md:flex opacity-100 text-white select-none">Share VidGaze Channel</p>
                     </div>
+
             </div>
 
             <div class="   py-5  px-5 lg:px-10 generic-background_2 dark:generic-background-dark_2  ">
@@ -108,18 +122,26 @@ const fetchVideos = async () => {
                         <div class="h-20 hidden sm:flex">
                             <div></div>
                         </div>
+                        <div v-if="useAuthStore().user && useAuthStore().user.creator.slug === channel.slug"
+                            class="flex flex-row gap-x-1 ml-auto mt-2">
+                            <StudioLink text="Customise Channel" :link="route('studio.customise')"/>
+                            <StudioLink text="Manage Videos" :link="route('studio.content')"/>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="flex flex-row flex-wrap items-center just ify-center px-auto gap-x-2 z-10 sm:px-5 lg:px-10 bg-zinc-50  dark:bg-zinc-900  text-sm font-bold text-center text-zinc-500  dark:text-zinc-200 ">
-                <ChannelButton :currentTab="page" :tab="'home'" @changePage="page = 'home'"/>
-                <ChannelButton :currentTab="page" :tab="'videos'" @changePage="page = 'videos'"/>
-                <ChannelButton :currentTab="page" :tab="'playlists'" @changePage="page = 'playlists'"/>
-                <ChannelButton :currentTab="page" :tab="'about'" @changePage="page = 'about'"/>
+                <ChannelButton :currentTab="tab" :tab="'home'" @changePage="tab = 'home'"/>
+                <ChannelButton :currentTab="tab" :tab="'videos'" @changePage="tab = 'videos'"/>
+                <ChannelButton :currentTab="tab" :tab="'playlists'" @changePage="tab = 'playlists'"/>
+                <ChannelButton :currentTab="tab" :tab="'about'" @changePage="tab = 'about'"/>
             </div>
 
-            <div class="pt-5 px-5 lg:px-10 pb-10 h-full min-h-screen ">
-                <ChannelHome v-if="page === 'home'" :channel="channel" :videos="videos" />
+            <div class="pt-5 px-5 lg:px-10 pb-10 h-full">
+                <ChannelHome v-if="tab === 'home'" :channel="channel" :videos="videos" />
+                <ChannelVideos v-if="tab === 'videos'" :videos="videos" @fetchVideos="fetchVideos" :key="channel.slug"/>
+                <ChannelPlaylists v-if="tab === 'playlists'" :channel="channel" />
+                <ChannelAbout v-if="tab === 'about'" :channel="channel" />
 
 
 

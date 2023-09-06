@@ -52,6 +52,7 @@ class VideoApiController extends Controller
             'platforms' => 'array|in:' . implode(',', $this->allowedPlatforms),
             'shorts' => 'boolean',
             'first_video_slug' => 'string',
+            'creator_id' => 'nullable|integer|exists:creators,id',
         ]);
 
         $per_page = $request->per_page ?? 20;
@@ -60,6 +61,7 @@ class VideoApiController extends Controller
         $shorts = $request->shorts ?? false;
         $first_video_slug = $request->first_video_slug ?? null;
         $selectedVideoPlatforms = $request->platforms ?? ['YouTube', 'Dailymotion', 'Vimeo'];
+        $creator_id = $request->creator_id ?? null;
 
 
         if (!is_array($video_ids) ) {
@@ -68,8 +70,12 @@ class VideoApiController extends Controller
 
         // if first_video_id is set add it to videoIds to be ignored
         if ($first_video_slug) {
-            $first_video_id = Video::where('slug', $first_video_slug)->first()->id;
-            $video_ids[] = $first_video_id;
+            $first_video = Video::where('slug', $first_video_slug)->first();
+            if ($first_video) {
+                $first_video_id = $first_video->id;
+                $video_ids[] = $first_video_id;
+
+            }
         }
 
         $query = Video::query();
@@ -145,6 +151,11 @@ class VideoApiController extends Controller
             $query->where('duration', '<', 90);
         }
 
+        // Filter by channel
+        if ($creator_id) {
+            $query->where('creator_id', $creator_id);
+        }
+
         // Filter by video platform
         if (!empty($selectedVideoPlatforms)) {
             $query->whereIn('preferred_source', $selectedVideoPlatforms);
@@ -173,7 +184,7 @@ class VideoApiController extends Controller
 
 
         // If there are not enough videos, get random public videos
-        if (!isset($videos) || $videos->count() < $per_page) {
+        if ((!isset($videos) || $videos->count() < $per_page) && $creator_id === null) {
             // get random public videos that are not in the videoIds array and get the amt to make up the difference if there are some videos already
             if (isset($videos)) {
                 $amt = $per_page - $videos->count();

@@ -24,7 +24,7 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
 
 
         // get videos
-        async getVideos(category = "popular", per_page = 20, video_ids = [], shorts = false, first_video_slug = null) {
+        async getVideos(category = "popular", per_page = 20, video_ids = [], shorts = false, first_video_slug = null, creator_id = null) {
             // convert shorts to 1 or 0
             shorts = shorts ? 1 : 0;
             const response = await axios.get(route('api.video.index'), {
@@ -33,7 +33,8 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
                     per_page: per_page,
                     video_ids,
                     shorts,
-                    first_video_slug
+                    first_video_slug,
+                    creator_id: creator_id
                 }
             }).catch(error => {
                     console.log(error);
@@ -45,6 +46,28 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
 
             return response.data.videos.data;
         },
+
+        // get channel videos
+        async getChannelVideos(creator, per_page = 50, page = null) {
+            let videos = [];
+            let nextPage = null;
+            const response = await axios.get(route('api.creator.videos', {
+                slug: creator.slug,
+                perPage: per_page,
+                page: page
+            }))
+            .then((response) => {
+                videos = response.data.videos.data;
+                nextPage = response.data.next;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+            return {
+                'response': response,
+                'videos': videos,
+                'nextPage': nextPage
+            } },
 
         // get top streams
         async getStreams(per_page = 10, category_id = null, skip = 0) {
