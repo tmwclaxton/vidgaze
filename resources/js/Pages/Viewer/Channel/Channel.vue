@@ -12,6 +12,8 @@ import _, {debounce} from "lodash";
 import ChannelPlaylists from "@/Pages/Viewer/Channel/Partials/ChannelPlaylists.vue";
 import ChannelAbout from "@/Pages/Viewer/Channel/Partials/ChannelAbout.vue";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
+import StudioLink from "@/Pages/Viewer/Channel/Partials/StudioLink.vue";
+import {useAuthStore} from "@/Stores/AuthStore";
 
 const name = 'Channel';
 const channel = ref(null);
@@ -87,6 +89,7 @@ const fetchVideos = async () => {
                         <font-awesome-icon :icon="['fas', 'share-alt']" class="w-4 text-white my-auto"/>
                         <p class="hidden md:flex opacity-100 text-white select-none">Share VidGaze Channel</p>
                     </div>
+
             </div>
 
             <div class="   py-5  px-5 lg:px-10 generic-background_2 dark:generic-background-dark_2  ">
@@ -110,6 +113,11 @@ const fetchVideos = async () => {
                          <!--this is here for design fix -->
                         <div class="h-20 hidden sm:flex">
                             <div></div>
+                        </div>
+                        <div v-if="useAuthStore().user && useAuthStore().user.creator.slug === channel.slug"
+                            class="flex flex-row gap-x-1 ml-auto mt-2">
+                            <StudioLink text="Customise Channel" :link="route('studio.customise')"/>
+                            <StudioLink text="Manage Videos" :link="route('studio.content')"/>
                         </div>
                     </div>
                 </div>

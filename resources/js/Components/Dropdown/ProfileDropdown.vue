@@ -54,7 +54,8 @@ const authStore = useAuthStore();
                         <font-awesome-icon :icon="['fas', 'helmet-safety']" class="w-5 h-5 flex-shrink-0"/>
                         <span class="font-bold">Admin Dashboard</span>
                     </DropdownLink>
-                    <DropdownLink :href="route('profile.edit')" class="flex flex-row space-x-2">
+                    <DropdownLink :href="route('channel.show', authStore.user.creator.slug)"
+                                  class="flex flex-row space-x-2">
                         <ProfileIcon class="w-5 h-5 flex-shrink-0"/>
                         <span class="font-bold">Your Channel</span>
                     </DropdownLink>
