@@ -5,31 +5,48 @@ import {onMounted, ref, watch} from "vue";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 import VideoStreamSuggestionCard
     from "@/Components/Cards/VideoStreamCards/VideoStreamSuggestionCard/VideoStreamSuggestionCard.vue";
+import {shuffle} from "lodash";
+import VideoStreamSuggestionSkeleton
+    from "@/Components/Cards/VideoStreamCards/VideoStreamSuggestionCard/VideoStreamSuggestionSkeleton.vue";
 
 const name = 'SuggestedVideos';
 
-const props = {
+const props = defineProps({
     video: {
         type: Object,
         required: true
+    },
+    creator: {
+        type: Object,
+        required: false
     }
-};
+});
 
 const suggestions = ref([]);
 const mode = ref("recommended");
+const page = ref(null);
 
 onMounted(async () => {
     await loadMore();
 });
 
 const loadMore = async () => {
-    if (mode.value === "recommended") {
+    if (mode.value === "recommended" || props.creator === null) {
         const videoIds = suggestions.value.map(video => video.id).join(',');
         const extraItems = await useContentRoutesStore().getVideos("random", 10, videoIds);
         suggestions.value = suggestions.value.concat(extraItems);
     } else if (mode.value === "channel") {
-        // not implemented yet
-
+        // console.log(props.creator);
+        // const result = await useContentRoutesStore().getChannelVideos(props.creator, 30, page.value);
+        // if (result.videos.length === 0) {
+        //     return;
+        // }
+        //
+        // // treat videos as a set, so no duplicates
+        // const videoIds = suggestions.value.map(video => video.id);
+        // result.videos = result.videos.filter(video => !videoIds.includes(video.id));
+        // suggestions.value = shuffle([...suggestions.value, ...result.videos]);
+        // page.value = result.nextPage;
     }
 };
 
@@ -54,12 +71,12 @@ watch(mode, () => {
             </QuaternaryButton>
         </div>
 
-        <div v-if="suggestions && suggestions.length > 0">
+        <div >
             <div class="relative flex flex-col pb-1 overflow-y-auto gap-y-2 mt-3 overflow-hidden" >
-                <VideoStreamSuggestionCard v-for="(item, index) in suggestions" :item="item" :key="index"/>
+                <VideoStreamSuggestionCard v-if="suggestions && suggestions.length > 0" v-for="(item, index) in suggestions" :item="item" :key="index"/>
+                <VideoStreamSuggestionSkeleton v-else v-for="i in 10" :key="i"/>
             </div>
         </div>
-
         <div v-if="suggestions && suggestions.length > 0" @click="loadMore">
             <QuaternaryButton @click="loadMore" class="font-bold rounded-sm text-sm py-2.5 mb-2 w-full shine px-0">
                 <p  class="text-center select-none">Load More Videos</p>
