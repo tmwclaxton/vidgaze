@@ -66,6 +66,9 @@ const page = ref(null);
 const fetchVideos = async () => {
     console.log(page.value)
     const result = await useContentRoutesStore().getChannelVideos(channel.value, 30, page.value);
+    if (result.videos.length === 0) {
+        return;
+    }
     videos.value = [...videos.value, ...result.videos];
     page.value = result.nextPage;
 };
