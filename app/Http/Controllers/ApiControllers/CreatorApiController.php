@@ -141,7 +141,7 @@ class CreatorApiController extends Controller
             $source = $creator->sources()->first();
             $response = match(Platform::fromValue($source->source_name))
             {
-                Platform::YouTube => YouTube::getCreatorVideosBeforeDate($source->external_channel_id, Carbon::create($page), $perPage),
+                Platform::YouTube => YouTube::getCreatorVideosBeforeDate($source->external_channel_id, $page == null ? null : Carbon::create($page), $perPage),
                 Platform::Dailymotion => Dailymotion::getCreatorVideosBeforeDate($source->external_channel_id, $page == null ? null : Carbon::createFromTimestamp($page), $perPage),
                 Platform::Vimeo => Vimeo::getCreatorVideos($creator->sources()->first()->external_channel_id, $page, $perPage),
                 default => throw new \Exception('Platform not supported')
