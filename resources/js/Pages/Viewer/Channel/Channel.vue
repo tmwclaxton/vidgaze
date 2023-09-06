@@ -26,7 +26,7 @@ const props = defineProps({
 });
 
 const fetchChannel = async () => {
-    console.log('fetching channel');
+    // console.log('fetching channel');
     channelLoading.value = true;
     axios.get(route('api.creator.show', {slug: props.slug}))
         .then((response) => {
@@ -64,7 +64,7 @@ const tab = ref('home');
 const videos = ref([]);
 const page = ref(null);
 const fetchVideos = async () => {
-    console.log(page.value)
+    // console.log(page.value)
     const result = await useContentRoutesStore().getChannelVideos(channel.value, 30, page.value);
     if (result.videos.length === 0) {
         return;
