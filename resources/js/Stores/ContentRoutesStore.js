@@ -24,7 +24,7 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
 
 
         // get videos
-        async getVideos(category = "popular", per_page = 20, video_ids = [], shorts = false, first_video_slug = null, channel_id = null) {
+        async getVideos(category = "popular", per_page = 20, video_ids = [], shorts = false, first_video_slug = null, creator_id = null) {
             // convert shorts to 1 or 0
             shorts = shorts ? 1 : 0;
             const response = await axios.get(route('api.video.index'), {
@@ -34,7 +34,7 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
                     video_ids,
                     shorts,
                     first_video_slug,
-                    channel_id: channel_id
+                    creator_id: creator_id
                 }
             }).catch(error => {
                     console.log(error);

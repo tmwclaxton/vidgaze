@@ -183,19 +183,19 @@ class VideoApiController extends Controller
         $videos = $query->take($per_page)->get();
 
 
-        //// If there are not enough videos, get random public videos
-        //if (!isset($videos) || $videos->count() < $per_page) {
-        //    // get random public videos that are not in the videoIds array and get the amt to make up the difference if there are some videos already
-        //    if (isset($videos)) {
-        //        $amt = $per_page - $videos->count();
-        //    } else {
-        //        $amt = $per_page;
-        //    }
-        //    $randomVideos = Video::where('visibility', 'public')->whereNotIn('id', $video_ids)
-        //        ->inRandomOrder()->take($amt)->get();
-        //
-        //    $videos = $videos->merge($randomVideos);
-        //}
+        // If there are not enough videos, get random public videos
+        if ((!isset($videos) || $videos->count() < $per_page) && $creator_id === null) {
+            // get random public videos that are not in the videoIds array and get the amt to make up the difference if there are some videos already
+            if (isset($videos)) {
+                $amt = $per_page - $videos->count();
+            } else {
+                $amt = $per_page;
+            }
+            $randomVideos = Video::where('visibility', 'public')->whereNotIn('id', $video_ids)
+                ->inRandomOrder()->take($amt)->get();
+
+            $videos = $videos->merge($randomVideos);
+        }
 
         // if first_video_slug is not null, then find that video and put it at the beginning of the collection
         if ($first_video_slug) {

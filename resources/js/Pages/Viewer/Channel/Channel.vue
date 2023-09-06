@@ -69,6 +69,11 @@ const fetchVideos = async () => {
     if (result.videos.length === 0) {
         return;
     }
+
+    // treat videos as a set, so no duplicates
+    const videoIds = videos.value.map(video => video.id);
+    result.videos = result.videos.filter(video => !videoIds.includes(video.id));
+
     videos.value = [...videos.value, ...result.videos];
     page.value = result.nextPage;
 };
@@ -134,7 +139,7 @@ const fetchVideos = async () => {
 
             <div class="pt-5 px-5 lg:px-10 pb-10 h-full">
                 <ChannelHome v-if="tab === 'home'" :channel="channel" :videos="videos" />
-                <ChannelVideos v-if="tab === 'videos'" :videos="videos" @fetchVideos="fetchVideos"/>
+                <ChannelVideos v-if="tab === 'videos'" :videos="videos" @fetchVideos="fetchVideos" :key="channel.slug"/>
                 <ChannelPlaylists v-if="tab === 'playlists'" :channel="channel" />
                 <ChannelAbout v-if="tab === 'about'" :channel="channel" />
 
