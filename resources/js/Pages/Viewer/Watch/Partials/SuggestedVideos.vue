@@ -36,17 +36,17 @@ const loadMore = async () => {
         const extraItems = await useContentRoutesStore().getVideos("random", 10, videoIds);
         suggestions.value = suggestions.value.concat(extraItems);
     } else if (mode.value === "channel") {
-        // console.log(props.creator);
-        // const result = await useContentRoutesStore().getChannelVideos(props.creator, 30, page.value);
-        // if (result.videos.length === 0) {
-        //     return;
-        // }
-        //
-        // // treat videos as a set, so no duplicates
-        // const videoIds = suggestions.value.map(video => video.id);
-        // result.videos = result.videos.filter(video => !videoIds.includes(video.id));
-        // suggestions.value = shuffle([...suggestions.value, ...result.videos]);
-        // page.value = result.nextPage;
+        console.log(props.creator);
+        const result = await useContentRoutesStore().getChannelVideos(props.creator, 30, page.value);
+        if (result.videos.length === 0) {
+            return;
+        }
+
+        // treat videos as a set, so no duplicates
+        const videoIds = suggestions.value.map(video => video.id);
+        result.videos = result.videos.filter(video => !videoIds.includes(video.id));
+        suggestions.value = shuffle([...suggestions.value, ...result.videos]);
+        page.value = result.nextPage;
     }
 };
 
