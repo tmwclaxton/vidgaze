@@ -1,3 +1,20 @@
+<script setup>
+import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
+import {useAuthStore} from "@/Stores/AuthStore";
+import {onMounted, ref} from "vue";
+const name = 'ChannelOverview';
+
+const views = ref(null);
+const viewDuration = ref(null);
+onMounted(() => {
+    axios.get(route('api.studio.analytics')).then((response) => {
+        views.value = response.data.views;
+        viewDuration.value = response.data.viewDuration;
+    })
+})
+
+</script>
+
 <template>
     <ConsistentContentHolder class="p-5 h-full">
         <div class="flex flex-col" v-if="useAuthStore().user">
@@ -17,11 +34,13 @@
                     <ConsistentContentHolder class="flex flex-row align-middle justify-center w-max px-5">
                         <p class="text-sm" v-text="useAuthStore().user.creator.subscriber_count "/>
                     </ConsistentContentHolder>
-                    <ConsistentContentHolder class="flex flex-row align-middle justify-center w-max px-5">
-                        <p class="text-sm" v-text="'3:53 Avg View Duration '"/>
+                    <ConsistentContentHolder v-if="viewDuration != null"
+                        class="flex flex-row align-middle justify-center w-max px-5">
+                        <p class="text-sm" v-text="viewDuration"/>
                     </ConsistentContentHolder>
-                    <ConsistentContentHolder class="flex flex-row align-middle justify-center w-max px-5">
-                        <p class="text-sm" v-text="'25 Views this Month'"/>
+                    <ConsistentContentHolder v-if="views != null"
+                        class="flex flex-row align-middle justify-center w-max px-5">
+                        <p class="text-sm" v-text="views"/>
                     </ConsistentContentHolder>
                 </div>
             </div>
@@ -29,12 +48,5 @@
     </ConsistentContentHolder>
 </template>
 
-<script setup>
-import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
-import {useAuthStore} from "@/Stores/AuthStore";
-const name = 'ChannelOverview';
-</script>
 
-<style scoped>
 
-</style>

@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\VideoModels\VideoView;
+use App\Models\VideoViews;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class StudioContentApiController extends Controller
 {
@@ -29,5 +32,30 @@ class StudioContentApiController extends Controller
             ]);
 
         return ['videoDrafts' => $videoDrafts, 'videos' => $videos];
+    }
+
+    public function analytics() {
+        // join video_views and videos and get the avg videos_views.duration, video_id, viewer_id, created_at, title, slug
+        $joined = VideoView::join('videos', 'video_views.video_id', '=', 'videos.id')
+            ->where('videos.creator_id', auth()->user()->creator()->first()->id)
+            ->get(['video_views.duration', 'video_views.video_id', 'video_views.viewer_id', 'video_views.created_at', 'videos.title', 'videos.slug']);
+
+        // get this channels' last month views
+        $views = $joined->where('created_at', '>=', Carbon::now()->subMonth() )->count();
+        $views = number_format_short($views)  . " " . Str::plural('Views', $views);
+        // get average view duration
+        $averageViewDuration = $joined->where('created_at', '>=', Carbon::now()->subMonth() )->avg('duration') ;
+        if ($averageViewDuration) {
+            $averageViewDuration = convertDuration($averageViewDuration) . ' Avg View Duration';
+        } else {
+            $averageViewDuration = null;
+        }
+
+
+        return [
+            'views' => $views,
+            'viewDuration' => $averageViewDuration
+        ];
+
     }
 }
