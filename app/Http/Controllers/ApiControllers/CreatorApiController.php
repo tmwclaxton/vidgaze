@@ -14,6 +14,7 @@ use App\Http\Resources\CreatorResource;
 use App\Http\Resources\VideoCollection;
 use App\Models\CreatorModels\Creator;
 use App\Models\PodcastModels\Podcast;
+use Aws\Rekognition\RekognitionClient;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -189,12 +190,18 @@ class CreatorApiController extends Controller
     }
 
     public function updateProfilePicture(Request $request) {
-
         $request->validate([
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp|max:4096||dimensions:min_width=98,min_height=98,max_width=1000,max_height=1000',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:4096||dimensions:min_width=98,min_height=98,max_width=1000,max_height=1000',
         ]);
 
         if ($request->hasFile('image')) {
+            if ($this->inapropriateImageCheck($request->file('image'))) {
+                return [
+                    'toastType' => 'warning',
+                    'message' => 'This image is inappropriate. Please upload another image.'
+                ];
+            }
+
             if (Auth::user()->creator->avatar_url && Storage::exists(Auth::user()->creator->avatar_url)) {
                 Storage::delete(Auth::user()->creator->avatar_url);
             }
@@ -217,10 +224,17 @@ class CreatorApiController extends Controller
 
     public function updateProfileBanner(Request $request) {
         $request->validate([
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp|nullable|max:6144||dimensions:min_width=1024,min_height=256,max_width=4096,max_height=4096',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,svg|nullable|max:6144||dimensions:min_width=1024,min_height=256,max_width=4096,max_height=4096',
         ]);
 
         if ($request->hasFile('image')) {
+            if ($this->inapropriateImageCheck($request->file('image'))) {
+                return [
+                    'toastType' => 'warning',
+                    'message' => 'This image is inappropriate. Please upload another image.'
+                ];
+            }
+
             if (Auth::user()->creator->banner_url && Storage::exists(Auth::user()->creator->banner_url)) {
                 Storage::delete(Auth::user()->creator->banner_url);
             }
@@ -242,4 +256,28 @@ class CreatorApiController extends Controller
 
     }
 
+    private function inapropriateImageCheck($image) {
+        // set up AWS client with credentials from .env
+        $client = new RekognitionClient([
+            'region' =>  config('aws.aws_default_region', 'eu-west-1'),
+            'version' => 'latest',
+            'credentials' => [
+                'key' => config('aws.aws_access_key_id', ''),
+                'secret' => config('aws.aws_secret_access_key', ''),
+            ],
+        ]);
+        // check if image has nudity or gore
+        $response = $client->detectModerationLabels([
+            'Image' => [
+                'Bytes' => file_get_contents($image->getRealPath()),
+            ],
+            'MinConfidence' => 50,
+        ]);
+
+        if (count($response['ModerationLabels']) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

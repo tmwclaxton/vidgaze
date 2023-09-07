@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Aws\Rekognition\RekognitionClient;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;

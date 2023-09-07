@@ -23,7 +23,8 @@
         "nesbot/carbon": "^2.66",
         "nicklaw5/twitch-api-php": "^7.0",
         "tightenco/ziggy": "^1.0",
-        "vimeo/laravel": "^5.7"
+        "vimeo/laravel": "^5.7",
+        "aws/aws-sdk-php": "3.*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
