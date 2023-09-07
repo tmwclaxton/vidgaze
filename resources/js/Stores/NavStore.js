@@ -64,11 +64,15 @@ export const useNavStore = defineStore('NavStore', {
         },
 
         checkBottomNavLinks() {
-            if (window.innerHeight > 850 || this.showingNavigationDropdown || (useAuthStore().user === null && window.innerHeight > 665)) {
-                this.showingBottomNavLinks = true
-            } else {
-                this.showingBottomNavLinks = false
-            }
+            this.showingBottomNavLinks = true
+
+            // if podcasts and music are showing this one
+            // if (window.innerHeight > 850 || this.showingNavigationDropdown || (useAuthStore().user === null && window.innerHeight > 665)) {
+            // if (window.innerHeight > 650 || this.showingNavigationDropdown || (useAuthStore().user === null && window.innerHeight > 425)) {
+            //     this.showingBottomNavLinks = true
+            // } else {
+            //     this.showingBottomNavLinks = false
+            // }
         },
 
         toggleShowingNavigationDropdown() {

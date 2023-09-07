@@ -14,12 +14,16 @@ export const useAuthStore = defineStore('AuthStore', {
     },
 
     actions: {
-        getUser(toast = false) {
+        async getUser(toast = false) {
             const toastStore = useToastStore();
             if (localStorage.getItem('token')) {
                 // we need to set the token in the axios header as this might be a page refresh
                 axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+
                 axios.get(route('api.user')).then(response => {
+
+                    axios.get(route('auth.flag', {flag: true})).then(response => {} ).catch(error => {} );
+
                     this.user = response.data.user
                     this.admin = response.data.admin
                     this.subscription_ids = response.data.subscription_ids
@@ -30,7 +34,7 @@ export const useAuthStore = defineStore('AuthStore', {
                             type: 'success',
                         });
                     }
-                } ).catch(error => {
+                }).catch(error => {
                     this.clearBrowserStorage();
                     toastStore.add({
                         message: 'Sorry we couldn\'t log you in!  Please login again.',
@@ -80,12 +84,15 @@ export const useAuthStore = defineStore('AuthStore', {
 
         logout() {
             const thisRef = this;
-            return axios.post(route('api.logout')).then(response => {
-                thisRef.clearBrowserStorage();
-                useToastStore().add({
-                    message: 'Logout successful.',
-                    type: 'success',
-                });
+            return axios.post(route('api.logout')).then(async response => {
+                await thisRef.clearBrowserStorage();
+                // hard refresh the page
+                location.reload();
+
+                // useToastStore().add({
+                //     message: 'Logout successful.',
+                //     type: 'success',
+                // });
             }) .catch(error => {
                 thisRef.handleErrors(error);
             } );
@@ -126,7 +133,10 @@ export const useAuthStore = defineStore('AuthStore', {
             });
         },
 
-        clearBrowserStorage() {
+        async clearBrowserStorage() {
+            await axios.get(route('auth.flag', {flag: false})).then(response => {
+            }).catch(error => {
+            });
             this.user = null;
             this.admin = false;
             this.subscription_ids = [];

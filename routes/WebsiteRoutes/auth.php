@@ -17,7 +17,7 @@ use App\Http\Controllers\WebControllers\AuthWebController;
                 ->name('password.reset');
 
     Route::get('verify-email', [AuthWebController::class, 'verifyEmail'])
-                ->name('verification.notice');
+                ->name('verification.notice')->middleware(['auth.flag.cookie']);
 
 
     Route::get('/email/verify/{id}/{hash}', [AuthWebController::class, 'VerifyEmailRedirect'])
@@ -26,3 +26,9 @@ use App\Http\Controllers\WebControllers\AuthWebController;
     Route::get('confirm-password', [AuthWebController::class, 'confirmPassword'])
                 ->name('password.confirm');
 
+    //Route to add or overwrite auth_flag cookie without changing page
+    Route::get('auth-flag/{flag}', function ($flag) {
+        return response()->json([
+            'auth_flag' => $flag
+        ])->cookie('auth_flag', $flag, 60);
+    })->name('auth.flag');

@@ -102,7 +102,7 @@ const name = 'SideBar';
 
 
                     <!--                dark/light mode-->
-                    <div class="text-white cursor-pointer space-y-1" @click="toggleDark()">
+                    <div class="text-white cursor-pointer space-y-1 pb-5" @click="toggleDark()">
                         <span v-if="!isDark">
                             <ResponsiveNavLink :span="true">
                                     <SunIcon class="w-5 h-5 flex-shrink-0"/>

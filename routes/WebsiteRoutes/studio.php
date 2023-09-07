@@ -11,22 +11,19 @@ use App\Http\Controllers\WebControllers\VideoWebController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-//add a token to these routes that says studio
+
+Route::prefix('studio')->name('studio.')->middleware(['auth.flag.cookie'])->group(function () {
+    Route::get('/', [StudioWebController::class, 'dashboard'])->name("dashboard");
+    Route::get('/content', [StudioWebController::class, 'content'])->name("content");
+    Route::get('/streaming', [StudioWebController::class, 'stream'])->name("streaming");
+    Route::get('unionise', [UnionWebController::class,'index'])->name("unionise");
+    Route::get('customise', [StudioWebController::class, 'customise'])->name("customise");
+
+    //Route::get('video/{video:slug}', [VideoWebController::class,'edit'])->name("video.edit");
+    //Route::get('stream/{stream:slug}', [StreamWebController::class,'edit'])->name("stream.edit");
+    Route::get('link/{platform}', [LinkingWebController::class,'link'])->name('link');
+    Route::get('upload',  [VideoDraftWebController::class, 'upload'])->name("upload");
+    Route::get('video-draft/{slug}/edit',  [VideoDraftWebController::class, 'edit'])->name("video.draft.edit");
+});
 
 
-
-Route::get('/studio', [StudioWebController::class, 'dashboard'])->name("studio.dashboard");
-Route::get('/studio/content', [StudioWebController::class, 'content'])->name("studio.content");
-Route::get('/studio/streaming', [StudioWebController::class, 'stream'])->name("studio.streaming");
-Route::get('studio/customise', [StudioWebController::class, 'customise'])->name("studio.customise");
-
-
-
-//Route::get('studio/video/{video:slug}', [VideoWebController::class,'edit'])->name("studio.video.edit");
-//Route::get('studio/stream/{stream:slug}', [StreamWebController::class,'edit'])->name("studio.stream.edit");
-Route::get('studio/unionise', [UnionWebController::class,'index'])->name("studio.unionise");
-
-Route::get('studio/link/{platform}', [LinkingWebController::class,'link'])->name('studio.link');
-
-Route::get('studio/upload',  [VideoDraftWebController::class, 'upload'])->name("studio.upload");
-Route::get('studio/video-draft/{slug}/edit',  [VideoDraftWebController::class, 'edit'])->name("studio.video.draft.edit");

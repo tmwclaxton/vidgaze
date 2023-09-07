@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\AuthFlagCookie;
 use App\Http\Middleware\JsonMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -91,5 +92,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'vidgaze.api.key' => \App\Http\Middleware\VidGazeAPI::class,
+        'auth.flag.cookie' => AuthFlagCookie::class,
     ];
 }

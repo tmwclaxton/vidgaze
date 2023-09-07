@@ -126,6 +126,7 @@ const save = () => {
             type: "warning"
         });
     });
+    imageUrl.value = null
 }
 
 </script>

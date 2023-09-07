@@ -26,7 +26,12 @@ onMounted(() => {
     usePlayerStore().loadScripts();
     // use authStore to get user if token is set in local storage
     if (authStore.user === null && localStorage.getItem('token') !== null) {
-        authStore.getUser();
+        authStore.getUser().then(() => {
+            // if user is null & page prop auth_routes is true, redirect to home
+            if (authStore.user === null && usePage().props.auth_route) {
+                window.location.href = route('home');
+            }
+        });
     }
 
 
