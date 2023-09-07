@@ -64,6 +64,11 @@ const tab = ref('home');
 const videos = ref([]);
 const page = ref(null);
 const fetchVideos = async () => {
+    if (page.value === null && videos.value.length > 0) {
+        console.log('no more videos');
+        return;
+    }
+
     // console.log(page.value)
     const result = await useContentRoutesStore().getChannelVideos(channel.value, 30, page.value);
     if (result.videos.length === 0) {

@@ -10,10 +10,12 @@ const name = 'ChannelHome';
 
 const props = defineProps({
     videos: {
-        type: Array
+        type: Array,
+        required: false,
     },
     channel: {
-        type: Object
+        type: Object,
+        required: true
     }
 });
 
@@ -30,7 +32,7 @@ onMounted(() => {
 const popularVideosComputed = computed(() => {
     // if not enough popular videos, fill missing with props.videos shuffled
     if (popularVideos.value.length < 6) {
-        if ( props.videos.length > 0) {
+        if ( props.videos.length > 6) {
             const shuffledVideos = shuffle(props.videos)
             const missingVideos = 6 - popularVideos.value.length;
             for (let i = 0; i < missingVideos; i++) {
@@ -45,7 +47,8 @@ const slicedVideos = computed(() => {
     if (props.videos.length === 0) {
         return props.videos;
     }
-    return props.videos.slice(0, 6);
+    // return an array of the first 6 videos but if there are less than 6 videos, return exactly what we have
+    return props.videos.length > 6 ? props.videos.slice(0, 6) : props.videos.slice(0, props.videos.length);
 });
 </script>
 <template>
