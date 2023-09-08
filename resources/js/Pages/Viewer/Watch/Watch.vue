@@ -70,7 +70,7 @@ function togglePlaylistModal()  {
     }
     playlistModalStore.videoIds = [item.value.id];
     if (!playlistToggled.value) {
-        playlistModalStore.getPlaylists();
+        playlistModalStore.getMyPlaylists();
         playlistModalStore.showMenu = true;
     } else {
         playlistModalStore.showMenu = false;

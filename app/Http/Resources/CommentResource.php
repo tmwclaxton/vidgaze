@@ -28,6 +28,8 @@ class CommentResource extends JsonResource
             // if created_at != updated_at then it has been edited
             'edited' =>  $this->created_at != $this->updated_at ? true : false,
             'pinned' => $this->pinned,
+            'creator_replied' => $this->creator_replied ? true : false,
+
             'parent_comment_id' => $this->parent_comment_id,
 
         ];

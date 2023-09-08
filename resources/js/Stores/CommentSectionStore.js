@@ -21,7 +21,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
         }
     },
     actions: {
-        async fetchComments(category, parent_comment_id = null, first_comment_id = null,loadMore = false) {
+        async fetchComments(category, parent_comment_id = null, first_comment_id = null,loadMore = false, reply_count = null) {
             try {
                 let comment_ids = null;
                 if (loadMore) {
@@ -40,6 +40,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                         // grab comment attribute from url parameter
                         first_comment_id: first_comment_id,
                         parent_comment_id: parent_comment_id,
+                        reply_count: reply_count
                     }
                 }).then(
                     response => {

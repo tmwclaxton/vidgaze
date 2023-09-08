@@ -141,13 +141,14 @@ const playlistPageModal = ref(false);
                     <row-divider class="mt-5 mb-5 rounded-2xl"></row-divider>
 
                     <div class="flex flex-row px-2 mb-5">
-                        <a href="/channel/" class="flex flex-row">
+                        <Link :href="route('channel.show', playlist.creator.slug)"
+                           class="flex flex-row">
                             <img class="bg-white h-10 aspect-square rounded-full "
                                  :src="playlist.creator.avatar_url"/>
-                        </a>
+                        </Link>
                         <div class="flex flex-col ml-2">
-                            <a href="/channel/" class="text text-sm font-semibold dark:text-zinc-200"
-                               v-text="playlist.creator.name"></a>
+                            <Link :href="route('channel.show', playlist.creator.slug)" class="text text-sm font-semibold dark:text-zinc-200"
+                                  v-text="playlist.creator.name"></Link>
                             <p class="text text-sm dark:text-zinc-200" v-text="playlist.creator.subscriber_count"></p>
                         </div>
                         <div v-if="useAuthStore().user === null" class="my-auto  ml-auto flex flex-row gap-x-2">

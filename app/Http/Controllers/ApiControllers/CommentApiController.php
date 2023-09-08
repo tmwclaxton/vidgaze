@@ -67,7 +67,8 @@ class CommentApiController extends Controller
             'per_page' => 'nullable|integer',
             'comment_ids' => 'string|regex:/^[0-9,]+$/|nullable',
             'first_comment_id' => 'nullable|integer',
-            'parent_comment_id' => 'nullable|integer'
+            'parent_comment_id' => 'nullable|integer',
+            'reply_count' => 'nullable|integer',
         ]);
 
         // get order by, limit, offset, and video id from request,
@@ -79,6 +80,7 @@ class CommentApiController extends Controller
         $item_type = $request->input('item_type') ?? null;
         $first_comment_id = $request->input('first_comment_id') ?? null;
         $parent_comment_id = $request->input('parent_comment_id') ?? null;
+        $reply_count = $request->input('reply_count') ?? null;
 
 
         // if commentIds is not an array, explode the ids into an array
@@ -117,6 +119,11 @@ class CommentApiController extends Controller
         // if commentIds is not empty, add where clause to query
         if (!empty($comment_ids)) {
             $query->whereNotIn('comments.id', $comment_ids);
+        }
+
+        // if replyCount is not null, add where clause to query
+        if ($reply_count !== null) {
+            $query->where('comments.reply_count', '=', $reply_count);
         }
 
         // order the query by the orderByMethod passed in
@@ -230,11 +237,18 @@ class CommentApiController extends Controller
         ]);
 
         $item->comment_count++;
+
+
+
         $item->save();
 
         if ($parent_comment_id !== null) {
             $parent_comment = Comment::find($parent_comment_id);
             $parent_comment->reply_count++;
+            // if person replying is the owner of the item, change creator_replied on comment to true
+            if ($item->creator_id === Auth::user()->creator->id) {
+                $parent_comment->creator_replied = true;
+            }
             $parent_comment->save();
         }
 

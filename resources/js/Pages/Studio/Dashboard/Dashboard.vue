@@ -7,10 +7,22 @@ import ConsistentContentHolder from "@/Components/General/ConsistentContentHolde
 
 import ConnectChannels from "@/Pages/Studio/Dashboard/Partials/ConnectChannels.vue";
 import ItemPerformance from "@/Pages/Studio/Dashboard/Partials/ItemPerformance.vue";
-import LatestComment from "@/Pages/Studio/Dashboard/Partials/LatestComment.vue";
+import LatestComments from "@/Pages/Studio/Dashboard/Partials/LatestComments.vue";
 import ChannelOverview from "@/Pages/Studio/Dashboard/Partials/ChannelOverview.vue";
+import {onMounted, ref} from "vue";
+import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
+import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 
-
+const comments = ref(null);
+onMounted(() => {
+    axios.get(route('api.studio.comments'))
+        .then(response => {
+            comments.value = response.data.comments;
+        })
+        .catch(error => {
+            console.log(error);
+        });
+});
 
 </script>
 <template>
@@ -18,10 +30,10 @@ import ChannelOverview from "@/Pages/Studio/Dashboard/Partials/ChannelOverview.v
 
     <ConsistentPadding class="-mt-4">
         <Title :text="'Channel Dashboard'" class="my-4 mb-8">
-            <StreamIcon class="w-6 h-6 my-auto"/>
+            <font-awesome-icon :icon="['fas', 'house']" class="w-6 h-6 my-auto"/>
         </Title>
 
-        <div class="grid grid-cols-6 grid-rows-6 gap-4 -mt-2">
+        <div class="flex flex-col sm:grid sm:grid-cols-6 sm:grid-rows-6 gap-4 -mt-2">
             <!--channel overview -->
             <div class="col-span-2 row-span-2">
                 <ChannelOverview/>
@@ -40,8 +52,9 @@ import ChannelOverview from "@/Pages/Studio/Dashboard/Partials/ChannelOverview.v
                 <ItemPerformance/>
             </div>
 
-            <div class="col-span-2 row-span-2">
-                <LatestComment/>
+            <div v-if="comments != null && comments.length > 0"
+                class="col-span-2 row-span-2">
+                <LatestComments :comments="comments"/>
             </div>
         </div>
 

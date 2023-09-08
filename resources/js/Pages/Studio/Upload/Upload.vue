@@ -3,7 +3,7 @@
     <Head title="Upload Video" />
 
     <ConsistentPadding class="-mt-4">
-        <Title text="Upload Video" class="my-4 mb-8">
+        <Title text="VidGaze MultiUploader" class="my-4 mb-8">
             <!--                <StreamIcon class="w-6 h-6 my-auto"/>-->
         </Title>
         <form @submit.prevent="submit" class="space-y-4 sm:min-w-[20rem] w-screen sm:w-full px-6 sm:px-0">

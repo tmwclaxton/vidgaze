@@ -8,6 +8,7 @@ Route::middleware(['throttle:60,1','auth:sanctum'])->prefix('playlist')->name('p
 
     //create playlist
     Route::get('/index', [PlaylistApiController::class, 'index'])->name('index');
+    Route::get('/getChannelPublicPlaylists', [PlaylistApiController::class, 'channelIndex'])->name('channelIndex');
     Route::post('/create', [PlaylistApiController::class, 'create'])->name('create');
     Route::patch('/update', [PlaylistApiController::class, 'update'])->name('update');
     Route::delete('/destroy', [PlaylistApiController::class, 'delete'])->name('destroy');

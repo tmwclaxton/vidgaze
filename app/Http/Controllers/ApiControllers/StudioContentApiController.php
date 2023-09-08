@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CommentCollection;
 use App\Models\VideoModels\VideoView;
 use App\Models\VideoViews;
 use Carbon\Carbon;
@@ -57,5 +58,45 @@ class StudioContentApiController extends Controller
             'viewDuration' => $averageViewDuration
         ];
 
+    }
+
+    public function comments() {
+        // there are video comments, channel comments, stream comments and podcast episode comments
+        // these are connect like video -> video_comments -> comments etc.
+
+        // get all video comments
+        $videos = auth()->user()->creator()->first()->videos()->get(['id']);
+        // get comments through video_comments order by lowest reply_count and created_at
+        $videoComments = $videos->map(fn ($video) => $video->comments()->get())
+            ->flatten();
+
+        // get all stream comments
+        $streams = auth()->user()->creator()->first()->streams()->get(['id']);
+        // get comments through stream_comments order by lowest reply_count and created_at
+        $streamComments = $streams->map(fn ($stream) => $stream->comments()->get())
+            ->flatten();
+
+        // get all podcast episode comments
+        //$podcastEpisodes = auth()->user()->creator()->first()->podcast_episodes()->get(['id']);
+        // get comments through podcast_episode_comments order by lowest reply_count and created_at
+        //$podcastEpisodeComments = $podcastEpisodes->map(fn ($podcastEpisode) => $podcastEpisode->comments()->get())
+        //    ->flatten()
+        //    ->sortBy('created_at')
+        //    ->sortBy('reply_count');
+
+        // get all channel comments
+        //$channelComments = auth()->user()->creator()->first()->comments()->get()
+        //    ->sortBy('created_at')
+        //    ->sortBy('reply_count');
+
+        // merge all comments and return comments that haven't been replied to by the creator creator_replied = false && its not the creator's own comment
+        $comments = $videoComments->merge($streamComments)->where('creator_replied', false)->where('creator_id', '!=', auth()->user()->creator()->first()->id)
+            ->sortBy('created_at')
+            ->sortBy('reply_count');
+
+
+        return [
+            'comments' => new CommentCollection($comments),
+        ];
     }
 }
