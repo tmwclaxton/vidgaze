@@ -14,6 +14,7 @@ import ChannelAbout from "@/Pages/Viewer/Channel/Partials/ChannelAbout.vue";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 import StudioLink from "@/Pages/Viewer/Channel/Partials/StudioLink.vue";
 import {useAuthStore} from "@/Stores/AuthStore";
+import FeatureCreatorButton from "@/Components/Buttons/FeatureCreatorButton.vue";
 
 const name = 'Channel';
 const channel = ref(null);
@@ -127,10 +128,12 @@ const fetchVideos = async () => {
                         <div class="h-20 hidden sm:flex">
                             <div></div>
                         </div>
-                        <div v-if="useAuthStore().user && useAuthStore().user.creator.slug === channel.slug"
+                        <div
                             class="flex flex-row gap-x-1 ml-auto mt-2">
-                            <StudioLink text="Customise Channel" :link="route('studio.customise')"/>
-                            <StudioLink text="Manage Videos" :link="route('studio.content')"/>
+                            <StudioLink v-if="useAuthStore().user && useAuthStore().user.creator.slug === channel.slug" text="Customise Channel" :link="route('studio.customise')"/>
+                            <StudioLink v-if="useAuthStore().user && useAuthStore().user.creator.slug === channel.slug" text="Manage Videos" :link="route('studio.content')"/>
+                            <FeatureCreatorButton v-if="useAuthStore().admin" :creator_id="channel.id"/>
+
                         </div>
                     </div>
                 </div>
