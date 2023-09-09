@@ -37,7 +37,7 @@ onUnmounted(() => {
     <div
          class="min-h-screen mb-32 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <template  v-if="videos.length > 0" v-for="(video, index) in videos" :key="video.id">
-            <VideoStreamCard :item="video" />
+            <VideoStreamCard :item="video" :channel_page="true" />
         </template>
         <!--skeleton loading-->
         <template v-else v-for="i in 24">

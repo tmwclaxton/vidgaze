@@ -29,8 +29,9 @@ class CommentResource extends JsonResource
             'edited' =>  $this->created_at != $this->updated_at ? true : false,
             'pinned' => $this->pinned,
             'creator_replied' => $this->creator_replied ? true : false,
-
             'parent_comment_id' => $this->parent_comment_id,
+            'share_url' => $this->getShareUrl(),
+
 
         ];
     }

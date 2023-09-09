@@ -53,12 +53,12 @@ const slicedVideos = computed(() => {
 </script>
 <template>
     <!--first 6 videos-->
-    <VideosRow :videos="slicedVideos"
+    <VideosRow :videos="slicedVideos" :rowDivider="true" :channel_page="true"
                title="Latest Videos">
         <!--<font-awesome-icon :icon="['fas', 'burst']" class="my-auto h-6"/>-->
     </VideosRow>
     <!--popular channel videos-->
-    <VideosRow :videos="popularVideosComputed" :rowDivider="false"
+    <VideosRow :videos="popularVideosComputed" :rowDivider="false" :channel_page="true"
                title="Popular Videos">
         <!--<font-awesome-icon :icon="['fas', 'burst']" class="my-auto h-6"/>-->
     </VideosRow>

@@ -133,7 +133,6 @@ const fetchVideos = async () => {
                             <StudioLink v-if="useAuthStore().user && useAuthStore().user.creator.slug === channel.slug" text="Customise Channel" :link="route('studio.customise')"/>
                             <StudioLink v-if="useAuthStore().user && useAuthStore().user.creator.slug === channel.slug" text="Manage Videos" :link="route('studio.content')"/>
                             <FeatureCreatorButton v-if="useAuthStore().admin" :creator_id="channel.id"/>
-
                         </div>
                     </div>
                 </div>

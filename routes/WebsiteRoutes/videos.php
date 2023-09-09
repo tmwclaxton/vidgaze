@@ -12,7 +12,6 @@ Route::get('/shorts', [VideoWebController::class,'shorts'])->name('videos.shorts
 //view routes
 Route::prefix('watch/{slug}')->name('watch.')->group(function () {
     Route::get('/', [VideoWebController::class, 'show'])->name('show');
-    //Route::get('{playlist:slug}', [VideoWebController::class, 'playlist'])->name('playlist');
 });
 
 
