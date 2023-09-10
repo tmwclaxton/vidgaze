@@ -14,7 +14,8 @@ import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 
 const comments = ref(null);
-const items = ref([]);
+const item = ref(null);
+const item_analytics = ref(null);
 onMounted(() => {
     axios.get(route('api.studio.comments'))
         .then(response => {
@@ -25,7 +26,8 @@ onMounted(() => {
         });
     axios.get(route('api.studio.latest.video'))
         .then(response => {
-            items.value = response.data.data.data
+            item.value = response.data.video;
+            item_analytics.value = response.data.analytic;
         })
         .catch(error => {
             console.log(error);
@@ -56,9 +58,9 @@ onMounted(() => {
 
 
             <!--latest item performance-->
-            <div v-if="items != null && items.length > 0"
+            <div v-if="item != null"
                 class="col-span-4 row-span-2">
-                <ItemPerformance :items="items"/>
+                <ItemPerformance :item="item" :item_analytics="item_analytics"/>
             </div>
 
             <div v-if="comments != null && comments.length > 0"

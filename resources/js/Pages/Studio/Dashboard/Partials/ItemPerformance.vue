@@ -5,10 +5,14 @@ import {ref} from "vue";
 const name = "LatestItemPerformance"
 
 const props = defineProps({
-    items: {
-        type: Array,
+    item: {
+        type: Object,
         required: true
     },
+    item_analytics: {
+        type: Object,
+        required: true
+    }
 });
 
 
@@ -23,7 +27,7 @@ const props = defineProps({
 
         <div class="border-t border-zinc-200 dark:border-zinc-600 my-2 mb-3"></div>
 
-        <DashboardItem v-for="item in items" :key="item.id" :item="item" />
+        <DashboardItem :key="item.id" :item="item" :item_analytics="item_analytics"></DashboardItem>
 
     </ConsistentContentHolder>
 </template>

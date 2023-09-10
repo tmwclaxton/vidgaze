@@ -82,46 +82,31 @@ class VideoApiController extends Controller
 
         switch ($selectedCategory) {
             case 'popular':
+                // calculate ctr by dividing views by impressions avoid division by zero by adding 1 to impressions
+
+                // if view_count is 0 && impressions less than 10, set ctr to 0.8 so new videos have a chance to be seen
+                //$query->selectRaw('videos.*, IF(views = 0 && impressions < 10, 0.8, view_count / (impressions_count + 1)) as ctr');
+                //$query->orderBy('ctr', 'desc');
+                $query->selectRaw('videos.*, IF(view_count = 0 && impressions_count < 10, 0.6, ((view_count + 0.7) / (impressions_count + 1))) as ctr')
+                    ->orderBy('ctr', 'desc');
+                break;
+            case 'trending':
                 $videoViews = VideoView::select(DB::raw('video_id, sum(duration) as total_duration, count(*) as total_views, (sum(duration) * (1 + (UNIX_TIMESTAMP(created_at) - UNIX_TIMESTAMP(NOW())) / (3600 * 24 * 7)) + count(*)) as score, created_at'))
                     ->where('created_at', '>=', Carbon::now()->subWeek())
                     ->groupBy('video_id', 'created_at')
                     ->orderBy('score', 'desc')
                     ->take(500)
                     ->get();
-
                 // Get the most popular video IDs
                 $mostPopularVideoIds = $videoViews->pluck('video_id');
                 // Preserve order
                 if ($mostPopularVideoIds->count() > 0) {
                     //$query->whereIn('id', $mostPopularVideoIds)->orderByRaw(DB::raw("FIELD(id, ".implode(',', $mostPopularVideoIds->toArray()).")"));
                     $query->whereIn('id', $mostPopularVideoIds)->orderByRaw("FIELD(id, ".implode(',', $mostPopularVideoIds->toArray()).")");
-
                 }
                 break;
             case 'new':
                 $query->where('created_at', '>=', Carbon::now()->subWeek());
-                break;
-            case 'trending':
-                if (!isset($mostTrendingVideoIds)) {
-                    $videoViewInfos = DB::table('video_interactions')
-                        ->select('video_id', DB::raw('SUM(CASE WHEN liked = "like" THEN 1 ELSE 0 END) as likes'), DB::raw('SUM(CASE WHEN liked = "dislike" THEN 1 ELSE 0 END) as dislikes'))
-                        ->where('created_at', '>=', Carbon::now()->subWeek())
-                        ->groupBy('video_id')
-                        ->limit(500)
-                        ->get();
-
-                    $mostTrendingVideoIds = $videoViewInfos->sortByDesc(function($videoId) {
-                        return $videoId->likes - $videoId->dislikes;
-                    })->pluck('video_id');
-
-                }
-
-                // Preserve order
-                if ($mostTrendingVideoIds->count() > 0) {
-                    //$query->whereIn('id', $mostTrendingVideoIds)->orderByRaw(DB::raw("FIELD(id, " . implode(',', $mostTrendingVideoIds->toArray()) . ")"));
-                    $query->whereIn('id', $mostTrendingVideoIds)->orderByRaw("FIELD(id, " . implode(',', $mostTrendingVideoIds->toArray()) . ")");
-
-                }
                 break;
             case 'random':
                 $query->inRandomOrder();
@@ -138,11 +123,7 @@ class VideoApiController extends Controller
                 break;
             default:
                 return response()->json(['error' => 'Invalid category'], 400);
-
         }
-
-
-
 
         // Only get public videos
         $query->where('visibility', '=','public');

@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('slug')->unique()->index();
             $table->foreignId('creator_id')->constrained()->cascadeOnDelete();
             $table->enum('preferred_source', Platform::getSupportedPlatforms()->toArray()); //use enum
-
             $table->string('title')->index();
             $table->text('description')->nullable();
             $table->integer('karma')->default(0)->index();
@@ -42,8 +41,6 @@ return new class extends Migration
             $table->string('language', 5)->nullable()->index(); //ISO 639-3:2007
             $table->string('region', 3)->nullable()->index();
             $table->enum('audience', array_map(fn($audience) => $audience->value, Audience::getAll()))->default('all');
-
-
             $table->timestamps();
         });
     }
