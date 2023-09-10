@@ -51,7 +51,29 @@ class Comment extends Model
             default:
                 return null;
         }
+    }
 
+    public function parentItem() {
+        foreach(['video', 'podcast', 'stream', 'channel'] as $objectType) {
+            if($this->hasOneThroughObject($objectType)) {
+                return [
+                    'parentType' => $objectType,
+                    'parent' => $this->hasOneThroughObject($objectType)
+                ];
+            }
+        }
+    }
+
+
+    // returns the comment's share url depending on the object type
+    public function getShareUrl() {
+        $parent = $this->parentItem();
+        return match ($parent['parentType']) {
+            'video' => route('watch.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
+            'stream' => route('stream.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
+            'channel' => route('channel.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
+            default => null,
+        };
     }
 
 

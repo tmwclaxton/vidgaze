@@ -70,7 +70,7 @@ function togglePlaylistModal()  {
     }
     playlistModalStore.videoIds = [item.value.id];
     if (!playlistToggled.value) {
-        playlistModalStore.getPlaylists();
+        playlistModalStore.getMyPlaylists();
         playlistModalStore.showMenu = true;
     } else {
         playlistModalStore.showMenu = false;
@@ -218,15 +218,16 @@ onUnmounted(() => {
                         <div class=" py-6 ">
                             <div v-if="ready" class="flex justify-between">
                                 <span class="flex flex-row   w-full overflow-hidden">
-                                    <a  href="/channel/" class="flex-shrink-0">
+                                    <Link :href="route('channel.show', item.creator.slug)"
+                                        class="flex-shrink-0">
                                         <img class="hover:cursor-pointer my-auto object-cover w-11 h-11 mr-2 rounded-full flex-shrink-0"
                                              v-bind:src="item.creator.avatar_url" alt="Profile image"/>
-                                    </a>
+                                    </Link>
                                     <div class="pl-1 flex flex-col my-auto">
-                                        <a href="/channel/"
+                                        <Link :href="route('channel.show', item.creator.slug)"
                                            class="text-sm font-bold hover:cursor-pointer text dark:textDark w-44 xs:w-full break-words">
                                             <span v-text="item.creator.name"></span>
-                                        </a>
+                                        </Link>
                                         <p class="text-xs text dark:textDark leading-4" v-text="item.creator.subscriber_count"/>
                                     </div>
 

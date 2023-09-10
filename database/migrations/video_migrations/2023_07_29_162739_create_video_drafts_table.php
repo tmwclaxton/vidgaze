@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Audience;
+use App\Enums\Platform;
 use App\Enums\Visibility;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,9 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('slug')->unique()->index();
             $table->foreignId('creator_id')->constrained()->cascadeOnDelete();
-
             $table->string('video_path')->nullable();
-
             $table->string('thumbnail_path')->nullable();
             $table->string('title')->default('Untitled Video');
             $table->text('description')->nullable();
@@ -25,6 +24,7 @@ return new class extends Migration {
             $table->string('region', 3)->nullable();
             $table->enum('audience', array_map(fn($audience) => $audience->value, Audience::getAll()))->default(Audience::ALL->value);
             $table->enum('visibility', array_map(fn($visibility) => $visibility->value, Visibility::getAll()))->default(Visibility::PUBLIC->value);
+            $table->enum('preferred_source', Platform::getSupportedPlatforms()->toArray()); //use enum
             $table->string('platforms')->nullable();
 
             $table->timestamps();

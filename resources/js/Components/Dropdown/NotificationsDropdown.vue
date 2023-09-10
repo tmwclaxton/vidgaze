@@ -36,7 +36,7 @@ onMounted(() => {
             </template>
 
             <template #content>
-                <div class="flex flex-col gap-y-1 block w-full px-2 py-1 text-left text-sm">
+                <div class="flex flex-col gap-y-1 block w-full px-2 py-1 text-left text-sm ">
 
                     <div class="flex justify-between pb-4 pt-2 px-4 text dark:textDark w-full">
                         <span class="font-bold text-xl  ">Notifications</span>
@@ -47,7 +47,7 @@ onMounted(() => {
 
                     <hr class="pointer-events-none flex-grow border-1 border-zinc-300 dark:border-zinc-700 rounded-full" />
 
-                    <div class="flex flex-col gap-y-1 block w-full px-2 py-1 text-left text-sm ">
+                    <div class="flex flex-col gap-y-1 block w-full px-2 py-1 text-left text-sm h-96 overflow-auto">
                         <NotificationCard v-for="item in notifications" :item="item" :key="item.id"/>
                     </div>
 

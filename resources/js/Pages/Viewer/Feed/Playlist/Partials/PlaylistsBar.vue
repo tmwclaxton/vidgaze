@@ -26,10 +26,10 @@ onMounted(async () => {
     {
         usePlaylistModalStore().videoIds = [];
         if (useAuthStore().user !== null) {
-            await usePlaylistModalStore().getPlaylists('all');
+            await usePlaylistModalStore().getMyPlaylists('all');
         } else {
             watch(() => useAuthStore().user, async () => {
-                await usePlaylistModalStore().getPlaylists('all')
+                await usePlaylistModalStore().getMyPlaylists('all')
             });
         }
     }

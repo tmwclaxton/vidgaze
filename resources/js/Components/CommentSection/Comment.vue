@@ -84,13 +84,12 @@ const noRepliesText = computed(() => {
 
 
                             <div class="w-9 mr-3 flex-shrink-0 ">
-                                <a href="/channel/{{props.comment.owner.slug}}">
-                                    <!--v-bind:href="route('channel', props.comment.owner.slug)"-->
+                                <Link :href="route('channel.show', props.comment.owner.slug)">
                                     <img
                                         class=" z-1 relative hover:cursor-pointer inline object-cover w-9 h-9  rounded-full"
                                         v-bind:src="props.comment.owner.avatar_url"
                                         alt="Profile image"/>
-                                </a>
+                                </Link>
                             </div>
 
 
@@ -99,10 +98,11 @@ const noRepliesText = computed(() => {
 
                                 <div class=" flex flex-row items-center">
                                     <p class="select-none">
-                                        <a href="/channel/{{props.comment.owner.slug}}">
+                                        <Link :href="route('channel.show', props.comment.owner.slug)">
+
                                             <span class="text-sm   font-semibold hover:cursor-pointer  leading-tight  "
                                                   v-text="props.comment.owner.name"/>
-                                        </a>
+                                        </Link>
                                         <span class="mx-2 text dark:textDark font-bold leading-tight"> · </span>
                                         <span class="text-sm font-semibold     leading-tight"
                                               v-text="props.comment.created_at"/>

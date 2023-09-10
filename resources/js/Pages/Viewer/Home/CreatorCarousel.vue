@@ -55,7 +55,7 @@ onMounted(() => {
             response.data.creators.data.forEach((item) => {
                 carouselItems.value.push({
                     imgSrc: item.banner_url,
-                    link: ''
+                    link: route('channel.show', {slug: item.slug})
                 });
             });
         })
@@ -82,7 +82,7 @@ onMounted(() => {
         <div ref="carouselWrapper"
              class="overflow-y-hidden overflow-x-hidden snap-mandatory snap-x  h-full w-full flex flex-row relative transition-all delay-75 duration-700 ease-in-out  opacity-100 point-events-auto" >
             <!-- Item -->
-            <a class="flex-shrink-0 h-full w-full relative snap-center  "
+            <Link class="flex-shrink-0 h-full w-full relative snap-center  "
                  v-for="(item, index) in carouselItems"
                  :key="index"
                  :class="{'    ': activeIndex !== index,'  ': activeIndex === index}"
@@ -91,7 +91,7 @@ onMounted(() => {
                 <img :src="item.imgSrc" class="block w-full h-full max-h-72 cursor-pointer" />
 
                  <!--<div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/50 h-screen w-full"></div>-->
-            </a>
+            </Link>
         </div>
         <!-- Slider controls -->
         <div class="absolute z-30 flex space-x-3 -translate-x-1/2 bottom-5 left-1/2 pointer-events-none cursor-pointer ">

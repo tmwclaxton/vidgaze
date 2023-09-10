@@ -57,7 +57,7 @@ const debouncedFetchVideos = debounce(() => {
 
 const fetchTrendingVideos = async () => {
     trending_videos.value = [];
-    await contentRoutesStore.getVideos('trending', 6)
+    await contentRoutesStore.getVideos('popular', 6)
         .then(response => {
             trending_videos.value = response
         }).catch(error => {

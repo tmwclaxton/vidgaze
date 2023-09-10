@@ -57,6 +57,10 @@ class SearchApiController extends Controller
         $playlists = new PlaylistCollection($playlists);
         $podcasts = new PodcastCollection($podcasts);
 
+        // add 1 to impressions_count for each video in 1 query
+        $video_ids = $videos->pluck('id');
+        Video::whereIn('id', $video_ids)->increment('impressions_count');
+
         //return the creators, videos, streams, playlists, podcasts
         return response()->json([
             'creators' => $creators,

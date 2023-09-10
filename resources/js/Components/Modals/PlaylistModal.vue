@@ -18,7 +18,7 @@ import CreatePlaylistPartial from "@/Components/Modals/Partials/CreatePlaylistPa
 const toastStore =  useToastStore();
 
 onMounted(() => {
-    playlistModalStore.getPlaylists();
+    playlistModalStore.getMyPlaylists();
 });
 
 const name = "PlaylistModal";

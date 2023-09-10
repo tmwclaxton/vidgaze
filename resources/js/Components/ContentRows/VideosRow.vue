@@ -8,11 +8,13 @@
 
     <!--Show a row of popular videos-->
     <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        <template v-for="(video, index) in videos" :key="video.id">
-            <VideoStreamCard :item="video" />
+        <template v-if="videos !== null && videos.length > 0"
+            v-for="(video, index) in videos"
+                  :key="video.id">
+            <VideoStreamCard v-if="video != undefined" :item="video" :channel_page="channel_page" />
         </template>
         <!--skeleton loading-->
-        <template v-if="videos === null || videos.length === 0" v-for="i in 6">
+        <template v-else v-for="i in 6">
             <VideoStreamSkeleton />
         </template>
     </div>
@@ -29,9 +31,14 @@ import RowDivider from "@/Components/General/RowDivider.vue";
 const name = 'VideosRow';
 const props = defineProps({
     videos: {
-        type: Object,
+        type: Array,
         required: false,
         default: null
+    },
+    channel_page: {
+        type: Boolean,
+        required: false,
+        default: false
     },
     title: {
         type: String,
@@ -45,7 +52,3 @@ const props = defineProps({
     }
 });
 </script>
-
-<style scoped>
-
-</style>

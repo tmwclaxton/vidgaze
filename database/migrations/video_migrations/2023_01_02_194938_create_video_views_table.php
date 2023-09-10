@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('viewer_id')->references('id')->on('creators')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('video_id')->references('id')->on('videos')->constrained()->cascadeOnDelete();
             $table->integer('duration')->unsigned()->nullable();
+            $table->integer('end_point')->unsigned()->nullable();
             $table->string('session_id');
             $table->timestamps();
         });

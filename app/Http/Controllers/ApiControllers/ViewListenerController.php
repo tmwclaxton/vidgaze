@@ -112,7 +112,7 @@ class ViewListenerController extends Controller
         }
 
         // Record the view model
-        [$durationUpdated, $recordVideoViewResponse] = $this->recordVideoView($liveClient->viewer_id, $item_id, $liveClient->session_id, $watch_duration);
+        [$durationUpdated, $recordVideoViewResponse] = $this->recordVideoView($liveClient->viewer_id, $item_id, $liveClient->session_id, $watch_duration, $view_point);
 
         //check if live viewer count has been updated
         if (($liveClient->live_viewer_counted === false)) {
@@ -220,7 +220,7 @@ class ViewListenerController extends Controller
         return false;
     }
 
-    private function recordVideoView(mixed $viewer_id, string $item_id, string $session_id, int $watch_duration): array
+    private function recordVideoView(mixed $viewer_id, string $item_id, string $session_id, int $watch_duration, int $viewPoint): array
     {
         // Retrieve the view for the given viewer, video, and session within the last 5 minutes otherwise create a new view
         $view = VideoView::where([
@@ -243,13 +243,15 @@ class ViewListenerController extends Controller
                     'viewer_id' => $viewer_id,
                     'video_id' => $item_id,
                     'session_id' => $session_id,
-                    'duration' => $watch_duration
+                    'duration' => $watch_duration,
+                    'end_point' => $viewPoint,
                 ]);
             } else {
                 $videoView = VideoView::create([
                     'video_id' => $item_id,
                     'session_id' => $session_id,
-                    'duration' => $watch_duration
+                    'duration' => $watch_duration,
+                    'end_point' => $viewPoint,
                 ]);
             }
             $videoView->save();

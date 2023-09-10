@@ -89,7 +89,7 @@ const updateChannelDetails = () => {
                                              placeholder="Channel bio"
                                              for="channel-bio"
                                              :enter-submit="false"
-                                             maxlength="1000"
+                                             :maxlength="1000"
                             />
 
                             <!--channel profile image-->
@@ -131,7 +131,7 @@ const updateChannelDetails = () => {
                                              label="Contact Email"
                                              placeholder="Contact Email"
                                              for="contact-email"
-                                             maxlength="320"
+                                             :maxlength="320"
                             />
 
                         </div>

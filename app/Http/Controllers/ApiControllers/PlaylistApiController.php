@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaylistCollection;
 use App\Http\Resources\PlaylistResource;
 use App\Http\Resources\VideoCollection;
+use App\Models\CreatorModels\Creator;
 use App\Models\PlaylistModels\Playlist;
 use App\Models\PlaylistModels\PlaylistVideo;
 use Illuminate\Http\JsonResponse;
@@ -216,4 +217,28 @@ class PlaylistApiController extends Controller
 
     }
 
+    /** channel index
+     * @param Request $request
+     * @return array
+     */
+    public function channelIndex(Request $request) {
+        $request->validate([
+            'channel_id' => 'required|exists:creators,id|integer',
+            'page' => 'required|integer',
+            'per_page' => 'required|integer',
+        ]);
+
+        // return public playlists for that channel
+        $playlists = Playlist::where([
+            ['creator_id', '=', $request->channel_id],
+            ['visibility', '=', 'public'],
+        ])->orderByDesc('updated_at')->paginate($request->per_page);
+
+        $playlists = new PlaylistCollection($playlists);
+
+        return [
+            'playlists' => $playlists,
+        ];
+
+    }
 }
