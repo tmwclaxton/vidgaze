@@ -6,7 +6,7 @@ import InputLabel from "@/Components/Inputs/InputLabel.vue";
 import TextInput from "@/Components/Inputs/TextInput.vue";
 import InputError from "@/Components/Inputs/InputError.vue";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
-import Title from "@/Components/General/TitleComponent.vue";
+import TitleComponent from "@/Components/General/TitleComponent.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import TextArea from "@/Components/Inputs/TextArea.vue";
 import TagInput from "@/Components/Inputs/TagInput.vue";
@@ -15,6 +15,7 @@ import DateInput from "@/Components/Inputs/DateInput.vue";
 import YouTubeIcon from '#icons/youtube.svg';
 import DailyMotionIcon from '#icons/dailymotion.svg';
 import VimeoIcon from '#icons/vimeo.svg';
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 
 let categories = ref([]);
@@ -121,20 +122,16 @@ const selectedFileThumbnail = () =>{
     form.thumbnail = thumbnailValue.value;
 }
 
-
-// function getImageURL(image) {
-//     return URL.createObjectURL(image);
-// }
 </script>
 
 <template>
 
         <Head title="Upload Video" />
 
-        <ConsistentPadding class="mt-4">
-            <Title text="Upload Video" class="my-4 mb-8">
-<!--                <StreamIcon class="w-6 h-6 my-auto"/>-->
-            </Title>
+        <ConsistentPadding >
+            <TitleComponent text="Upload Video" class="">
+                <font-awesome-icon :icon="['fas', 'upload']"  class="w-6 h-6 my-auto"/>
+            </TitleComponent>
         <form @submit.prevent="" class="space-y-4 sm:min-w-[20rem] w-full sm:px-6">
             <div>
                 <InputLabel class="mb-1" for="title" value="Title"/>

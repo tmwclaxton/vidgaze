@@ -22,8 +22,9 @@ const videos = ref([]);
 <template>
     <Head title="Studio Content" />
 
-    <ConsistentPadding class="-mt-4">
+    <ConsistentPadding >
         <TitleComponent :text="'Channel Content'">
+            <font-awesome-icon :icon="['fas', 'clapperboard']" class="w-6 h-6 my-auto"/>
         </TitleComponent>
 
 <!--        table-->
@@ -64,13 +65,13 @@ const videos = ref([]);
                         class="border-b-2 hover:bg-zinc-200 dark:hover:bg-zinc-900 dark:border-zinc-800">
                         <td>
                             <div class="ml-2 my-2 flex space-x-3 max-h-[90px] max-w-[300px]">
-                                <a :href="route('studio.video.draft.edit', videoDraft.slug)">
+                                <Link :href="route('studio.video.draft.edit', videoDraft.slug)">
                                     <img src="https://picsum.photos/1600/900" class="w-[160px] h-[90px] rounded-lg">
-                                </a>
+                                </Link>
                                 <div class="max-w-[120px]">
-                                    <a :href="route('studio.video.draft.edit', videoDraft.slug)">
+                                    <Link :href="route('studio.video.draft.edit', videoDraft.slug)">
                                         <h3 class="font-semibold text-lg hover:underline">{{ videoDraft.title }}</h3>
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </td>
