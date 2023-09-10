@@ -205,10 +205,12 @@ class VideoApiController extends Controller
             }
         }
 
+        // add 1 to impressions_count for each video in 1 query
+        $video_ids = $videos->pluck('id');
+        Video::whereIn('id', $video_ids)->increment('impressions_count');
+
         // Retrieve the videos
-        //if ($videos->count() > 0) {
-            $videos = new VideoCollection($videos);
-        //}
+        $videos = new VideoCollection($videos);
 
 
 

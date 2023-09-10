@@ -14,10 +14,18 @@ import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 
 const comments = ref(null);
+const items = ref([]);
 onMounted(() => {
     axios.get(route('api.studio.comments'))
         .then(response => {
             comments.value = response.data.comments;
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    axios.get(route('api.studio.latest.video'))
+        .then(response => {
+            items.value = response.data.data.data
         })
         .catch(error => {
             console.log(error);
@@ -33,7 +41,7 @@ onMounted(() => {
             <font-awesome-icon :icon="['fas', 'house']" class="w-6 h-6 my-auto"/>
         </Title>
 
-        <div class="flex flex-col sm:grid sm:grid-cols-6 sm:grid-rows-6 gap-4 -mt-2">
+        <div class="flex flex-col sm:grid sm:grid-cols-6 sm:grid-rows-4 gap-4 -mt-2">
             <!--channel overview -->
             <div class="col-span-2 row-span-2">
                 <ChannelOverview/>
@@ -48,8 +56,9 @@ onMounted(() => {
 
 
             <!--latest item performance-->
-            <div class="col-span-4 row-span-2">
-                <ItemPerformance/>
+            <div v-if="items != null && items.length > 0"
+                class="col-span-4 row-span-2">
+                <ItemPerformance :items="items"/>
             </div>
 
             <div v-if="comments != null && comments.length > 0"

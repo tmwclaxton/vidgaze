@@ -127,7 +127,6 @@ const dotsIconShow = computed(() => {
                                         <!--<ClockIcon class="w-3 h-3 mr-1 my-auto dark:hidden"/>-->
                                         <ClockFillIcon class="w-3 h-3 mr-1 my-auto hid den dark: flex"/>
                                         <p class="line-clamp-1 " v-text="(item.time_published)"/>
-
                                     </div>
 
                                     <div v-if="item.preferred_source != null" class=" info-tag dark:info-tag-dark flex flex-row gap-2 items-center align-middle pb-0.5 ">

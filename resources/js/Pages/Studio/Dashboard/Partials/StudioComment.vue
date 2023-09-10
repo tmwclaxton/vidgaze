@@ -12,7 +12,7 @@ const props = defineProps({
         <Link v-bind:href="comment.share_url"  class="absolute top-0 left-0 h-full w-full z-0">
 
         </Link>
-        <div class="pointer-events-none relative pointer-events-none flex flex-row w-full h-full  bg-zinc-100 dark:bg-zinc-900 p-4 px-3 rounded-xl">
+        <div class="pointer-events-none relative pointer-events-none flex flex-row w-full h-full  bg-zinc-100 dark:bg-zinc-800 p-4 px-3 rounded-xl">
 
 
             <div class="w-9 mr-3 flex-shrink-0 ">

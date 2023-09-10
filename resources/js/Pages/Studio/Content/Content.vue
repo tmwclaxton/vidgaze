@@ -6,13 +6,16 @@ import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import TitleComponent from "@/Components/General/TitleComponent.vue";
 import LikeDislikeBar from "@/Pages/Studio/Content/Partials/LikeDislikeBar.vue";
 
-let content = ref({});
 
 onBeforeMount(async () => {
-    content.value = await axios.get(route("api.studio.content")).then((response) => {
-        return response.data;
+    await axios.get(route("api.studio.content")).then((response) => {
+        videos.value = response.data.videos.data;
+        video_drafts.value = response.data.videoDrafts.data
     });
 });
+
+const video_drafts = ref([]);
+const videos = ref([]);
 
 </script>
 
@@ -21,7 +24,6 @@ onBeforeMount(async () => {
 
     <ConsistentPadding class="-mt-4">
         <TitleComponent :text="'Channel Content'">
-            <StreamIcon class="w-6 h-6 my-auto"/>
         </TitleComponent>
 
 <!--        table-->
@@ -58,7 +60,7 @@ onBeforeMount(async () => {
                 </tr>
                 </thead>
                 <tbody class="h-full">
-                    <tr v-for="videoDraft in content.videoDrafts"
+                    <tr v-for="videoDraft in video_drafts"
                         class="border-b-2 hover:bg-zinc-200 dark:hover:bg-zinc-900 dark:border-zinc-800">
                         <td>
                             <div class="ml-2 my-2 flex space-x-3 max-h-[90px] max-w-[300px]">
@@ -88,7 +90,7 @@ onBeforeMount(async () => {
                             N/A
                         </td>
                     </tr>
-                    <tr v-for="video in content.videos"
+                    <tr v-for="video in videos"
                         class="border-b-2 hover:bg-zinc-200 dark:hover:bg-zinc-900 dark:border-zinc-800">
                         <td>
                             <div class="ml-2 my-2 flex space-x-3 max-h-[90px] max-w-[300px]">

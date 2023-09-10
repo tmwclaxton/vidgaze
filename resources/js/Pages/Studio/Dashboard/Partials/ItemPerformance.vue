@@ -1,3 +1,20 @@
+<script setup>
+import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
+import DashboardItem from "@/Pages/Studio/Dashboard/Partials/DashboardItem.vue";
+import {ref} from "vue";
+const name = "LatestItemPerformance"
+
+const props = defineProps({
+    items: {
+        type: Array,
+        required: true
+    },
+});
+
+
+
+</script>
+
 <template>
     <ConsistentContentHolder class="p-5 h-full">
 
@@ -6,23 +23,8 @@
 
         <div class="border-t border-zinc-200 dark:border-zinc-600 my-2 mb-3"></div>
 
-        <div class="w-full grid grid-cols-3">
-            <div class="cols-1">
-                <img src="https://picsum.photos/1600/900" class="w-full aspect-[21/12] rounded-lg shadow">
-            </div>
-            <div class="col-2">
-
-            </div>
-        </div>
+        <DashboardItem v-for="item in items" :key="item.id" :item="item" />
 
     </ConsistentContentHolder>
 </template>
 
-<script setup>
-import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
-const name = "LatestItemPerformance"
-</script>
-
-<style scoped>
-
-</style>

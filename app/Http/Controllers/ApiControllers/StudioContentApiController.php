@@ -4,35 +4,110 @@ namespace App\Http\Controllers\ApiControllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CommentCollection;
+use App\Http\Resources\VideoCollection;
+use App\Http\Resources\VideoDraftCollection;
 use App\Models\VideoModels\VideoView;
 use App\Models\VideoViews;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class StudioContentApiController extends Controller
 {
-    public function index()
+    public function content(Request $request)
     {
-        $creator = auth()->user()->creator()->first();
-        $videoDrafts = $creator->video_drafts()->get(['id', 'title', 'description', 'slug', 'thumbnail_path', 'visibility', 'created_at']);
-        $videos = $creator->videos()->get(['id', 'title', 'description', 'slug', 'thumbnail_url', 'visibility','duration', 'time_uploaded', 'time_published', 'view_count', 'comment_count', 'like_count', 'dislike_count'])
-            ->map(fn ($video) => [
-                'id' => $video->id,
-                'title' => $video->title,
-                'description' => $video->description,
-                'slug' => $video->slug,
-                'thumbnail_url' => $video->thumbnail_url,
-                'visibility' => $video->visibility,
-                'duration' => $video->duration,
-                'time_uploaded' => Carbon::create($video->time_uploaded)->format('j M Y'),
-                'time_published' => $video->time_published ? Carbon::create($video->time_published)->format('j M Y') : null,
-                'view_count' => $video->view_count,
-                'comment_count' => $video->comment_count,
-                'like_count' => $video->like_count,
-                'dislike_count' => $video->dislike_count,
-            ]);
+        $request->validate([
+            'page' => 'nullable|integer',
+            'per_page' => 'nullable|integer',
+        ]);
+        $page = $request->page ?? 1;
+        $perPage = $request->per_page ?? 15;
 
-        return ['videoDrafts' => $videoDrafts, 'videos' => $videos];
+        $creator = auth()->user()->creator()->first();
+
+
+        $videoDrafts = $creator->video_drafts()
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+        $videos = $creator->videos()
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return [
+            'videoDrafts' => new VideoDraftCollection($videoDrafts),
+            'videos' => new VideoCollection($videos),
+            'streams' => null,
+            'podcasts_episodes' => null,
+
+        ];
+    }
+
+    public function latestVideo(Request $request) {
+        $request->validate([
+            'page' => 'nullable|integer',
+            'per_page' => 'nullable|integer',
+        ]);
+        $page = $request->page ?? 1;
+        $perPage = $request->per_page ?? 1;
+
+        $creator = auth()->user()->creator()->first();
+
+        $videos = $creator->videos()
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return new VideoCollection($videos);
+    }
+
+    public function videoAnalytic(Request $request) {
+        $request->validate([
+            'page' => 'nullable|integer',
+            'per_page' => 'nullable|integer',
+            'video_id' => 'required|integer',
+        ]);
+        $page = $request->page ?? 1;
+        $perPage = $request->per_page ?? 15;
+
+        $creator = auth()->user()->creator()->first();
+        $video = $creator->videos()->where('id', $request->video_id)->first();
+        if (!$video) {
+            return response()->json(['message' => 'Video not found'], 404);
+        }
+        // check if video belongs to this creator
+        if ($video->creator_id != $creator->id) {
+            return response()->json(['message' => 'Not authorized'], 401);
+        }
+
+        // return this month's views avg and total watch time
+        $joined = VideoView::join('videos', 'video_views.video_id', '=', 'videos.id')
+            ->where('videos.creator_id', auth()->user()->creator()->first()->id)
+            ->where('video_views.video_id', $request->video_id)
+            ->get(['video_views.duration', 'video_views.video_id', 'video_views.viewer_id', 'video_views.created_at', 'videos.title', 'videos.slug']);
+
+        // get this channels' last month views
+        $views = $joined->where('created_at', '>=', Carbon::now()->subMonth() )->count();
+        $views = number_format_short($views)  . " " . Str::plural('Views', $views);
+        // get average view duration
+        $averageViewDuration = $joined->where('created_at', '>=', Carbon::now()->subMonth() )->avg('duration') ;
+        if ($averageViewDuration) {
+            $averageViewDuration = convertDuration($averageViewDuration) . ' Avg View Duration';
+            $averagePercentageWatched = $averageViewDuration / $video->duration;
+        } else {
+            $averageViewDuration = null;
+            $averagePercentageWatched = null;
+        }
+        // get total watch time
+        $totalWatchTime = $joined->sum('duration');
+
+        return [
+            'views' => $views,
+            'avg_view_duration' => $averageViewDuration,
+            'avg_percentage_watched' => $averagePercentageWatched,
+            'total_watch_time' => convertDuration($totalWatchTime)
+        ];
+
+
+
     }
 
     public function analytics() {

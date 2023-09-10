@@ -36,6 +36,7 @@ return new class extends Migration
             $table->integer('comment_count')->default('0')->unsigned();
             $table->integer('report_count')->default('0')->unsigned();
             $table->integer('view_count')->default('0')->unsigned();
+            $table->integer('impressions_count')->default('0')->unsigned();
             $table->integer('live_viewer_count')->unsigned()->default('0')->index();
             $table->string('thumbnail_url');
             $table->string('language', 5)->nullable()->index(); //ISO 639-3:2007

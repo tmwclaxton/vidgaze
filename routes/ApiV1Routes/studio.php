@@ -21,7 +21,10 @@ Route::middleware('auth:sanctum')->name('studio.')->prefix('/studio')->group(fun
     Route::get('link/{platform}', [LinkingApiController::class, 'link'])->name('link');
     Route::delete('unlink/{platform}', [LinkingApiController::class, 'unlink'])->name('unlink');
 
-    Route::get('content', [StudioContentApiController::class, 'index'])->name('content');
+    Route::get('content', [StudioContentApiController::class, 'content'])->name('content');
+    Route::get('latest/video', [StudioContentApiController::class, 'latestVideo'])->name('latest.video');
+    Route::get('video/analytic', [StudioContentApiController::class, 'videoAnalytic'])->name('video.analytic');
+
     Route::get('analytics', [StudioContentApiController::class, 'analytics'])->name('analytics');
     Route::get('comments', [StudioContentApiController::class, 'comments'])->name('comments');
 
