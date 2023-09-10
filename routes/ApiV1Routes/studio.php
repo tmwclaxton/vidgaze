@@ -10,8 +10,8 @@ Route::middleware('auth:sanctum')->name('studio.')->prefix('/studio')->group(fun
 //    Route::get('import/{platform}', [ImportingController::class,'import'])->name('import');
 //    Route::get('create_account/import/{platform}', [ImportingController::class,'create_account'])->middleware("guest");
 
-    Route::post('video/{slug}/upload', [VideoDraftApiController::class, 'upload'])->name("video.upload");
     Route::post('video/prime', [VideoDraftApiController::class, 'primeNewVideoDraft'])->name("video.prime");
+    Route::post('video/{slug}/upload', [VideoDraftApiController::class, 'upload'])->name("video.upload");
     Route::get('video-drafts/{slug}/get-edit', [VideoDraftApiController::class, 'getEdit'])->name("video.draft.getEdit");
     Route::put('video-drafts/{slug}/update', [VideoDraftApiController::class, 'update'])->name("video.draft.update");
     Route::post('video/{slug}/publish',  [VideoDraftApiController::class, 'publish'])->name("video.publish");
