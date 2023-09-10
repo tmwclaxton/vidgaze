@@ -59,7 +59,7 @@ onMounted(() => {
 
             <!--latest item performance-->
             <div v-if="item != null"
-                class="col-span-4 row-span-2">
+                class="col-span-4 row-span-2 overflow-y-auto">
                 <ItemPerformance :item="item" :item_analytics="item_analytics"/>
             </div>
 

@@ -20,7 +20,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <ConsistentContentHolder class="p-5 h-full">
+    <ConsistentContentHolder class="p-5 h-max">
 
         <p class="font-bold text-lg">Latest Video Performance</p>
 
