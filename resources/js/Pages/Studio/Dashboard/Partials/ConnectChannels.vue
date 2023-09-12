@@ -11,7 +11,7 @@
         </StudioLinkButton>
         <StudioLinkButton platform="dailymotion" :external_id="useAuthStore().sources.dailymotion"
                           :text="!useAuthStore().sources.dailymotion ? 'Sign in with Dailymotion' : useAuthStore().sources.dailymotion"
-                          buttonClasses="bg-zinc-200 hover:bg-zinc-300">
+                          buttonClasses="bg-zinc-100 hover:bg-zinc-200">
             <DailyMotionIcon class="w-6 h-6 my-auto  "/>
         </StudioLinkButton>
         <StudioLinkButton platform="twitch" :external_id="useAuthStore().sources.twitch"
@@ -24,6 +24,21 @@
                           buttonClasses="bg-blue-200 hover:bg-blue-300">
             <VimeoIcon class="w-6 h-6 my-auto "/>
         </StudioLinkButton>
+        <StudioLinkButton platform="tiktok" :external_id="useAuthStore().sources.tiktok"
+                          :text="!useAuthStore().sources.tiktok ? 'Sign in with TikTok' : useAuthStore().sources.tiktok"
+                          buttonClasses="bg-white hover:bg-zinc-100">
+            <TikTokIcon class="w-6 h-6 my-auto "/>
+        </StudioLinkButton>
+        <StudioLinkButton platform="rumble" :external_id="useAuthStore().sources.rumble"
+                          :text="!useAuthStore().sources.rumble ? 'Sign in with Rumble' : useAuthStore().sources.rumble"
+                          buttonClasses="bg-green-200 hover:bg-green-300">
+            <RumbleIcon class="w-6 h-6 my-auto "/>
+        </StudioLinkButton>
+        <StudioLinkButton platform="facebook" :external_id="useAuthStore().sources.facebook"
+                          :text="!useAuthStore().sources.facebook ? 'Sign in with FaceBook' : useAuthStore().sources.facebook"
+                          buttonClasses="bg-blue-300 hover:bg-blue-400">
+            <FacebookIcon class="w-6 h-6 my-auto "/>
+        </StudioLinkButton>
 
     </div>
 </template>
@@ -34,6 +49,9 @@ import YouTubeIcon from '#icons/youtube.svg';
 import TwitchIcon from '#icons/twitch.svg';
 import DailyMotionIcon from '#icons/dailymotion.svg';
 import VimeoIcon from '#icons/vimeo.svg';
+import TikTokIcon from '#icons/tiktok.svg';
+import RumbleIcon from '#icons/rumble.svg';
+import FacebookIcon from '#icons/facebook.svg';
 import {useAuthStore} from "@/Stores/AuthStore";
 
 const name = 'ConnectChannels';

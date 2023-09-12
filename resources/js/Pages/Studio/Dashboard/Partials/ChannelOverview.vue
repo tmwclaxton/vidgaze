@@ -28,7 +28,7 @@ onMounted(() => {
             <div class="border-t border-zinc-200 dark:border-zinc-600 my-2"></div>
 
             <div class="flex flex-col">
-                <p class="font-bold mb-3 ">VidGaze Channel Analytics</p>
+                <p class="font-bold mb-3 mt-4">VidGaze Channel Analytics</p>
 
                 <div class=" flex flex-row flex-wrap gap-2 w-full">
                     <ConsistentContentHolder class="flex flex-row align-middle justify-center w-max px-5">

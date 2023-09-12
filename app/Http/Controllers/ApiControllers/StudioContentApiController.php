@@ -49,6 +49,12 @@ class StudioContentApiController extends Controller
             ->orderBy('created_at', 'desc')
             ->first();
         // add video_id to request
+        if (!$video) {
+            return [
+                'video' => null,
+                'analytic' => null,
+            ];
+        }
         $request->merge(['video_id' => $video->id]);
         $analytic = $this->videoAnalyticArray($request);
         return [
@@ -148,7 +154,7 @@ class StudioContentApiController extends Controller
         $joined = VideoView::join('videos', 'video_views.video_id', '=', 'videos.id')
             ->where('videos.creator_id', auth()->user()->creator()->first()->id)
             ->where('video_views.video_id', $request->video_id)
-            ->get(['video_views.duration','video_views.end_point', 'video_views.video_id', 'video_views.created_at', 'videos.title', 'videos.slug']);
+            ->get(['video_views.duration','video_views.end_point', 'video_views.video_id', 'video_views.created_at', 'videos.title', 'videos.slug', 'videos.impressions_count']);
 
         // get this channels' last month views
         $views = $joined->where('created_at', '>=', Carbon::now()->subMonth() )->count();
@@ -158,9 +164,9 @@ class StudioContentApiController extends Controller
         $averageViewDuration = $joined->where('created_at', '>=', Carbon::now()->subMonth() )->avg('duration') ;
         if ($averageViewDuration) {
             // change average view duration to a numeric value
-            $averageViewDuration = convertDuration(intval($averageViewDuration)) . ' Avg View Duration';
+            $averageViewDuration = convertDuration(intval($averageViewDuration));
             // get average percentage watched
-            $averagePercentageWatched = round($joined->where('created_at', '>=', Carbon::now()->subMonth() )->avg('end_point') / $video->duration * 100, 2) . '% Watched on average';
+            $averagePercentageWatched = round($joined->where('created_at', '>=', Carbon::now()->subMonth() )->avg('end_point') / $video->duration * 100, 2) . '%';
         } else {
             $averageViewDuration = null;
             $averagePercentageWatched = null;
@@ -168,12 +174,16 @@ class StudioContentApiController extends Controller
         // get total watch time
         $totalWatchTime = $joined->sum('duration');
 
+        // get ctr it's views / impressions
+        $ctr = round(intval($views) / intval($video->impressions_count) * 100, 2) . '%';
+
         return [
             'views' => $views,
-            'avg_view_duration' => $averageViewDuration,
-            'avg_percentage_watched' => $averagePercentageWatched,
-            'total_watch_time' => convertDuration($totalWatchTime) . ' Total Watch Time',
-            'end_points' => $joined->pluck('end_point')
+            'avg_view_duration' => 'Avg. view duration: ' . $averageViewDuration,
+            'avg_percentage_watched' => 'On avg. people watched ' . $averagePercentageWatched . ' of this video',
+            'total_watch_time' => 'Total Watch Time: ' . convertDuration($totalWatchTime),
+            'end_points' => $joined->pluck('end_point'),
+            'ctr' => 'CTR: '.$ctr
         ];
     }
 

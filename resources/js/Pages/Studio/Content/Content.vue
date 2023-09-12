@@ -23,14 +23,15 @@ const videos = ref([]);
     <Head title="Studio Content" />
 
     <ConsistentPadding >
-        <TitleComponent :text="'Channel Content'">
+        <TitleComponent :text="'VidGaze Cross-Platform Content Manager'">
             <font-awesome-icon :icon="['fas', 'clapperboard']" class="w-6 h-6 my-auto"/>
         </TitleComponent>
+        <p>Edit your YouTube, TikTok, Dailymotion and Vimeo content all in one place all at the same time!</p>
 
 <!--        table-->
 <!--        <div class="relative overflow-x-scroll">-->
 
-            <table class="w-full text-sm text-left text-center">
+            <table class="w-full text-sm text-left text-center  mt-10">
                 <thead
                     class="text-xs text-zinc-700 uppercase border-y-2 dark:border-zinc-800 dark:text-zinc-200">
                 <tr>

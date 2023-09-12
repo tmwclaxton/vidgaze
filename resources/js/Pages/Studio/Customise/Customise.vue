@@ -8,9 +8,9 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import TitleComponent from "@/Components/General/TitleComponent.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import TextInput from "@/Components/Inputs/TextInput.vue";
-import StudioTextInput from "@/Pages/Studio/Customise/Partials/StudioTextInput.vue";
+import StudioTextInput from "@/Pages/Studio/Partials/StudioTextInput.vue";
 import {useToastStore} from "@/Stores/ToastStore";
-import StudioImageInput from "@/Pages/Studio/Customise/Partials/StudioImageInput.vue";
+import StudioImageInput from "@/Pages/Studio/Partials/StudioImageInput.vue";
 
 
 

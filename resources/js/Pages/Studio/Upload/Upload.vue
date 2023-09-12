@@ -53,7 +53,6 @@ const selectedFile = () =>{
     form.video = dropzoneFile.value;
     submit();
 }
-
 </script>
 <template>
 
@@ -63,6 +62,7 @@ const selectedFile = () =>{
         <TitleComponent text="VidGaze MultiUploader" >
             <font-awesome-icon :icon="['fas', 'cloud-arrow-up']" class="w-6 h-6 my-auto"/>
         </TitleComponent>
+        <p>Upload to YouTube, TikTok, Dailymotion and Vimeo all at the same time.</p>
         <form @submit.prevent="submit" class="space-y-4 w-full mt-10 h-[calc(100vh-14rem)]">
             <DropZone @drop.prevent="drop" @change="selectedFile"/>
             <div class="max-w-md">

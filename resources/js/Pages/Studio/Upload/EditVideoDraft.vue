@@ -16,6 +16,8 @@ import YouTubeIcon from '#icons/youtube.svg';
 import DailyMotionIcon from '#icons/dailymotion.svg';
 import VimeoIcon from '#icons/vimeo.svg';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import StudioTextInput from "@/Pages/Studio/Partials/StudioTextInput.vue";
+import StudioTagsInput from "@/Pages/Studio/Partials/StudioTagsInput.vue";
 
 
 let categories = ref([]);
@@ -132,21 +134,39 @@ const selectedFileThumbnail = () =>{
             <TitleComponent text="Upload Video" class="">
                 <font-awesome-icon :icon="['fas', 'upload']"  class="w-6 h-6 my-auto"/>
             </TitleComponent>
-        <form @submit.prevent="" class="space-y-4 sm:min-w-[20rem] w-full sm:px-6">
-            <div>
-                <InputLabel class="mb-1" for="title" value="Title"/>
-                <TextInput type="text" title="title" id="title" placeholder="Title" v-model="form.title" class="w-full" required/>
-                <InputError class="mt-2" :message="form.errors.title ? form.errors.title[0] : null"/>
-            </div>
-            <div>
-                <InputLabel class="mb-1" for="description" value="Description"/>
-                <TextArea
-                    id="description"
-                    v-model="form.description"
-                    rows="4"
-                />
-                <InputError :message="form.errors.description ? form.errors.description[0] : null"/>
-            </div>
+        <form @submit.prevent="" class="mt-5 space-y-4 sm:min-w-[20rem] w-full ">
+            <StudioTextInput :value="form.title || ''"
+                             @update:model-value="form.title = $event"
+                             @submit=""
+                             label="Title"
+                             placeholder="Video title"
+                             for="title"
+                             :error_message="form.errors.title ? form.errors.title[0] : null"
+            />
+            <StudioTextInput :value="form.description || ''"
+                             @update:model-value="form.description = $event"
+                             @submit=""
+                             label="Description"
+                             placeholder="Video description"
+                             for="description"
+                             :enter-submit="false"
+                             :maxlength="1000"
+                             :error_message="form.errors.description ? form.errors.description[0] : null"
+            />
+            <StudioTagsInput :value="form.tags || false"
+                             @update:model-value="form.tags = $event"
+                             @submit=""
+                             label="Tags"
+                             for="tags"
+                             :error_message="form.errors.tags ? form.errors.tags[0] : null"
+            />
+            <!--<StudioTagsInput :value="form.made_for_kids || false"-->
+            <!--                               @update:model-value="form.made_for_kids = $event"-->
+            <!--                               @submit=""-->
+            <!--                               label="Made for kids"-->
+            <!--                               for="made_for_kids"-->
+            <!--                               :error_message="form.errors.made_for_kids ? form.errors.made_for_kids[0] : null"-->
+            <!--/>-->
             <div>
                 <InputLabel class="mb-1" for="tags" value="Tags"/>
                 <TagInput v-model="form.tags" :key="key"/>

@@ -3,6 +3,7 @@
 
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
 import {computed, onMounted, ref, watch} from "vue";
+import InputError from "@/Components/Inputs/InputError.vue";
 
 const name = 'StudioTextInput';
 const textarea = ref(null);
@@ -36,6 +37,11 @@ const props = defineProps({
         type: Boolean,
         default: true
     },
+    error_message: {
+        type: String,
+        default: null
+
+    }
 });
 const resizeTextarea = () => {
     textarea.value.style.height = '5px';
@@ -114,6 +120,8 @@ const enter = () => {
         <p id="remaining" class="mt-1 text-right text-xs">
             <span v-text="remaining"></span> / <span v-text="props.maxlength"></span>
         </p>
+        <InputError v-if="props.error_message" class="mt-2" :message="props.error_message"/>
+
     </consistent-content-holder>
 </template>
 
