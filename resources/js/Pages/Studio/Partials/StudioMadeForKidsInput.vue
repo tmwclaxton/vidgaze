@@ -8,7 +8,7 @@ import InputError from "@/Components/Inputs/InputError.vue";
 const name = 'StudioMadeForKidsInput';
 const props = defineProps({
     value: {
-        type: Array,
+        type: String,
         default: ''
     },
     for: {

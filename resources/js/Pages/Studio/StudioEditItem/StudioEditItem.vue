@@ -8,10 +8,6 @@ import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
 import TitleComponent from "@/Components/General/TitleComponent.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import Dropdown from "@/Components/Inputs/Dropdown.vue";
-import DateInput from "@/Components/Inputs/DateInput.vue";
-import YouTubeIcon from '#icons/youtube.svg';
-import DailyMotionIcon from '#icons/dailymotion.svg';
-import VimeoIcon from '#icons/vimeo.svg';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import StudioTextInput from "@/Pages/Studio/Partials/StudioTextInput.vue";
 import StudioTagsInput from "@/Pages/Studio/Partials/StudioTagsInput.vue";
@@ -20,6 +16,11 @@ import StudioImageInput from "@/Pages/Studio/Partials/StudioImageInput.vue";
 import StudioPrimarySourceInput from "@/Pages/Studio/Partials/StudioPrimarySourceInput.vue";
 import StudioCheck from "@/Pages/Studio/Partials/StudioCheck.vue";
 import StudioVisibilityInput from "@/Pages/Studio/Partials/StudioVisibilityInput.vue";
+import StudioPlatformsInput from "@/Pages/Studio/Partials/StudioPlatformsInput.vue";
+import StudioCategoryInput from "@/Pages/Studio/Partials/StudioCategoryInput.vue";
+import TertiaryButton from "@/Components/Buttons/TertiaryButton.vue";
+import {useAuthStore} from "@/Stores/AuthStore";
+import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
 
 
 let categories = ref([]);
@@ -139,120 +140,134 @@ const headTitle = computed(() => {
 
         <Head :title="headTitle" />
 
-        <ConsistentPadding >
-            <TitleComponent :text="headTitle" class="">
-                <font-awesome-icon :icon="['fas', 'upload']"  class="w-6 h-6 my-auto"/>
-            </TitleComponent>
-        <form @submit.prevent="" class="mt-5 space-y-4 sm:min-w-[20rem] w-full ">
-            <StudioTextInput :value="form.title || ''"
-                             @update:model-value="form.title = $event"
-                             @submit=""
-                             label="Title"
-                             placeholder="Video title"
-                             for="title"
-                             :error_message="form.errors.title ? form.errors.title[0] : null"
-            />
-            <StudioTextInput :value="form.description || ''"
-                             @update:model-value="form.description = $event"
-                             @submit=""
-                             label="Description"
-                             placeholder="Video description"
-                             for="description"
-                             :enter-submit="false"
-                             :maxlength="1000"
-                             :error_message="form.errors.description ? form.errors.description[0] : null"
-            />
-            <StudioTagsInput :value="form.tags || []"
-                             @update:model-value="form.tags = $event"
-                             @submit=""
-                             label="Tags"
-                             for="tags"
-                             :error_message="form.errors.tags ? form.errors.tags[0] : null"
-            />
-            <StudioImageInput :value="form.thumbnail || ''"
-                              @update:model-value="form.thumbnail = $event"
-                              @submit=""
-                              label="Thumbnail"
-                              for="thumbnail"
-                              :error_message="form.errors.thumbnail ? form.errors.thumbnail[0] : null"
-            />
-            <StudioMadeForKidsInput :value="form.audience || null"
-                                     @update:model-value="form.audience = $event"
-                                     @submit=""
-                                     label="Made for kids"
-                                     for="made_for_kids"
-                                     :error_message="form.errors.audience ? form.errors.audience[0] : null"
-            />
 
-            <StudioVisibilityInput :value="form.visibility || null"
-                                   :publish_time="form.publish_time || null"
-                                   @update:model-value="form.visibility = $event"
-                                   @submit=""
-                                   label="Visibility"
-                                   for="visibility"
-                                   :errors="form.errors"
-            />
+            <div  v-if="useAuthStore().user != null">
+                <div class=" flex flex-col md:flex-row-reverse ">
+                    <div class="display:initial   mx-8 md:mr-8 md:ml-0">
+                        <div class="sticky top-36 pt-3 w-full md:w-56">
+                            <consistent-content-holder class="">
+                                <div class="pb-3  overflow-hidden rounded w-full  mb-2 md:ml-0 ">
+                                    <div class="md:mx-12 my-4  flex justify-center">
+                                        <img class="w-1/2 md:w-full aspect-square rounded-full "
+                                             :src="useAuthStore().user.creator.avatar_url"
+                                             alt="Profile picture">
+                                    </div>
+                                    <div class="px-4">
+                                        <p class=" text-xs font-bold">Channel name</p>
+                                        <div class="mx-2">
+                                            <Link href=""
+                                                  class=" text-xs   my-1  break-words font-semibold" v-text="useAuthStore().user.creator.name"></Link>
+                                        </div>
 
-            <div>
-                <InputLabel class="mb-1" for="collection" value="Category"/>
-                <Dropdown
-                    v-model="form.category_id"
-                    name="category_id"
-                    id="category_id"
-                    :items="categories"
-                    required
+                                        <p class=" mt-2 text-xs font-bold">Channel url</p>
+                                        <div class="mx-2">
+                                            <Link :href="route('channel.show',useAuthStore().user.creator.slug)"
+                                                  class=" text-xs text-blue-700 overflow-ellipsis my-1 font-semibold" v-text="route('channel.show',useAuthStore().user.creator.slug)"></Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            </consistent-content-holder>
+                        </div>
+                    </div>
+        <div class="flex flex-grow">
+          <ConsistentPadding >
+              <TitleComponent :text="headTitle" class="">
+                  <font-awesome-icon :icon="['fas', 'upload']"  class="w-6 h-6 my-auto"/>
+              </TitleComponent>
+            <form @submit.prevent="" class="mt-8 space-y-3 sm:min-w-[20rem] w-full ">
+                <StudioTextInput :value="form.title || ''"
+                                 @update:model-value="form.title = $event"
+                                 @submit=""
+                                 label="Title"
+                                 placeholder="Video title"
+                                 for="title"
+                                 :error_message="form.errors.title ? form.errors.title[0] : null"
                 />
-                <InputError class="mt-2" :message="form.errors.category_id ? form.errors.category_id[0] : null"/>
-            </div>
+                <StudioTextInput :value="form.description || ''"
+                                 @update:model-value="form.description = $event"
+                                 @submit=""
+                                 label="Description"
+                                 placeholder="Video description"
+                                 for="description"
+                                 :enter-submit="false"
+                                 :maxlength="1000"
+                                 :error_message="form.errors.description ? form.errors.description[0] : null"
+                />
+                <StudioTagsInput :value="form.tags || []"
+                                 @update:model-value="form.tags = $event"
+                                 @submit=""
+                                 label="Tags"
+                                 for="tags"
+                                 :error_message="form.errors.tags ? form.errors.tags[0] : null"
+                />
+                <StudioImageInput :value="form.thumbnail || ''"
+                                  @update:model-value="form.thumbnail = $event"
+                                  @submit=""
+                                  label="Thumbnail"
+                                  for="thumbnail"
+                                  :error_message="form.errors.thumbnail ? form.errors.thumbnail[0] : null"
+                />
+                <StudioMadeForKidsInput :value="form.audience"
+                                         @update:model-value="form.audience = $event"
+                                         @submit=""
+                                         label="Made for kids"
+                                         for="made_for_kids"
+                                         :error_message="form.errors.audience ? form.errors.audience[0] : null"
+                />
+
+                <StudioVisibilityInput :value="form.visibility"
+                                       :publish_time="form.publish_time || null"
+                                       @update:model-value="form.visibility = $event"
+                                       @submit=""
+                                       label="Visibility"
+                                       for="visibility"
+                                       :errors="form.errors"
+                />
+                <StudioCategoryInput :value="form.category_id"
+                                     :categories="categories"
+                                     @update:model-value=""
+                                     label="Category"
+                                     for="category"
+                                     :errors="form.errors"
+                 />
+
+                <StudioPlatformsInput :errors="form.errors"
+                                          :preferred_source="form.preferred_source"
+                                          :sources="['youtube']"
+                                          @update:model-value="form.preferred_source = $event"
+                 />
+
+                <StudioPrimarySourceInput :preferred_source="form.preferred_source"
+                                          :sources="['youtube']"
+                                          @update:model-value="form.preferred_source = $event"
+                                          @submit=""
+                                          label="Primary Source"
+                                          for="primary_source"
+                                          :errors="form.errors"
+                />
+                <StudioCheck/>
+                <div class="flex space-x-3 justify-center">
+                    <div class="flex justify-center">
+                        <TertiaryButton @click="handleSaveDraft" class="h-[3rem]" :class="{ 'opacity-25': form.processing }"
+                                       :disabled="form.processing">SAVE DRAFT
+                        </TertiaryButton>
+                    </div>
+                    <div class="flex justify-center">
+                        <TertiaryButton @click="handlePublish" class="h-[3rem]" :class="{ 'opacity-25': form.processing }"
+                                       :disabled="form.processing">{{ form.visibility === 'scheduled' ? 'SCHEDULE' : 'PUBLISH'}}
+                        </TertiaryButton>
+                    </div>
+                </div>
+            </form>
             <div>
-                <InputLabel class="mb-1" for="platforms" value="Platforms"/>
-                <div class="space-y-2">
-                    <div class="flex items-center">
-                        <input type="checkbox" id="youtube" value="youtube" v-model="form.platforms" class="mr-2">
-                        <YouTubeIcon class="w-6 h-6 mr-2"/>
-                        <label for="youtube">YouTube</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="dailymotion" value="dailymotion" v-model="form.platforms" class="mr-2">
-                        <DailyMotionIcon class="w-6 h-6 mr-2"/>
-                        <label for="dailymotion">Dailymotion</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="vimeo" value="vimeo" v-model="form.platforms" class="mr-2">
-                        <VimeoIcon class="w-6 h-6 mr-2"/>
-                        <label for="vimeo">Vimeo</label>
-                    </div>
-                </div>
-                <InputError class="mt-2" :message="form.errors.platforms ? form.errors.platforms[0] : null"/>
+                <!--            <div>-->
+                <!--                <div  :style="{'background-image': 'url(' + getImageURL(image) + ')'}" v-for="image in form.images" class="w-20 h-20 bg-cover bg-center"></div>-->
+                <!--                <img v-for="image in images" :src="getImageURL(image)" :key="image.name"  alt="image"/>-->
+                <!--            </div>-->
             </div>
-            <StudioPrimarySourceInput :preferred_source="form.preferred_source"
-                                      :sources="['youtube']"
-                                      @update:model-value="form.preferred_source = $event"
-                                      @submit=""
-                                      label="Primary Source"
-                                      for="primary_source"
-                                      :error_message="form.errors.preferred_source ? form.errors.preferred_source[0] : null"
-            />
-            <StudioCheck/>
-            <div class="flex space-x-3 justify-center">
-                <div class="flex justify-center">
-                    <PrimaryButton @click="handleSaveDraft" class="h-[3rem]" :class="{ 'opacity-25': form.processing }"
-                                   :disabled="form.processing">SAVE DRAFT
-                    </PrimaryButton>
-                </div>
-                <div class="flex justify-center">
-                    <PrimaryButton @click="handlePublish" class="h-[3rem]" :class="{ 'opacity-25': form.processing }"
-                                   :disabled="form.processing">{{ form.visibility === 'scheduled' ? 'SCHEDULE' : 'PUBLISH'}}
-                    </PrimaryButton>
-                </div>
-            </div>
-        </form>
-        <div>
-            <!--            <div>-->
-            <!--                <div  :style="{'background-image': 'url(' + getImageURL(image) + ')'}" v-for="image in form.images" class="w-20 h-20 bg-cover bg-center"></div>-->
-            <!--                <img v-for="image in images" :src="getImageURL(image)" :key="image.name"  alt="image"/>-->
-            <!--            </div>-->
-        </div>
         </ConsistentPadding>
+        </div>
+    </div>
+</div>
 </template>
 

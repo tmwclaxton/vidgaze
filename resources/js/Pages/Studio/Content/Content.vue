@@ -96,13 +96,13 @@ const videos = ref([]);
                         class="border-b-2 hover:bg-zinc-200 dark:hover:bg-zinc-900 dark:border-zinc-800">
                         <td>
                             <div class="ml-2 my-2 flex space-x-3 max-h-[90px] max-w-[300px]">
-                                <a href="route('studio.video.edit', video.slug)">
+                                <Link :href="route('studio.video.edit', video.slug)">
                                     <img :src="video.thumbnail_url" class="w-[160px] h-[90px] rounded-lg">
-                                </a>
+                                </Link>
                                 <div class="max-w-[120px]">
-                                    <a href="route('studio.video.edit', video.slug)">
+                                    <Link :href="route('studio.video.edit', video.slug)">
                                         <h3 class="font-semibold text-lg hover:underline">{{ video.title }}</h3>
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </td>
