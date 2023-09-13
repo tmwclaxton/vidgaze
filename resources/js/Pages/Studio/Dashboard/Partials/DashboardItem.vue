@@ -14,7 +14,7 @@ const props = defineProps({
 </script>
 <template>
     <div class="relative h-max w-full pointer-events-none overflow-hidden">
-        <Link :href="route('watch.show', {slug: item.slug})" class="absolute w-full h-full z-0 pointer-events-auto">
+        <Link :href="route('studio.video.edit', {slug: item.slug})" class="absolute w-full h-full z-0 pointer-events-auto">
 
         </Link>
         <div class="flex flex-col md:flex-row z-10 relative h-full w-full overflow-hidden">

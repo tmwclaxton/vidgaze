@@ -79,23 +79,43 @@ class StudioContentApiController extends Controller
         // join video_views and videos and get the avg videos_views.duration, video_id, viewer_id, created_at, title, slug
         $joined = VideoView::join('videos', 'video_views.video_id', '=', 'videos.id')
             ->where('videos.creator_id', auth()->user()->creator()->first()->id)
-            ->get(['video_views.duration', 'video_views.video_id', 'video_views.viewer_id', 'video_views.created_at', 'videos.title', 'videos.slug']);
+            ->where('video_views.created_at', '>=', Carbon::now()->subMonth() )
+            ->selectRaw('avg(video_views.duration) as average_view_duration, video_views.video_id,
+            video_views.viewer_id, video_views.created_at, videos.impressions_count, videos.view_count, videos.duration, videos.title, videos.slug')
+            ->groupBy('video_views.video_id', 'video_views.viewer_id', 'video_views.created_at', 'videos.title', 'videos.slug')
+            ->orderBy('video_views.created_at', 'desc')
+            ->paginate(15);
+        //$joined = VideoView::join('videos', 'video_views.video_id', '=', 'videos.id')
+        //    ->where('videos.creator_id', auth()->user()->creator()->first()->id)
+        //    ->where('video_views.created_at', '>=', Carbon::now()->subMonth() )
+        //    ->get(['video_views.duration', 'video_views.video_id', 'video_views.viewer_id',
+        //        'video_views.created_at', 'videos.title', 'videos.slug', 'videos.impressions_count',
+        //        'videos.view_count', 'videos.duration'
+        //
+        //    ]);
+        //return $joined;
 
         // get this channels' last month views
-        $views = $joined->where('created_at', '>=', Carbon::now()->subMonth() )->count();
-        $views = number_format_short($views)  . " " . Str::plural('Views', $views);
+        $views = $joined->count();
         // get average view duration
-        $averageViewDuration = $joined->where('created_at', '>=', Carbon::now()->subMonth() )->avg('duration') ;
+        $averageViewDuration = $joined->avg('average_view_duration') ;
         if ($averageViewDuration) {
-            $averageViewDuration = convertDuration($averageViewDuration) . ' Avg View Duration';
+            $averageViewDuration = convertDuration($averageViewDuration);
         } else {
             $averageViewDuration = null;
         }
-
+        // calculate ctr for all videos, it's the sum of all video views divided by the sum of all video impressions , where views are greater than 0
+        //$ctr = round($joined->sum('duration') / $joined->sum('impressions_count') * 100, 2);
+        $ctr = $joined->sum('impressions_count') > 0 ? round($joined->sum('view_count') / $joined->sum('impressions_count') * 100, 2) : 0;
+        $subscriberCount = auth()->user()->creator()->first()->subscriber_count;
 
         return [
-            'views' => $views,
-            'viewDuration' => $averageViewDuration
+            "monthly" => [
+                'subscriber_count' => number_format_short($subscriberCount)  . " " . Str::plural('Subscriber', $subscriberCount),
+                'views' => number_format_short($views)  . " " . Str::plural('Views', $views),
+                'avg_view_duration' =>   $averageViewDuration  . ' Avg View Duration' ,
+                'ctr' => 'CTR: ' . $ctr . '%',
+            ]
         ];
 
     }
@@ -158,7 +178,6 @@ class StudioContentApiController extends Controller
 
         // get this channels' last month views
         $views = $joined->where('created_at', '>=', Carbon::now()->subMonth() )->count();
-        $views = number_format_short($views)  . " " . Str::plural('Views', $views);
 
         // get average view duration
         $averageViewDuration = $joined->where('created_at', '>=', Carbon::now()->subMonth() )->avg('duration') ;
@@ -175,15 +194,15 @@ class StudioContentApiController extends Controller
         $totalWatchTime = $joined->sum('duration');
 
         // get ctr it's views / impressions
-        $ctr = round(intval($views) / intval($video->impressions_count) * 100, 2) . '%';
+        $ctr = round(intval($views) / intval($video->impressions_count) * 100, 2);
 
         return [
-            'views' => $views,
+            'views' => number_format_short($views)  . " " . Str::plural('Views', $views),
             'avg_view_duration' => 'Avg. view duration: ' . $averageViewDuration,
             'avg_percentage_watched' => 'On avg. people watched ' . $averagePercentageWatched . ' of this video',
             'total_watch_time' => 'Total Watch Time: ' . convertDuration($totalWatchTime),
             'end_points' => $joined->pluck('end_point'),
-            'ctr' => 'CTR: '.$ctr
+            'ctr' => 'CTR: '.$ctr . '%',
         ];
     }
 

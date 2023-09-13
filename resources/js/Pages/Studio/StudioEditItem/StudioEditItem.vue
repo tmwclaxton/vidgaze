@@ -1,15 +1,12 @@
 <script setup>
 
-import {onBeforeMount, ref} from "vue";
+import {computed, onBeforeMount, ref} from "vue";
 import {Head, router, useForm} from "@inertiajs/vue3";
 import InputLabel from "@/Components/Inputs/InputLabel.vue";
-import TextInput from "@/Components/Inputs/TextInput.vue";
 import InputError from "@/Components/Inputs/InputError.vue";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
 import TitleComponent from "@/Components/General/TitleComponent.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
-import TextArea from "@/Components/Inputs/TextArea.vue";
-import TagInput from "@/Components/Inputs/TagInput.vue";
 import Dropdown from "@/Components/Inputs/Dropdown.vue";
 import DateInput from "@/Components/Inputs/DateInput.vue";
 import YouTubeIcon from '#icons/youtube.svg';
@@ -18,12 +15,18 @@ import VimeoIcon from '#icons/vimeo.svg';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import StudioTextInput from "@/Pages/Studio/Partials/StudioTextInput.vue";
 import StudioTagsInput from "@/Pages/Studio/Partials/StudioTagsInput.vue";
+import StudioMadeForKidsInput from "@/Pages/Studio/Partials/StudioMadeForKidsInput.vue";
+import StudioImageInput from "@/Pages/Studio/Partials/StudioImageInput.vue";
+import StudioPrimarySourceInput from "@/Pages/Studio/Partials/StudioPrimarySourceInput.vue";
+import StudioCheck from "@/Pages/Studio/Partials/StudioCheck.vue";
+import StudioVisibilityInput from "@/Pages/Studio/Partials/StudioVisibilityInput.vue";
 
 
 let categories = ref([]);
 let video = ref({});
 let props = defineProps({
     slug: String,
+    type: String,
 });
 let key = ref('');
 
@@ -53,11 +56,6 @@ onBeforeMount(() => {
     })
 })
 
-const audiences = [
-    { value: 'all', name: 'Everyone' },
-    { value: 'kids', name: 'Kids' },
-    { value: 'mature', name: 'Mature' },
-];
 
 let form = useForm({
     title: video.value.title,
@@ -69,6 +67,7 @@ let form = useForm({
     publish_time: video.value.publish_time,
     audience: video.value.audience,
     platforms: video.value.platforms,
+    preferred_source: video.value.preferred_source,
 });
 
 
@@ -124,14 +123,24 @@ const selectedFileThumbnail = () =>{
     form.thumbnail = thumbnailValue.value;
 }
 
+const headTitle = computed(() => {
+    // depends on props.type
+    if (props.type === 'video_draft') {
+        return 'Upload Video';
+    } else if (props.type === 'video') {
+        return 'Edit Video';
+    } else if (props.type === 'stream') {
+        return 'Edit Stream';
+    }
+});
 </script>
 
 <template>
 
-        <Head title="Upload Video" />
+        <Head :title="headTitle" />
 
         <ConsistentPadding >
-            <TitleComponent text="Upload Video" class="">
+            <TitleComponent :text="headTitle" class="">
                 <font-awesome-icon :icon="['fas', 'upload']"  class="w-6 h-6 my-auto"/>
             </TitleComponent>
         <form @submit.prevent="" class="mt-5 space-y-4 sm:min-w-[20rem] w-full ">
@@ -153,64 +162,37 @@ const selectedFileThumbnail = () =>{
                              :maxlength="1000"
                              :error_message="form.errors.description ? form.errors.description[0] : null"
             />
-            <StudioTagsInput :value="form.tags || false"
+            <StudioTagsInput :value="form.tags || []"
                              @update:model-value="form.tags = $event"
                              @submit=""
                              label="Tags"
                              for="tags"
                              :error_message="form.errors.tags ? form.errors.tags[0] : null"
             />
-            <!--<StudioTagsInput :value="form.made_for_kids || false"-->
-            <!--                               @update:model-value="form.made_for_kids = $event"-->
-            <!--                               @submit=""-->
-            <!--                               label="Made for kids"-->
-            <!--                               for="made_for_kids"-->
-            <!--                               :error_message="form.errors.made_for_kids ? form.errors.made_for_kids[0] : null"-->
-            <!--/>-->
-            <div>
-                <InputLabel class="mb-1" for="tags" value="Tags"/>
-                <TagInput v-model="form.tags" :key="key"/>
-                <InputError :message="form.errors.tags ? form.errors.tags[0] : null"/>
-            </div>
-            <div class="max-w-md">
-                <InputLabel class="mb-1" for="thumbnail" value="Thumbnail"/>
-                <input type="file" name="thumbnail" id="thumbnail" @input="selectedFileThumbnail">
-                <InputError class="mt-1" :message="form.errors.thumbnail ? form.errors.thumbnail[0] : null"/>
-            </div>
-            <div>
-                <InputLabel class="mb-1" for="audience" value="Audience"/>
-                <Dropdown
-                    v-model="form.audience"
-                    name="audience"
-                    id="audience"
-                    :items="audiences"
-                    required/>
-                <InputError class="mt-2" :message="form.errors.audience ? form.errors.audience[0] : null"/>
-            </div>
-            <div>
-                <InputLabel class="mb-1" for="visibility" value="Visibility"/>
-                <div class="space-y-2">
-                    <div class="flex items-center">
-                        <input type="radio" id="private" value="private" v-model="form.visibility" class="mr-2">
-                        <label for="private">Private</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="radio" id="unlisted" value="unlisted" v-model="form.visibility" class="mr-2">
-                        <label for="unlisted">Unlisted</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="radio" id="public" value="public" v-model="form.visibility" class="mr-2">
-                        <label for="public">Public</label>
-                    </div>
-                    <div>
-                        <div class="flex items-center"><input type="radio" id="scheduled" value="scheduled" v-model="form.visibility" class="mr-2">
-                            <label for="scheduled">Schedule</label></div>
-                        <DateInput class="mt-2" v-if="form.visibility === 'scheduled'" v-model="form.publish_time"/>
-                        <InputError class="mt-2" :message="form.errors.publish_time ? form.errors.publish_time[0] : null"/>
-                    </div>
-                </div>
-                <InputError class="mt-2" :message="form.errors.visibility ? form.errors.visibility[0] : null"/>
-            </div>
+            <StudioImageInput :value="form.thumbnail || ''"
+                              @update:model-value="form.thumbnail = $event"
+                              @submit=""
+                              label="Thumbnail"
+                              for="thumbnail"
+                              :error_message="form.errors.thumbnail ? form.errors.thumbnail[0] : null"
+            />
+            <StudioMadeForKidsInput :value="form.audience || null"
+                                     @update:model-value="form.audience = $event"
+                                     @submit=""
+                                     label="Made for kids"
+                                     for="made_for_kids"
+                                     :error_message="form.errors.audience ? form.errors.audience[0] : null"
+            />
+
+            <StudioVisibilityInput :value="form.visibility || null"
+                                   :publish_time="form.publish_time || null"
+                                   @update:model-value="form.visibility = $event"
+                                   @submit=""
+                                   label="Visibility"
+                                   for="visibility"
+                                   :errors="form.errors"
+            />
+
             <div>
                 <InputLabel class="mb-1" for="collection" value="Category"/>
                 <Dropdown
@@ -243,6 +225,15 @@ const selectedFileThumbnail = () =>{
                 </div>
                 <InputError class="mt-2" :message="form.errors.platforms ? form.errors.platforms[0] : null"/>
             </div>
+            <StudioPrimarySourceInput :preferred_source="form.preferred_source"
+                                      :sources="['youtube']"
+                                      @update:model-value="form.preferred_source = $event"
+                                      @submit=""
+                                      label="Primary Source"
+                                      for="primary_source"
+                                      :error_message="form.errors.preferred_source ? form.errors.preferred_source[0] : null"
+            />
+            <StudioCheck/>
             <div class="flex space-x-3 justify-center">
                 <div class="flex justify-center">
                     <PrimaryButton @click="handleSaveDraft" class="h-[3rem]" :class="{ 'opacity-25': form.processing }"

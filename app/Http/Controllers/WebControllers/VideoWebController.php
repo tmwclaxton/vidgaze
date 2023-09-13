@@ -26,16 +26,17 @@ class VideoWebController extends Controller
         ]);
     }
 
+    public function edit(string $slug)
+    {
+        return Inertia::render('Studio/StudioEditItem/StudioEditItem', [
+            'slug' => $slug,
+            'type' => 'video'
+        ]);
+    }
+
     public function shorts()
     {
         return Inertia::render('Viewer/Shorts/ShortsIndex');
-    }
-
-    private function checkVisibilityAndOwnership($item) {
-        //forbidden if visibility is set to private and you don't own it
-        if ($item->visibility == 'private' && $item->creator_id != Auth::user()->creator->id) {
-            abort(401);
-        }
     }
 
 }

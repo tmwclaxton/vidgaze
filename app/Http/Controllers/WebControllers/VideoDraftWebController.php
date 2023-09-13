@@ -14,8 +14,9 @@ class VideoDraftWebController extends Controller
 
     public function edit(string $slug)
     {
-        return Inertia::render('Studio/Upload/EditVideoDraft', [
+        return Inertia::render('Studio/StudioEditItem/StudioEditItem', [
             'slug' => $slug,
+            'type' => 'video_draft'
         ]);
     }
 }

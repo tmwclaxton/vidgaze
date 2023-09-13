@@ -6,10 +6,14 @@ const name = 'ChannelOverview';
 
 const views = ref(null);
 const viewDuration = ref(null);
+const ctr = ref(null);
+const subscriber_count = ref(null);
 onMounted(() => {
     axios.get(route('api.studio.analytics')).then((response) => {
-        views.value = response.data.views;
-        viewDuration.value = response.data.viewDuration;
+        views.value = response.data.monthly.views;
+        viewDuration.value = response.data.monthly.avg_view_duration
+        ctr.value = response.data.monthly.ctr;
+        subscriber_count.value = response.data.monthly.subscriber_count;
     })
 })
 
@@ -32,15 +36,19 @@ onMounted(() => {
 
                 <div class=" flex flex-row flex-wrap gap-2 w-full">
                     <ConsistentContentHolder class="flex flex-row align-middle justify-center w-max px-5">
-                        <p class="text-sm" v-text="useAuthStore().user.creator.subscriber_count "/>
+                        <p class="text-sm" v-text="subscriber_count "/>
                     </ConsistentContentHolder>
                     <ConsistentContentHolder v-if="viewDuration != null"
                         class="flex flex-row align-middle justify-center w-max px-5">
                         <p class="text-sm" v-text="viewDuration"/>
                     </ConsistentContentHolder>
                     <ConsistentContentHolder v-if="views != null"
-                        class="flex flex-row align-middle justify-center w-max px-5">
+                                             class="flex flex-row align-middle justify-center w-max px-5">
                         <p class="text-sm" v-text="views"/>
+                    </ConsistentContentHolder>
+                    <ConsistentContentHolder v-if="ctr != null"
+                                             class="flex flex-row align-middle justify-center w-max px-5">
+                        <p class="text-sm" v-text="ctr"/>
                     </ConsistentContentHolder>
                 </div>
             </div>

@@ -2,11 +2,12 @@
 <script setup>
 
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
-import {computed, onMounted, ref, watch} from "vue";
 import InputError from "@/Components/Inputs/InputError.vue";
 import InputLabel from "@/Components/Inputs/InputLabel.vue";
-import TagInput from "@/Components/Inputs/TagInput.vue";
 
+import {ref, defineProps, defineEmits, onMounted} from 'vue';
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {useToastStore} from "@/Stores/ToastStore";
 const name = 'StudioTagsInput';
 const props = defineProps({
     maxlength: {
@@ -14,7 +15,7 @@ const props = defineProps({
         default: 50
     },
     value: {
-        type: String,
+        type: Array,
         default: ''
     },
     placeholder: {
@@ -41,26 +42,67 @@ const props = defineProps({
 });
 
 
+const emits = defineEmits(['update:modelValue']);
 
-const emits = defineEmits(['update:modelValue','submit']);
+const tags = ref(props.value || []);
 
-const submit = () => {
-    // deselect
-    // textarea.value.blur();
-    emits('submit');
+function addTag(e) {
+    if (e.code === 'Enter' || e.code === 'Comma' || e.code === 'Tab') {
+
+        e.preventDefault();
+        var val = e.target.value.trim();
+        // if the combined length of the tags plus this one is greater than 500 characters, don't add the tag
+        if (tags.value.join(',').length + val.length > 500) {
+            useToastStore().add({
+                'message': 'Combined length of tags must be less than 500 characters',
+                'type': 'warning'
+            });
+            return;
+        }
+
+        if (val.length > 0 && tags.value.indexOf(val) === -1) {
+            tags.value.push(val);
+            emits('update:modelValue', tags.value); // Emit the updated tags array to the parent
+            e.target.value = '';
+        }
+    }
 }
 
-const enter = () => {
+function removeTag(index) {
+    tags.value.splice(index, 1);
+    emits('update:modelValue', tags.value); // Emit the updated tags array to the parent
+}
 
+function removeLastTag(e) {
+    if (e.target.value.length === 0 && tags.value.length > 0) {
+        removeTag(tags.value.length - 1);
+    }
 }
 
 </script>
 
 <template>
     <consistent-content-holder class="rounded p-2 focus:ring">
-        <p class="text-xs font-bold" v-text="props.label"></p>
         <InputLabel class="mb-1" for="tags" value="Tags"/>
-        <TagInput v-model="props.value" :key="key"/>
+        <div class="flex flex-row flex-wrap gap-2 h-full w-full border-1 border-gray-300 border-box">
+            <div
+                v-for="(tag, index) in value"
+                :key="tag"
+                class="flex flex-row gap-x-1 align-middle items-center h-8  bg-zinc-200 dark:bg-zinc-800 rounded-lg px-3 "
+            >
+                <font-awesome-icon  :icon="['fas', 'close']" class="h-3 cursor-pointer my-auto " @click="removeTag(index)"/>
+                <span class="leading-5" v-text="tag"></span>
+            </div>
+            <input
+                type="text"
+                placeholder="Add a tag"
+                class="bg-transparent h-8 flex-grow max-w-sm
+            without-ring border-t-0 border-x-0 border-b-1 border-zinc-300 focus:border-zinc-500 dark:border-zinc-700 focus:dark:border-zinc-500 focus:border-b "
+                @keydown="addTag"
+                @keydown.delete="removeLastTag"
+
+            />
+        </div>
         <InputError v-if="props.error_message" class="mt-2" :message="props.error_message"/>
 
     </consistent-content-holder>

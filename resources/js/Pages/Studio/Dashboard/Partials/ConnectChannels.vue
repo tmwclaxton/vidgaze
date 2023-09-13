@@ -29,15 +29,20 @@
                           buttonClasses="bg-white hover:bg-zinc-100">
             <TikTokIcon class="w-6 h-6 my-auto "/>
         </StudioLinkButton>
+        <StudioLinkButton platform="facebook" :external_id="useAuthStore().sources.facebook"
+                          :text="!useAuthStore().sources.facebook ? 'Sign in with FaceBook' : useAuthStore().sources.facebook"
+                          buttonClasses="bg-blue-300 hover:bg-blue-400">
+            <FacebookIcon class="w-6 h-6 my-auto "/>
+        </StudioLinkButton>
         <StudioLinkButton platform="rumble" :external_id="useAuthStore().sources.rumble"
                           :text="!useAuthStore().sources.rumble ? 'Sign in with Rumble' : useAuthStore().sources.rumble"
                           buttonClasses="bg-green-200 hover:bg-green-300">
             <RumbleIcon class="w-6 h-6 my-auto "/>
         </StudioLinkButton>
-        <StudioLinkButton platform="facebook" :external_id="useAuthStore().sources.facebook"
-                          :text="!useAuthStore().sources.facebook ? 'Sign in with FaceBook' : useAuthStore().sources.facebook"
-                          buttonClasses="bg-blue-300 hover:bg-blue-400">
-            <FacebookIcon class="w-6 h-6 my-auto "/>
+        <StudioLinkButton platform="oydsee" :external_id="useAuthStore().sources.oydsee"
+                          :text="!useAuthStore().sources.oydsee ? 'Sign in with Odysee' : useAuthStore().sources.oydsee"
+                          buttonClasses="bg-red-200 hover:bg-red-300">
+            <OdyseeIcon class="w-6 h-6 my-auto "/>
         </StudioLinkButton>
 
     </div>
@@ -52,6 +57,7 @@ import VimeoIcon from '#icons/vimeo.svg';
 import TikTokIcon from '#icons/tiktok.svg';
 import RumbleIcon from '#icons/rumble.svg';
 import FacebookIcon from '#icons/facebook.svg';
+import OdyseeIcon from '#icons/odysee.svg';
 import {useAuthStore} from "@/Stores/AuthStore";
 
 const name = 'ConnectChannels';
