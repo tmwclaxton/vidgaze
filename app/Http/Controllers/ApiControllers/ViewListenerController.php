@@ -245,6 +245,7 @@ class ViewListenerController extends Controller
                     'session_id' => $session_id,
                     'duration' => $watch_duration,
                     'end_point' => $viewPoint,
+                    'platform' => $this->video->preferred_source,
                 ]);
             } else {
                 $videoView = VideoView::create([
@@ -252,6 +253,7 @@ class ViewListenerController extends Controller
                     'session_id' => $session_id,
                     'duration' => $watch_duration,
                     'end_point' => $viewPoint,
+                    'platform' => $this->video->preferred_source,
                 ]);
             }
             $videoView->save();

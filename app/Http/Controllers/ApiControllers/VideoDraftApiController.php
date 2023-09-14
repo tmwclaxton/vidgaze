@@ -20,16 +20,17 @@ use function GuzzleHttp\json_encode;
 class VideoDraftApiController extends Controller
 {
 
-    public function index()
-    {
-        return auth()->user()->creator()->videoDrafts()->all();
-    }
-    public function getEdit(string $slug)
+    //public function index()
+    //{
+    //    return auth()->user()->creator()->videoDrafts()->all();
+    //}
+
+    public function edit(string $slug)
     {
         $video = auth()->user()->creator()->first()->video_drafts()->where('slug', $slug)->firstOrFail();
         return [
 
-            'video' => new VideoDraftResource($video),
+            'item' => new VideoDraftResource($video),
             'categories' => Category::orderBy('name')->get(['id', 'name'])->map(fn($category)=>
             [
                 'value' => $category->id,
@@ -39,12 +40,10 @@ class VideoDraftApiController extends Controller
     }
 
 
-
     public function update(string $slug){
-
         $videoDraft = auth()->user()->creator()->first()->video_drafts()->where('slug', $slug)->firstOrFail();
         request()->validate([
-            'thumbnail' => ['file', 'nullable'],
+            'image' => ['nullable', 'image', 'max:10240', 'dimensions:min_width=640,min_height=360,ratio=16/9'],
             'title' => ['max:255', 'required', 'string', 'min:1'],
             'description' => ['nullable', 'string'],
             'tags' => ['nullable', 'array'],
@@ -69,9 +68,8 @@ class VideoDraftApiController extends Controller
         }
 
         $thumbnail_path = null;
-        if(request()->file('thumbnail'))
-        {
-            $thumbnail_path = request()->file('thumbnail')->storePublicly('thumbnails', 'public');
+        if(request()->hasFile('image')){
+            $thumbnail_path = request()->file('image')->storePublicly('thumbnails', 'public');
         }
         $videoDraft->update([
             'thumbnail_path' => $thumbnail_path,

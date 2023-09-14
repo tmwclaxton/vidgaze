@@ -26,10 +26,10 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
                 <div class="flex flex-col gap-y-1 block w-full px-2 py-1 text-left text-sm ">
                     <DropdownLink :href="route('studio.upload')" class="flex flex-row space-x-2">
                         <font-awesome-icon :icon="['fas', 'upload']" class="w-5 h-5 flex-shrink-0"/>
-                        <span class="font-bold">Multiupload</span>
+                        <span class="font-bold">MultiUpload</span>
                     </DropdownLink>
                     <DropdownLink :href="route('studio.content')" class="flex flex-row space-x-2">
-                        <font-awesome-icon :icon="['fas', 'video']" class="w-5 h-5 flex-shrink-0"/>
+                        <font-awesome-icon :icon="['fas', 'clapperboard']" class="w-5 h-5 flex-shrink-0"/>
                         <span class="font-bold">Manage content</span>
                     </DropdownLink>
                 </div>

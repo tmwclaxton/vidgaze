@@ -9,10 +9,6 @@ import {useAuthStore} from "@/Stores/AuthStore";
 import {useToastStore} from "@/Stores/ToastStore";
 
 const props = defineProps({
-    maxlength: {
-        type: Number,
-        default: 50
-    },
     value: {
         type: String,
         default: ''
@@ -22,10 +18,6 @@ const props = defineProps({
         default: ''
     },
     description: {
-        type: String,
-        default: ''
-    },
-    name: {
         type: String,
         default: ''
     },

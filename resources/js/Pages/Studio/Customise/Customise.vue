@@ -101,12 +101,6 @@ const updateChannelDetails = () => {
                                               placeholder="Channel Profile Image"
                                               for="channel-profile-image"
                                               :rounded="true"
-                                              :enter-submit="false"
-                                              :max-file-size="4"
-                                              :max-width="98"
-                                              :max-height="98"
-                                              :aspect-ratio="1"
-                                              :file-type="['image/png','image/jpeg']"
                             />
 
                             <!--channel banner image-->
@@ -118,11 +112,6 @@ const updateChannelDetails = () => {
                                               placeholder="Channel Profile Banner"
                                               for="channel-profile-banner"
                                               :rounded="false"
-                                              :max-file-size="6"
-                                              :max-width="4096"
-                                              :max-height="4096"
-                                              :aspect-ratio="16/9"
-                                              :file-type="['image/png','image/jpeg']"
                             />
                             <!--channel contact email-->
                             <StudioTextInput :value="useAuthStore().user.creator.contact_email"

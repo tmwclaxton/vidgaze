@@ -12,10 +12,13 @@ Route::middleware('auth:sanctum')->name('studio.')->prefix('/studio')->group(fun
 
     Route::post('video/prime', [VideoDraftApiController::class, 'primeNewVideoDraft'])->name("video.prime");
     Route::post('video/{slug}/upload', [VideoDraftApiController::class, 'upload'])->name("video.upload");
-    Route::get('video-drafts/{slug}/get-edit', [VideoDraftApiController::class, 'getEdit'])->name("video.draft.getEdit");
-    Route::put('video-drafts/{slug}/update', [VideoDraftApiController::class, 'update'])->name("video.draft.update");
-    Route::post('video/{slug}/publish',  [VideoDraftApiController::class, 'publish'])->name("video.publish");
 
+    Route::get('video/draft/{slug}/edit', [VideoDraftApiController::class, 'edit'])->name("video.draft.edit");
+    Route::patch('video/draft/{slug}/update', [VideoDraftApiController::class, 'update'])->name("video.draft.update");
+    Route::post('video/draft/{slug}/publish',  [VideoDraftApiController::class, 'publish'])->name("video.draft.publish");
+
+    Route::get('video/draft/{slug}/edit', [VideoDraftApiController::class, 'edit'])->name("video.draft.edit");
+    Route::patch('video/draft/{slug}/update', [VideoDraftApiController::class, 'update'])->name("video.draft.update");
 
     Route::get('login/{platform}', [LinkingApiController::class, 'logIn'])->name('login');
     Route::get('link/{platform}', [LinkingApiController::class, 'link'])->name('link');
