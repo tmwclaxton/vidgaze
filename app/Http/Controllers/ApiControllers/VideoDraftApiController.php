@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ApiControllers;
 use App\Enums\Audience;
 use App\Enums\Platform;
 use App\Enums\Visibility;
+use App\Helpers\ImageCheck;
 use App\Helpers\Upload;
 use App\Helpers\UploadDTO;
 use App\Http\Controllers\Controller;
@@ -13,6 +14,9 @@ use App\Models\Category;
 use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoDraft;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use function GuzzleHttp\json_encode;
@@ -67,12 +71,7 @@ class VideoDraftApiController extends Controller
             if($publish_time->isPast()) return  response()->json(['errors' => [ 'publish_time' => ['Publish time must be in the future']]], 422);
         }
 
-        $thumbnail_path = null;
-        if(request()->hasFile('image')){
-            $thumbnail_path = request()->file('image')->storePublicly('thumbnails', 'public');
-        }
         $videoDraft->update([
-            'thumbnail_path' => $thumbnail_path,
             'title' => request()->title,
             'description' => request()->description,
             'tags' => request()->tags ? json_encode(request()->tags) : null,
@@ -87,6 +86,46 @@ class VideoDraftApiController extends Controller
 
         return response()->json();
     }
+
+
+    public function updateThumbnail(Request $request, string $slug) {
+        //grab the video draft
+        $videoDraft = auth()->user()->creator()->first()->video_drafts()->where('slug', $slug)->firstOrFail();
+        //$thumbnail_path = null;
+        //if(request()->hasFile('image') && ImageCheck::inapropriateImageCheck(request()->file('image'))){
+        //    $thumbnail_path = request()->file('image')->storePublicly('thumbnails', 'public');
+        //}
+
+        if ($request->hasFile('image')) {
+            if (ImageCheck::inapropriateImageCheck($request->file('image'))) {
+                return [
+                    'toastType' => 'warning',
+                    'message' => 'This image is inappropriate. Please upload another image.'
+                ];
+            }
+
+            if ($videoDraft->thumbnail_path && Storage::exists($videoDraft->thumbnail_path)) {
+                Storage::delete($videoDraft->thumbnail_path);
+            }
+
+            // store the image and get the path that is available to the public
+            $url = Storage::url($request->file('image')->store('public/thumbnails'));
+        } else {
+            $url = null;
+        }
+
+        // update the video draft with the new thumbnail path
+        $videoDraft->update([
+            'thumbnail_path' => $url
+        ]);
+
+
+        return [
+            'toastType' => 'success',
+            'message' => 'Thumbnail updated successfully.'
+        ];
+    }
+
 
     public function publish(string $slug){
         $creator = auth()->user()->creator()->first();

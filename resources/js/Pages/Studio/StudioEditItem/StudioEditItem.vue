@@ -56,6 +56,10 @@ let form = useForm({});
 
 
 onMounted(() => {
+    getItem();
+});
+
+const getItem = () => {
     axios.get(route('api.studio.video.draft.edit', [props.slug])).then((response) => {
         categories.value = response.data.categories;
         item.value = response.data.item;
@@ -64,8 +68,7 @@ onMounted(() => {
         // }
         // form.publish_time = new Date(form.publish_time).getTime() - new Date().getTimezoneOffset() * 60;
     })
-});
-
+};
 
 function prepareFormData(){
     const formData = new FormData();
@@ -127,7 +130,7 @@ const handlePublish = () => {
                         </QuaternaryButton>
                     </Link>
                     <div class="mt-2">
-                        <img src="https://picsum.photos/1600/900" class=" w-full aspect-21/12  ">
+                        <img :src="item.thumbnail_path" class="w-full h-32 object-cover rounded"/>
                     </div>
                     <p class="mx-1 mt-3 text-sm font-bold" v-text="'Your ' + type"></p>
                     <p class="text-zinc-500 dark:text-zinc-400 mx-1 text-sm" v-text="item.title"></p>
@@ -175,10 +178,12 @@ const handlePublish = () => {
                                      :maxlength="1000"
                                      :error_message="form.errors.description ? form.errors.description[0] : null"
                     />
-                    <StudioImageInput :value="item.thumbnail"
-                                      :endpoint="route('api.studio.video.draft.update', [item.slug])"
+                    <StudioImageInput :value="item.thumbnail_path"
+                                      :endpoint="route('api.studio.video.draft.thumbnail.update', [item.slug])"
+                                      @refresh="getItem"
                                       label="Thumbnail"
                                       for="thumbnail"
+                                      :rounded="false"
                                       description="Select or upload a picture that shows what's in your video. A good thumbnail stands out and draws viewers' attention."
                                       placeholder="Channel Profile Banner"
                                       :error_message="form.errors.thumbnail ? form.errors.thumbnail[0] : null"

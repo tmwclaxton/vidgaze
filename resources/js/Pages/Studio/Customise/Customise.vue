@@ -95,6 +95,7 @@ const updateChannelDetails = () => {
                             <!--channel profile image-->
                             <StudioImageInput :value="useAuthStore().user.creator.avatar_url"
                                               :endpoint="route('api.creator.update.avatar')"
+                                              @refresh="useAuthStore().getUser();"
                                               label="Channel Profile Image"
                                               description="Your profile picture will appear where your channel is presented on VidGaze, like next to your videos and comments."
                                               recommendation="We recommend using a square image (1:1 aspect ratio) with a minimum resolution of 98x98 pixels and a maximum file size of 4MB."
@@ -106,6 +107,7 @@ const updateChannelDetails = () => {
                             <!--channel banner image-->
                             <StudioImageInput :value="useAuthStore().user.creator.banner_url"
                                               :endpoint="route('api.creator.update.banner')"
+                                              @refresh="useAuthStore().getUser();"
                                               label="Channel Profile Banner"
                                               description="Your banner will appear at the top of your channel page."
                                               recommendation="We recommend using a 16:9 aspect ratio image with a minimum resolution of 2048x1152 pixels and a maximum file size of 6MB."

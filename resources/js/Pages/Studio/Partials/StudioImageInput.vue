@@ -35,7 +35,7 @@ const props = defineProps({
     },
 });
 
-const emits = defineEmits(['submit']);
+const emits = defineEmits(['submit','refresh']);
 const saved = ref(true);
 const fileInput = ref(null);
 const image = ref(null);
@@ -86,7 +86,7 @@ const save = () => {
         axios.patch(props.endpoint, {
             image: null
         }).then(response => {
-            useAuthStore().getUser();
+            emits('refresh');
             useToastStore().add({
                 message: response.data.message,
                 type: response.data.toastType
@@ -107,7 +107,7 @@ const save = () => {
             'Content-Type': 'multipart/form-data'
         }
     }).then(response => {
-        useAuthStore().getUser();
+        emits('refresh');
         useToastStore().add({
             message: response.data.message,
             type: response.data.toastType

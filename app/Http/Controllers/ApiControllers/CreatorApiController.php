@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ApiControllers;
 
 use App\Enums\Platform;
 use App\Helpers\ContentDTO;
+use App\Helpers\ImageCheck;
 use App\Helpers\PlatformAPIs\Dailymotion;
 use App\Helpers\PlatformAPIs\Vimeo;
 use App\Helpers\PlatformAPIs\YouTube;
@@ -195,7 +196,7 @@ class CreatorApiController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            if ($this->inapropriateImageCheck($request->file('image'))) {
+            if (ImageCheck::inapropriateImageCheck($request->file('image'))) {
                 return [
                     'toastType' => 'warning',
                     'message' => 'This image is inappropriate. Please upload another image.'
@@ -228,7 +229,7 @@ class CreatorApiController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            if ($this->inapropriateImageCheck($request->file('image'))) {
+            if (ImageCheck::inapropriateImageCheck($request->file('image'))) {
                 return [
                     'toastType' => 'warning',
                     'message' => 'This image is inappropriate. Please upload another image.'
@@ -254,30 +255,5 @@ class CreatorApiController extends Controller
             'message' => 'Profile banner updated successfully'
         ];
 
-    }
-
-    private function inapropriateImageCheck($image) {
-        // set up AWS client with credentials from .env
-        $client = new RekognitionClient([
-            'region' =>  config('aws.aws_default_region', 'eu-west-1'),
-            'version' => 'latest',
-            'credentials' => [
-                'key' => config('aws.aws_access_key_id', ''),
-                'secret' => config('aws.aws_secret_access_key', ''),
-            ],
-        ]);
-        // check if image has nudity or gore
-        $response = $client->detectModerationLabels([
-            'Image' => [
-                'Bytes' => file_get_contents($image->getRealPath()),
-            ],
-            'MinConfidence' => 50,
-        ]);
-
-        if (count($response['ModerationLabels']) > 0) {
-            return true;
-        } else {
-            return false;
-        }
     }
 }
