@@ -31,10 +31,8 @@ const props = defineProps({
 
 const emits = defineEmits(['update:modelValue','submit']);
 
-const submit = () => {
-    // deselect
-    // textarea.value.blur();
-    emits('update:modelValue');
+const submit = (value) => {
+    emits('update:modelValue', value);
 }
 
 const audience = ref(props.value);
@@ -62,7 +60,7 @@ watch(() => props.value, () => {
                         value="kids"
                         v-model="audience"
                         :checked="audience === 'kids'"
-                        @click="submit"
+                        @click="submit('kids')"
                     >
                     <label for="is_for_kids"
                            class="cursor-pointer ml-2 text-sm font-medium text-zinc-900 dark:text-zinc-200">
@@ -78,7 +76,7 @@ watch(() => props.value, () => {
                         value="all"
                         v-model="audience"
                         :checked="audience === 'all'"
-                        @click="submit"
+                        @click="submit('all')"
 
                     >
 
@@ -102,7 +100,10 @@ watch(() => props.value, () => {
                                     name="audience"
                                     class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600"
                                     value="mature"
-                                    v-model="audience">
+                                    v-model="audience"
+                                    :checked="audience === 'mature'"
+                                    @click="submit('mature')"
+                                >
 
                                 <label for="mature"
                                        class="cursor-pointer ml-2 text-sm font-medium text-zinc-900 dark:text-zinc-200">

@@ -14,6 +14,7 @@ use App\Models\Category;
 use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoDraft;
 use Carbon\Carbon;
+use GuzzleHttp\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -51,7 +52,6 @@ class VideoDraftApiController extends Controller
             'title' => ['max:255', 'required', 'string', 'min:1'],
             'description' => ['nullable', 'string'],
             'tags' => ['nullable', 'array'],
-            'tags.*' => ['string'],
             'visibility' => ['nullable', 'string', 'in:public,unlisted,private,scheduled'],
             'language' => ['nullable', 'string'],
             'region' => ['nullable', 'string'],
@@ -70,21 +70,28 @@ class VideoDraftApiController extends Controller
             $publish_time = Carbon::createFromTimestamp(request()->publish_time);
             if($publish_time->isPast()) return  response()->json(['errors' => [ 'publish_time' => ['Publish time must be in the future']]], 422);
         }
-
+        //if (request()->tags) {
+        //    return [
+        //        'tags' => Utils::jsonEncode(request()->tags)
+        //    ];
+        //}
         $videoDraft->update([
             'title' => request()->title,
             'description' => request()->description,
-            'tags' => request()->tags ? json_encode(request()->tags) : null,
+            'tags' => request()->tags ? Utils::jsonEncode(request()->tags) : null,
             'visibility' => request()->visibility,
             'language' => request()->language,
             'region' => request()->region,
             'audience' => request()->audience,
             'category_id' => request()->category_id,
             'publish_time' => $publish_time ?? null,
-            'platforms' =>request()->platforms ?  json_encode(request()->platforms) : null
+            'platforms' =>request()->platforms ?  Utils::jsonEncode(request()->platforms) : null
         ]);
+        $videoDraft->save();
 
-        return response()->json();
+        return response()->json([
+            'draft' => new VideoDraftResource($videoDraft),
+        ]);
     }
 
 

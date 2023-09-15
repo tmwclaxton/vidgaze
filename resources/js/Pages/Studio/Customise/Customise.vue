@@ -12,8 +12,8 @@ import StudioTextInput from "@/Pages/Studio/Partials/StudioTextInput.vue";
 import {useToastStore} from "@/Stores/ToastStore";
 import StudioImageInput from "@/Pages/Studio/Partials/StudioImageInput.vue";
 
-
-
+const name = 'Customise';
+const errors = ref({});
 
 const updateChannelDetails = () => {
     axios.patch(route('api.creator.update'),{
@@ -21,13 +21,15 @@ const updateChannelDetails = () => {
         bio: useAuthStore().user.creator.bio,
         contact_email: useAuthStore().user.creator.contact_email,
     }).then(response => {
+        errors.value = {};
         useToastStore().add({
             message: response.data.message,
             type: response.data.toastType
         });
     }).catch(error => {
+        errors.value = error.response.data.errors;
         useToastStore().add({
-            message: error.response.data.message,
+            message: "There was an error updating your channel details.",
             type: "warning"
         });
     });
@@ -79,6 +81,8 @@ const updateChannelDetails = () => {
                                              label="Channel Name"
                                              placeholder="Channel Name"
                                              for="channel-name"
+                                             :error_message="errors.name ? errors.name[0] : null"
+
                             />
 
                             <!--channel bio-->
@@ -90,6 +94,8 @@ const updateChannelDetails = () => {
                                              for="channel-bio"
                                              :enter-submit="false"
                                              :maxlength="1000"
+                                             :error_message="errors.bio ? errors.bio[0] : null"
+
                             />
 
                             <!--channel profile image-->
@@ -123,6 +129,7 @@ const updateChannelDetails = () => {
                                              placeholder="Contact Email"
                                              for="contact-email"
                                              :maxlength="320"
+                                             :error_message="errors.contact_email ? errors.contact_email[0] : null"
                             />
 
                         </div>

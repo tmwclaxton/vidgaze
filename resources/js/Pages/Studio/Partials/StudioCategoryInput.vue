@@ -39,6 +39,7 @@ const category_id_local = ref(props.value);
             <p class="text-xs mx-1 my-1">Choose a category that best describes your video</p>
 
             <Dropdown
+                @update:modelValue="emits('update:modelValue', $event)"
                 v-model="category_id_local"
                 name="category_id"
                 id="category_id"

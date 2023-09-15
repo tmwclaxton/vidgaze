@@ -44,7 +44,12 @@ const props = defineProps({
 
 const emits = defineEmits(['update:modelValue']);
 
-const tags = ref(props.value || []);
+const tags = ref(props.value );
+
+//watch the value prop and update the tags array if it changes
+onMounted(() => {
+    tags.value = props.value;
+});
 
 function addTag(e) {
     if (e.code === 'Enter' || e.code === 'Comma' || e.code === 'Tab') {
@@ -59,12 +64,24 @@ function addTag(e) {
             });
             return;
         }
-
-        if (val.length > 0 && tags.value.indexOf(val) === -1) {
-            tags.value.push(val);
-            emits('update:modelValue', tags.value); // Emit the updated tags array to the parent
-            e.target.value = '';
+        if (tags.value.indexOf(val) !== -1) {
+            useToastStore().add({
+                'message': 'Tag already exists',
+                'type': 'warning'
+            });
+            return;
         }
+        if (val.length === 0) {
+            useToastStore().add({
+                'message': 'Tag cannot be empty',
+                'type': 'warning'
+            });
+            return;
+        }
+
+        tags.value.push(val);
+        emits('update:modelValue', tags.value); // Emit the updated tags array to the parent
+        e.target.value = '';
     }
 }
 

@@ -22,6 +22,7 @@ import TertiaryButton from "@/Components/Buttons/TertiaryButton.vue";
 import {useAuthStore} from "@/Stores/AuthStore";
 import StudioEditItemButton from "@/Pages/Studio/StudioEditItem/Partials/StudioEditItemButton.vue";
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
+import {useToastStore} from "@/Stores/ToastStore";
 
 const headTitle = computed(() => {
     // depends on props.type
@@ -67,33 +68,40 @@ const getItem = () => {
         //     form.publish_time = Math.floor((new Date().getTime()) / 1000);
         // }
         // form.publish_time = new Date(form.publish_time).getTime() - new Date().getTimezoneOffset() * 60;
+        // random key to force re-render
+        key.value = Math.random().toString(36).substring(2, 15);
     })
 };
 
 function prepareFormData(){
-    const formData = new FormData();
-    formData.append('title', form.title);
-    formData.append('description', form.description);
-    form.tags.forEach((tag) => {
-        formData.append('tags[]', tag);
+    const formData = useForm({
+        title: item.value.title,
+        description: item.value.description,
+        tags: item.value.tags,
+        visibility: item.value.visibility,
+        publish_time: item.value.publish_time,
+        audience: item.value.audience,
+        platforms: ['youtube'],
+        category_id: item.value.category.id,
     });
-    formData.append('category_id', form.category_id);
-    formData.append('thumbnail', form.thumbnail);
-    formData.append('visibility', form.visibility);
 
     // convert local publish time to unix integer
-    let publish_time = Math.floor(new Date(form.publish_time).getTime());
-    formData.append('publish_time', publish_time);
-    formData.append('audience', form.audience);
-    form.platforms.forEach((platform) => {
-        formData.append('platforms[]', platform);
-    });
+    // let publish_time = Math.floor(new Date(item.value.publish_time).getTime());
+    // formData.append('publish_time', publish_time);
+    // item.value.platforms.forEach((platform) => {
+    //     formData.append('platforms[]', platform);
+    // });
     return formData;
 }
 
 const handleSaveDraft = () => {
-    axios.put(route('api.studio.video.draft.update', [video.value.slug]), prepareFormData()).then(() => {
-            router.get(route('studio.content'))
+    axios.patch(route('api.studio.video.draft.update', [item.value.slug]), prepareFormData()).then(() => {
+            // router.get(route('studio.content'))
+            getItem();
+            useToastStore().add({
+                'message': 'Draft saved',
+                'type': 'success',
+            });
         }
     ).catch((error) => {
         form.errors = error.response.data.errors || {};
@@ -102,7 +110,7 @@ const handleSaveDraft = () => {
 };
 
 const handlePublish = () => {
-    axios.post(route('api.studio.video.publish', [video.value.slug]), prepareFormData()).then(() => {
+    axios.post(route('api.studio.video.publish', [item.value.slug]), prepareFormData()).then(() => {
             router.get(route('studio.content'))
         }
     ).catch((error) => {
@@ -119,7 +127,7 @@ const handlePublish = () => {
     <Head :title="headTitle" />
 
 
-    <div  v-if="useAuthStore().user != null && item != null">
+    <div  v-if="useAuthStore().user != null && item != null" :key="key">
         <div class=" flex flex-col md:flex-row ">
             <div class="display:initial  ">
                 <div class="flex flex-col sticky top-16 h-[calc(100vh-4rem)] w-full md:w-56 p-2 border border-b-0 border-l-0 border-t-0 border-zinc-200 dark:border-zinc-800 ">
@@ -129,8 +137,8 @@ const handlePublish = () => {
                             <p class="text-sm font-bold ">Channel Content</p>
                         </QuaternaryButton>
                     </Link>
-                    <div class="mt-2">
-                        <img :src="item.thumbnail_path" class="w-full h-32 object-cover rounded"/>
+                    <div class="mt-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 w-full aspect-21/12 overflow-hidden">
+                        <img v-if="item.thumbnail_path" :src="item.thumbnail_path" class="w-full h-full"/>
                     </div>
                     <p class="mx-1 mt-3 text-sm font-bold" v-text="'Your ' + type"></p>
                     <p class="text-zinc-500 dark:text-zinc-400 mx-1 text-sm" v-text="item.title"></p>
@@ -140,7 +148,7 @@ const handlePublish = () => {
                             <StudioEditItemButton v-if="props.type !== 'video_draft'" :currentTab="tab" :tab="'analytics'" @changePage="tab = 'analytics'"/>
                             <StudioEditItemButton v-if="props.type !== 'video_draft'" :currentTab="tab" :tab="'comments'" @changePage="tab = 'comments'"/>
                         </div>
-                        <div class="flex space-x-3 justify-center">
+                        <div class="flex flex-row flex-wrap gap-2 justify-center">
                             <div class="flex justify-center">
                                 <TertiaryButton @click="handleSaveDraft" class="h-[3rem]" :class="{ 'opacity-25': form.processing }"
                                                 :disabled="form.processing">SAVE DRAFT
@@ -149,6 +157,11 @@ const handlePublish = () => {
                             <div class="flex justify-center">
                                 <TertiaryButton @click="handlePublish" class="h-[3rem]" :class="{ 'opacity-25': form.processing }"
                                                 :disabled="form.processing">{{ form.visibility === 'scheduled' ? 'SCHEDULE' : 'PUBLISH'}}
+                                </TertiaryButton>
+                            </div>
+                            <div class="flex justify-center">
+                                <TertiaryButton @click="deleteItem" class="h-[3rem]" :class="{ 'opacity-25': form.processing }"
+                                                :disabled="form.processing">DELETE
                                 </TertiaryButton>
                             </div>
                         </div>
@@ -212,9 +225,9 @@ const handlePublish = () => {
                                            for="visibility"
                                            :errors="form.errors"
                     />
-                    <StudioCategoryInput :value="form.category_id"
+                    <StudioCategoryInput :value="item.category.id"
                                          :categories="categories"
-                                         @update:model-value=""
+                                         @update:model-value="item.category.id = $event"
                                          label="Category"
                                          for="category"
                                          :errors="form.errors"

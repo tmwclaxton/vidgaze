@@ -7,6 +7,7 @@ import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {useAuthStore} from "@/Stores/AuthStore";
 import {useToastStore} from "@/Stores/ToastStore";
+import InputError from "@/Components/Inputs/InputError.vue";
 
 const props = defineProps({
     value: {
@@ -36,6 +37,7 @@ const props = defineProps({
 });
 
 const emits = defineEmits(['submit','refresh']);
+const error_message = ref(null);
 const saved = ref(true);
 const fileInput = ref(null);
 const image = ref(null);
@@ -87,11 +89,13 @@ const save = () => {
             image: null
         }).then(response => {
             emits('refresh');
+            error_message.value = null;
             useToastStore().add({
                 message: response.data.message,
                 type: response.data.toastType
             });
         }).catch(error => {
+            error_message.value = error.response.data.message;
             useToastStore().add({
                 message: error.response.data.message,
                 type: "warning"
@@ -108,11 +112,13 @@ const save = () => {
         }
     }).then(response => {
         emits('refresh');
+        error_message.value = null;
         useToastStore().add({
             message: response.data.message,
             type: response.data.toastType
         });
     }).catch(error => {
+        error_message.value = error.response.data.message;
         useToastStore().add({
             message: error.response.data.message,
             type: "warning"
@@ -166,6 +172,7 @@ const save = () => {
                 </div>
 
             </div>
+            <InputError v-if="error_message !== null" class="mt-2" :message="error_message"/>
 
     </consistent-content-holder>
 </template>
