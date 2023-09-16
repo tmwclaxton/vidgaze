@@ -4,7 +4,6 @@
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
 import {computed, onMounted, ref, watch} from "vue";
 import InputError from "@/Components/Inputs/InputError.vue";
-
 import YouTubeIcon from '#icons/youtube.svg';
 import DailyMotionIcon from '#icons/dailymotion.svg';
 import VimeoIcon from '#icons/vimeo.svg';

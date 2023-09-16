@@ -105,7 +105,10 @@ const handleSaveDraft = () => {
         }
     ).catch((error) => {
         form.errors = error.response.data.errors || {};
-        console.log(error);
+        useToastStore().add({
+            'message': 'Error saving draft',
+            'type': 'warning',
+        });
     })
 };
 

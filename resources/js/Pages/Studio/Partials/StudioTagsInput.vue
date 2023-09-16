@@ -100,7 +100,8 @@ function removeLastTag(e) {
 
 <template>
     <consistent-content-holder class="rounded-lg p-2 focus:ring">
-        <InputLabel class="mb-1" for="tags" value="Tags"/>
+        <p class="text-xs font-bold mb-1">Tags</p>
+
         <div class="flex flex-row flex-wrap gap-2 h-full w-full border-1 border-gray-300 border-box">
             <div
                 v-for="(tag, index) in value"

@@ -8,6 +8,8 @@ import InputError from "@/Components/Inputs/InputError.vue";
 import InputLabel from "@/Components/Inputs/InputLabel.vue";
 import DateInput from "@/Components/Inputs/DateInput.vue";
 
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 const name = 'StudioVisibilityInput';
 const props = defineProps({
     value: {
@@ -56,7 +58,8 @@ watch (() => props.publish_time, (value) => {
 <template>
     <consistent-content-holder class="rounded p-2 focus:ring">
         <div>
-            <InputLabel class="mb-1" for="visibility" value="Visibility (Required)"/>
+            <p class="text-xs font-bold mb-1">Visibility (Required)</p>
+
             <p class="text-xs mx-2 my-1">Choose when to publish and who can see your video </p>
 
             <div class="ml-2 space-y-2">
@@ -127,7 +130,10 @@ watch (() => props.publish_time, (value) => {
                             <span class="cursor-pointer text-xs">Select a date to make your video  <span class="font-bold">public</span></span>
                         </label>
                     </div>
-                    <DateInput class="mt-2" v-if="visibility === 'scheduled'" v-model="publishing_time"/>
+                    <!--<DateInput class="mt-2" v-if="visibility === 'scheduled'" v-model="publishing_time"/>-->
+                    <div class="w-64">
+                        <VueDatePicker class="ml-6 mt-2" v-if="visibility === 'scheduled'" v-model="publishing_time" minutes-increment="1"/>
+                    </div>
                     <InputError class="mt-2" :message="errors.publish_time ? errors.publish_time[0] : null"/>
                 </div>
             </div>
