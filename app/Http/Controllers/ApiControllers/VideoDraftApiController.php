@@ -36,7 +36,8 @@ class VideoDraftApiController extends Controller
         return [
 
             'item' => new VideoDraftResource($video),
-            'categories' => Category::orderBy('name')->get(['id', 'name'])->map(fn($category)=>
+            'categories' => Category::where('youtube_category_id', '!=', null)
+                ->orderBy('name')->get(['id', 'name'])->map(fn($category)=>
             [
                 'value' => $category->id,
                 'name' => $category->name
@@ -48,7 +49,7 @@ class VideoDraftApiController extends Controller
     public function update(string $slug){
         $videoDraft = auth()->user()->creator()->first()->video_drafts()->where('slug', $slug)->firstOrFail();
         request()->validate([
-            'image' => ['nullable', 'image', 'max:10240', 'dimensions:min_width=640,min_height=360,ratio=16/9'],
+            //'image' => ['nullable', 'image', 'max:10240', 'dimensions:min_width=640,min_height=360,ratio=16/9'],
             'title' => ['max:255', 'required', 'string', 'min:1'],
             'description' => ['nullable', 'string'],
             'tags' => ['nullable', 'array'],
@@ -56,12 +57,11 @@ class VideoDraftApiController extends Controller
             'language' => ['nullable', 'string'],
             'region' => ['nullable', 'string'],
             'audience' => ['nullable', 'string', 'in:all,kids,mature'],
-            'category_id' => ['required', 'integer', 'exists:categories,id'],
-            //publish_time	"2023-09-29T11:51:00.000Z" // required if visibility is scheduled
-            'publish_time' => ['nullable', 'required_if:visibility,scheduled', 'string'],
+            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
+            'publish_time' => ['nullable', 'required_if:visibility,scheduled', 'date'],
             'platforms' => ['nullable', 'array', 'min:1', Rule::in(Platform::getUploadablePlatforms(false))],
+            'preferred_source' => ['nullable', 'string', Rule::in(Platform::getUploadablePlatforms(false))],
         ]);
-
 
         $publish_time = null;
         if(request()->visibility == Visibility::SCHEDULED->value){
@@ -72,11 +72,7 @@ class VideoDraftApiController extends Controller
                 return  response()->json(['errors' => [ 'publish_time' => ['Publish time must be in the future']]], 422);
             }
         }
-        //if (request()->tags) {
-        //    return [
-        //        'tags' => Utils::jsonEncode(request()->tags)
-        //    ];
-        //}
+
         $videoDraft->update([
             'title' => request()->title,
             'description' => request()->description,
@@ -87,7 +83,8 @@ class VideoDraftApiController extends Controller
             'audience' => request()->audience,
             'category_id' => request()->category_id,
             'publish_time' => $publish_time ?? null,
-            'platforms' =>request()->platforms ?  Utils::jsonEncode(request()->platforms) : null
+            'platforms' =>request()->platforms ?  Utils::jsonEncode(request()->platforms) : null,
+            'preferred_source' => request()->preferred_source,
         ]);
         $videoDraft->save();
 

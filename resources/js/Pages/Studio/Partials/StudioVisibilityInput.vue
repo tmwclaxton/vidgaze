@@ -136,7 +136,8 @@ watch( () => publishing_time.value, (value) => {
                     <!--<DateInput class="mt-2" v-if="visibility === 'scheduled'" v-model="publishing_time"/>-->
                     <div class="w-64">
                         <VueDatePicker class="ml-6 mt-2" v-if="visibility === 'scheduled'" v-model="publishing_time" minutes-increment="1"
-                                       :action-row="{ showNow: true }" now-button-label="Current" />
+                                       :action-row="{ showNow: true }" now-button-label="Current" utc
+                        />
                     </div>
                     <InputError class="ml-6 mt-2" :message="errors.publish_time ? errors.publish_time[0] : null"/>
                 </div>

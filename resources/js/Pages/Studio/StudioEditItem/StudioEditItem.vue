@@ -74,6 +74,12 @@ const getItem = () => {
 };
 
 function prepareFormData(){
+    // add 1 hour to publish time, I don't think this is a timezone issue I think the date component I'm using is just broken
+    // as the date shown in the input is correct but the value is 1 hour behind
+    let publish_time = new Date(item.value.publish_time);
+    publish_time.setHours(publish_time.getHours() + 1);
+    item.value.publish_time = publish_time.toISOString().slice(0, 19).replace('T', ' ');
+
     const formData = useForm({
         title: item.value.title,
         description: item.value.description,
@@ -83,14 +89,8 @@ function prepareFormData(){
         audience: item.value.audience,
         platforms: item.value.platforms,
         category_id: item.value.category.id,
+        preferred_source: item.value.preferred_source,
     });
-
-    // convert local publish time to unix integer
-    // let publish_time = Math.floor(new Date(item.value.publish_time).getTime());
-    // formData.append('publish_time', publish_time);
-    // item.value.platforms.forEach((platform) => {
-    //     formData.append('platforms[]', platform);
-    // });
     return formData;
 }
 
@@ -243,15 +243,16 @@ const handleDelete = () => {
                                             :platforms="item.platforms"
                                               :preferred_source="item.preferred_source"
                                               @update:model-value="item.platforms = $event;"
+                                          :error_message="form.errors.platforms ? form.errors.platforms[0] : null"
                      />
 
-                    <!--<StudioPrimarySourceInput :preferred_source="item.preferred_source"-->
-                    <!--                          :sources="['youtube']"-->
-                    <!--                          @update:model-value="item.preferred_source = $event"-->
-                    <!--                          label="Primary Source"-->
-                    <!--                          for="primary_source"-->
-                    <!--                          :errors="form.errors"-->
-                    <!--/>-->
+                    <StudioPrimarySourceInput :preferred_source="item.preferred_source"
+                                              :platforms="item.platforms"
+                                              @update:model-value="item.preferred_source = $event"
+                                              label="Primary Source"
+                                              for="primary_source"
+                                              :error_message="form.errors.preferred_source ? form.errors.preferred_source[0] : null"
+                    />
                     <StudioCheck/>
 
                 </div>

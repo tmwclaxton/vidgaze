@@ -72,7 +72,7 @@ const removeFile = () => {
     if (!image.value) {
         // this means user wants to remove their current image and revert to the default one
         // emits('update:modelValue', null)
-        imageUrl.value = "https://img.freepik.com/free-photo/abstract-luxury-plain-blur-grey-black-gradient-used-as-background-studio-wall-display-your-products_1258-63747.jpg?w=2000";
+        imageUrl.value = true;
         saved.value = false;
 
         return;
@@ -139,8 +139,8 @@ const save = () => {
                     <div class="flex flex-col h-full align-middle justify-middle "  :class="[props.rounded ? 'rounded-full overflow-hidden aspect-square  mx-auto w-max' : 'w-full']">
 
                             <img class="w-full  " :class="[props.rounded ? 'h-full ' : 'my-auto']"
-                                 v-if="imageUrl || props.value"
-                                 :src="imageUrl ? imageUrl : props.value">
+                                 v-if="props.value && !imageUrl"
+                                 :src="props.value">
 
                     </div>
                 </div>
@@ -165,7 +165,7 @@ const save = () => {
                         <font-awesome-icon icon="edit" class="mr-2"/>
                         Change
                     </quaternary-button>
-                    <quaternary-button class="float-right h-max" @click="removeFile">
+                    <quaternary-button class="float-right h-max" @click="removeFile" v-if="props.value">
                         <font-awesome-icon icon="trash" class="mr-2"/>
                         Remove
                     </quaternary-button>
