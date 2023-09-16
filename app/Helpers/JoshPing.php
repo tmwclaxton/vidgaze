@@ -29,6 +29,7 @@ class JoshPing
     {
 
 
+        dd(Carbon::create(null));
 
 //        ddd(Carbon::create("2022-12-27T16:33:35.000000Z")->toDate());
 //        $creator = Creator::where('slug', 'yt_UC-lHJZR3Gqxm24_Vd_AJ5Yw')->firstOrFail();
