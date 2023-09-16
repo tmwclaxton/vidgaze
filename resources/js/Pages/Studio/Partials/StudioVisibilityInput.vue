@@ -8,7 +8,7 @@ import InputError from "@/Components/Inputs/InputError.vue";
 import InputLabel from "@/Components/Inputs/InputLabel.vue";
 import DateInput from "@/Components/Inputs/DateInput.vue";
 
-const name = 'StudioMadeForKidsInput';
+const name = 'StudioVisibilityInput';
 const props = defineProps({
     value: {
         type: String,
@@ -36,15 +36,21 @@ const props = defineProps({
     }
 });
 
-const emits = defineEmits(['update:modelValue','submit']);
+const emits = defineEmits(['update:modelVisibility','update:modelPublishTime']);
 
-const submit = () => {
-    // deselect
-    // textarea.value.blur();
-    emits('update:modelValue');
+const submit = (value) => {
+    console.log('submitting visibility')
+    emits('update:modelVisibility', value);
 }
+
 const visibility = ref(props.value);
 const publishing_time = ref(props.publish_time);
+watch (() => props.value, (value) => {
+    visibility.value = value;
+});
+watch (() => props.publish_time, (value) => {
+    publishing_time.value = value;
+});
 </script>
 
 <template>
@@ -62,6 +68,8 @@ const publishing_time = ref(props.publish_time);
                         value="private"
                         class="w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600"
                         v-model="visibility"
+                        :checked="visibility === 'private'"
+                        @click="submit('private')"
                     >
                     <label for="private" class="flex flex-col ml-2 cursor-pointer select-none select-none">
                         <span class="cursor-pointer font-semibold text-sm font-medium text-zinc-900 dark:text-zinc-200">Private</span>
@@ -72,10 +80,12 @@ const publishing_time = ref(props.publish_time);
                     <input
                         id="unlisted"
                         type="radio"
+                        name="visibility"
                         value="unlisted"
                         class="w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600"
                         v-model="visibility"
-                        name="visibility"
+                        :checked="visibility === 'unlisted'"
+                        @click="submit('unlisted')"
                     >
                     <label for="unlisted" class="flex flex-col ml-2 cursor-pointer select-none">
                         <span class="font-semibold text-sm font-medium text-zinc-900 dark:text-zinc-200">Unlisted</span>
@@ -84,13 +94,14 @@ const publishing_time = ref(props.publish_time);
                 </div>
                 <div class="flex items-center">
                     <input
-                        required
                         id="public"
                         type="radio"
                         name="visibility"
-                        class="w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600"
                         value="public"
+                        class="w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600"
                         v-model="visibility"
+                        :checked="visibility === 'public'"
+                        @click="submit('public')"
                     >
                     <label for="public" class="flex flex-col ml-2 cursor-pointer select-none">
                         <span  class="font-semibold text-sm font-medium text-zinc-900 dark:text-zinc-200">Public</span>
@@ -106,6 +117,8 @@ const publishing_time = ref(props.publish_time);
                             name="visibility"
                             class="w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600"
                             v-model="visibility"
+                            :checked="visibility === 'scheduled'"
+                            @click="submit('scheduled')"
                         >
                         <label
                             for="scheduled"

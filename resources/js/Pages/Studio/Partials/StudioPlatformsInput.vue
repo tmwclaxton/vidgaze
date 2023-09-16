@@ -14,7 +14,7 @@ const props = defineProps({
         type: String,
         default: ''
     },
-    sources: {
+    platforms: {
         type: Array,
         default: ''
     },
@@ -24,7 +24,7 @@ const props = defineProps({
     }
 });
 
-const emits = defineEmits(['update:modelValue','submit']);
+const emits = defineEmits(['update:modelValue']);
 
 const submit = () => {
     // deselect
@@ -32,7 +32,13 @@ const submit = () => {
     emits('update:modelValue');
 }
 
-const platformsLocal = ref(props.platforms);
+const platformsLocal = ref(props.platforms || []);
+
+watch(platformsLocal, () => {
+    console.log('platformsLocal changed');
+    emits('update:modelValue', platformsLocal.value);
+});
+
 </script>
 
 <template>
@@ -42,21 +48,33 @@ const platformsLocal = ref(props.platforms);
             <p class="text-xs mx-1 my-1">These are the platforms where your video will be published to</p>
 
 
-        <div class="ml-2 space-y-2">
-            <div class="flex items-center">
-                <input type="checkbox" id="youtube" value="youtube" v-model="platformsLocal" class="mr-2">
-                <YouTubeIcon class="w-6 h-6 mr-2"/>
-                <label for="youtube">YouTube</label>
+        <div class="ml-2 space-y-2 select-none">
+            <div class="flex flex-row gap-2 items-center">
+                <input type="checkbox" id="youtube" value="youtube" v-model="platformsLocal"
+                       :checked="platformsLocal.includes('youtube')"
+                       class="w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600 hover:dark:bg-zinc-700 focus:dark:bg-zinc-700">
+                <label for="youtube" class="flex flex-row gap-x-2 align-middle items-center">
+                    <YouTubeIcon class="w-6 h-6 "/>
+                    <p class="font-semibold text-sm">YouTube</p>
+                </label>
             </div>
-            <div class="flex items-center">
-                <input type="checkbox" id="dailymotion" value="dailymotion" v-model="platformsLocal" class="mr-2">
-                <DailyMotionIcon class="w-6 h-6 mr-2"/>
-                <label for="dailymotion">Dailymotion</label>
+            <div class="flex flex-row gap-2 items-center">
+                <input type="checkbox" id="dailymotion" value="dailymotion" v-model="platformsLocal"
+                          :checked="platformsLocal.includes('dailymotion')"
+                       class="w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600 hover:dark:bg-zinc-700 focus:dark:bg-zinc-700">
+                <label for="dailymotion" class="flex flex-row gap-x-2  align-middle items-center">
+                    <DailyMotionIcon class="w-6 h-6"/>
+                    <p class="font-semibold text-sm">Dailymotion</p>
+                </label>
             </div>
-            <div class="flex items-center">
-                <input type="checkbox" id="vimeo" value="vimeo" v-model="platformsLocal" class="mr-2">
-                <VimeoIcon class="w-6 h-6 mr-2"/>
-                <label for="vimeo">Vimeo</label>
+            <div class="flex flex-row gap-2 items-center">
+                <input type="checkbox" id="vimeo" value="vimeo" v-model="platformsLocal"
+                        :checked="platformsLocal.includes('vimeo')"
+                       class="w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600 hover:dark:bg-zinc-700 focus:dark:bg-zinc-700">
+                <label for="vimeo" class="flex flex-row gap-x-2 align-middle items-center">
+                    <VimeoIcon class="w-6 h-6"/>
+                    <p class="font-semibold text-sm">Vimeo</p>
+                </label>
             </div>
         </div>
 

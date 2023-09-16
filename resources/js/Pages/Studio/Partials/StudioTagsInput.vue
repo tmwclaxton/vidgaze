@@ -99,13 +99,13 @@ function removeLastTag(e) {
 </script>
 
 <template>
-    <consistent-content-holder class="rounded p-2 focus:ring">
+    <consistent-content-holder class="rounded-lg p-2 focus:ring">
         <InputLabel class="mb-1" for="tags" value="Tags"/>
         <div class="flex flex-row flex-wrap gap-2 h-full w-full border-1 border-gray-300 border-box">
             <div
                 v-for="(tag, index) in value"
                 :key="tag"
-                class="flex flex-row gap-x-1 align-middle items-center h-8  bg-zinc-200 dark:bg-zinc-800 rounded-lg px-3 "
+                class="flex flex-row gap-x-1 align-middle items-center h-8  bg-zinc-100 dark:bg-zinc-800 rounded-lg px-3 "
             >
                 <font-awesome-icon  :icon="['fas', 'close']" class="h-3 cursor-pointer my-auto " @click="removeTag(index)"/>
                 <span class="leading-5" v-text="tag"></span>

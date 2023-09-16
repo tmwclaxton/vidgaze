@@ -146,7 +146,7 @@ enum Platform: string
     {
         $uploadable = collect([
             Platform::YouTube,
-//            Platform::Dailymotion,
+            Platform::Dailymotion,
             Platform::Vimeo,
         ]);
         if($asEnum){

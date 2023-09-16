@@ -81,7 +81,7 @@ function prepareFormData(){
         visibility: item.value.visibility,
         publish_time: item.value.publish_time,
         audience: item.value.audience,
-        platforms: ['youtube'],
+        platforms: item.value.platforms,
         category_id: item.value.category.id,
     });
 
@@ -119,6 +119,16 @@ const handlePublish = () => {
     });
 };
 
+const handleDelete = () => {
+    // axios.delete(route('api.studio.video.draft.delete', [item.value.slug])).then(() => {
+    //         router.get(route('studio.content'))
+    //     }
+    // ).catch((error) => {
+    //     form.errors = error.response.data.errors || {};
+    //     console.log(error);
+    // });
+};
+
 
 </script>
 
@@ -130,13 +140,13 @@ const handlePublish = () => {
     <div  v-if="useAuthStore().user != null && item != null" :key="key">
         <div class=" flex flex-col md:flex-row ">
             <div class="display:initial  ">
-                <div class="flex flex-col sticky top-16 h-[calc(100vh-4rem)] w-full md:w-56 p-2 border border-b-0 border-l-0 border-t-0 border-zinc-200 dark:border-zinc-800 ">
-                    <Link :href="route('studio.content')" class="h-16">
-                        <QuaternaryButton>
-                            <font-awesome-icon :icon="['fas', 'arrow-left']" class="w-5 aspect-square "/>
-                            <p class="text-sm font-bold ">Channel Content</p>
-                        </QuaternaryButton>
-                    </Link>
+                <div class="flex flex-col sticky top-16 md:h-[calc(100vh-4rem)] w-full md:w-72 p-2 px-5 border border-b-0 border-l-0 border-t-0 border-zinc-200 dark:border-zinc-800 shadow dark:shadow-zinc-800">
+                        <Link :href="route('studio.content')" class="mt-2 ">
+                            <QuaternaryButton>
+                                <font-awesome-icon :icon="['fas', 'arrow-left']" class="w-5 aspect-square "/>
+                                <p class="text-sm font-bold my-auto">Channel Content</p>
+                            </QuaternaryButton>
+                        </Link>
                     <div class="mt-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 w-full aspect-21/12 overflow-hidden">
                         <img v-if="item.thumbnail_path" :src="item.thumbnail_path" class="w-full h-full"/>
                     </div>
@@ -160,7 +170,7 @@ const handlePublish = () => {
                                 </TertiaryButton>
                             </div>
                             <div class="flex justify-center">
-                                <TertiaryButton @click="deleteItem" class="h-[3rem]" :class="{ 'opacity-25': form.processing }"
+                                <TertiaryButton @click="handleDelete" class="h-[3rem]" :class="{ 'opacity-25': form.processing }"
                                                 :disabled="form.processing">DELETE
                                 </TertiaryButton>
                             </div>
@@ -203,14 +213,12 @@ const handlePublish = () => {
                     />
                     <StudioTagsInput :value="item.tags"
                                      @update:model-value="item.tags = $event"
-                                     @submit=""
                                      label="Tags"
                                      for="tags"
                                      :error_message="form.errors.tags ? form.errors.tags[0] : null"
                     />
                     <StudioMadeForKidsInput :value="item.audience"
                                              @update:model-value="item.audience = $event"
-                                             @submit=""
                                              label="Made for kids"
                                              for="made_for_kids"
                                              :error_message="form.errors.audience ? form.errors.audience[0] : null"
@@ -220,33 +228,27 @@ const handlePublish = () => {
                                            :publish_time="item.publish_time"
                                            @update:model-visibility="item.visibility = $event"
                                            @update:model-publish_time="item.publish_time = $event"
-                                           @submit=""
-                                           label="Visibility"
-                                           for="visibility"
                                            :errors="form.errors"
                     />
                     <StudioCategoryInput :value="item.category.id"
                                          :categories="categories"
                                          @update:model-value="item.category.id = $event"
-                                         label="Category"
-                                         for="category"
                                          :errors="form.errors"
                      />
 
                     <StudioPlatformsInput :errors="form.errors"
-                                              :preferred_source="form.preferred_source"
-                                              :sources="['youtube']"
-                                              @update:model-value="form.preferred_source = $event"
+                                            :platforms="item.platforms"
+                                              :preferred_source="item.preferred_source"
+                                              @update:model-value="item.platforms = $event;"
                      />
 
-                    <StudioPrimarySourceInput :preferred_source="form.preferred_source"
-                                              :sources="['youtube']"
-                                              @update:model-value="form.preferred_source = $event"
-                                              @submit=""
-                                              label="Primary Source"
-                                              for="primary_source"
-                                              :errors="form.errors"
-                    />
+                    <!--<StudioPrimarySourceInput :preferred_source="item.preferred_source"-->
+                    <!--                          :sources="['youtube']"-->
+                    <!--                          @update:model-value="item.preferred_source = $event"-->
+                    <!--                          label="Primary Source"-->
+                    <!--                          for="primary_source"-->
+                    <!--                          :errors="form.errors"-->
+                    <!--/>-->
                     <StudioCheck/>
 
                 </div>
