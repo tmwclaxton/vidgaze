@@ -26,7 +26,7 @@ return new class extends Migration {
             $table->enum('visibility', array_map(fn($visibility) => $visibility->value, Visibility::getAll()))->default(Visibility::PUBLIC->value);
             $table->enum('preferred_source', Platform::getSupportedPlatforms()->toArray()); //use enum
             $table->string('platforms')->nullable();
-
+            $table->timestamp('publish_time')->nullable();
             $table->timestamps();
         });
     }

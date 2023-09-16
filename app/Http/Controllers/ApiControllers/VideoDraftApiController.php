@@ -57,18 +57,20 @@ class VideoDraftApiController extends Controller
             'region' => ['nullable', 'string'],
             'audience' => ['nullable', 'string', 'in:all,kids,mature'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
-            'publish_time' => ['nullable', 'int'],
+            //publish_time	"2023-09-29T11:51:00.000Z" // required if visibility is scheduled
+            'publish_time' => ['nullable', 'required_if:visibility,scheduled', 'string'],
             'platforms' => ['nullable', 'array', 'min:1', Rule::in(Platform::getUploadablePlatforms(false))],
         ]);
 
 
         $publish_time = null;
         if(request()->visibility == Visibility::SCHEDULED->value){
-            request()->validate([
-                'publish_time' => ['required', 'int']
-            ]);
-            $publish_time = Carbon::createFromTimestamp(request()->publish_time);
-            if($publish_time->isPast()) return  response()->json(['errors' => [ 'publish_time' => ['Publish time must be in the future']]], 422);
+            if (!request()->publish_time) return  response()->json(['errors' => [ 'publish_time' => ['Publish time is required']]], 422);
+            $publish_time = request()->publish_time; // 2023-09-29T11:51:00.000Z
+            $publish_time = Carbon::parse($publish_time);
+            if($publish_time < Carbon::now()){
+                return  response()->json(['errors' => [ 'publish_time' => ['Publish time must be in the future']]], 422);
+            }
         }
         //if (request()->tags) {
         //    return [

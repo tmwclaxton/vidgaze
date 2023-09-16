@@ -64,10 +64,10 @@ const getItem = () => {
     axios.get(route('api.studio.video.draft.edit', [props.slug])).then((response) => {
         categories.value = response.data.categories;
         item.value = response.data.item;
-        // if (form.publish_time < Math.floor((new Date().getTime()) / 1000)) {
-        //     form.publish_time = Math.floor((new Date().getTime()) / 1000);
+        // if (item.publish_time < Math.floor((new Date().getTime()) / 1000)) {
+        //     item.publish_time = Math.floor((new Date().getTime()) / 1000);
         // }
-        // form.publish_time = new Date(form.publish_time).getTime() - new Date().getTimezoneOffset() * 60;
+        // item.publish_time = new Date(item.publish_time).getTime() - new Date().getTimezoneOffset() * 60;
         // random key to force re-render
         key.value = Math.random().toString(36).substring(2, 15);
     })
@@ -79,7 +79,7 @@ function prepareFormData(){
         description: item.value.description,
         tags: item.value.tags,
         visibility: item.value.visibility,
-        publish_time: item.value.publish_time,
+        publish_time: item.value.visibility === 'scheduled' ? item.value.publish_time : null,
         audience: item.value.audience,
         platforms: item.value.platforms,
         category_id: item.value.category.id,
@@ -230,7 +230,7 @@ const handleDelete = () => {
                     <StudioVisibilityInput :value="item.visibility"
                                            :publish_time="item.publish_time"
                                            @update:model-visibility="item.visibility = $event"
-                                           @update:model-publish_time="item.publish_time = $event"
+                                           @update:model-publish-time="item.publish_time = $event"
                                            :errors="form.errors"
                     />
                     <StudioCategoryInput :value="item.category.id"

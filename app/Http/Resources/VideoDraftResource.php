@@ -35,6 +35,8 @@ class VideoDraftResource extends JsonResource
             'category' => new CategoryResource($this->category()->first()),
             'platforms' => json_decode($this->platforms) ?? [],
             'visibility' => $this->visibility,
+            // if no publish time, return current time
+            'publish_time' => $this->publish_time ? $this->publish_time : Carbon::now()->toDateTimeString(),
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(),
             'updated_at' => Carbon::parse($this->updated_at)->diffForHumans(),
         ];
