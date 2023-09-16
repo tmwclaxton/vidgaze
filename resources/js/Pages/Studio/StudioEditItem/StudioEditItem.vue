@@ -143,18 +143,18 @@ const handleDelete = () => {
     <div  v-if="useAuthStore().user != null && item != null" :key="key">
         <div class=" flex flex-col md:flex-row ">
             <div class="display:initial  ">
-                <div class="flex flex-col sticky top-16 md:h-[calc(100vh-4rem)] w-full md:w-72 p-2 px-5 border border-b-0 border-l-0 border-t-0 border-zinc-200 dark:border-zinc-800 shadow dark:shadow-zinc-800">
-                        <Link :href="route('studio.content')" class="mt-2 ">
-                            <QuaternaryButton>
-                                <font-awesome-icon :icon="['fas', 'arrow-left']" class="w-5 aspect-square "/>
-                                <p class="text-sm font-bold my-auto">Channel Content</p>
-                            </QuaternaryButton>
-                        </Link>
+                <div class="flex flex-col sticky top-16 md:h-[calc(100vh-4rem)] overflow-hidden w-full md:w-72 p-2 px-5 border border-b-0 border-l-0 border-t-0 border-zinc-200 dark:border-zinc-800 shadow dark:shadow-zinc-800">
+                    <Link :href="route('studio.content')" class="mt-2 ">
+                        <QuaternaryButton>
+                            <font-awesome-icon :icon="['fas', 'arrow-left']" class="w-5 aspect-square "/>
+                            <p class="text-sm font-bold my-auto">Channel Content</p>
+                        </QuaternaryButton>
+                    </Link>
                     <div class="mt-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 w-full aspect-21/12 overflow-hidden">
                         <img v-if="item.thumbnail_path" :src="item.thumbnail_path" class="w-full h-full"/>
                     </div>
-                    <p class="mx-1 mt-3 text-sm font-bold" v-text="'Your ' + type"></p>
-                    <p class="text-zinc-500 dark:text-zinc-400 mx-1 text-sm" v-text="item.title"></p>
+                    <p class="mx-1 mt-3 text-sm font-bold break-all w-full" v-text="'Your ' + type"></p>
+                    <p class="text-zinc-500 dark:text-zinc-400 mx-1 text-sm break-all" v-text="item.title"></p>
                     <div class="py-3 flex-grow flex flex-col justify-between overflow-hidden rounded w-full  mb-2 md:ml-0 ">
                         <div class="flex flex-col flex-wrap  px-auto gap-y-2 z-10 text-sm font-bold text-center  ">
                             <StudioEditItemButton :currentTab="tab" :tab="'details'" @changePage="tab = 'details'"/>
@@ -181,17 +181,18 @@ const handleDelete = () => {
                     </div>
                 </div>
             </div>
-            <div class="flex flex-grow">
-              <ConsistentPadding class="-mt-4 px-4 max-w-4xl" >
+            <div class="flex flex-grow ">
+              <ConsistentPadding class="-mt-4 px-4 flex flex-row gap-3 pr-6 " >
                   <!--<TitleComponent :text="headTitle" class="">-->
                   <!--    <font-awesome-icon :icon="['fas', 'upload']"  class="w-6 h-6 my-auto"/>-->
                   <!--</TitleComponent>-->
-                <div class="m t-8 space-y-3 sm:min-w-[20rem] w-full ">
+                <div class="m t-8 space-y-3 sm:min-w-[20rem] w-full flex-grow-1 max-w-4xl">
                     <StudioTextInput :value="item.title"
                                      @update:model-value="item.title = $event"
                                      label="Title"
                                      placeholder="Video title"
                                      for="title"
+                                     :maxlength="100"
                                      :error_message="form.errors.title ? form.errors.title[0] : null"
                     />
                     <StudioTextInput :value="item.description"
@@ -201,7 +202,7 @@ const handleDelete = () => {
                                      placeholder="Video description"
                                      for="description"
                                      :enter-submit="false"
-                                     :maxlength="1000"
+                                     :maxlength="5000"
                                      :error_message="form.errors.description ? form.errors.description[0] : null"
                     />
                     <StudioImageInput :value="item.thumbnail_path"
@@ -256,12 +257,9 @@ const handleDelete = () => {
                     <StudioCheck/>
 
                 </div>
-                <div>
-                    <!--            <div>-->
-                    <!--                <div  :style="{'background-image': 'url(' + getImageURL(image) + ')'}" v-for="image in form.images" class="w-20 h-20 bg-cover bg-center"></div>-->
-                    <!--                <img v-for="image in images" :src="getImageURL(image)" :key="image.name"  alt="image"/>-->
-                    <!--            </div>-->
-                </div>
+                    <!--<video v-if="item" class="  h-72 rounded" controls>-->
+                    <!--    <source :src="item.video_path" type="video/mp4">-->
+                    <!--</video>-->
             </ConsistentPadding>
             </div>
         </div>

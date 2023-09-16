@@ -134,16 +134,21 @@ const save = () => {
         <p class="text-xs font-bold" v-text="props.label"></p>
         <p class="text-xs mx-2 my-1" v-text="props.description"></p>
         <div class="flex flex-col md:flex-row mx-2  my-3">
-                <div @click="open"
-                     class="w-full  overflow-hidden aspect-21/12 md:w-52 flex-shrink-0 bg-zinc-50 dark:bg-zinc-800 rounded h-min cursor-pointer py-2">
-                    <div class="flex flex-col h-full align-middle justify-middle "  :class="[props.rounded ? 'rounded-full overflow-hidden aspect-square  mx-auto w-max' : 'w-full']">
+            <div @click="open" :class="[props.rounded ? 'py-2' : '']"
+                 class="w-full group overflow-hidden aspect-21/12 md:w-52 flex-shrink-0 bg-zinc-50 dark:bg-zinc-800 rounded h-min cursor-pointer">
+                <div class=" relative flex flex-col h-full justify-center items-center" :class="[props.rounded ? 'rounded-full overflow-hidden aspect-square mx-auto w-max' : 'w-full']">
 
-                            <img class="w-full  " :class="[props.rounded ? 'h-full ' : 'my-auto']"
-                                 v-if="props.value && !imageUrl"
-                                 :src="props.value">
+                    <img class="w-full group-hover:blur-sm transition-all duration-300 ease-in-out"
+                         :class="[props.rounded ? 'h-full ' : 'my-auto']"
+                         v-if="props.value && !imageUrl"
+                         :src="props.value">
 
-                    </div>
+                    <!-- Centering the Font Awesome icon vertically -->
+                    <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-8 absolute mx-auto inset-0 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-70 pointer-events-none transition-all duration-300 ease-in-out"></font-awesome-icon>
+
                 </div>
+            </div>
+
                 <div class="flex flex-col lg:flex-row ml-auto space-y-2 gap-x-2 mb-2 h-max ">
                     <div class="flex flex-col mx-2 w-full ">
                         <p class="mt-4 md:mt-0 text-xs  flex-shrink" v-text="props.recommendation"></p>

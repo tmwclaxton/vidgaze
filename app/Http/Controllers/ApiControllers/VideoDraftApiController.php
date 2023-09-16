@@ -50,8 +50,8 @@ class VideoDraftApiController extends Controller
         $videoDraft = auth()->user()->creator()->first()->video_drafts()->where('slug', $slug)->firstOrFail();
         request()->validate([
             //'image' => ['nullable', 'image', 'max:10240', 'dimensions:min_width=640,min_height=360,ratio=16/9'],
-            'title' => ['max:255', 'required', 'string', 'min:1'],
-            'description' => ['nullable', 'string'],
+            'title' => ['max:100', 'required', 'string', 'min:1'],
+            'description' => ['nullable', 'string', 'max:5000'],
             'tags' => ['nullable', 'array'],
             'visibility' => ['nullable', 'string', 'in:public,unlisted,private,scheduled'],
             'language' => ['nullable', 'string'],
@@ -229,12 +229,17 @@ class VideoDraftApiController extends Controller
             request()->validate([
                 'video' => ['required', 'file', 'mimes:mp4,mov'],
             ]);
-            $path = \request()->file('video')->store('videos');
-            VideoDraft::where('slug', $slug)->update(['video_path' => $path ]);
+            // TODO:  make this only accessible to the creator
+            $url = Storage::url(\request()->file('video')->store('public/videos'));
+            VideoDraft::where('slug', $slug)->update(['video_path' => $url]);
             return response()->json();
         }
         catch (\Exception $e){
+            // delete the video draft if there is an error
+            VideoDraft::where('slug', $slug)->delete();
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
+
 }

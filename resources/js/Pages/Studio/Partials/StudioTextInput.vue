@@ -68,7 +68,7 @@ onMounted(() => {
 });
 
 const calculateRemaining = () => {
-    remaining.value = props.value ? props.maxlength - props.value.length : props.maxlength;
+    remaining.value = props.value ? props.value.length : 0;
 }
 
 watch(() => props.value, () => {

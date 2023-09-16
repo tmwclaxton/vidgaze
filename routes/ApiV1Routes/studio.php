@@ -20,6 +20,8 @@ Route::middleware('auth:sanctum')->name('studio.')->prefix('/studio')->group(fun
     Route::get('video/draft/{slug}/edit', [VideoDraftApiController::class, 'edit'])->name("video.draft.edit");
     Route::patch('video/draft/{slug}/update', [VideoDraftApiController::class, 'update'])->name("video.draft.update");
     Route::patch('video/draft/{slug}/update/thumbnail', [VideoDraftApiController::class, 'updateThumbnail'])->name("video.draft.thumbnail.update");
+    // download video
+    Route::get('video/draft/{slug}/play', [VideoDraftApiController::class, 'playVideo'])->name("video.draft.play");
 
     Route::get('login/{platform}', [LinkingApiController::class, 'logIn'])->name('login');
     Route::get('link/{platform}', [LinkingApiController::class, 'link'])->name('link');

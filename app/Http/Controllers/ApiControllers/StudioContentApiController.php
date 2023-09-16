@@ -28,6 +28,7 @@ class StudioContentApiController extends Controller
 
 
         $videoDrafts = $creator->video_drafts()
+            ->where('video_path', '!=', null)
             ->orderBy('created_at', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
         $videos = $creator->videos()
