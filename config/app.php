@@ -201,8 +201,6 @@ return [
         App\Providers\HorizonServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
-
-        App\Providers\RekognitionServiceProvider::class,
     ],
 
     /*
