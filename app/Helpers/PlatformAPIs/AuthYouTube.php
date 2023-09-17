@@ -60,7 +60,7 @@ class AuthYouTube extends YouTube implements iCanLogin, iCanUpload
     }
 
     public function upload(UploadDTO $uploadDTO): string{
-        $video_storage_path = storage_path('app/'.$uploadDTO->video_path);
+        $video_storage_path = $uploadDTO->video_path;
 
         $snippet = new \Google_Service_YouTube_VideoSnippet();
         $snippet->setTitle($uploadDTO->title);
@@ -117,7 +117,7 @@ class AuthYouTube extends YouTube implements iCanLogin, iCanUpload
         return $this->client->thumbnails->set(
             $video_id,
             array(
-                'data' => \Storage::get('public/'.$thumbnail_path),
+                'data' => $thumbnail_path,
                 'mimeType' => 'application/octet-stream',
                 'uploadType' => 'multipart'
             )

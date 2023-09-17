@@ -8,12 +8,12 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import TitleComponent from "@/Components/General/TitleComponent.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import TextInput from "@/Components/Inputs/TextInput.vue";
-import StudioTextInput from "@/Pages/Studio/Customise/Partials/StudioTextInput.vue";
+import StudioTextInput from "@/Pages/Studio/Partials/StudioTextInput.vue";
 import {useToastStore} from "@/Stores/ToastStore";
-import StudioImageInput from "@/Pages/Studio/Customise/Partials/StudioImageInput.vue";
+import StudioImageInput from "@/Pages/Studio/Partials/StudioImageInput.vue";
 
-
-
+const name = 'Customise';
+const errors = ref({});
 
 const updateChannelDetails = () => {
     axios.patch(route('api.creator.update'),{
@@ -21,13 +21,15 @@ const updateChannelDetails = () => {
         bio: useAuthStore().user.creator.bio,
         contact_email: useAuthStore().user.creator.contact_email,
     }).then(response => {
+        errors.value = {};
         useToastStore().add({
             message: response.data.message,
             type: response.data.toastType
         });
     }).catch(error => {
+        errors.value = error.response.data.errors;
         useToastStore().add({
-            message: error.response.data.message,
+            message: "There was an error updating your channel details.",
             type: "warning"
         });
     });
@@ -79,6 +81,8 @@ const updateChannelDetails = () => {
                                              label="Channel Name"
                                              placeholder="Channel Name"
                                              for="channel-name"
+                                             :error_message="errors.name ? errors.name[0] : null"
+
                             />
 
                             <!--channel bio-->
@@ -90,39 +94,32 @@ const updateChannelDetails = () => {
                                              for="channel-bio"
                                              :enter-submit="false"
                                              :maxlength="1000"
+                                             :error_message="errors.bio ? errors.bio[0] : null"
+
                             />
 
                             <!--channel profile image-->
                             <StudioImageInput :value="useAuthStore().user.creator.avatar_url"
                                               :endpoint="route('api.creator.update.avatar')"
+                                              @refresh="useAuthStore().getUser();"
                                               label="Channel Profile Image"
                                               description="Your profile picture will appear where your channel is presented on VidGaze, like next to your videos and comments."
                                               recommendation="We recommend using a square image (1:1 aspect ratio) with a minimum resolution of 98x98 pixels and a maximum file size of 4MB."
                                               placeholder="Channel Profile Image"
                                               for="channel-profile-image"
                                               :rounded="true"
-                                              :enter-submit="false"
-                                              :max-file-size="4"
-                                              :max-width="98"
-                                              :max-height="98"
-                                              :aspect-ratio="1"
-                                              :file-type="['image/png','image/jpeg']"
                             />
 
                             <!--channel banner image-->
                             <StudioImageInput :value="useAuthStore().user.creator.banner_url"
                                               :endpoint="route('api.creator.update.banner')"
+                                              @refresh="useAuthStore().getUser();"
                                               label="Channel Profile Banner"
                                               description="Your banner will appear at the top of your channel page."
                                               recommendation="We recommend using a 16:9 aspect ratio image with a minimum resolution of 2048x1152 pixels and a maximum file size of 6MB."
                                               placeholder="Channel Profile Banner"
                                               for="channel-profile-banner"
                                               :rounded="false"
-                                              :max-file-size="6"
-                                              :max-width="4096"
-                                              :max-height="4096"
-                                              :aspect-ratio="16/9"
-                                              :file-type="['image/png','image/jpeg']"
                             />
                             <!--channel contact email-->
                             <StudioTextInput :value="useAuthStore().user.creator.contact_email"
@@ -132,6 +129,7 @@ const updateChannelDetails = () => {
                                              placeholder="Contact Email"
                                              for="contact-email"
                                              :maxlength="320"
+                                             :error_message="errors.contact_email ? errors.contact_email[0] : null"
                             />
 
                         </div>

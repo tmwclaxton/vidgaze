@@ -20,7 +20,7 @@ return new class extends Migration
             $table->id();
             $table->string('slug')->unique()->index();
             $table->foreignId('creator_id')->constrained()->cascadeOnDelete();
-            $table->enum('preferred_source', Platform::getSupportedPlatforms()->toArray()); //use enum
+            $table->enum('preferred_source', Platform::getSupportedPlatforms()->toArray());
             $table->string('title')->index();
             $table->text('description')->nullable();
             $table->integer('karma')->default(0)->index();

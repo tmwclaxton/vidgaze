@@ -7,12 +7,9 @@ import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {useAuthStore} from "@/Stores/AuthStore";
 import {useToastStore} from "@/Stores/ToastStore";
+import InputError from "@/Components/Inputs/InputError.vue";
 
 const props = defineProps({
-    maxlength: {
-        type: Number,
-        default: 50
-    },
     value: {
         type: String,
         default: ''
@@ -22,10 +19,6 @@ const props = defineProps({
         default: ''
     },
     description: {
-        type: String,
-        default: ''
-    },
-    name: {
         type: String,
         default: ''
     },
@@ -41,9 +34,17 @@ const props = defineProps({
         type: String,
         default: ''
     },
+    error_message: {
+        type: String,
+        default: null
+    }
 });
 
-const emits = defineEmits(['submit']);
+const emits = defineEmits(['submit','refresh']);
+const error_message_local = ref(props.error_message);
+watch(() => props.error_message, (value) => {
+    error_message_local.value = value;
+});
 const saved = ref(true);
 const fileInput = ref(null);
 const image = ref(null);
@@ -78,7 +79,7 @@ const removeFile = () => {
     if (!image.value) {
         // this means user wants to remove their current image and revert to the default one
         // emits('update:modelValue', null)
-        imageUrl.value = "https://img.freepik.com/free-photo/abstract-luxury-plain-blur-grey-black-gradient-used-as-background-studio-wall-display-your-products_1258-63747.jpg?w=2000";
+        imageUrl.value = true;
         saved.value = false;
 
         return;
@@ -94,12 +95,14 @@ const save = () => {
         axios.patch(props.endpoint, {
             image: null
         }).then(response => {
-            useAuthStore().getUser();
+            emits('refresh');
+            error_message.value = null;
             useToastStore().add({
                 message: response.data.message,
                 type: response.data.toastType
             });
         }).catch(error => {
+            error_message.value = error.response.data.message;
             useToastStore().add({
                 message: error.response.data.message,
                 type: "warning"
@@ -115,12 +118,14 @@ const save = () => {
             'Content-Type': 'multipart/form-data'
         }
     }).then(response => {
-        useAuthStore().getUser();
+        emits('refresh');
+        error_message.value = null;
         useToastStore().add({
             message: response.data.message,
             type: response.data.toastType
         });
     }).catch(error => {
+        error_message.value = error.response.data.message;
         useToastStore().add({
             message: error.response.data.message,
             type: "warning"
@@ -136,30 +141,36 @@ const save = () => {
         <p class="text-xs font-bold" v-text="props.label"></p>
         <p class="text-xs mx-2 my-1" v-text="props.description"></p>
         <div class="flex flex-col md:flex-row mx-2  my-3">
-                <div @click="open"
-                     class="w-full  overflow-hidden aspect-21/12 md:w-52 flex-shrink-0 bg-zinc-50 dark:bg-zinc-800 rounded h-min cursor-pointer py-2">
-                    <div class="flex flex-col h-full align-middle justify-middle "  :class="[props.rounded ? 'rounded-full overflow-hidden aspect-square  mx-auto w-max' : 'w-full']">
+            <div @click="open" :class="[props.rounded ? 'py-2' : '']"
+                 class="w-full group  overflow-hidden aspect-21/12 md:w-52 flex-shrink-0 bg-zinc-50 dark:bg-zinc-800 rounded h-min cursor-pointer">
+                <div class=" relative flex flex-col h-full justify-center items-center" :class="[props.rounded ? 'rounded-full overflow-hidden aspect-square mx-auto w-max' : 'w-full']">
 
-                            <img class="w-full  " :class="[props.rounded ? 'h-full ' : 'my-auto']"
-                                 v-if="imageUrl || props.value"
-                                 :src="imageUrl ? imageUrl : props.value">
+                    <img class="w-full group-hover:blur-sm transition-all duration-300 ease-in-out group-hover:brightness-50"
+                         :class="[props.rounded ? 'h-full ' : 'my-auto']"
+                         v-if="props.value || imageUrl"
+                         :src="imageUrl ? imageUrl : props.value"/>
 
-                    </div>
+                    <!-- Centering the Font Awesome icon vertically -->
+                    <font-awesome-icon :icon="['fas', 'circle-plus']" class="text-zinc-300 h-8 absolute mx-auto inset-0 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-70 pointer-events-none transition-all duration-300 ease-in-out"></font-awesome-icon>
+
                 </div>
-                <div class="flex flex-col lg:flex-row ml-auto space-y-2 gap-x-2 mb-2 h-max ">
-                    <div class="flex flex-col mx-2 w-full ">
-                        <p class="mt-4 md:mt-0 text-xs  flex-shrink" v-text="props.recommendation"></p>
-                        <p class="text-xs flex-shrink text-red-500 mt-2" v-text="saved ? '' : 'Not saved'"></p>
+            </div>
+
+            <div class="flex flex-col md:flex-row px-2 justify-between w-full">
+                <div class="flex flex-col mx-2 w-max  ">
+                    <p class="mt-4 md:mt-0 text-xs  flex-shrink" v-text="props.recommendation"></p>
+                    <p class="text-xs flex-shrink text-red-500 mt-2" v-text="saved ? '' : 'Not saved'"></p>
 
 
-                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row flex-wrap space-x-2 space-y-2 mb-2 h-max ">
                     <div class="relative cursor-pointer">
                         <input ref="fileInput" type="file" accept="image/*" @change="previewFiles"
 
                                class="cursor-pointer absolute inset-0 z-10 m-0 p-0 w-full h-full outline-none opacity-0"/>
                     </div>
                     <quaternary-button v-if="!saved"
-                        class="float-right h-max" @click="save">
+                                       class="float-right h-max" @click="save">
                         <font-awesome-icon icon="save" class="mr-2"/>
                         Save
                     </quaternary-button>
@@ -167,13 +178,15 @@ const save = () => {
                         <font-awesome-icon icon="edit" class="mr-2"/>
                         Change
                     </quaternary-button>
-                    <quaternary-button class="float-right h-max" @click="removeFile">
+                    <quaternary-button class="float-right h-max" @click="removeFile" v-if="props.value">
                         <font-awesome-icon icon="trash" class="mr-2"/>
                         Remove
                     </quaternary-button>
                 </div>
-
             </div>
+
+        </div>
+        <InputError v-if="error_message_local !== null" class="ml-3 mt-2" :message="error_message_local"/>
 
     </consistent-content-holder>
 </template>
