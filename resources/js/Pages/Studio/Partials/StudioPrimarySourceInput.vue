@@ -19,6 +19,10 @@ const props = defineProps({
         type: Array,
         default: ''
     },
+    uploadable_platforms: {
+        type: Array,
+        default: ''
+    },
     error_message: {
         type: String,
         default: null
@@ -27,32 +31,34 @@ const props = defineProps({
 
 const emits = defineEmits(['update:modelValue']);
 
-const match_platforms = ref({
-    'youtube': 'YouTube',
-    'twitch': 'Twitch',
-    'facebook': 'Facebook',
-    'instagram': 'Instagram',
-    'dailymotion': 'Dailymotion',
-    'tiktok': 'TikTok',
-    'vimeo': 'Vimeo',
-});
-
-// based on props.platforms and match_platforms
+// based on props.platforms and props.uploadable_platforms
 const platforms = computed(() => {
-    var platforms = {};
-    for (var i = 0; i < props.platforms.length; i++) {
-        var platform = props.platforms[i];
-        platforms[platform] = match_platforms.value[platform];
-    }
-    // now convert into an array of objects of name and value
-    var platforms_array = [];
-    for (const key in platforms) {
-        platforms_array.push({name: platforms[key], value: key});
-    }
-    return platforms_array;
+    let platforms = [];
+    props.uploadable_platforms.forEach((platform) => {
+        if (props.platforms.includes(platform.value)) {
+            platforms.push(platform);
+        }
+    });
+    return platforms;
 });
 
 const preferred_source_local = ref(props.preferred_source);
+
+// watch if props.platforms doesn't have preferred_source
+watch(() => props.platforms, (value) => {
+    check();
+});
+
+onMounted(() => {
+    check();
+});
+
+const check = () => {
+    if (!props.platforms.includes(preferred_source_local.value) || preferred_source_local.value === '') {
+        preferred_source_local.value = platforms.value[0].value;
+        emits('update:modelValue', platforms.value[0].value);
+    }
+}
 </script>
 
 <template>
@@ -63,12 +69,6 @@ const preferred_source_local = ref(props.preferred_source);
 
         <div>
             <div class="mt-2  mx-1  ">
-                <!--<select name="platforms" class=" text-sm font-semibold mx-2 my-2 without-ring"-->
-                <!--        @change="$emit('update:modelValue', $event.target.value)">-->
-                <!--    &lt;!&ndash;value should be lowercase&ndash;&gt;-->
-                <!--    &lt;!&ndash;<option class="hidden" selected v-text="preferred_source" :value="preferred_source"/>&ndash;&gt;-->
-                <!--    <option v-for="(value, key) in platforms" :value="key" v-text="value" :selected="key === preferred_source"/>-->
-                <!--</select>-->
                 <Dropdown
                     @update:modelValue="emits('update:modelValue', $event)"
                     v-model="preferred_source_local"

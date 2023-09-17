@@ -2,12 +2,7 @@
 
 import {computed, onBeforeMount, onMounted, ref} from "vue";
 import {Head, router, useForm} from "@inertiajs/vue3";
-import InputLabel from "@/Components/Inputs/InputLabel.vue";
-import InputError from "@/Components/Inputs/InputError.vue";
-import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
-import TitleComponent from "@/Components/General/TitleComponent.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
-import Dropdown from "@/Components/Inputs/Dropdown.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import StudioTextInput from "@/Pages/Studio/Partials/StudioTextInput.vue";
 import StudioTagsInput from "@/Pages/Studio/Partials/StudioTagsInput.vue";
@@ -24,6 +19,11 @@ import StudioEditItemButton from "@/Pages/Studio/StudioEditItem/Partials/StudioE
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import {useToastStore} from "@/Stores/ToastStore";
 
+let props = defineProps({
+    slug: String,
+    type: String,
+});
+
 const headTitle = computed(() => {
     // depends on props.type
     if (props.type === 'video_draft') {
@@ -34,7 +34,6 @@ const headTitle = computed(() => {
         return 'Edit Stream';
     }
 });
-
 const type = computed(() => {
     if (props.type === 'video_draft') {
         return 'video draft';
@@ -44,13 +43,9 @@ const type = computed(() => {
         return 'stream';
     }
 });
-
 const tab = ref('details');
-let props = defineProps({
-    slug: String,
-    type: String,
-});
 const categories = ref([]);
+const uploadable_platforms = ref([]);
 const item = ref(null);
 const key = ref('');
 let form = useForm({});
@@ -61,15 +56,12 @@ onMounted(() => {
 });
 
 const getItem = () => {
+    form.errors = {};
     axios.get(route('api.studio.video.draft.edit', [props.slug])).then((response) => {
         categories.value = response.data.categories;
+        uploadable_platforms.value = response.data.platforms;
         item.value = response.data.item;
-        // if (item.publish_time < Math.floor((new Date().getTime()) / 1000)) {
-        //     item.publish_time = Math.floor((new Date().getTime()) / 1000);
-        // }
-        // item.publish_time = new Date(item.publish_time).getTime() - new Date().getTimezoneOffset() * 60;
         // random key to force re-render
-        key.value = Math.random().toString(36).substring(2, 15);
     })
 };
 
@@ -89,7 +81,7 @@ function prepareFormData(){
         audience: item.value.audience,
         platforms: item.value.platforms,
         category_id: item.value.category.id,
-        preferred_source: item.value.preferred_source,
+        preferred_source: item.value.platforms.length > 0 ? item.value.preferred_source: null,
     });
     return formData;
 }
@@ -140,7 +132,7 @@ const handleDelete = () => {
     <Head :title="headTitle" />
 
 
-    <div  v-if="useAuthStore().user != null && item != null" :key="key">
+    <div  v-if="useAuthStore().user != null && item != null">
         <div class=" flex flex-col md:flex-row ">
             <div class="display:initial  ">
                 <div class="flex flex-col sticky top-16 md:h-[calc(100vh-4rem)] overflow-hidden w-full md:w-72 p-2 px-5 border border-b-0 border-l-0 border-t-0 border-zinc-200 dark:border-zinc-800 shadow dark:shadow-zinc-800">
@@ -155,7 +147,7 @@ const handleDelete = () => {
                     </div>
                     <p class="mx-1 mt-3 text-sm font-bold break-all w-full" v-text="'Your ' + type"></p>
                     <p class="text-zinc-500 dark:text-zinc-400 mx-1 text-sm break-all" v-text="item.title"></p>
-                    <div class="py-3 flex-grow flex flex-col justify-between overflow-hidden rounded w-full  mb-2 md:ml-0 ">
+                    <div class="py-3 flex-grow flex flex-col gap-y-3 justify-between overflow-hidden rounded w-full  mb-2 md:ml-0 ">
                         <div class="flex flex-col flex-wrap  px-auto gap-y-2 z-10 text-sm font-bold text-center  ">
                             <StudioEditItemButton :currentTab="tab" :tab="'details'" @changePage="tab = 'details'"/>
                             <StudioEditItemButton v-if="props.type !== 'video_draft'" :currentTab="tab" :tab="'analytics'" @changePage="tab = 'analytics'"/>
@@ -182,7 +174,7 @@ const handleDelete = () => {
                 </div>
             </div>
             <div class="flex flex-grow ">
-              <ConsistentPadding class="-mt-4 px-4 flex flex-row gap-3 pr-6 " >
+              <ConsistentPadding class="-mt-4 px-4 flex flex-col-reverse xl:flex-row gap-3 pr-6 " >
                   <!--<TitleComponent :text="headTitle" class="">-->
                   <!--    <font-awesome-icon :icon="['fas', 'upload']"  class="w-6 h-6 my-auto"/>-->
                   <!--</TitleComponent>-->
@@ -247,7 +239,9 @@ const handleDelete = () => {
                                           :error_message="form.errors.platforms ? form.errors.platforms[0] : null"
                      />
 
-                    <StudioPrimarySourceInput :preferred_source="item.preferred_source"
+                    <StudioPrimarySourceInput v-if="item.platforms.length > 0"
+                                              :uploadable_platforms="uploadable_platforms"
+                                                :preferred_source="item.preferred_source"
                                               :platforms="item.platforms"
                                               @update:model-value="item.preferred_source = $event"
                                               label="Primary Source"
@@ -257,9 +251,11 @@ const handleDelete = () => {
                     <StudioCheck/>
 
                 </div>
-                    <!--<video v-if="item" class="  h-72 rounded" controls>-->
-                    <!--    <source :src="item.video_path" type="video/mp4">-->
-                    <!--</video>-->
+                  <div class="flex flex-grow ">
+                        <video v-if="item" class=" mx-auto h-full max-h-72 rounded-lg" controls>
+                            <source :src="item.video_path" type="video/mp4">
+                        </video>
+                  </div>
             </ConsistentPadding>
             </div>
         </div>

@@ -33,6 +33,12 @@ class VideoDraftApiController extends Controller
     public function edit(string $slug)
     {
         $video = auth()->user()->creator()->first()->video_drafts()->where('slug', $slug)->firstOrFail();
+        $platforms = Platform::getUploadablePlatforms();
+        // iterate through platforms and create an array of the platform and its capitalised name
+        $platforms = $platforms->map(fn($platform) => [
+            'value' => $platform->value,
+            'name' => capitalisePlatformName($platform->value)
+        ]);
         return [
 
             'item' => new VideoDraftResource($video),
@@ -42,6 +48,8 @@ class VideoDraftApiController extends Controller
                 'value' => $category->id,
                 'name' => $category->name
             ]),
+            // for each platform, get the make array of the platform and its capitalised name
+            'platforms' => $platforms
         ];
     }
 
@@ -59,8 +67,8 @@ class VideoDraftApiController extends Controller
             'audience' => ['nullable', 'string', 'in:all,kids,mature'],
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'publish_time' => ['nullable', 'required_if:visibility,scheduled', 'date'],
-            'platforms' => ['nullable', 'array', 'min:1', Rule::in(Platform::getUploadablePlatforms(false))],
-            'preferred_source' => ['nullable', 'string', Rule::in(Platform::getUploadablePlatforms(false))],
+            'platforms' => ['nullable', 'array', Rule::in(Platform::getUploadablePlatforms(false))],
+            'preferred_source' => ['nullable', 'string', Rule::in(Platform::getUploadablePlatforms(false)), 'required_with:platforms', Rule::in(request()->platforms)],
         ]);
 
         $publish_time = null;

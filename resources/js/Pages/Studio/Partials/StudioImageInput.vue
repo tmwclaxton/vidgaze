@@ -135,34 +135,35 @@ const save = () => {
         <p class="text-xs mx-2 my-1" v-text="props.description"></p>
         <div class="flex flex-col md:flex-row mx-2  my-3">
             <div @click="open" :class="[props.rounded ? 'py-2' : '']"
-                 class="w-full group overflow-hidden aspect-21/12 md:w-52 flex-shrink-0 bg-zinc-50 dark:bg-zinc-800 rounded h-min cursor-pointer">
+                 class="w-full group  overflow-hidden aspect-21/12 md:w-52 flex-shrink-0 bg-zinc-50 dark:bg-zinc-800 rounded h-min cursor-pointer">
                 <div class=" relative flex flex-col h-full justify-center items-center" :class="[props.rounded ? 'rounded-full overflow-hidden aspect-square mx-auto w-max' : 'w-full']">
 
-                    <img class="w-full group-hover:blur-sm transition-all duration-300 ease-in-out"
+                    <img class="w-full group-hover:blur-sm transition-all duration-300 ease-in-out group-hover:brightness-50"
                          :class="[props.rounded ? 'h-full ' : 'my-auto']"
-                         v-if="props.value && !imageUrl"
-                         :src="props.value">
+                         v-if="props.value || imageUrl"
+                         :src="imageUrl ? imageUrl : props.value"/>
 
                     <!-- Centering the Font Awesome icon vertically -->
-                    <font-awesome-icon :icon="['fas', 'circle-plus']" class="h-8 absolute mx-auto inset-0 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-70 pointer-events-none transition-all duration-300 ease-in-out"></font-awesome-icon>
+                    <font-awesome-icon :icon="['fas', 'circle-plus']" class="text-zinc-300 h-8 absolute mx-auto inset-0 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-70 pointer-events-none transition-all duration-300 ease-in-out"></font-awesome-icon>
 
                 </div>
             </div>
 
-                <div class="flex flex-col lg:flex-row ml-auto space-y-2 gap-x-2 mb-2 h-max ">
-                    <div class="flex flex-col mx-2 w-full ">
-                        <p class="mt-4 md:mt-0 text-xs  flex-shrink" v-text="props.recommendation"></p>
-                        <p class="text-xs flex-shrink text-red-500 mt-2" v-text="saved ? '' : 'Not saved'"></p>
+            <div class="flex flex-col md:flex-row px-2 justify-between w-full">
+                <div class="flex flex-col mx-2 w-max  ">
+                    <p class="mt-4 md:mt-0 text-xs  flex-shrink" v-text="props.recommendation"></p>
+                    <p class="text-xs flex-shrink text-red-500 mt-2" v-text="saved ? '' : 'Not saved'"></p>
 
 
-                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row flex-wrap space-x-2 space-y-2 mb-2 h-max ">
                     <div class="relative cursor-pointer">
                         <input ref="fileInput" type="file" accept="image/*" @change="previewFiles"
 
                                class="cursor-pointer absolute inset-0 z-10 m-0 p-0 w-full h-full outline-none opacity-0"/>
                     </div>
                     <quaternary-button v-if="!saved"
-                        class="float-right h-max" @click="save">
+                                       class="float-right h-max" @click="save">
                         <font-awesome-icon icon="save" class="mr-2"/>
                         Save
                     </quaternary-button>
@@ -175,9 +176,10 @@ const save = () => {
                         Remove
                     </quaternary-button>
                 </div>
-
             </div>
-            <InputError v-if="error_message !== null" class="mt-2" :message="error_message"/>
+
+        </div>
+        <InputError v-if="error_message !== null" class="mt-2" :message="error_message"/>
 
     </consistent-content-holder>
 </template>

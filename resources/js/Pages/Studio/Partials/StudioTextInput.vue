@@ -47,7 +47,7 @@ const resizeTextarea = () => {
     textarea.value.style.height = '5px';
     // if textarea has more than one line, add 12px to the height to account for the extra line
     if (textarea.value.value.split('\n').length > 1 || !props.enterSubmit) {
-        textarea.value.style.height = textarea.value.scrollHeight + 12 + 'px';
+        textarea.value.style.height = textarea.value.scrollHeight + 20 + 'px';
     }
     else {
         textarea.value.style.height = textarea.value.scrollHeight + 'px';
