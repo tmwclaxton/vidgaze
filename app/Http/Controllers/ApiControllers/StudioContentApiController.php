@@ -186,21 +186,21 @@ class StudioContentApiController extends Controller
             // change average view duration to a numeric value
             $averageViewDuration = convertDuration(intval($averageViewDuration));
             // get average percentage watched
-            $averagePercentageWatched = round($joined->where('created_at', '>=', Carbon::now()->subMonth() )->avg('end_point') / $video->duration * 100, 2) . '%';
+            $averagePercentageWatched = round($joined->where('created_at', '>=', Carbon::now()->subMonth() )->avg('end_point') / $video->duration * 100, 2);
         } else {
-            $averageViewDuration = null;
-            $averagePercentageWatched = null;
+            $averageViewDuration = "0:00";
+            $averagePercentageWatched = 0;
         }
         // get total watch time
         $totalWatchTime = $joined->sum('duration');
 
         // get ctr it's views / impressions
-        $ctr = round(intval($views) / intval($video->impressions_count) * 100, 2);
+        $ctr = round(intval($views) / (intval($video->impressions_count) + 1) * 100, 2);
 
         return [
             'views' => number_format_short($views)  . " " . Str::plural('Views', $views),
             'avg_view_duration' => 'Avg. view duration: ' . $averageViewDuration,
-            'avg_percentage_watched' => 'On avg. people watched ' . $averagePercentageWatched . ' of this video',
+            'avg_percentage_watched' => 'On avg. people watched ' . $averagePercentageWatched . '% of this video',
             'total_watch_time' => 'Total Watch Time: ' . convertDuration($totalWatchTime),
             'end_points' => $joined->pluck('end_point'),
             'ctr' => 'CTR: '.$ctr . '%',
