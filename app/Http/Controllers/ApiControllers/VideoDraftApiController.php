@@ -204,7 +204,7 @@ class VideoDraftApiController extends Controller
             $creator->id,
             array_map(fn($platform) => Platform::fromValue($platform), json_decode($videoDraft->platforms)),
             $videoDraft->thumbnail_path,
-            $videoDraft->tags,
+            json_decode($videoDraft->tags),
             Category::find($videoDraft->category_id),
             Visibility::fromValue($videoDraft->visibility),
             Audience::fromValue($videoDraft->audience),
