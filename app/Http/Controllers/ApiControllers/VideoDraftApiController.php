@@ -25,10 +25,6 @@ use function GuzzleHttp\json_encode;
 class VideoDraftApiController extends Controller
 {
 
-    //public function index()
-    //{
-    //    return auth()->user()->creator()->videoDrafts()->all();
-    //}
 
     public function edit(string $slug)
     {
@@ -39,6 +35,8 @@ class VideoDraftApiController extends Controller
             'value' => $platform->value,
             'name' => capitalisePlatformName($platform->value)
         ]);
+        // check what platforms the creators has linked to their account
+
         return [
 
             'item' => new VideoDraftResource($video),
@@ -218,7 +216,18 @@ class VideoDraftApiController extends Controller
 
     public function destroy(string $slug)
     {
-        auth()->user()->creator()->videoDrafts()->where('slug', $slug)->firstOrFail()->delete();
+
+        $creator = auth()->user()->creator()->first();
+        $videoDraft = $creator->video_drafts()->where('slug', $slug)->firstOrFail();
+        // find thumbnail path and delete it
+        if ($videoDraft->thumbnail_path && Storage::exists($videoDraft->thumbnail_path)) {
+            Storage::delete($videoDraft->thumbnail_path);
+        }
+        // find video path and delete it
+        if ($videoDraft->video_path && Storage::exists($videoDraft->video_path)) {
+            Storage::delete($videoDraft->video_path);
+        }
+        $videoDraft->delete();
         return response()->json();
     }
 

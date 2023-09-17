@@ -18,6 +18,7 @@ import {useAuthStore} from "@/Stores/AuthStore";
 import StudioEditItemButton from "@/Pages/Studio/StudioEditItem/Partials/StudioEditItemButton.vue";
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import {useToastStore} from "@/Stores/ToastStore";
+import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
 
 let props = defineProps({
     slug: String,
@@ -105,7 +106,7 @@ const handleSaveDraft = () => {
 };
 
 const handlePublish = () => {
-    axios.post(route('api.studio.video.publish', [item.value.slug]), prepareFormData()).then(() => {
+    axios.post(route('api.studio.video.draft.publish', [item.value.slug]), prepareFormData()).then(() => {
             router.get(route('studio.content'))
         }
     ).catch((error) => {
@@ -115,13 +116,19 @@ const handlePublish = () => {
 };
 
 const handleDelete = () => {
-    // axios.delete(route('api.studio.video.draft.delete', [item.value.slug])).then(() => {
-    //         router.get(route('studio.content'))
-    //     }
-    // ).catch((error) => {
-    //     form.errors = error.response.data.errors || {};
-    //     console.log(error);
-    // });
+    useConfirmModalStore().buttonOneText = 'Cancel';
+    useConfirmModalStore().buttonTwoText = 'Delete';
+    useConfirmModalStore().title = 'Are you sure, this will delete your ' + type.value + ' permanently?';
+    useConfirmModalStore().show = true;
+    useConfirmModalStore().continue = () => {
+        axios.delete(route('api.studio.video.draft.delete', [item.value.slug])).then(() => {
+                router.get(route('studio.content'))
+            }
+        ).catch((error) => {
+            form.errors = error.response.data.errors || {};
+            console.log(error);
+        });
+    };
 };
 
 
@@ -233,6 +240,7 @@ const handleDelete = () => {
                      />
 
                     <StudioPlatformsInput :errors="form.errors"
+                                          :uploadable_platforms="uploadable_platforms"
                                             :platforms="item.platforms"
                                               :preferred_source="item.preferred_source"
                                               @update:model-value="item.platforms = $event;"

@@ -16,6 +16,7 @@ Route::middleware('auth:sanctum')->name('studio.')->prefix('/studio')->group(fun
     Route::get('video/draft/{slug}/edit', [VideoDraftApiController::class, 'edit'])->name("video.draft.edit");
     Route::patch('video/draft/{slug}/update', [VideoDraftApiController::class, 'update'])->name("video.draft.update");
     Route::post('video/draft/{slug}/publish',  [VideoDraftApiController::class, 'publish'])->name("video.draft.publish");
+    Route::delete('video/draft/{slug}/delete',  [VideoDraftApiController::class, 'destroy'])->name("video.draft.delete");
 
     Route::get('video/draft/{slug}/edit', [VideoDraftApiController::class, 'edit'])->name("video.draft.edit");
     Route::patch('video/draft/{slug}/update', [VideoDraftApiController::class, 'update'])->name("video.draft.update");
