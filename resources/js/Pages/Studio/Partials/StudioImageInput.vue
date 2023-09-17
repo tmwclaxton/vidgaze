@@ -34,10 +34,17 @@ const props = defineProps({
         type: String,
         default: ''
     },
+    error_message: {
+        type: String,
+        default: null
+    }
 });
 
 const emits = defineEmits(['submit','refresh']);
-const error_message = ref(null);
+const error_message_local = ref(props.error_message);
+watch(() => props.error_message, (value) => {
+    error_message_local.value = value;
+});
 const saved = ref(true);
 const fileInput = ref(null);
 const image = ref(null);
@@ -179,7 +186,7 @@ const save = () => {
             </div>
 
         </div>
-        <InputError v-if="error_message !== null" class="mt-2" :message="error_message"/>
+        <InputError v-if="error_message_local !== null" class="ml-3 mt-2" :message="error_message_local"/>
 
     </consistent-content-holder>
 </template>

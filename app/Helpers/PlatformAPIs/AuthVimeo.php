@@ -83,7 +83,7 @@ class AuthVimeo extends Vimeo implements iCanLogin, iCanUpload
     public function upload(UploadDTO $uploadDTO): string
     {
         // upload to vimeo using tus approach
-        $video_storage_path = storage_path('app/'.$uploadDTO->video_path);
+        $video_storage_path = $uploadDTO->video_path;
 
         $privacy = match ($uploadDTO->visibility) {
             Visibility::PUBLIC => 'anybody',
@@ -132,7 +132,7 @@ class AuthVimeo extends Vimeo implements iCanLogin, iCanUpload
             'fields' => 'metadata.connections.pictures.uri',
         ])['body']['metadata']['connections']['pictures']['uri'];
 
-        $thumbnail_storage_path = storage_path('app/public/'.$thumbnail_path);
+        $thumbnail_storage_path = $thumbnail_path;
 
         return $this->client->uploadImage($thumbnail_uri, $thumbnail_storage_path, true);
     }

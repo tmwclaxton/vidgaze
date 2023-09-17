@@ -91,6 +91,7 @@ const uploadable_platforms_value = computed(() => {
                     <p class="font-semibold text-sm">Vimeo</p>
                 </label>
             </div>
+            <p class="font-bold text-xs">Connect more platforms to your account! <Link :href="route('studio.dashboard')" class="text-blue-600 dark:text-blue-400 hover:underline">Click here</Link></p>
         </div>
 
 

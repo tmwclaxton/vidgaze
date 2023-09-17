@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 
 class UploadPlatform implements ShouldQueue
 {
@@ -46,8 +47,8 @@ class UploadPlatform implements ShouldQueue
         ]);
 
         if($video->sources()->count() === sizeof($this->uploadDTO->platforms)) {
-            unlink(storage_path('app/' . $this->uploadDTO->video_path));
-//            unlink(storage_path('app/public/' . $this->uploadDTO->thumbnail_path));
+            unlink($this->uploadDTO->video_path);
+            //unlink(storage_path('app/public/' . $this->uploadDTO->thumbnail_path));
         }
     }
 }

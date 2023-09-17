@@ -29,13 +29,15 @@ class VideoDraftApiController extends Controller
     public function edit(string $slug)
     {
         $video = auth()->user()->creator()->first()->video_drafts()->where('slug', $slug)->firstOrFail();
-        $platforms = Platform::getUploadablePlatforms();
-        // iterate through platforms and create an array of the platform and its capitalised name
-        $platforms = $platforms->map(fn($platform) => [
-            'value' => $platform->value,
-            'name' => capitalisePlatformName($platform->value)
-        ]);
-        // check what platforms the creators has linked to their account
+        $platforms = auth()->user()->creator()->first()->getUploadablePlatforms();
+        // iterate through platforms array and create an array of the platform and its capitalised name
+        while ($platform = current($platforms)) {
+            $platforms[key($platforms)] = [
+                'value' => $platform,
+                'name' => capitalisePlatformName($platform)
+            ];
+            next($platforms);
+        }
 
         return [
 
@@ -55,10 +57,10 @@ class VideoDraftApiController extends Controller
     public function update(string $slug){
         $videoDraft = auth()->user()->creator()->first()->video_drafts()->where('slug', $slug)->firstOrFail();
         request()->validate([
-            //'image' => ['nullable', 'image', 'max:10240', 'dimensions:min_width=640,min_height=360,ratio=16/9'],
             'title' => ['max:100', 'required', 'string', 'min:1'],
             'description' => ['nullable', 'string', 'max:5000'],
             'tags' => ['nullable', 'array'],
+            'tags.*' => ['string'],
             'visibility' => ['nullable', 'string', 'in:public,unlisted,private,scheduled'],
             'language' => ['nullable', 'string'],
             'region' => ['nullable', 'string'],
@@ -66,15 +68,15 @@ class VideoDraftApiController extends Controller
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'publish_time' => ['nullable', 'required_if:visibility,scheduled', 'date'],
             'platforms' => ['nullable', 'array', Rule::in(Platform::getUploadablePlatforms(false))],
-            'preferred_source' => ['nullable', 'string', Rule::in(Platform::getUploadablePlatforms(false)), 'required_with:platforms', Rule::in(request()->platforms)],
+            'preferred_source' => ['nullable', 'string', 'required_with:platforms', Rule::in(request()->platforms)],
         ]);
 
         $publish_time = null;
         if(request()->visibility == Visibility::SCHEDULED->value){
             if (!request()->publish_time) return  response()->json(['errors' => [ 'publish_time' => ['Publish time is required']]], 422);
-            $publish_time = request()->publish_time; // 2023-09-29T11:51:00.000Z
+            $publish_time = request()->publish_time;
             $publish_time = Carbon::parse($publish_time);
-            if($publish_time < Carbon::now()){
+            if($publish_time->isPast()){
                 return  response()->json(['errors' => [ 'publish_time' => ['Publish time must be in the future']]], 422);
             }
         }
@@ -101,50 +103,34 @@ class VideoDraftApiController extends Controller
 
 
     public function updateThumbnail(Request $request, string $slug) {
-        //grab the video draft
         $videoDraft = auth()->user()->creator()->first()->video_drafts()->where('slug', $slug)->firstOrFail();
-        //$thumbnail_path = null;
-        //if(request()->hasFile('image') && ImageCheck::inapropriateImageCheck(request()->file('image'))){
-        //    $thumbnail_path = request()->file('image')->storePublicly('thumbnails', 'public');
-        //}
-
-        if ($request->hasFile('image')) {
+        if (!$request->hasFile('image')) {
+            $url = null;
+        } else {
             if (ImageCheck::inapropriateImageCheck($request->file('image'))) {
                 return [
                     'toastType' => 'warning',
                     'message' => 'This image is inappropriate. Please upload another image.'
                 ];
             }
-
             if ($videoDraft->thumbnail_path && Storage::exists($videoDraft->thumbnail_path)) {
                 Storage::delete($videoDraft->thumbnail_path);
             }
-
-            // store the image and get the path that is available to the public
+            // store the image and get the path that is available to the public - we should make this only available to the creator in the future
             $url = Storage::url($request->file('image')->store('public/thumbnails'));
-        } else {
-            $url = null;
         }
-
-        // update the video draft with the new thumbnail path
         $videoDraft->update([
             'thumbnail_path' => $url
         ]);
-
-
         return [
             'toastType' => 'success',
             'message' => 'Thumbnail updated successfully.'
         ];
     }
 
-
     public function publish(string $slug){
         $creator = auth()->user()->creator()->first();
-        $videoDraft = $creator->video_drafts()->where('slug', $slug)->firstOrFail();
-
         $validated = request()->validate([
-            'thumbnail' => ['file', 'required', 'mimes:jpeg,jpg,png', 'max:2048'],
             'title' => ['max:255', 'required', 'string', 'min:1'],
             'description' => ['nullable', 'string'],
             'tags' => ['nullable', 'array'],
@@ -154,58 +140,79 @@ class VideoDraftApiController extends Controller
             'region' => ['nullable', 'string'],
             'audience' => ['required', 'string', 'in:all,kids,mature'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
-            'publish_time' => ['nullable', 'int'],
+            'publish_time' => ['nullable', 'int', 'required_if:visibility,scheduled'],
             'platforms' => ['required', 'array', 'min:1', Rule::in($creator->getUploadablePlatforms())],
+            'preferred_source' => ['required', 'string', 'required_with:platforms', Rule::in(request()->platforms)],
         ]);
-
         $publish_time = null;
         if(request()->visibility == Visibility::SCHEDULED->value){
-            request()->validate([
-                'publish_time' => ['required', 'int']
-            ]);
-            $publish_time = Carbon::createFromTimestamp(request()->publish_time);
-            if($publish_time->isPast()) return  response()->json(['errors' => [ 'publish_time' => ['Publish time must be in the future']]], 422);
+            if (!request()->publish_time) return  response()->json(['errors' => [ 'publish_time' => ['Publish time is required']]], 422);
+            $publish_time = request()->publish_time;
+            $publish_time = Carbon::parse($publish_time);
+            if($publish_time->isPast()){
+                return  response()->json(['errors' => [ 'publish_time' => ['Publish time must be in the future']]], 422);
+            }
+        }
+        $videoDraft = $creator->video_drafts()->where('slug', $slug)->firstOrFail();
+        // update the video draft with the new data
+        $videoDraft->update([
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'tags' => $validated['tags'] ? Utils::jsonEncode($validated['tags']) : null,
+            'visibility' => $validated['visibility'],
+            'language' => $validated['language'],
+            'region' => $validated['region'],
+            'audience' => $validated['audience'],
+            'category_id' => $validated['category_id'],
+            'publish_time' => $validated['publish_time'] ?? null,
+            'platforms' => Utils::jsonEncode($validated['platforms']),
+            'preferred_source' => $validated['preferred_source'],
+        ]);
+        // now check thumbnail validation
+        if (!$videoDraft->thumbnail_path) {
+            return response()->json([
+                'errors' => [
+                    'thumbnail' => ['A thumbnail is required']
+                ]
+            ], 422);
         }
 
-        $thumbnail_path = null;
-        if(request()->file('thumbnail'))
-        {
-            $thumbnail_path = request()->file('thumbnail')->storePublicly('thumbnails', 'public');
-        }
         $video = Video::create([
             'slug' => $slug,
             'creator_id' => $creator->id,
-            'preferred_source' => Platform::YouTube,
-            'title' => request()->title,
-            'description' => request()->description,
-            'thumbnail_url' => \Storage::url($thumbnail_path),
-            'tags' => json_encode(request()->tags),
-            'visibility' => request()->visibility,
-            'language' => request()->language,
-            'region' => request()->region,
-            'audience' => request()->audience,
-            'category_id' => request()->category_id,
-            'time_published' => $publish_time,
+            'title' => $videoDraft->title,
+            'preferred_source' => $videoDraft->preferred_source,
+            'description' => $videoDraft->description,
+            'thumbnail_url' => $videoDraft->thumbnail_path,
+            'tags' => $videoDraft->tags,
+            'visibility' => $videoDraft->visibility,
+            'language' => $videoDraft->language,
+            'region' => $videoDraft->region,
+            'audience' => $videoDraft->audience,
+            'category_id' => $videoDraft->category_id,
+            'time_published' => $videoDraft->publish_time,
         ]);
 
+        $videoDraft->thumbnail_path = str_replace('/storage', 'storage/app/public', $videoDraft->thumbnail_path);
+        $videoDraft->video_path = str_replace('/storage', 'storage/app/public', $videoDraft->video_path);
 
         $uploadDTO = new UploadDTO(
             $video->id,
             $videoDraft->video_path,
-            request()->title,
-            request()->description,
+            $videoDraft->title,
+            $videoDraft->description,
             $creator->id,
-            array_map(fn($platform) => Platform::fromValue($platform), request()->platforms),
-            $thumbnail_path,
-            request()->tags,
-            Category::find(request()->category_id),
-            Visibility::fromValue(request()->visibility),
-            Audience::fromValue(request()->audience),
-            $publish_time
+            array_map(fn($platform) => Platform::fromValue($platform), json_decode($videoDraft->platforms)),
+            $videoDraft->thumbnail_path,
+            $videoDraft->tags,
+            Category::find($videoDraft->category_id),
+            Visibility::fromValue($videoDraft->visibility),
+            Audience::fromValue($videoDraft->audience),
+            $videoDraft->publish_time
         );
-        $videoDraft->delete();
 
         $batch_id = Upload::platformUpload($creator->id, $video->id, $uploadDTO);
+        $videoDraft->delete(); // we need to delete the video and thumbnail also not sure if there would be a race condition here though
 
         return response()->json([
             'batch_id' => $batch_id,

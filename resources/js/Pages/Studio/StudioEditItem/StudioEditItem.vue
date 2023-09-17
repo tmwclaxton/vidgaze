@@ -58,12 +58,13 @@ onMounted(() => {
 
 const getItem = () => {
     form.errors = {};
-    axios.get(route('api.studio.video.draft.edit', [props.slug])).then((response) => {
-        categories.value = response.data.categories;
-        uploadable_platforms.value = response.data.platforms;
-        item.value = response.data.item;
-        // random key to force re-render
-    })
+    if (props.type === 'video_draft') {
+        axios.get(route('api.studio.video.draft.edit', [props.slug])).then((response) => {
+            categories.value = response.data.categories;
+            uploadable_platforms.value = response.data.platforms;
+            item.value = response.data.item;
+        })
+    }
 };
 
 function prepareFormData(){
@@ -83,6 +84,8 @@ function prepareFormData(){
         platforms: item.value.platforms,
         category_id: item.value.category.id,
         preferred_source: item.value.platforms.length > 0 ? item.value.preferred_source: null,
+        language: item.value.language,
+        region: item.value.region,
     });
     return formData;
 }
@@ -247,7 +250,7 @@ const handleDelete = () => {
                                           :error_message="form.errors.platforms ? form.errors.platforms[0] : null"
                      />
 
-                    <StudioPrimarySourceInput v-if="item.platforms.length > 0"
+                    <StudioPrimarySourceInput v-if="item.platforms.length > 0 && uploadable_platforms.length > 0"
                                               :uploadable_platforms="uploadable_platforms"
                                                 :preferred_source="item.preferred_source"
                                               :platforms="item.platforms"
