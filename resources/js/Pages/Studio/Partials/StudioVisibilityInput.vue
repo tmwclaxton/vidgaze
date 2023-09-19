@@ -10,6 +10,7 @@ import DateInput from "@/Components/Inputs/DateInput.vue";
 
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
+import {useDark} from "@vueuse/core";
 const name = 'StudioVisibilityInput';
 const props = defineProps({
     value: {
@@ -38,6 +39,7 @@ const props = defineProps({
     }
 });
 
+const isDark = useDark();
 const emits = defineEmits(['update:modelVisibility','update:modelPublishTime']);
 
 
@@ -140,6 +142,7 @@ watch( () => publishing_time.value, (value) => {
                     <div class="w-64">
                         <VueDatePicker class="ml-6 mt-2" v-if="visibility === 'scheduled'" v-model="publishing_time" minutes-increment="1"
                                        :action-row="{ showNow: true }" now-button-label="Current" utc
+                                       :dark="isDark"
                         />
                     </div>
                     <InputError class="ml-6 mt-2" :message="errors.publish_time ? errors.publish_time[0] : null"/>
