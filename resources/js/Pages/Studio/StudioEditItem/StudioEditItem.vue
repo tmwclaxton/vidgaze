@@ -1,6 +1,6 @@
 <script setup>
 
-import {computed, onBeforeMount, onMounted, ref} from "vue";
+import {computed, onBeforeMount, onMounted, ref, watch} from "vue";
 import {Head, router, useForm} from "@inertiajs/vue3";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
@@ -19,6 +19,7 @@ import StudioEditItemButton from "@/Pages/Studio/StudioEditItem/Partials/StudioE
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import {useToastStore} from "@/Stores/ToastStore";
 import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
+import Badge from "@/Components/General/Badge.vue";
 
 let props = defineProps({
     slug: String,
@@ -47,14 +48,25 @@ const type = computed(() => {
 const tab = ref('details');
 const categories = ref([]);
 const uploadable_platforms = ref([]);
-const item = ref(null);
-const key = ref('');
+const key = ref(0);
 let form = useForm({});
-
+const forceRerender = () => {
+    key.value += 1;
+};
 
 onMounted(() => {
     getItem();
 });
+
+const item = ref(null);
+const item_original = ref(null);
+const itemChanged = computed(() => {
+    if (item.value === null || item_original.value === null) {
+        return false;
+    }
+    return JSON.stringify(item.value) !== JSON.stringify(item_original.value);
+});
+
 
 const getItem = () => {
     form.errors = {};
@@ -63,6 +75,9 @@ const getItem = () => {
             categories.value = response.data.categories;
             uploadable_platforms.value = response.data.platforms;
             item.value = response.data.item;
+            // for some reason item and item_original seem to be referencing the same object but I don't want that
+            item_original.value = JSON.parse(JSON.stringify(item.value));
+            forceRerender();
         })
     }
 };
@@ -111,6 +126,10 @@ const handleSaveDraft = () => {
 const handlePublish = () => {
     axios.post(route('api.studio.video.draft.publish', [item.value.slug]), prepareFormData()).then(() => {
             router.get(route('studio.content'))
+            useToastStore().add({
+                'message': 'Published',
+                'type': 'success',
+            });
         }
     ).catch((error) => {
         form.errors = error.response.data.errors || {};
@@ -135,6 +154,7 @@ const handleDelete = () => {
 };
 
 
+
 </script>
 
 <template>
@@ -142,7 +162,7 @@ const handleDelete = () => {
     <Head :title="headTitle" />
 
 
-    <div  v-if="useAuthStore().user != null && item != null">
+    <div  v-if="useAuthStore().user != null && item != null" >
         <div class=" flex flex-col md:flex-row ">
             <div class="display:initial  ">
                 <div class="flex flex-col sticky top-16 md:h-[calc(100vh-4rem)] overflow-hidden w-full md:w-72 p-2 px-5 border border-b-0 border-l-0 border-t-0 border-zinc-200 dark:border-zinc-800 shadow dark:shadow-zinc-800">
@@ -163,21 +183,30 @@ const handleDelete = () => {
                             <StudioEditItemButton v-if="props.type !== 'video_draft'" :currentTab="tab" :tab="'analytics'" @changePage="tab = 'analytics'"/>
                             <StudioEditItemButton v-if="props.type !== 'video_draft'" :currentTab="tab" :tab="'comments'" @changePage="tab = 'comments'"/>
                         </div>
-                        <div class="flex flex-row flex-wrap gap-2 justify-center">
-                            <div class="flex justify-center">
-                                <TertiaryButton @click="handleSaveDraft" class="h-[3rem]" :class="{ 'opacity-25': form.processing }"
-                                                :disabled="form.processing">SAVE DRAFT
-                                </TertiaryButton>
-                            </div>
-                            <div class="flex justify-center">
-                                <TertiaryButton @click="handlePublish" class="h-[3rem]" :class="{ 'opacity-25': form.processing }"
-                                                :disabled="form.processing">{{ form.visibility === 'scheduled' ? 'SCHEDULE' : 'PUBLISH'}}
-                                </TertiaryButton>
-                            </div>
-                            <div class="flex justify-center">
-                                <TertiaryButton @click="handleDelete" class="h-[3rem]" :class="{ 'opacity-25': form.processing }"
-                                                :disabled="form.processing">DELETE
-                                </TertiaryButton>
+                        <div class="flex flex-col gap-2">
+                            <Badge v-if="itemChanged"  :key="key" extra-classes="mx-auto text-lg text-red-500 dark:text-red-500 text-center font-bold mb-3" >
+                                Unsaved changes
+                            </Badge>
+                            <div class="flex flex-row flex-wrap gap-2 justify-center">
+                                <div class="flex justify-center">
+                                    <TertiaryButton @click="handleSaveDraft" class="h-[3rem]"
+                                                    :class="{ 'opacity-25': form.processing }"
+                                                    :disabled="form.processing">SAVE DRAFT
+                                    </TertiaryButton>
+                                </div>
+                                <div class="flex justify-center">
+                                    <TertiaryButton @click="handlePublish" class="h-[3rem]"
+                                                    :class="{ 'opacity-25': form.processing }"
+                                                    :disabled="form.processing || itemChanged">
+                                        {{ form.visibility === 'scheduled' ? 'SCHEDULE' : 'PUBLISH' }}
+                                    </TertiaryButton>
+                                </div>
+                                <div class="flex justify-center">
+                                    <TertiaryButton @click="handleDelete" class="h-[3rem]"
+                                                    :class="{ 'opacity-25': form.processing }"
+                                                    :disabled="form.processing">DELETE
+                                    </TertiaryButton>
+                                </div>
                             </div>
                         </div>
                     </div>

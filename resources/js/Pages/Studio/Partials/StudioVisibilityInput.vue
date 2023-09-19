@@ -50,6 +50,9 @@ watch (() => props.publish_time, (value) => {
     publishing_time.value = value;
 });
 watch( () => publishing_time.value, (value) => {
+    if (publishing_time.value === props.publish_time) {
+        return;
+    }
     // 2023-09-30T07:57:00.000Z -> 2023-09-30T07:57:00
     var date = new Date(publishing_time.value);
     var date_string = date.toISOString();
