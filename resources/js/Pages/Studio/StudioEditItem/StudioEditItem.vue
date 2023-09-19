@@ -192,7 +192,9 @@ const handleDelete = () => {
                         </div>
                         <div class="flex flex-col gap-2">
                             <Badge v-if="itemChanged"  :key="key" extra-classes="mx-auto text-lg text-red-500 dark:text-red-500 text-center font-bold mb-3"
-                                   text="Unsaved changes"/>
+                                   text="">
+                                Unsaved changes
+                            </Badge>
                             <div class="flex flex-row flex-wrap gap-2 justify-center">
                                 <div class="flex justify-center">
                                     <TertiaryButton @click="handleSaveDraft" class="h-[3rem]"
