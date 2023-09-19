@@ -14,7 +14,7 @@
                     <!--<font-awesome-icon :icon="['fas', 'wrench']" class="w-full h-full text-zinc-600 dark:text-zinc-400 animate-bounce"/>-->
                     <font-awesome-icon :icon="['fas', 'wrench']"  class="w-full h-full text-zinc-600 dark:text-vidgaze-blue"/>
                 </div>
-                <p class="  text-zinc-600 dark:textDark font-bold text-4xl pt-8 text-center">VidGaze Livestreaming is Under Construction</p>
+                <p class="  text-zinc-600 dark:textDark font-bold text-4xl pt-8 text-center">VidGaze MultiStream is Under Construction</p>
                 <!--<p class="text dark:textDark text-sm justify-center text-justify ">-->
                 <!--    VidGaze Music will be composed of ITunes, YouTube Music and SoundCloud and will be a feature of the next update!-->
                 <!--</p>-->

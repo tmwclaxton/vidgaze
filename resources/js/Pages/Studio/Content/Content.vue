@@ -22,14 +22,16 @@ const videos = ref([]);
 <template>
     <Head title="Studio Content" />
 
-    <ConsistentPadding class="-mt-4">
-        <TitleComponent :text="'Channel Content'">
+    <ConsistentPadding >
+        <TitleComponent :text="'VidGaze Cross-Platform Content Manager'">
+            <font-awesome-icon :icon="['fas', 'clapperboard']" class="w-6 h-6 my-auto"/>
         </TitleComponent>
+        <p>Edit your YouTube, TikTok, Dailymotion and Vimeo content all in one place all at the same time!</p>
 
 <!--        table-->
 <!--        <div class="relative overflow-x-scroll">-->
 
-            <table class="w-full text-sm text-left text-center">
+            <table class="w-full text-sm text-left text-center  mt-10">
                 <thead
                     class="text-xs text-zinc-700 uppercase border-y-2 dark:border-zinc-800 dark:text-zinc-200">
                 <tr>
@@ -64,13 +66,13 @@ const videos = ref([]);
                         class="border-b-2 hover:bg-zinc-200 dark:hover:bg-zinc-900 dark:border-zinc-800">
                         <td>
                             <div class="ml-2 my-2 flex space-x-3 max-h-[90px] max-w-[300px]">
-                                <a :href="route('studio.video.draft.edit', videoDraft.slug)">
+                                <Link :href="route('studio.video.draft.edit', videoDraft.slug)">
                                     <img src="https://picsum.photos/1600/900" class="w-[160px] h-[90px] rounded-lg">
-                                </a>
+                                </Link>
                                 <div class="max-w-[120px]">
-                                    <a :href="route('studio.video.draft.edit', videoDraft.slug)">
+                                    <Link :href="route('studio.video.draft.edit', videoDraft.slug)">
                                         <h3 class="font-semibold text-lg hover:underline">{{ videoDraft.title }}</h3>
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </td>
@@ -94,13 +96,13 @@ const videos = ref([]);
                         class="border-b-2 hover:bg-zinc-200 dark:hover:bg-zinc-900 dark:border-zinc-800">
                         <td>
                             <div class="ml-2 my-2 flex space-x-3 max-h-[90px] max-w-[300px]">
-                                <a href="route('studio.video.edit', video.slug)">
+                                <Link :href="route('studio.video.edit', video.slug)">
                                     <img :src="video.thumbnail_url" class="w-[160px] h-[90px] rounded-lg">
-                                </a>
+                                </Link>
                                 <div class="max-w-[120px]">
-                                    <a href="route('studio.video.edit', video.slug)">
+                                    <Link :href="route('studio.video.edit', video.slug)">
                                         <h3 class="font-semibold text-lg hover:underline">{{ video.title }}</h3>
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </td>

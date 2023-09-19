@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Platform;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->foreignId('video_id')->references('id')->on('videos')->constrained()->cascadeOnDelete();
             $table->integer('duration')->unsigned()->nullable();
             $table->integer('end_point')->unsigned()->nullable();
+            $table->enum('platform', Platform::getSupportedPlatforms()->toArray());
             $table->string('session_id');
             $table->timestamps();
         });

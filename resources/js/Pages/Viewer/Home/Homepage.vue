@@ -68,7 +68,7 @@ const fetchTrendingVideos = async () => {
 const fetchVideos = async (videoArray) => {
 
     const videoIds = videoArray.map(video => video.id).join(',');
-    const response = await contentRoutesStore.getVideos('popular', 40, videoIds)
+    const response = await contentRoutesStore.getVideos('trending', 40, videoIds)
 
     if (response === undefined) {
         window.removeEventListener('scroll', handleScroll);

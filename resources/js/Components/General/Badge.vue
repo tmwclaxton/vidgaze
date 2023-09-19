@@ -1,5 +1,5 @@
 <template>
-    <div :class="getClasses" class=" w-max rounded-xl flex flex-row items-center  overflow-hidden px-3 h-6 w-max text-xs text-zinc-100 dark:text-white">
+    <div :class="getClasses" class=" w-max rounded-xl flex flex-row items-center  overflow-hidden px-3 h-6 w-max ">
         <slot class="w-3 h-3 mr-1.5"></slot>
 
         <YouTubeIcon v-if="source === 'YouTube'" class="w-4 mr-1.5" />
@@ -32,6 +32,10 @@ const props = defineProps({
         type: String,
         required: false,
     },
+    extraClasses: {
+        type: String,
+        required: false,
+    },
 });
 
 // Defined background color classes based on source light/dark mode and source
@@ -47,9 +51,9 @@ const getClasses = computed(() => {
     const classes = sourceClasses[props.source];
 
     if (!classes) {
-        return ' bg-vidgaze-blue';
+        return props.extraClasses ?? ' bg-vidgaze-blue text-zinc-100 dark:text-white  text-xs';
     }
 
-    return classes;
+    return classes + ' text-white';
 });
 </script>

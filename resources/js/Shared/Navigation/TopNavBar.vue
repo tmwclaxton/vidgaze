@@ -61,13 +61,17 @@ function redirect(which) {
 
 
                     <!-- Logo -->
-                    <div class="shrink-0 flex items-center md:mr-5 sm:ml-6" :class="
+                    <div class="shrink-0 flex flex-row items-center md:mr-5 sm:ml-6" :class="
                                 {
                                     'hidden sm:flex': navStore.getExpandedSearchBar(),
                                     '': !navStore.getExpandedSearchBar(),
                                 }">
-                        <Link :href="route('home')">
+                        <Link v-if="!navStore.showingStudioLinks" :href="route('home')">
                             <img src="/images/logos/vidgaze/vidgaze_banner.png" alt="VidGaze Logo"
+                                 class="h-12 w-auto">
+                        </Link>
+                        <Link v-if="navStore.showingStudioLinks" :href="route('studio.dashboard')">
+                            <img src="/images/logos/vidgaze/studio.png" alt="VidGaze Logo"
                                  class="h-12 w-auto">
                         </Link>
                     </div>

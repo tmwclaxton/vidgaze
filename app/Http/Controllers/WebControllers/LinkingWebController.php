@@ -9,6 +9,6 @@ class LinkingWebController extends Controller
 {
     public function link(string $platform)
     {
-        return Inertia::render('Studio/Link');
+        return Inertia::render('Studio/StudioLinkRedirect');
     }
 }

@@ -3,6 +3,7 @@
 
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
 import {computed, onMounted, ref, watch} from "vue";
+import InputError from "@/Components/Inputs/InputError.vue";
 
 const name = 'StudioTextInput';
 const textarea = ref(null);
@@ -36,10 +37,26 @@ const props = defineProps({
         type: Boolean,
         default: true
     },
+    error_message: {
+        type: String,
+        default: null
+
+    }
 });
 const resizeTextarea = () => {
     textarea.value.style.height = '5px';
-    textarea.value.style.height = textarea.value.scrollHeight + 'px';
+    // if textarea has more than one line, add 12px to the height to account for the extra line
+    if (textarea.value.value.split('\n').length > 1 || !props.enterSubmit) {
+        textarea.value.style.height = textarea.value.scrollHeight + 20 + 'px';
+    }
+    else {
+        textarea.value.style.height = textarea.value.scrollHeight + 'px';
+    }
+    // max height of 400px
+    if (textarea.value.scrollHeight > 400) {
+        textarea.value.style.height = '400px';
+    }
+
     return Promise.resolve();
 }
 
@@ -51,11 +68,12 @@ onMounted(() => {
 });
 
 const calculateRemaining = () => {
-    remaining.value = props.value ? props.maxlength - props.value.length : props.maxlength;
+    remaining.value = props.value ? props.value.length : 0;
 }
 
 watch(() => props.value, () => {
     calculateRemaining();
+    resizeTextarea();
 });
 
 const emits = defineEmits(['update:modelValue','submit']);
@@ -73,8 +91,8 @@ const submit = () => {
 
 const enter = () => {
     if (props.enterSubmit) {
-        submit(); }
-    else {
+        submit();
+    } else {
         //at cursor position in text add a new line
 
         // get cursor position
@@ -102,7 +120,7 @@ const enter = () => {
         <p class="text-xs font-bold" v-text="props.label"></p>
         <textarea ref="textarea"
             :maxlength="props.maxlength"
-            @input="resizeTextarea(); $emit('update:modelValue', $event.target.value); calculateRemaining();"
+            @input="$emit('update:modelValue', $event.target.value); calculateRemaining();resizeTextarea(); "
             @focusout="submit"
             @keydown.enter.prevent="enter"
             :value="props.value"
@@ -110,10 +128,14 @@ const enter = () => {
             :placeholder="props.placeholder"
             autocomplete="off"
             class="mt-1 w-full block p-1 resize-none text-sm bg-transparent h-full
-            without-ring border-t-0 border-x-0 border-b-1 border-zinc-300 focus:border-zinc-500 dark:border-zinc-700 focus:dark:border-zinc-500 focus:border-b "/>
+            without-ring "
+        :class="props.enterSubmit ? ' border-t-0 border-x-0 border-b-1 border-zinc-300 focus:border-zinc-500 dark:border-zinc-700 focus:dark:border-zinc-500 focus:border-b' : ''"
+        />
         <p id="remaining" class="mt-1 text-right text-xs">
             <span v-text="remaining"></span> / <span v-text="props.maxlength"></span>
         </p>
+        <InputError v-if="props.error_message" class="mt-2" :message="props.error_message"/>
+
     </consistent-content-holder>
 </template>
 
