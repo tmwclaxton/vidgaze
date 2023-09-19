@@ -37,10 +37,22 @@ const props = defineProps({
     error_message: {
         type: String,
         default: null
+    },
+    triggerSave: {
+        type: Boolean,
+        default: false
     }
 });
 
-const emits = defineEmits(['submit','refresh']);
+watch(() => props.triggerSave, (value) => {
+    if (value) {
+        save();
+    }
+});
+
+const name = 'StudioImageInput';
+
+const emits = defineEmits(['submit','refresh','update:thumbnail-different']);
 const error_message_local = ref(props.error_message);
 watch(() => props.error_message, (value) => {
     error_message_local.value = value;
@@ -51,13 +63,14 @@ const image = ref(null);
 const imageUrl = ref(null);
 const open = () => {
     fileInput.value.click();
-
 }
 
 const previewFiles = () => {
     if (!fileInput.value.files[0]) {
         return;
     }
+
+    emits('update:thumbnail-different', true);
     saved.value = false;
     image.value = fileInput.value.files[0];
     const reader = new FileReader();
@@ -70,20 +83,22 @@ const previewFiles = () => {
 
 const removeFile = () => {
     if (imageUrl.value) {
-        // set back to default image
+        // console.log('image url is set so lets go back to default image')
+        emits('update:thumbnail-different', false);
         image.value = null;
         imageUrl.value = null;
         saved.value = true;
         return;
     }
     if (!image.value) {
-        // this means user wants to remove their current image and revert to the default one
-        // emits('update:modelValue', null)
-        imageUrl.value = true;
+        // console.log('image is not set so that means user wants to remove their current image')
+        emits('update:thumbnail-different', true);
+        imageUrl.value = 'https://htmlcolorcodes.com/assets/images/colors/white-color-solid-background-1920x1080.png';
         saved.value = false;
-
         return;
     }
+    // console.log('image is set but image url is not set, user was going to upload a new image but changed their mind')
+    emits('update:thumbnail-different', false);
     image.value = null;
     saved.value = true;
     imageUrl.value = null;
@@ -96,13 +111,14 @@ const save = () => {
             image: null
         }).then(response => {
             emits('refresh');
-            error_message.value = null;
+            emits('update:thumbnail-different', false);
+            error_message_local.value = null;
             useToastStore().add({
                 message: response.data.message,
                 type: response.data.toastType
             });
         }).catch(error => {
-            error_message.value = error.response.data.message;
+            error_message_local.value = error.response.data.message;
             useToastStore().add({
                 message: error.response.data.message,
                 type: "warning"
@@ -119,13 +135,14 @@ const save = () => {
         }
     }).then(response => {
         emits('refresh');
-        error_message.value = null;
+        emits('update:thumbnail-different', false);
+        error_message_local.value = null;
         useToastStore().add({
             message: response.data.message,
             type: response.data.toastType
         });
     }).catch(error => {
-        error_message.value = error.response.data.message;
+        error_message_local.value = error.response.data.message;
         useToastStore().add({
             message: error.response.data.message,
             type: "warning"

@@ -60,11 +60,12 @@ onMounted(() => {
 
 const item = ref(null);
 const item_original = ref(null);
+const thumbnailDifferent = ref(false);
 const itemChanged = computed(() => {
     if (item.value === null || item_original.value === null) {
         return false;
     }
-    return JSON.stringify(item.value) !== JSON.stringify(item_original.value);
+    return (JSON.stringify(item.value) !== JSON.stringify(item_original.value)) || thumbnailDifferent.value;
 });
 
 
@@ -105,7 +106,11 @@ function prepareFormData(){
     return formData;
 }
 
+const triggerSave = ref(false);
 const handleSaveDraft = () => {
+    if (thumbnailDifferent.value) {
+        triggerSave.value = true;
+    }
     axios.patch(route('api.studio.video.draft.update', [item.value.slug]), prepareFormData()).then(() => {
             // router.get(route('studio.content'))
             getItem();
@@ -120,7 +125,9 @@ const handleSaveDraft = () => {
             'message': 'Error saving draft',
             'type': 'warning',
         });
-    })
+    }).finally(() => {
+        triggerSave.value = false;
+    });
 };
 
 const handlePublish = () => {
@@ -184,9 +191,8 @@ const handleDelete = () => {
                             <StudioEditItemButton v-if="props.type !== 'video_draft'" :currentTab="tab" :tab="'comments'" @changePage="tab = 'comments'"/>
                         </div>
                         <div class="flex flex-col gap-2">
-                            <Badge v-if="itemChanged"  :key="key" extra-classes="mx-auto text-lg text-red-500 dark:text-red-500 text-center font-bold mb-3" >
-                                Unsaved changes
-                            </Badge>
+                            <Badge v-if="itemChanged"  :key="key" extra-classes="mx-auto text-lg text-red-500 dark:text-red-500 text-center font-bold mb-3"
+                                   text="Unsaved changes"/>
                             <div class="flex flex-row flex-wrap gap-2 justify-center">
                                 <div class="flex justify-center">
                                     <TertiaryButton @click="handleSaveDraft" class="h-[3rem]"
@@ -239,6 +245,8 @@ const handleDelete = () => {
                     <StudioImageInput :value="item.thumbnail_path"
                                       :endpoint="route('api.studio.video.draft.thumbnail.update', [item.slug])"
                                       @refresh="getItem"
+                                      @update:thumbnail-different="thumbnailDifferent = $event"
+                                      :triggerSave="triggerSave"
                                       label="Thumbnail"
                                       for="thumbnail"
                                       :rounded="false"
