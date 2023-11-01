@@ -89,6 +89,8 @@ RUN php artisan cache:clear
 RUN #php artisan route:clear  # I think if these 2 lines are run it causes missing app key error cause env is exported by AppRunner
 RUN #php artisan optimize
 
+RUN php artisan storage:link
+
 # run npm install
 RUN npm install --no-audit --no-progress
 # npm run build
