@@ -28,7 +28,7 @@ class JoshPing
     public static function ping()
     {
 
-
+        return "hi";
         dd(Carbon::create(null));
 
 //        ddd(Carbon::create("2022-12-27T16:33:35.000000Z")->toDate());
