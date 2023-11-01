@@ -12,6 +12,7 @@ use App\Helpers\SearchQueryDTO;
 use Illuminate\Support\Arr;
 use TwitchApi\HelixGuzzleClient;
 use TwitchApi\TwitchApi;
+use App\Models\CreatorModels\TwitchLogin;
 
 class Twitch implements iSearchable, iIsPlatform
 {
@@ -93,4 +94,38 @@ class Twitch implements iSearchable, iIsPlatform
 //        });
     }
 
+    public static function updateStreamerStatus(array $broadcaster_ids = null): void
+    {
+        if(!$broadcaster_ids){
+            foreach (TwitchLogin::oldest()->take(100)->get() as $login){
+                $broadcaster_ids[] = $login->twitch_source_id;
+                $login->touch();
+            }
+        }
+        $twitch = new Twitch();
+
+        $url_params = implode("&user_id=", $broadcaster_ids);
+
+        $response = $twitch->client->getStreamsApi()->getStreamForUserId($twitch->getAppBearerToken(), $url_params);
+
+        $data = json_decode($response->getBody()->getContents(), true)['data'];
+        $live = Arr::map($data, function ($item){
+            return $item['user_id'];
+        });
+
+        $not_live = array_diff($broadcaster_ids, $live);
+
+        // for each not live stream where has no ->creator()->user() relation, delete stream
+
+        if($not_live) TwitchLogin::whereIn('twitch_source_id', $not_live)->get()
+            ->map(function($item) {
+                if(!$item->source()->creator()->first()->user()->first()) $item->source()->creator()->first()->streams()->delete();
+
+                $item->source()->creator()->first()->update(['is_live' => 0]);
+            });
+        if($live) TwitchLogin::whereIn('twitch_source_id', $live)->get()
+            ->map(function($item) {
+                $item->source()->creator()->first()->update(['is_live' => 1]);
+            });
+    }
 }

@@ -39,7 +39,7 @@ class Creator extends Model
     //no mass assignment!
     protected $guarded = ['id'];
 
-    //    protected $with = ['sources']; //eager load creator sources | usually not needed, i.e when getting creator from video
+    protected $with = ['sources'];
 
 
     public function getUploadablePlatforms(): array

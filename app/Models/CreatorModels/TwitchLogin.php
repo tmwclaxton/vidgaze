@@ -12,6 +12,8 @@ class TwitchLogin extends Model
     //no mass assignment!
     protected $guarded = [];
 
+    protected $with = ['source'];
+
     public function source(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(CreatorSource::class, 'external_channel_id', 'twitch_source_id');
