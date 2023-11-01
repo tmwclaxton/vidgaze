@@ -27,7 +27,7 @@ class VideoDraftResource extends JsonResource
             'video_path' => $this->video_path,
             'creator' => new CreatorResource($this->creator()->first()),
             'preferred_source' => $this->preferred_source,
-            'type' => 'video_draft',
+            'type' => 'video draft',
             'tags' => json_decode($this->tags) ?? [],
             'language' => $this->language,
             'region' => $this->region,
@@ -36,6 +36,7 @@ class VideoDraftResource extends JsonResource
             'platforms' => json_decode($this->platforms) ?? [],
             'visibility' => $this->visibility,
             'publish_time' => $this->publish_time ? $this->publish_time : Carbon::now()->toDateTimeString(),
+            'publish_time_human_readable' => Carbon::parse($this->publish_time)->diffForHumans(),
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(),
             'updated_at' => Carbon::parse($this->updated_at)->diffForHumans(),
         ];

@@ -1,17 +1,15 @@
 <template>
-    <div class="flex justify-between">
-        <p>{{likes}}</p>
-        <p>{{dislikes}}</p>
-    </div>
-    <div class="rounded-full overflow-hidden">
-        <div v-if="hasRatio" class="flex h-2">
-            <div class="bg-green-500 h-full" :style="{ width: likeRatio + '%' }"/>
-            <div class="bg-red-500 h-full" :style="{ width: dislikeRatio + '%' }"/>
+        <div class="flex flex-row gap-x-2 w-full px-3 font-bold text-xs">
+            <p>{{likes}}</p>
+            <div v-if="hasRatio" class="flex h-2 flex-grow w-full my-auto rounded-full overflow-hidden">
+                <div class="bg-green-500 h-full" :style="{ width: likeRatio + '%' }"/>
+                <div class="bg-red-500 h-full" :style="{ width: dislikeRatio + '%' }"/>
+            </div>
+            <div v-else class="flex h-2 flex-grow w-full my-auto rounded-full overflow-hidden">
+                <div class="bg-gray-300 dark:bg-gray-400 h-full w-full"/>
+            </div>
+            <p>{{dislikes}}</p>
         </div>
-        <div v-else class="flex h-2">
-            <div class="bg-gray-300 dark:bg-gray-400 h-full w-full"/>
-        </div>
-    </div>
 </template>
 
 <script setup>
