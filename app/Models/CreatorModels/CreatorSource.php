@@ -16,8 +16,6 @@ class CreatorSource extends Model
     //no mass assignment!
     protected $guarded = [];
 
-    protected $with = ['creator'];
-
     public function creator(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Creator::class, 'id', 'creator_id');
