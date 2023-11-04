@@ -143,7 +143,7 @@ onUnmounted(() => {
                         </div>
 
                         <!--Player-->
-                        <div  :id="'player_div_holder_' + video.external_id" class=" bg-black w-full   flex-grow without-ring flex relative overflow-hidden"
+                        <div  :id="'player_div_holder_' + video.external_id" class="p-5 sm:p-0 bg-black w-full   flex-grow without-ring flex relative overflow-hidden"
                         :class="showCommentSectionMobile ? 'rounded-l-2xl' : 'rounded-2xl'">
                             <!--<div :id="video.external_id" class="w-full h-full">-->
                             <!--</div>-->
@@ -158,7 +158,7 @@ onUnmounted(() => {
 
 
                 <!--Buttons-->
-                <div class="flex flex-col gap-4 select-none justify-end text dark:textDark ml-6">
+                <div v-if="hideCommentsButton" class="flex flex-col gap-4 select-none justify-end text dark:textDark ml-6">
 
                     <LikeDislikeButtons v-if="video" :item="video" :orientationVertical="true"/>
 
