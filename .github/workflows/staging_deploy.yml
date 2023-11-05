@@ -10,7 +10,7 @@ on:
 
 env:
   AWS_REGION: "US-EAST-1"                  # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: "vidgaze-laravel-app"           # set this to your Amazon ECR repository name
+  ECR_REPOSITORY: "vidgaze-staging-ecr-repository"           # set this to your Amazon ECR repository name
   ECS_SERVICE: "vidgaze-ecs-service"                 # set this to your Amazon ECS service name
   ECS_CLUSTER: "vidgaze-ecs-cluster"                 # set this to your Amazon ECS cluster name
   CONTAINER_NAME: "vidgaze-app-container"           # set this to the name of the container in the
@@ -40,7 +40,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{steps.login-ecr.outputs.registry}}
-          ECR_REPOSITORY: vidgaze-laravel-app
+          ECR_REPOSITORY: vidgaze-staging-ecr-repository
           IMAGE_TAG: "latest"
 
         run: |
@@ -70,4 +70,4 @@ jobs:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+          wait-for-service-stability: false
