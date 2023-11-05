@@ -1,10 +1,10 @@
 name: "Build Staging Image"
 
 on:
-  push:
-    branches: [ "staging" ]
-  pull_request:
-    branches: [ "staging" ]
+#  push:
+#    branches: [ "master" ]
+#  pull_request:
+#    branches: [ "master" ]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
