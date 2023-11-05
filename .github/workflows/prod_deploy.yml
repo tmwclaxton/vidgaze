@@ -1,4 +1,4 @@
-name: "Build Staging Image"
+name: "Prod Deploy"
 
 on:
 #  push:
@@ -11,9 +11,9 @@ on:
 env:
   AWS_REGION: "US-EAST-1 "                  # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: "vidgaze-laravel-app"           # set this to your Amazon ECR repository name
-  ECS_SERVICE: "vidgaze_ecs_service"                 # set this to your Amazon ECS service name
+  ECS_SERVICE: "vidgaze-ecs-service"                 # set this to your Amazon ECS service name
   ECS_CLUSTER: "vidgaze-ecs-cluster"                 # set this to your Amazon ECS cluster name
-  CONTAINER_NAME: "vidgaze_app_container"           # set this to the name of the container in the
+  CONTAINER_NAME: "vidgaze-app-container"           # set this to the name of the container in the
   # containerDefinitions section of your task definition
 
 
