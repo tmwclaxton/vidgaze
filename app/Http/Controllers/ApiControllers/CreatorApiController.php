@@ -95,10 +95,10 @@ class CreatorApiController extends Controller
     {
 
         // check token can admin
-        if (!Auth::user()->tokenCan('admin')) {
+        if (!Auth::user()->isAdmin()) {
             return response()->json([
                 'toastType' => 'warning',
-                'message' => 'You do need to be an admin to do that'
+                'message' => 'You need to be an admin to do that'
             ]);
         }
 

@@ -56,14 +56,14 @@ const name = 'ExpandableNavigationLinks';
                 <span>Shorts</span>
             </ResponsiveNavLink>
         </div>
-        <div class="2xl:hid den ">
+        <div  v-if="useAuthStore().user == null" class="2xl:hid den ">
             <ResponsiveNavLink :href="route('podcasts.index')" :active="route().current('podcasts.index')">
                 <PodcastIcon class="w-5 h-5 flex-shrink-0"/>
                 <span>Podcasts</span>
             </ResponsiveNavLink>
         </div>
 
-        <div class=" ">
+        <div v-if="useAuthStore().user == null" class=" ">
             <ResponsiveNavLink :href="route('music.index')" :active="route().current('music.index')">
                 <MusicIcon class="w-5 h-5 flex-shrink-0"/>
                 <span>Music</span>

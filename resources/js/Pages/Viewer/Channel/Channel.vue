@@ -53,12 +53,12 @@ function share() {
         useShareModalStore().showMenu = false;
     } else {
         useShareModalStore().showMenu = true;
-        let link = route('channel.show', {slug: this.channel.slug});
+        let link = route('channel.show', {slug: channel.value.slug});
         let title = "Check out this cool channel on VidGaze";
         useShareModalStore().getShareLinks(link, title);
     }
     showShare.value = !showShare.value;
-};
+}
 const tab = ref('home');
 
 // make axios request to channel videos api
