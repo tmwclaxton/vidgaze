@@ -1,15 +1,13 @@
 name: "Prod Deploy"
 
 on:
-#  push:
-#    branches: [ "master" ]
-  pull_request:
+  push:
     branches: [ "master" ]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 env:
-  AWS_REGION: "US-EAST-1 "                  # set this to your preferred AWS region, e.g. us-west-1
+  AWS_REGION: "eu-west-2"                  # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: "vidgaze-production-ecr-repository"           # set this to your Amazon ECR repository name
   ECS_SERVICE: "vidgaze-ecs-service-production"                 # set this to your Amazon ECS service name
   ECS_CLUSTER: "vidgaze-ecs-cluster-production"                 # set this to your Amazon ECS cluster name
@@ -30,7 +28,7 @@ jobs:
         with:
           aws-access-key-id: ${{secrets.VIDGAZE_AWS_ACCESS_KEY}}
           aws-secret-access-key: ${{secrets.VIDGAZE_AWS_SECRET_ACCESS_KEY}}
-          aws-region: eu-west-1
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to AmazonECR
         id: login-ecr
