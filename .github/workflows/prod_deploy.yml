@@ -3,18 +3,18 @@ name: "Prod Deploy"
 on:
 #  push:
 #    branches: [ "master" ]
-#  pull_request:
-#    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 env:
   AWS_REGION: "US-EAST-1 "                  # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: "vidgaze-laravel-app"           # set this to your Amazon ECR repository name
-  ECS_SERVICE: "vidgaze-ecs-service"                 # set this to your Amazon ECS service name
-  ECS_CLUSTER: "vidgaze-ecs-cluster"                 # set this to your Amazon ECS cluster name
-  CONTAINER_NAME: "vidgaze-app-container"           # set this to the name of the container in the
-  # containerDefinitions section of your task definition
+  ECR_REPOSITORY: "vidgaze-production-ecr-repository"           # set this to your Amazon ECR repository name
+  ECS_SERVICE: "vidgaze-ecs-service-production"                 # set this to your Amazon ECS service name
+  ECS_CLUSTER: "vidgaze-ecs-cluster-production"                 # set this to your Amazon ECS cluster name
+  CONTAINER_NAME: "vidgaze-app-container-production"           # set this to the name of the container in the containerDefinitions section of your task definition
+  TASK_DEFINITION: "vidgaze-laravel-app-production"           #
 
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{steps.login-ecr.outputs.registry}}
-          ECR_REPOSITORY: vidgaze-laravel-app
+          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
           IMAGE_TAG: "latest"
 
         run: |
@@ -51,23 +51,23 @@ jobs:
           docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Download task definition
-        id: task-def-download
-        run: |
-          aws ecs describe-task-definition --task-definition vidgaze-laravel-app --query taskDefinition > task-definition.json
-
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
-        with:
-          task-definition: task-definition.json
-          container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
-
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: false
+#      - name: Download task definition
+#        id: task-def-download
+#        run: |
+#          aws ecs describe-task-definition --task-definition ${{ env.TASK_DEFINITION }} --query taskDefinition > task-definition.json
+#
+#      - name: Fill in the new image ID in the Amazon ECS task definition
+#        id: task-def
+#        uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
+#        with:
+#          task-definition: task-definition.json
+#          container-name: ${{ env.CONTAINER_NAME }}
+#          image: ${{ steps.build-image.outputs.image }}
+#
+#      - name: Deploy Amazon ECS task definition
+#        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+#        with:
+#          task-definition: ${{ steps.task-def.outputs.task-definition }}
+#          service: ${{ env.ECS_SERVICE }}
+#          cluster: ${{ env.ECS_CLUSTER }}
+#          wait-for-service-stability: false

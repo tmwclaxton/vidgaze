@@ -1,8 +1,8 @@
 name: "Staging Deploy"
 
 on:
-  push:
-    branches: [ "staging" ]
+#  push:
+#    branches: [ "staging" ]
   pull_request:
     branches: [ "staging" ]
   # Allows you to run this workflow manually from the Actions tab
@@ -14,6 +14,7 @@ env:
   ECS_SERVICE: "vidgaze-ecs-service"                 # set this to your Amazon ECS service name
   ECS_CLUSTER: "vidgaze-ecs-cluster"                 # set this to your Amazon ECS cluster name
   CONTAINER_NAME: "vidgaze-app-container"           # set this to the name of the container in the
+  TASK_DEFINITION: "vidgaze-laravel-app"           # set this to the name of the container in the
   # containerDefinitions section of your task definition
 
 
@@ -40,7 +41,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{steps.login-ecr.outputs.registry}}
-          ECR_REPOSITORY: vidgaze-staging-ecr-repository
+          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
           IMAGE_TAG: "latest"
 
         run: |
@@ -54,7 +55,7 @@ jobs:
       - name: Download task definition
         id: task-def-download
         run: |
-          aws ecs describe-task-definition --task-definition vidgaze-laravel-app --query taskDefinition > task-definition.json
+          aws ecs describe-task-definition --task-definition ${{ env.TASK_DEFINITION }} --query taskDefinition > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
