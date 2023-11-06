@@ -9,9 +9,9 @@ on:
 env:
   AWS_REGION: "EU-WEST-1"                  # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: "vidgaze-staging-ecr-repository"           # set this to your Amazon ECR repository name
-  ECS_SERVICE: "vidgaze-ecs-service"                 # set this to your Amazon ECS service name
-  ECS_CLUSTER: "vidgaze-ecs-cluster"                 # set this to your Amazon ECS cluster name
-  CONTAINER_NAME: "vidgaze-app-container"           # set this to the name of the container in the
+  ECS_SERVICE: "vidgaze-staging-ecs-service"                 # set this to your Amazon ECS service name
+  ECS_CLUSTER: "vidgaze-staging-ecs-cluster"                 # set this to your Amazon ECS cluster name
+  CONTAINER_NAME: "vidgaze-staging-app-container"           # set this to the name of the container in the
   TASK_DEFINITION: "vidgaze-staging-laravel-app"           # set this to the name of the container in the
   # containerDefinitions section of your task definition
 
