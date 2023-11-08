@@ -96,6 +96,8 @@ class Twitch implements iSearchable, iIsPlatform
 //        });
     }
 
+
+    // also deletes ghost creator streams if they are not live
     public static function updateStreamerStatus(array $broadcaster_ids = null): void
     {
         if(!$broadcaster_ids){
