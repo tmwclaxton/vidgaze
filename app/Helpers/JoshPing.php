@@ -27,8 +27,12 @@ class JoshPing
 
     public static function ping()
     {
+//        dd(Twitch::getCategories(null, true));
+//        dd(Twitch::getTopStreamsByCategory(33214));
 
-        return "hi";
+        ddd(Twitch::updateTopCategories(3, 3));
+
+        dd("hi");
         dd(Carbon::create(null));
 
 //        ddd(Carbon::create("2022-12-27T16:33:35.000000Z")->toDate());

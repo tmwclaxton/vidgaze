@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Enums\Audience;
 use App\Enums\Kind;
 use App\Enums\Platform;
+use App\Models\Category;
 use App\Models\PodcastModels\Podcast;
 use App\Models\StreamModels\Stream;
 use App\Models\StreamModels\StreamSource;
@@ -68,6 +69,20 @@ class ContentDTO
         };
     }
 
+    public function saveCategory(): Category
+    {
+        $platform_category_id_column_name = $this->platform->getCategoryIdAttribute();
+        // find or create category
+        return Category::firstOrCreate([
+            'slug' => $this->category_slug,
+            $platform_category_id_column_name => $this->id,
+//            ], [
+            'name' => $this->name,
+            'description' => $this->description ?? null,
+            'thumbnail_url' => $this->thumbnail_url ?? null,
+        ]);
+    }
+
     public static function saveAll(array $content_dtos, $creator_id) : array
     {
         $models = [];
@@ -127,7 +142,7 @@ class ContentDTO
                     'preferred_source' => $this->platform->value,
                     'audience' => $this->audience->value ?? Audience::ALL,
                     'is_live' => $this->is_live??null,
-//                'category_id' => $this->category->save()->id,
+                    'category_id' => $this->category->saveCategory()->id,
                 ]);
                 StreamSource::create([
                     'source_name' => $this->platform->value,
