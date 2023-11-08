@@ -69,14 +69,14 @@ class ContentDTO
         };
     }
 
-    public function saveCategory(): Category
+    public function saveCategory()
     {
         $platform_category_id_column_name = $this->platform->getCategoryIdAttribute();
-        // find or create category
+
         return Category::firstOrCreate([
-            'slug' => $this->category_slug,
             $platform_category_id_column_name => $this->id,
-//            ], [
+        ], [
+            'slug' => $this->category_slug,
             'name' => $this->name,
             'description' => $this->description ?? null,
             'thumbnail_url' => $this->thumbnail_url ?? null,

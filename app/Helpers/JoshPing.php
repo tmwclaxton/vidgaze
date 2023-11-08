@@ -30,6 +30,7 @@ class JoshPing
 //        dd(Twitch::getCategories(null, true));
 //        dd(Twitch::getTopStreamsByCategory(33214));
 
+//        dd(Platform::Twitch->getCategoryIdAttribute());
         ddd(Twitch::updateTopCategories(3, 3));
 
         dd("hi");

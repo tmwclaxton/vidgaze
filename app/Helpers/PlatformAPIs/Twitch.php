@@ -184,20 +184,19 @@ class Twitch implements iSearchable, iIsPlatform
     }
 
 
+
     // do not exceed 20 categories or 20 streams
     public static function updateTopCategories(int $maxCategories = 20, $maxStreamsPerCategory = 20){
         $categories = array_slice(Twitch::getCategories(null, true), 0, $maxCategories);
         $streams = [];
         foreach ($categories as $category){
-            dd($category);
-            dd($category->saveCategory());
             $streams[] =
-            ResultDTO::saveAll(
-                array_slice(
-                    Twitch::getTopStreamsByCategory($category->id),
-                    0, $maxStreamsPerCategory
-                )
-            );
+                ResultDTO::saveAll(
+                    array_slice(
+                        Twitch::getTopStreamsByCategory($category->id),
+                        0, $maxStreamsPerCategory
+                    )
+                );
         }
         return $streams;
     }
