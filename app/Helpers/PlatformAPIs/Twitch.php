@@ -106,6 +106,7 @@ class Twitch implements iSearchable, iIsPlatform
                 $login->touch();
             }
         }
+        if (!$broadcaster_ids) return;
         $twitch = new Twitch();
 
         $url_params = implode("&user_id=", $broadcaster_ids);

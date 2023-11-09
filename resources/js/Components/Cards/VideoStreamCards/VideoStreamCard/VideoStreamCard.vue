@@ -81,7 +81,7 @@ const dotsIconShow = computed(() => {
                 </CornerInfo>
 
                 <CornerInfo v-if="item.viewers != null" :item="item" class="absolute bottom-0 right-0 m-1.5">
-                    <p class="my-auto" v-text="item.viewers"/>
+                    <p class="my-auto" v-text="'LIVE'"/>
                 </CornerInfo>
 
                 <div  class="flex flex-col absolute top-0 right-0 m-1.5 space-y-1 items-end opacity-0  duration-500 delay-500 group-hover:opacity-100 transition-none group-hover:transition-opacity">
