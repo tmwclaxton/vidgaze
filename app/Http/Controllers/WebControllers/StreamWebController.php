@@ -21,11 +21,13 @@ class StreamWebController extends Controller
 
     }
 
-    public function show()
+    public function show(string $slug)
     {
-        return Inertia::render('Viewer/Watch/Watch', ['type' => "stream"]);
+        return Inertia::render('Viewer/Watch/Watch', [
+            'type' => 'stream',
+            'slug' => $slug,
+        ]);
     }
-
     public function edit(string $slug)
     {
         return Inertia::render('Studio/StudioEditItem/StudioEditItem', [

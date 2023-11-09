@@ -70,7 +70,7 @@ const dotsIconShow = computed(() => {
         </div>
         <div  v-if="!hideItem">
             <div class="relative aspect-[21/12] overflow-hidden rounded-md ">
-                <Link :href="route('watch.show', {slug: item.slug})">
+                <Link :href="itemType === 'video' ? route('watch.show', {slug: item.slug}) : route('stream.show', {slug: item.slug})" >
                     <img class="object-cover w-full h-full bg-zinc-900" v-bind:src="item.thumbnail_url"   alt=""/>
                 </Link>
 
@@ -100,7 +100,8 @@ const dotsIconShow = computed(() => {
                     <span
                         class="pt-1 line-clamp-2 overflow-hidden leading-5 font-bold  text-base  inline-flex">
 
-                        <Link :href="route('watch.show', {slug: item.slug})" v-text="item.title" :title="item.title" class="pr-2 line-clamp-2 mb-0.5"></Link>
+                        <Link :href="itemType === 'video' ? route('watch.show', {slug: item.slug}) : route('stream.show', {slug: item.slug})"
+                              v-text="item.title" :title="item.title" class="pr-2 line-clamp-2 mb-0.5"></Link>
 
                     </span>
 

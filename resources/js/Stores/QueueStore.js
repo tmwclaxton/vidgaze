@@ -39,7 +39,7 @@ export const useQueueStore = defineStore('QueueStore', {
             // For example, you can check if players array is not empty
             let queueStore = useQueueStore();
             // also depends on what page you are on ... // url doesn't contian shorts or watch
-            return queueStore.items !== undefined && queueStore.items.length > 0 && usePage().url !== '/shorts' && !route().current('watch.show') && !queueStore.playlistLoading;
+            return queueStore.items !== undefined && queueStore.items.length > 0 && usePage().url !== '/shorts' && !route().current('watch.show') && !route().current('stream.show') && !queueStore.playlistLoading;
         },
         positionText() {
             if (this.items.length === 0) {

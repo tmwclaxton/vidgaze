@@ -76,9 +76,9 @@ class StreamApiController extends Controller
         }
 
         // return the stream
-        $stream = new StreamResource($stream);
-
-        return response()->json($stream);
+        return [
+            'stream' => new StreamResource($stream)
+        ];
     }
 
 

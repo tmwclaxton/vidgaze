@@ -9,8 +9,8 @@ on:
 env:
   AWS_REGION: "eu-west-2"                  # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: "vidgaze-production-ecr-repository"           # set this to your Amazon ECR repository name
-  ECS_SERVICE: "vidgaze-ecs-service-production"                 # set this to your Amazon ECS service name
-  ECS_CLUSTER: "vidgaze-ecs-cluster-production"                 # set this to your Amazon ECS cluster name
+  ECS_SERVICE: "vidgaze-ecs-service"                 # set this to your Amazon ECS service name
+  ECS_CLUSTER: "vidgaze-ecs-cluster"                 # set this to your Amazon ECS cluster name
   CONTAINER_NAME: "vidgaze-app-container-production"           # set this to the name of the container in the containerDefinitions section of your task definition
   TASK_DEFINITION: "vidgaze-laravel-app-production"           #
 

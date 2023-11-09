@@ -6,7 +6,7 @@ import {usePlayerStore} from "@/Stores/PlayerStore";
 export default class TwitchPlayer extends Player {
     async create() {
         this.player = new Twitch.Player(this.playerDiv, {
-            channel: "valorant", //this.external_id,
+            channel: this.external_id,
             parent: ["localhost","127.0.0.1","vidgaze.tv","www.vidgaze.tv","www.staging.vidgaze.tv","staging.vidgaze.tv"],
             width: '100%',
             height: '100%',

@@ -31,6 +31,8 @@ import ConsistentContentHolder from "@/Components/General/ConsistentContentHolde
 import WatchQueue from "@/Pages/Viewer/Watch/Partials/WatchQueue.vue";
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import SuggestedVideos from "@/Pages/Viewer/Watch/Partials/SuggestedVideos.vue";
+import TitleComponent from "@/Components/General/TitleComponent.vue";
+import ExternalCommentSection from "@/Components/CommentSection/ExternalCommentSection.vue";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -108,7 +110,12 @@ onMounted(  () => {
 
         // get video / stream details
         if (props.type === 'video') {
+            console.log('getting video');
             item.value = await useContentRoutesStore().getVideo(props.slug);
+        }
+        if (props.type === 'stream') {
+            console.log('getting stream');
+            item.value = await useContentRoutesStore().getStream(props.slug);
         }
     });
 });
@@ -147,15 +154,10 @@ onUnmounted(() => {
         playerStore.destroyPlayers(true);
     }
 });
-
-
-
-
-
 </script>
 
 <template>
-        <Head  :title="item.title"  />
+        <Head v-if="item !== undefined"  :title="item.title"  />
 
         <div class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4 md:mx-24']">
             <!--player with theatre mode-->
@@ -182,7 +184,7 @@ onUnmounted(() => {
                         <p class="text-lg font-bold leading-6 line-clamp-2 text dark:textDark" v-text="ready ? item.title : 'Loading...'"/>
                         <div class="px-3 sm:px-0 flex pt-2 -mb-2 justify-between text dark:textDark flex flex-row flex-wrap gap-8 ">
                             <div v-if="ready" class="flex flex-col">
-                                <p class=" pr-3 " v-text="item.view_count + ' · ' + item.time_published"/>
+                                <p v-if="item.type === 'video'" class=" pr-3 " v-text="item.view_count + ' · ' + item.time_published"/>
                                 <span class="pr-3  pt-0.5 font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
                                       v-text="item.live_viewer_count + ' Watching'"/>
                             </div>
@@ -245,7 +247,7 @@ onUnmounted(() => {
                                 ></button>
                             </div>
                         </div>
-                        <RowDivider/>
+                        <RowDivider v-if="item.type === 'video'" />
                     </div>
 
                     <TertiaryButton v-if="!showCommentSection" class="w-full text-center"
@@ -255,10 +257,10 @@ onUnmounted(() => {
                         <p class="w-full text-center">Open Comments</p>
                     </TertiaryButton>
 
-                    <CommentSection v-if="item.creator != undefined" :item="item"
+                    <CommentSection v-if="item.type !== 'stream' && item.creator !== undefined" :item="item"
                                     v-bind:class="[showCommentSection ? 'flex' : 'hidden lg:flex']" />
 
-                    <RowDivider class=" " :class="[theatre ? 'flex ' : 'flex lg:hidden ']"/>
+                    <RowDivider  :class="[theatre ? 'flex ' : 'flex lg:hidden ']"/>
 
                 </div>
             </div>
@@ -266,10 +268,15 @@ onUnmounted(() => {
             <!--video suggestions-->
             <div class=" relative w-full gap-4 flex flex-col min-h-screen" :class="[theatre ? 'col-span-12 p-4 md:px-10 -mt-8 ' : 'col-span-12 lg:col-span-4 ']" >
                 <!--playlist-->
-                <WatchQueue :item="item" :ready="ready"/>
+                <WatchQueue v-if="props.type !== 'stream'"  :item="item" :ready="ready"/>
 
                 <!--suggested videos-->
-                <SuggestedVideos :video="item" :creator="item.creator" :ready="ready"/>
+                <SuggestedVideos  v-if="props.type !== 'stream'"  :video="item" :creator="item.creator" :ready="ready"/>
+
+                <!--stream chat-->
+                <div v-if="props.type === 'stream'" class="flex flex-col gap-4 h-[calc(100vh-10rem)]">
+                    <ExternalCommentSection :source="item.preferred_source" external_id="item.external_id"/>
+                </div>
             </div>
         </div>
 </template>

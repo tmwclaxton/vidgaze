@@ -8,7 +8,7 @@
 <script setup>
 import {computed, onMounted, ref, watch} from "vue";
 import { useToastStore } from "@/Stores/ToastStore";
-import {usePage} from "@inertiajs/vue3";
+import {router, usePage} from "@inertiajs/vue3";
 import {useAuthStore} from "@/Stores/AuthStore";
 const toastStore = useToastStore();
 const name = 'SubscribeButton'
@@ -24,7 +24,7 @@ const props = defineProps({
 const subscribe = () => {
     // if not logged in, redirect to login page using ziggy
     if ( useAuthStore().user === null) {
-        window.location.href = route('login');
+        router.visit(route('login'));
         return;
     }
 
