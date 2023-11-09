@@ -124,9 +124,11 @@ class VideoApiController extends Controller
             default:
                 return response()->json(['error' => 'Invalid category'], 400);
         }
-        // query where name doesn't contain Nursery or Rhymes
-        $query->where('name', 'not like', '%Nursery%')->where('name', 'not like', '%Rhymes%');
-
+        // query where name doesn't contain Nursery or Rhymes in caps or lowercase
+        $bannedWords = ['nursery', 'rhymes','children','cartoon','kids','finger','singing','toys','babies','family'];
+        foreach ($bannedWords as $word) {
+            $query->where('name', 'not like', '%'.$word.'%');
+        }
         // Only get public videos
         $query->where('visibility', '=','public');
 
