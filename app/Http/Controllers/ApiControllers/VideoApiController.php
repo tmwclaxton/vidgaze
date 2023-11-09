@@ -127,7 +127,7 @@ class VideoApiController extends Controller
         // query where name doesn't contain Nursery or Rhymes in caps or lowercase
         $bannedWords = ['nursery', 'rhymes','children','cartoon','kids','finger','singing','toys','babies','family'];
         foreach ($bannedWords as $word) {
-            $query->where('name', 'not like', '%'.$word.'%');
+            $query->where('title', 'not like', '%'.$word.'%');
         }
         // Only get public videos
         $query->where('visibility', '=','public');
