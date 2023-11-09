@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Helpers\PlatformAPIs\Twitch;
+use App\Models\Category;
 use Illuminate\Console\Command;
 
 class RefreshStreams extends Command
@@ -30,6 +31,9 @@ class RefreshStreams extends Command
     public function handle()
     {
         Twitch::updateStreamerStatus();
+
+        Twitch::updateTopCategories(8, 3);
+
         return Command::SUCCESS;
     }
 }

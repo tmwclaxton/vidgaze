@@ -4,11 +4,13 @@ namespace App\Helpers\PlatformAPIs;
 
 use App\Enums\Kind;
 use App\Enums\Platform;
+use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use TwitchApi\HelixGuzzleClient;
 use TwitchApi\TwitchApi;
@@ -94,6 +96,8 @@ class Twitch implements iSearchable, iIsPlatform
 //        });
     }
 
+
+    // also deletes ghost creator streams if they are not live
     public static function updateStreamerStatus(array $broadcaster_ids = null): void
     {
         if(!$broadcaster_ids){
@@ -128,4 +132,76 @@ class Twitch implements iSearchable, iIsPlatform
                 $item->source()->creator()->first()->update(['is_live' => 1]);
             });
     }
+
+    public static function getCategories(array $ids = null, $topTwenty = false) : array //ContentDTO
+    {
+        $t = new Twitch();
+
+        $response = $topTwenty ? json_decode($t->client->getGamesApi()->getTopGames($t->getAppBearerToken())->getBody()->getContents())->data
+            : json_decode($t->client->getGamesApi()->getGames($t->getAppBearerToken(), $ids)->getBody()->getContents())->data;
+
+        return array_map(function ($value){
+            $contentDTO = new ContentDTO(Platform::Twitch, Kind::Category, $value->id);
+            $contentDTO->name = $value->name;
+            $contentDTO->category_slug = convertNameToSlug($value->name);
+            $contentDTO->thumbnail_url = str_replace('{width}x{height}','564x750', $value->box_art_url);
+            return $contentDTO;
+        }, $response);
+    }
+
+    public static function getTopStreamsByCategory(string $category_id){
+        $t = new Twitch();
+
+        $response = json_decode($t->client->getStreamsApi()->getStreamsByGameId($t->getAppBearerToken(), $category_id)->getBody()->getContents())->data;
+
+        return array_map(function ($value){
+            $resultDTO = new ResultDTO(Platform::Twitch, Kind::Stream);
+
+            $categoryDTO = new ContentDTO(Platform::Twitch, Kind::Category, $value->game_id);
+            $categoryDTO->name = $value->game_name;
+            $categoryDTO->category_slug = convertNameToSlug($value->game_name);
+
+            $creatorDTO = new CreatorDTO(Platform::Twitch, $value->user_id);
+            $creatorDTO->twitch_login = $value->user_login;
+            $creatorDTO->is_live = true;
+            $creatorDTO->name = $value->user_name;
+
+            $contentDTO = new ContentDTO(Platform::Twitch, Kind::Stream, $value->id);
+            $contentDTO->creator_id = $value->user_id;
+            $contentDTO->name = $value->title;
+            $contentDTO->views = $value->viewer_count;
+            $contentDTO->publish_time = Carbon::make($value->started_at);
+            $contentDTO->language = $value->language;
+            $contentDTO->is_live = true;
+            $contentDTO->thumbnail_url = str_replace('{width}x{height}','1920x1080', $value->thumbnail_url);
+            $contentDTO->tags = $value->tags;
+            $contentDTO->category_id = $value->game_id;
+
+            $contentDTO->category = $categoryDTO;
+
+            $resultDTO->creator = $creatorDTO;
+            $resultDTO->content = $contentDTO;
+            return $resultDTO;
+        }, $response);
+    }
+
+
+
+    // do not exceed 20 categories or 20 streams
+    public static function updateTopCategories(int $maxCategories = 20, $maxStreamsPerCategory = 20){
+        $categories = array_slice(Twitch::getCategories(null, true), 0, $maxCategories);
+        $streams = [];
+        foreach ($categories as $category){
+            $streams[] =
+                ResultDTO::saveAll(
+                    array_slice(
+                        Twitch::getTopStreamsByCategory($category->id),
+                        0, $maxStreamsPerCategory
+                    )
+                );
+        }
+        return $streams;
+    }
+
+
 }
