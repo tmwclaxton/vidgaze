@@ -32,7 +32,7 @@ class RefreshStreams extends Command
     {
         Twitch::updateStreamerStatus();
 
-        Twitch::updateTopCategories(8, 3);
+        Twitch::updateTopCategories(8, 8);
 
         return Command::SUCCESS;
     }
