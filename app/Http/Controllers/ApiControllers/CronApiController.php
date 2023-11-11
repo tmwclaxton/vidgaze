@@ -41,11 +41,11 @@ class CronApiController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function refreshOneTwitchCategory(Request $request): JsonResponse
+    public function refreshTopCategories(Request $request): JsonResponse
     {
-        Artisan::queue('refresh:one_twitch_category')->onQueue('commands');
+        Artisan::queue('refresh:top-categories')->onQueue('commands');
         return response()->json([
-            'message' => 'one twitch category refreshed'
+            'message' => 'Top categories refreshed'
         ], 200);
     }
 
