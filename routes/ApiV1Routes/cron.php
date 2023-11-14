@@ -12,7 +12,7 @@ Route::middleware(['vidgaze.api.key'])->group(function () {
         Route::post('/sanctum/prune', [CronApiController::class, 'sanctumTokens'])->name('sanctum.tokens.prune');
 
         // refresh one twitch category
-        Route::post('/refresh/one_twitch_category', [CronApiController::class, 'refreshOneTwitchCategory'])->name('refresh.one_twitch_category');
+        Route::post('/refresh/top_categories', [CronApiController::class, 'refreshTopCategories'])->name('refresh.top_categories');
 
         // refresh twitch category info
         Route::post('/refresh/twitch_category_info', [CronApiController::class, 'refreshTwitchCategoryInfo'])->name('refresh.twitch_category_info');
