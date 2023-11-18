@@ -82,12 +82,8 @@ class VideoApiController extends Controller
 
         switch ($selectedCategory) {
             case 'popular':
-                // calculate ctr by dividing views by impressions avoid division by zero by adding 1 to impressions
-
-                // if view_count is 0 && impressions less than 10, set ctr to 0.8 so new videos have a chance to be seen
-                //$query->selectRaw('videos.*, IF(views = 0 && impressions < 10, 0.8, view_count / (impressions_count + 1)) as ctr');
-                //$query->orderBy('ctr', 'desc');
-                $query->selectRaw('videos.*, IF(view_count = 0 && impressions_count < 10, 0.6, ((view_count + 0.7) / (impressions_count + 1))) as ctr')
+                // calculate ctr by dividing views by impressions avoid division by zero by adding 1 to impressions,
+                $query->selectRaw('videos.*, IF(view_count = 0 && impressions_count < 10, 0.01, ((view_count + 0.7) / (impressions_count + 1))) as ctr')
                     ->orderBy('ctr', 'desc');
                 break;
             case 'trending':
