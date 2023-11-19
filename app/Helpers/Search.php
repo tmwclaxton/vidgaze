@@ -17,10 +17,8 @@ class Search
         return "search:" . $platform->getPrefix() . ":" . $query->query;
     }
 
-    public static function search(SearchQueryDTO $searchQuery, bool $saveAndReturnModels = true, int $max_wait = 5): array
+    public static function searchJobs(SearchQueryDTO $searchQuery)
     {
-        $max_wait = $max_wait >=0 ? $max_wait : 5;
-
         // check the Redis cache for each platform in query
         $cache_results = [];
         $platforms_to_search = [];
@@ -43,20 +41,22 @@ class Search
             }
 
             // dispatch batch
-            $batch = Bus::batch($search_jobs)
-               /* ->finally(function (Batch $batch) use ($platforms_to_search, $searchQuery) {
-                    self::getRedisCacheResults($searchQuery, $platforms_to_search);
-                })*/->onQueue('search')->onConnection('redis')->dispatch();
-
-            // wait to finish or wait max seconds
-            $time = 0;
-            while (!Bus::findBatch($batch->id)->finished() && $time < $max_wait) {
-                usleep(500000);
-                $time+=0.5;
+            try {
+                $batch = Bus::batch($search_jobs)->onQueue('search')->onConnection('redis')->dispatch();
+            } catch (\Throwable $th) {
+                return [];
             }
+        }
+    }
 
-            // return results in Redis cache
-            $cache_results = array_merge($cache_results, self::getRedisCacheResults($searchQuery, $platforms_to_search));
+    public static function searchResults(SearchQueryDTO $searchQuery, bool $saveAndReturnModels = true): array
+    {
+        $cache_results = [];
+        foreach ($searchQuery->getPlatforms() as $platform) {
+            $result = Redis::client()->get(self::getRedisSearchKey($platform, $searchQuery));
+            if ($result) {
+                $cache_results[$platform->value] = json_decode($result);
+            }
         }
 
         $results = [];

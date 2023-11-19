@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('search')->name('search.')->group(function () {
 
-    Route::get('/query', [SearchApiController::class, 'getSearchResults'])->name('query');
+    Route::post('/start_query', [SearchApiController::class, 'startQuery'])->name('start_query');
+    Route::get('/get_results', [SearchApiController::class, 'getResults'])->name('get_results');
 
     Route::middleware('throttle:60,1')->group(function () {
         //search bar
