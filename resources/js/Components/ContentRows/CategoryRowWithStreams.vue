@@ -44,7 +44,7 @@ onMounted(async () => {
 
 <template>
 
-        <div v-if="expandedStreams.length !== 0">
+        <div v-if="expandedStreams.length > 5">
             <div class="flex flex-row gap-2  my-4 mb-8 ">
                 <!--<StreamIcon class="w-6 h-6 my-auto"/>-->
                 <font-awesome-icon class="w-6 h-6 my-auto" :icon="['fas', 'gamepad']" />
@@ -61,10 +61,11 @@ onMounted(async () => {
                 <!--</template>-->
             </div>
 
-            <RowDivider text="Show more" v-if="!expand" @click="expand = true">
-                <font-awesome-icon class="w-6 h-6 my-auto" :icon="['fas', 'caret-down']" />
+            <RowDivider :text="streams.length > 6 ? 'Show More' : ''" v-if="!expand" @click="expand = true">
+                <font-awesome-icon v-if="streams.length > 6"
+                    class="w-6 h-6 my-auto" :icon="['fas', 'caret-down']" />
             </RowDivider>
-            <RowDivider   v-if="expand" @click="expand = false">
+            <RowDivider  v-if="expand" @click="expand = false">
                 <!--<font-awesome-icon class="w-6 h-6 my-auto" :icon="['fas', 'caret-up']" />-->
             </RowDivider>
         </div>
