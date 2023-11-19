@@ -21,10 +21,19 @@ class SearchApiController extends Controller
 
     /** Get search results for a query
      * @param Request $request
+     */
+    public static function startQuery(Request $request)
+    {
+        $searchQuery = $request->q;
+        $query = new SearchQueryDTO($searchQuery, 5);
+        Search::searchJobs($query);
+    }
+
+    /** Get search results for a query
+     * @param Request $request
      * @return JsonResponse
      */
-    public static function getSearchResults(Request $request)
-    {
+    public static function getResults(Request $request) {
         $searchQuery = $request->q;
         if (empty($searchQuery)) {
             return response()->json([
@@ -38,17 +47,18 @@ class SearchApiController extends Controller
 
         $query = new SearchQueryDTO($searchQuery, 5);
 
-        $start = microtime(true);
-        $results = Search::search($query);
+        $results = Search::searchResults($query);
 
         // return the creators, videos, streams, playlists, podcasts in a collection
-        //$creators = if $results['creators'] is not null then new CreatorCollection($results['creators']) otherwise []
-        $creators = array_key_exists("creators",$results) ? new CreatorCollection($results['creators']) : [];
-        $videos = array_key_exists("videos",$results) ? new VideoCollection($results['videos']) : [];
-        $streams = array_key_exists("streams",$results) ? new StreamCollection($results['streams']) : [];
-        $playlists = array_key_exists("playlists",$results) ? new PlaylistCollection($results['playlists']) : [];
-        $podcasts = array_key_exists("podcasts",$results) ? new PodcastCollection($results['podcasts']) : [];
-
+        $creators = array_key_exists("creators", $results) ? new CreatorCollection($results['creators']) : [];
+        $videos = array_key_exists("videos", $results) ? new VideoCollection($results['videos']) : [];
+        $streams = array_key_exists("streams", $results) ? new StreamCollection($results['streams']) : [];
+        $playlists = array_key_exists("playlists", $results) ? new PlaylistCollection($results['playlists']) : [];
+        $podcasts = array_key_exists("podcasts", $results) ? new PodcastCollection($results['podcasts']) : [];
+        // shuffle videos in a repeatable way // we need to shuffle for YouTube API approval
+        if (count($videos) > 0) {
+            $videos = $videos->shuffle(crc32($searchQuery));
+        }
 
         // hide important info from the user by using resource collections
         $creators = new CreatorCollection($creators);
@@ -64,7 +74,6 @@ class SearchApiController extends Controller
         //return the creators, videos, streams, playlists, podcasts
         return response()->json([
             'creators' => $creators,
-            // shuffle videos
             'videos' => $videos,
             'streams' => $streams,
             'playlists' => $playlists,
@@ -107,7 +116,5 @@ class SearchApiController extends Controller
             'categories' => $categories,
 
         ]);
-
     }
-
 }
