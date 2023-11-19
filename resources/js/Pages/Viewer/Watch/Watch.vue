@@ -191,8 +191,8 @@ onUnmounted(() => {
                             <div class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
                                 <FeatureCreatorButton v-if="ready && authStore.admin" :creator_id="item.creator.id"/>
 
-                                <TertiaryButton>
-                                    <LikeDislikeButtons v-if="item" :item="item" :orientationVertical="false"/>
+                                <TertiaryButton v-if="item.type === 'video' && item">
+                                    <LikeDislikeButtons :item="item" :orientationVertical="false"/>
                                 </TertiaryButton>
 
                                 <div @click="share" class="flex flex-row cursor-pointer align-middle items-center">
@@ -200,7 +200,7 @@ onUnmounted(() => {
                                     <p class="pl-2">Share</p>
                                 </div>
 
-                                <div v-if="authStore.user" @click="togglePlaylistModal()" class="flex flex-row cursor-pointer align-middle items-center" >
+                                <div v-if="item.type === 'video' && authStore.user" @click="togglePlaylistModal()" class="flex flex-row cursor-pointer align-middle items-center" >
                                     <LibraryIcon class="h-5"/>
                                     <p class="pl-2">Save</p>
                                 </div>
