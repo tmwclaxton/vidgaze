@@ -188,10 +188,10 @@ onUnmounted(() => {
                                 <span class="pr-3  pt-0.5 font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
                                       v-text="item.live_viewer_count + ' Watching'"/>
                             </div>
-                            <div class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
-                                <FeatureCreatorButton v-if="ready && authStore.admin" :creator_id="item.creator.id"/>
+                            <div v-if="ready && item" class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
+                                <FeatureCreatorButton v-if="authStore.admin" :creator_id="item.creator.id"/>
 
-                                <TertiaryButton v-if="item.type === 'video' && item">
+                                <TertiaryButton v-if="item.type === 'video'">
                                     <LikeDislikeButtons :item="item" :orientationVertical="false"/>
                                 </TertiaryButton>
 
