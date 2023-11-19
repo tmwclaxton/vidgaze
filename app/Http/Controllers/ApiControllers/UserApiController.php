@@ -26,8 +26,8 @@ class UserApiController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $request->user()->id],
         ]);
         // do everything manually to avoid mass assignment
-        $request->user()->first_name = $request->first_name;
-        $request->user()->last_name = $request->last_name;
+        $request->user()->first_name = $request->first_name !== null ? $request->first_name : '';
+        $request->user()->last_name = $request->last_name !== null ? $request->last_name : '';
         $request->user()->email = $request->email;
 
         if ($request->user()->isDirty('email')) {
