@@ -28,11 +28,6 @@ const toggleVisibleCreators = () => {
     // console.log(visibleCreatorsCount.value);
 };
 
-
-
-
-
-const loaded = ref(false);
 const loading = ref(true);
 const creators = ref([]);
 const videos = ref([]);
@@ -80,7 +75,6 @@ function search(searchQuery,page = 1) {
 
 onMounted(() => {
     search(searchQuery,1);
-    loaded.value = true;
 });
 
 
@@ -184,7 +178,7 @@ onMounted(() => {
 
                         </div>
 
-                        <div class="mt-20" v-if="loaded && videos.length == 0 && creators.length == 0">
+                        <div class="mt-20" v-if="!loading && videos.length === 0 && creators.length === 0">
                             <ErrorMessage :message="'Whoops we couldn\'t find any content'"/>
                         </div>
 
