@@ -78,8 +78,6 @@ function retrieveResults(searchQuery) {
     })
 }
 
-
-
 onMounted(() => {
     startSearch(searchQuery);
     // every second retrieve results, and stop after 10 seconds
@@ -90,22 +88,11 @@ onMounted(() => {
         clearInterval(interval);
     }, 10000);
 });
-
-
-
-
-
-
 </script>
-
-
-
 <template>
     <Head>
         <title>Search</title>
     </Head>
-
-
 
     <div class=" mx-auto pb-10 pt-4 px-6 lg:px-16">
         <!--filter button-->

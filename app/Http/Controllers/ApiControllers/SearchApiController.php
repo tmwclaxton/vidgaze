@@ -50,14 +50,15 @@ class SearchApiController extends Controller
         $results = Search::searchResults($query);
 
         // return the creators, videos, streams, playlists, podcasts in a collection
-        $creators = array_key_exists("creators",$results) ? new CreatorCollection($results['creators']) : [];
-        $videos = array_key_exists("videos",$results) ? new VideoCollection($results['videos']) : [];
-        $streams = array_key_exists("streams",$results) ? new StreamCollection($results['streams']) : [];
-        $playlists = array_key_exists("playlists",$results) ? new PlaylistCollection($results['playlists']) : [];
-        $podcasts = array_key_exists("podcasts",$results) ? new PodcastCollection($results['podcasts']) : [];
-        // shuffle videos in a repeatable way, i.e. same order for same query, change $searchQuery into an integer
-        $videos = $videos->shuffle(crc32($searchQuery));
-
+        $creators = array_key_exists("creators", $results) ? new CreatorCollection($results['creators']) : [];
+        $videos = array_key_exists("videos", $results) ? new VideoCollection($results['videos']) : [];
+        $streams = array_key_exists("streams", $results) ? new StreamCollection($results['streams']) : [];
+        $playlists = array_key_exists("playlists", $results) ? new PlaylistCollection($results['playlists']) : [];
+        $podcasts = array_key_exists("podcasts", $results) ? new PodcastCollection($results['podcasts']) : [];
+        // shuffle videos in a repeatable way // we need to shuffle for YouTube API approval
+        if (count($videos) > 0) {
+            $videos = $videos->shuffle(crc32($searchQuery));
+        }
 
         // hide important info from the user by using resource collections
         $creators = new CreatorCollection($creators);
@@ -65,7 +66,6 @@ class SearchApiController extends Controller
         $streams = new StreamCollection($streams);
         $playlists = new PlaylistCollection($playlists);
         $podcasts = new PodcastCollection($podcasts);
-
 
         // add 1 to impressions_count for each video in 1 query
         $video_ids = $videos->pluck('id');
@@ -116,7 +116,5 @@ class SearchApiController extends Controller
             'categories' => $categories,
 
         ]);
-
     }
-
 }
