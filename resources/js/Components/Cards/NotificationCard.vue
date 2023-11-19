@@ -10,9 +10,8 @@ const props = defineProps({
 });
 
 </script>
-
 <template>
-    <Link :href="route('watch.show', {slug: item.slug})">
+    <Link :href="item.type === 'video' ? route('watch.show', {slug: item.slug}) : route('stream.show', {slug: item.slug})" >
         <div class="py-1 pb-2 rounded cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-700 overflow-hidden
             grid grid-cols-6 w-full h-18">
             <span class=" col-span-1">

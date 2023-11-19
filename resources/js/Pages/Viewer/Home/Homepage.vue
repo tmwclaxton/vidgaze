@@ -25,8 +25,6 @@ onMounted(async () => {
 
         window.addEventListener('scroll', handleScroll);
     });
-
-
 });
 
 onUnmounted(() => {
@@ -77,12 +75,6 @@ const fetchVideos = async (videoArray) => {
     }
 
 };
-
-
-
-
-
-
 </script>
 <template>
     <div>

@@ -72,12 +72,13 @@ function retrieveResults(searchQuery) {
                 streams.value = response.data.streams.data;
             }
             loading.value = false;
+
         }).catch(function (error) {
         // handle error
         console.log(error);
     })
 }
-
+const finished = ref(false);
 onMounted(() => {
     startSearch(searchQuery);
     // every second retrieve results, and stop after 10 seconds
@@ -86,6 +87,7 @@ onMounted(() => {
     }, 1000);
     setTimeout(() => {
         clearInterval(interval);
+        finished.value = true;
     }, 10000);
 });
 </script>
@@ -156,8 +158,6 @@ onMounted(() => {
         <div >
             <section v-if="true" class="mt-4">
 
-                <!--<RowDivider/>-->
-
                 <div
                     class="flex flex-col flex-wrap gap-4 ">
                     <CreatorSearchCard v-if="creators.length > 0" v-for="creator in creators.slice(0,visibleCreatorsCount)" :creator="creator"/>
@@ -179,7 +179,7 @@ onMounted(() => {
 
                 </div>
 
-                <div class="mt-20" v-if="!loading && (videos === undefined || videos.length === 0) && creators.length === 0">
+                <div class="mt-20" v-if="!loading && (videos === undefined || videos.length === 0) && creators.length === 0 && finished">
                     <ErrorMessage :message="'Whoops we couldn\'t find any content'"/>
                 </div>
 
@@ -189,8 +189,4 @@ onMounted(() => {
         </div>
 
     </div>
-
-
-
-
 </template>
