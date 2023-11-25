@@ -9,16 +9,22 @@ import {VitePWA} from "vite-plugin-pwa";
 export default defineConfig({
     plugins: [
         VitePWA({
-            injectManifest: true,
-            injectRegister: true,
+            // injectManifest: false,
+            // injectRegister: false,
             registerType: 'autoUpdate',
             devOptions: {
                 enabled: true
             },
+
             manifest: {
                 name: 'VidGaze',
                 short_name: 'VidGaze',
+                description: 'VidGaze is a video sharing platform',
                 theme_color: '#080a0f',
+                start_url: '/',
+                scope: '/',
+                display: 'standalone',
+                lang: 'en',
                 icons: [
                     {
                         src: '/images/logos/vidgaze/app_icon_512.png',
