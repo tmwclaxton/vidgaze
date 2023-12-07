@@ -20,12 +20,15 @@ class UserApiController extends Controller
      */
     public function update(ProfileUpdateRequest $request): \Illuminate\Http\JsonResponse
     {
-        //$request->user()->fill($request->validated());
+        $request->validate([
+            'first_name' => ['nullable', 'string', 'max:255'],
+            'last_name' => ['nullable', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $request->user()->id],
+        ]);
         // do everything manually to avoid mass assignment
-        $request->user()->first_name = $request->validated()['first_name'];
-        $request->user()->last_name = $request->validated()['last_name'];
-        $request->user()->email = $request->validated()['email'];
-
+        $request->user()->first_name = $request->first_name !== null ? $request->first_name : '';
+        $request->user()->last_name = $request->last_name !== null ? $request->last_name : '';
+        $request->user()->email = $request->email;
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;

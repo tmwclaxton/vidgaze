@@ -28,12 +28,15 @@ const form = reactive({
 
 const save =() => {
     form.processing = true;
+    form.errors = {};
 
-    axios.patch(route('api.profile.update',{
-        first_name: form.data.first_name,
-        last_name: form.data.last_name,
+    const data = {
+        ...(form.data.first_name !== '' && { first_name: form.data.first_name }),
+        ...(form.data.last_name !== '' && { last_name: form.data.last_name }),
         email: form.data.email,
-    })).then((response) => {
+    };
+
+    axios.patch(route('api.profile.update', data)).then((response) => {
         useToastStore().add({
             message: 'Profile updated.',
             type: 'success',
@@ -41,7 +44,7 @@ const save =() => {
     }).catch((errors) => {
         useToastStore().add({
             message: 'Profile could not be updated.',
-            type: 'error',
+            type: 'warning',
         });
         form.errors = errors.response.data.errors;
     }).finally(() => {
