@@ -10,16 +10,15 @@ export default defineConfig({
     plugins: [
         VitePWA({
             // injectManifest: false,
-            // injectRegister: false,
+            injectRegister: 'auto',
             registerType: 'autoUpdate',
             devOptions: {
                 enabled: true
             },
-
             manifest: {
                 name: 'VidGaze',
                 short_name: 'VidGaze',
-                description: 'VidGaze is a video sharing platform',
+                description: 'VidGaze is a video sharing platform where you can watch YouTube, Dailymotion, Vimeo, Twitch and more all in the one place!',
                 theme_color: '#080a0f',
                 start_url: '/',
                 scope: '/',
@@ -32,6 +31,26 @@ export default defineConfig({
                         type: 'image/png',
                     },
                 ],
+                launch_handler: {
+                    url: '/',
+                },
+                id: 'com.vidgaze.app',
+                background_color: '#080a0f',
+                categories: ['entertainment', 'video', 'streaming'],
+                screenshots: [
+                    {
+                        src: '/images/screenshots/1.png',
+                        sizes: '675x1231',
+                        type: 'image/png',
+                    },
+                    {
+                        src: '/images/screenshots/2.png',
+                        sizes: '673x1227',
+                        type: 'image/png',
+                    },
+                ],
+                orientation: "any",
+                display_override: ["fullscreen"],
             },
         }),
         laravel({
