@@ -37,7 +37,8 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
 // landing route
 Route::get('/', function () {
-        return Inertia::render('Viewer/Landing/Landing');
+    return Inertia::render('Viewer/Home/Homepage');
+    // return Inertia::render('Viewer/Landing/Landing');
 })->name('landing');
 
 //home route
