@@ -121,7 +121,7 @@ class VideoApiController extends Controller
                 return response()->json(['error' => 'Invalid category'], 400);
         }
         // query where name doesn't contain Nursery or Rhymes in caps or lowercase
-        $bannedWords = ['nude','naked','nursery', 'rhymes','children','cartoon','kids','finger','singing','toys','babies','family','baby','songs','song','learn','learning','educational','shopkins','shoppies','numbers'];
+        $bannedWords = ['maravilloso','animal','nude','naked','nursery', 'rhymes','children','cartoon','kids','finger','singing','toys','babies','family','baby','songs','song','learn','learning','educational','shopkins','shoppies','numbers'];
         foreach ($bannedWords as $word) {
             $query->where('title', 'not like', '%'.$word.'%');
         }
