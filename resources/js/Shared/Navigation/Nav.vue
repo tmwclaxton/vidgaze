@@ -4,6 +4,7 @@ import {onMounted, onUnmounted, ref, watch} from "vue";
 import TopNavBar from "@/Shared/Navigation/TopNavBar.vue";
 import SideBar from "@/Shared/Navigation/SideBar.vue";
 import {useNavStore} from "@/Stores/NavStore";
+import BottomNavBar from "@/Shared/Navigation/BottomNavBar.vue";
 const navStore = useNavStore();
 
 onMounted(() => {
@@ -32,6 +33,7 @@ onUnmounted(() => {
             <TopNavBar />
 
             <SideBar/>
+
 
     </nav>
 

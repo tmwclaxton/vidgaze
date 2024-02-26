@@ -43,7 +43,7 @@ function redirect(which) {
             <div class="flex justify-between h-16 ">
                 <div class="flex w-full">
                     <!-- Hamburger, hide whenever search icon is clicked in mobile mode -->
-                    <div class=" flex items-center  "
+                    <div class="hidden sm:flex items-center"
                          :class="{'hidden sm:flex': navStore.getExpandedSearchBar(),  '': !navStore.getExpandedSearchBar() }">
                         <button
                             @click="navStore.toggleShowingNavigationDropdown()"

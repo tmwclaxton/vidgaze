@@ -13,6 +13,7 @@ import {usePage} from "@inertiajs/vue3";
 import {usePlayerStore} from "@/Stores/PlayerStore";
 import {useAuthStore} from "@/Stores/AuthStore";
 import PlaylistPageModal from "@/Components/Modals/PlaylistPageModal.vue";
+import BottomNavBar from "@/Shared/Navigation/BottomNavBar.vue";
 const playerStore = usePlayerStore();
 const authStore = useAuthStore();
 const navStore = useNavStore();
@@ -48,12 +49,12 @@ onMounted(() => {
         <!-- this is where the toast message popup is added -->
         <ToastList :flash="$page.props.flash"/>
 
-        <div class=" flex flex-col   ">
+        <div class="flex flex-col  relative ">
 
             <Nav v-if="usePage().props.layoutDisplay !== 'auth'"/>
 
             <!-- Page Content -->
-            <main class="flex flex-row flex-grow    " >
+            <main class="h-full flex flex-row flex-grow    " >
 
                 <div v-if="usePage().props.layoutDisplay !== 'auth' && usePage().props.layoutDisplay !== 'wide'"
                      class="pointer-events-none opacity-0 flex-shrink-0 transition  ease-in-out"  :class="{'sm:w-64  ': navStore.getNavigationDropdown(), 'sm:w-24': !navStore.getNavigationDropdown()}">
@@ -75,6 +76,8 @@ onMounted(() => {
                 <!--<CookieConsent/>-->
 
             </main>
+
+            <BottomNavBar />
 
         </div>
     </div>
