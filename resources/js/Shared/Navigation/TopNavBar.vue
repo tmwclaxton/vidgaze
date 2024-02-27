@@ -37,7 +37,7 @@ function redirect(which) {
 <template>
 
     <!--Top nav-->
-    <div class="-mt-0.5 bg-vidgaze-blue-nav pointer-events-auto backdrop-blur-sm " >
+    <div id="topNavBar" class="-mt-0.5 z-50 bg-vidgaze-blue-nav pointer-events-auto backdrop-blur-sm " >
         <div class="max-w- screen-2xl mx-auto pl-5 sm:pl-8 pr-4 sm:pr-6 lg:pr-8  flex flex-col">
             <div class="h-0.5"></div>
             <div class="flex justify-between h-16 ">

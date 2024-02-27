@@ -44,12 +44,12 @@ onMounted(() => {
 
 
 
-    <div>
+    <div >
 
         <!-- this is where the toast message popup is added -->
         <ToastList :flash="$page.props.flash"/>
 
-        <div class="flex flex-col  relative ">
+        <div class="flex flex-col  relative min-h-screen">
 
             <Nav v-if="usePage().props.layoutDisplay !== 'auth'"/>
 
