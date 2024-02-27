@@ -28,7 +28,7 @@ const name = 'BottomNavBar';
 <template>
 
     <!--Bottom Nav Bar-->
-    <div id="bottomNav" class="bottom-0 z-50 sticky sm:hidden bg-vidgaze-blue-nav pointer-events-auto backdrop-blur-sm " >
+    <div id="bottomNav" class="bottom-0 z-10 sticky sm:hidden bg-vidgaze-blue-nav pointer-events-auto backdrop-blur-sm " >
         <div class="max-w- screen-2xl mx-auto pl-5 sm:pl-8 pr-4 sm:pr-6 lg:pr-8  flex flex-col">
             <div class="h-0.5"></div>
             <div class="flex justify-between h-16 ">
