@@ -1,4 +1,4 @@
-# VidGaze
+# VidGaze (open-source)
 ## _The Ultimate Video-Streaming App_
 
 VidGaze is a website and mobile-ready video-streaming app designed to empower content creators and make viewing content from multiple platforms a delightful experience. 
