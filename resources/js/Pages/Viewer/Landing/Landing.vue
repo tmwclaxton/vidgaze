@@ -127,56 +127,56 @@ onUnmounted(() => {
 
         <!-- explain the platform -->
 
-        <div class="relative w-screen h-screen flex   ">
+        <!--<div class="relative w-screen h-screen flex   ">-->
 
-            <div class=" max-w-2xl w-full m-auto  p-4">
-                    <h2 class="text-4xl font-bold mb-8 mx-auto text-center text-white ">Message from the Founders</h2>
-                    <iframe class="w-full  my-auto ml-auto aspect-video rounded-2xl shadow-2xl shadow-zinc-900"
-                        src="https://www.youtube.com/embed/CIob-HllZOw" title="YouTube video player" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen></iframe>
-            </div>
+        <!--    <div class=" max-w-2xl w-full m-auto  p-4">-->
+        <!--            <h2 class="text-4xl font-bold mb-8 mx-auto text-center text-white ">Message from the Founders</h2>-->
+        <!--            <iframe class="w-full  my-auto ml-auto aspect-video rounded-2xl shadow-2xl shadow-zinc-900"-->
+        <!--                src="https://www.youtube.com/embed/CIob-HllZOw" title="YouTube video player" frameborder="0"-->
+        <!--                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"-->
+        <!--                allowfullscreen></iframe>-->
+        <!--    </div>-->
 
-        </div>
+        <!--</div>-->
 
-        <!-- present the founders -->
-        <div id="support" class="relative w-screen min-h-screen flex overflow-x-hidden  bg-white dark:bg-vidgaze-blue ">
+        <!--&lt;!&ndash; present the founders &ndash;&gt;-->
+        <!--<div id="support" class="relative w-screen min-h-screen flex overflow-x-hidden  bg-white dark:bg-vidgaze-blue ">-->
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 m-auto py-8 ">
-                <div class="max-w-4xl w-full  mx-auto px-4">
-                    <h2 class="text-4xl font-bold mb-8 mx-auto text-center ">The Team</h2>
-                    <div class="flex flex-col sm:flex-row gap-8 items-center justify-center p-14 ">
-                        <FounderCard img="/images/people/toby_3.jpeg" fullname="Toby Claxton"
-                                     description="Founder & Developer"
-                                     github="https://github.com/tmwclaxton"
-                                     linkedin="https://www.linkedin.com/in/toby-claxton/"
-                                     instagram="https://www.instagram.com/toby_claxton517/" />
-                        <FounderCard img="/images/people/josh_3.jpg" fullname="Joshua Young"
-                                     description="Founder & Developer"
-                                     github="https://github.com/joshuasy10"
-                                     linkedin="https://www.linkedin.com/in/joshua-young-8a97911a2/"
-                                     instagram="https://www.instagram.com/joshuasy1o/" />
-                    </div>
-                </div>
-                <div id="support">
-                    <h2 class="text-4xl font-bold mb-8 mx-auto text-center ">Support Information</h2>
-                    <div class="flex flex-wrap flex-row gap-8 items-center justify-center p-14 w-full">
-                        <div class="flex flex-col gap-y-6 mt-2 w-full">
-                            <div class="flex flex-row gap-x-4 mx-auto">
-                                <font-awesome-icon :icon="['fas', 'envelope']"  class="h-8"/>
-                                <p class="text-xl font-bold text-center "><a href="mailto:support@vidgaze.tv">support@vidgaze.tv</a></p>
-                            </div>
-                            <div class="flex flex-row gap-x-4 mx-auto ">
-                                <font-awesome-icon :icon="['fas', 'phone']"  class="h-8"/>
-                                <p class="text-xl font-bold text-center ">Phone: <a href="tel:+447478 635 635">+44 7837 370669</a></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!--    <div class="grid grid-cols-1 lg:grid-cols-2 m-auto py-8 ">-->
+        <!--        <div class="max-w-4xl w-full  mx-auto px-4">-->
+        <!--            <h2 class="text-4xl font-bold mb-8 mx-auto text-center ">The Team</h2>-->
+        <!--            <div class="flex flex-col sm:flex-row gap-8 items-center justify-center p-14 ">-->
+        <!--                <FounderCard img="/images/people/toby_3.jpeg" fullname="Toby Claxton"-->
+        <!--                             description="Founder & Developer"-->
+        <!--                             github="https://github.com/tmwclaxton"-->
+        <!--                             linkedin="https://www.linkedin.com/in/toby-claxton/"-->
+        <!--                             instagram="https://www.instagram.com/toby_claxton517/" />-->
+        <!--                <FounderCard img="/images/people/josh_3.jpg" fullname="Joshua Young"-->
+        <!--                             description="Founder & Developer"-->
+        <!--                             github="https://github.com/joshuasy10"-->
+        <!--                             linkedin="https://www.linkedin.com/in/joshua-young-8a97911a2/"-->
+        <!--                             instagram="https://www.instagram.com/joshuasy1o/" />-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <!--        <div id="support">-->
+        <!--            <h2 class="text-4xl font-bold mb-8 mx-auto text-center ">Support Information</h2>-->
+        <!--            <div class="flex flex-wrap flex-row gap-8 items-center justify-center p-14 w-full">-->
+        <!--                <div class="flex flex-col gap-y-6 mt-2 w-full">-->
+        <!--                    <div class="flex flex-row gap-x-4 mx-auto">-->
+        <!--                        <font-awesome-icon :icon="['fas', 'envelope']"  class="h-8"/>-->
+        <!--                        <p class="text-xl font-bold text-center "><a href="mailto:support@vidgaze.tv">support@vidgaze.tv</a></p>-->
+        <!--                    </div>-->
+        <!--                    <div class="flex flex-row gap-x-4 mx-auto ">-->
+        <!--                        <font-awesome-icon :icon="['fas', 'phone']"  class="h-8"/>-->
+        <!--                        <p class="text-xl font-bold text-center ">Phone: <a href="tel:+447478 635 635">+44 7837 370669</a></p>-->
+        <!--                    </div>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <!--    </div>-->
 
 
-        </div>
+        <!--</div>-->
 
         <!-- testimonials -->
 
