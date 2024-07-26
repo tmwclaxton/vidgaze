@@ -71,7 +71,11 @@ function retrieveResults(searchQuery) {
             if (response.data.streams !== undefined) {
                 streams.value = response.data.streams.data;
             }
-            loading.value = false;
+
+            // if any of the values aren't empty or undefined, set loading to false
+            if (creators.value.length > 0 || videos.value.length > 0 || playlists.value.length > 0 || podcasts.value.length > 0 || streams.value.length > 0) {
+                loading.value = false;
+            }
 
         }).catch(function (error) {
         // handle error
@@ -84,11 +88,12 @@ onMounted(() => {
     // every second retrieve results, and stop after 10 seconds
     const interval = setInterval(() => {
         retrieveResults(searchQuery);
-    }, 1000);
+    }, 2000);
     setTimeout(() => {
         clearInterval(interval);
         finished.value = true;
-    }, 10000);
+        loading.value = false;
+    }, 20000);
 });
 </script>
 <template>
@@ -156,7 +161,7 @@ onMounted(() => {
 
 
         <div >
-            <section v-if="true" class="mt-4">
+            <section class="mt-4">
 
                 <div
                     class="flex flex-col flex-wrap gap-4 ">

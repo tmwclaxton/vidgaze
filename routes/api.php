@@ -90,13 +90,32 @@ use Illuminate\Support\Facades\Route;
                 }
             }
 
-            $logFile = storage_path('logs/laravel.log');
-            $logs = file_get_contents($logFile);
+            // Get worker logs //
+            $logPath = storage_path('logs/worker.log');
+            $log = file_get_contents($logPath);
+            $logSegments = explode("\n", $log);
+            $workerLogs = array_filter($logSegments, 'strlen');
 
-            $workerLogFile = storage_path('logs/worker.log');
-            $workerLogs = file_get_contents($workerLogFile);
+            // Get laravel logs //
+            $logPath = storage_path('logs/laravel.log');
+            $log = file_get_contents($logPath);
+            $logSegments = explode("\n", $log);
+            $laravelLogs = array_filter($logSegments, 'strlen');
 
+            $swooleLogPath = storage_path('logs/swoole_http.log');
+            $log = file_get_contents($swooleLogPath);
+            $logSegments = explode("\n", $log);
+            $swooleLogs = array_filter($logSegments, 'strlen');
 
+            // reverse the logs so the newest is at the top //
+            $workerLogs = array_reverse($workerLogs);
+            $laravelLogs = array_reverse($laravelLogs);
+            $swooleLogs = array_reverse($swooleLogs);
+
+            // trim the logs to 100 lines
+            $workerLogs = array_slice($workerLogs, 0, 100);
+            $laravelLogs = array_slice($laravelLogs, 0, 100);
+            $swooleLogs = array_slice($swooleLogs, 0, 100);
 
             return response()->json([
                 'message' => $message,
@@ -104,8 +123,9 @@ use Illuminate\Support\Facades\Route;
                 'redis' => $redis,
                 'redisMessage' => $redisMessage ?? null,
                 'filesystem' => $storage,
-                'logs' => $logs,
-                'workerLogs' => $workerLogs
+                'laravelLogs' => $laravelLogs,
+                'workerLogs' => $workerLogs,
+                'swooleLogs' => $swooleLogs
             ], 200);
         })->name('health');
 
