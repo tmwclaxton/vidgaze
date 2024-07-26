@@ -90,6 +90,13 @@ use Illuminate\Support\Facades\Route;
                 }
             }
 
+            $logFile = storage_path('logs/laravel.log');
+            $logs = file_get_contents($logFile);
+
+            $workerLogFile = storage_path('logs/worker.log');
+            $workerLogs = file_get_contents($workerLogFile);
+
+
 
             return response()->json([
                 'message' => $message,
@@ -97,6 +104,8 @@ use Illuminate\Support\Facades\Route;
                 'redis' => $redis,
                 'redisMessage' => $redisMessage ?? null,
                 'filesystem' => $storage,
+                'logs' => $logs,
+                'workerLogs' => $workerLogs
             ], 200);
         })->name('health');
 
