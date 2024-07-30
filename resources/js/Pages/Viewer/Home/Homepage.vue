@@ -91,7 +91,7 @@ const fetchVideos = async (videoArray) => {
                 <font-awesome-icon :icon="['fas', 'burst']" class="my-auto h-6"/>
             </VideosRow>
 
-            <TopStreamsRow/>
+            <!--<TopStreamsRow/>-->
 
             <TopShortsRow/>
 

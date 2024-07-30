@@ -44,12 +44,12 @@ const name = 'ExpandableNavigationLinks';
 
             </ResponsiveNavLink>
         </div>
-        <div class="ld:hid den">
-            <ResponsiveNavLink :href="route('streams.index')" :active="route().current('streams.index')">
-                <StreamIcon class="w-5 h-5 flex-shrink-0"/>
-                <span>Streams</span>
-            </ResponsiveNavLink>
-        </div>
+        <!--<div class="ld:hid den">-->
+        <!--    <ResponsiveNavLink :href="route('streams.index')" :active="route().current('streams.index')">-->
+        <!--        <StreamIcon class="w-5 h-5 flex-shrink-0"/>-->
+        <!--        <span>Streams</span>-->
+        <!--    </ResponsiveNavLink>-->
+        <!--</div>-->
         <div class="">
             <ResponsiveNavLink :href="route('videos.shorts')" :active="route().current('videos.shorts')">
                 <ShortsIcon class="w-5 h-5 flex-shrink-0"/>
