@@ -40,8 +40,8 @@ class AppServiceProvider extends ServiceProvider
 
         $this->loadMigrationsFrom($paths);
 
-        if ($this->app->environment('production')) {
-            URL::forceScheme('https');
-        }
+        // if ($this->app->environment('production')) {
+        //     URL::forceScheme('https');
+        // }
     }
 }
