@@ -1,5 +1,5 @@
 <template>
-    <div v-if="useAuthStore().user != null " class="relative flex">
+    <div  class="relative flex">
               <!--:class="{ 'opacity-100': awardDropdown }"opacity-0 -->
         <div
              class="fixed block text-black  m-auto option bg-white dark:bg-zinc-800 dark:text-white
@@ -11,9 +11,9 @@
                                     class="w-5 h-5 k my-auto cursor-pointer" @click="closeDropdown"/>
                 <p class="k text-lg my-auto font-bold ml-3">Awards</p>
                 <a :href="marketplaceUrl" class="ml-auto flex flex-row ">
-                    <primary-button class="flex flex-row px-4  align-middle">
+                    <primary-button class="flex flex-row px-4  align-middle" >
                         <img src="/images/vidcoins/coins/PileofCoins2.png" class="w-4 h-4 my-auto k"/>
-                        <p class="font-bold ml-3 text-sm my-auto ">{{ useAuthStore().user.creator.vidcoins }}</p>
+                        <p class="font-bold ml-3 text-sm my-auto " v-text="useAuthStore().user !== null ? useAuthStore().user.creator.vidcoins : 'Log in'"></p>
                         <div style="width: 1px;" class="h-full mx-3 bg-transparent border border-zinc-200 dark:border-zinc-600"/>
                         <font-awesome-icon :icon="['fas', 'plus']" class="w-4 h-4 my-auto k"/>
                     </primary-button>
@@ -38,9 +38,15 @@
                         <p class="k font-bold text-center my-2">{{ selectedAward.coin_price }} VidCoins</p>
                         <p class="k text-sm text-center px-6 line-clamp-3">{{ selectedAward.description }}</p>
                         <div class="mx-2 mt-6 flex flex-row justify-center">
-                            <primary-button @click="submitAward" class=" p-2 rounded w-max font-bold k">
+                            <primary-button  v-if="useAuthStore().user !== null && checkBal()" @click="submitAward" class=" p-2 rounded w-max font-bold k">
                                 Give Award
                             </primary-button>
+                            <Link v-else
+                                   :href="route('login')" >
+                                <primary-button  class=" p-2 rounded w-max font-bold k">
+                                    Login
+                                </primary-button>
+                            </Link>
                         </div>
                         <!--<input type="hidden" v-model="type">-->
                         <!--<input type="hidden" v-model="award_id">-->

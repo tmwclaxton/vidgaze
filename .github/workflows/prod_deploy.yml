@@ -2,8 +2,8 @@ name: "Production Deploy"
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ "master" ]
+  # push:
+    # branches: [ "master" ]
 
 env:
   AWS_REGION: "eu-west-2"

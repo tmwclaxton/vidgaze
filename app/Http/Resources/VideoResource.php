@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use AllowDynamicProperties;
 use App\Models\VideoModels\VideoAward;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class VideoResource extends JsonResource
+#[AllowDynamicProperties] class VideoResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -33,10 +34,7 @@ class VideoResource extends JsonResource
             'dislike_count' => $this->dislike_count,
             'creator' => new CreatorResource($this->creator()->first()),
             'visibility' => $this->visibility,
-            'object_awards' => VideoAward::where('video_id', '=', $this->id)
-                ->groupBy('award_id')
-                ->select('award_id', DB::raw('count(*) as total'))
-                ->get()->sortByDesc('award.coin_price'),
+            'object_awards' => null,
 
             'comment_count' => number_format_short($this->comment_count) . " " . Str::plural('Comment', $this->comment_count),
             // capitalize the first letter of the preference and if youtube capitalize the 'T' in 'YouTube'
@@ -71,4 +69,5 @@ class VideoResource extends JsonResource
             ]
         ];
     }
+
 }

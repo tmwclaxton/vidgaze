@@ -125,11 +125,11 @@ const noRepliesText = computed(() => {
                                 <p v-show="!editComment" class=" pr-2 pt-1 break-words   "
                                    v-bind:class="{' line-clamp-3': !isCollapsed}" v-html="props.comment.body"/>
 
-                                <div v-if="props.comment.edited && !editComment" class="select-none">
-                                    <span class="text-xs italic text-red-600 dark:text-red-400 font-semibold select-none">
-                                        Edited
-                                    </span>
-                                </div>
+                                <!--<div v-if="props.comment.edited && !editComment" class="select-none">-->
+                                <!--    <span class="text-xs italic text-red-600 dark:text-red-400 font-semibold select-none">-->
+                                <!--        Edited-->
+                                <!--    </span>-->
+                                <!--</div>-->
 
                                 <div v-show="editComment && editable">
                                     <CommentTextarea :body="props.comment.body" :comment_id="props.comment.id" action="edit"

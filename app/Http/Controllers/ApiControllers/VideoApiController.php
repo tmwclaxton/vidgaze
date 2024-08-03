@@ -7,6 +7,7 @@ use App\Http\Resources\VideoCollection;
 use App\Http\Resources\VideoResource;
 use App\Models\CreatorModels\CreatorInteraction;
 use App\Models\VideoModels\Video;
+use App\Models\VideoModels\VideoAward;
 use App\Models\VideoModels\VideoInteraction;
 use App\Models\VideoModels\VideoView;
 use Illuminate\Http\JsonResponse;
@@ -211,9 +212,19 @@ class VideoApiController extends Controller
         }
 
         $video->live_viewer_count = $video->live_viewer_count + 1;
+        $videoResource = new VideoResource($video);
+
+        $videoResource = $videoResource->toJson();
+
+        // convert the json string to an array
+        $videoResource = json_decode($videoResource, true);
+
+        // add object_awards to the videoResource
+        $videoResource["object_awards"] = VideoAward::where('video_id', $video->id)->get();
+
 
         return response()->json([
-            'video' => new VideoResource($video)
+            'video' => $videoResource
         ]);
     }
 

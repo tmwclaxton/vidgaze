@@ -83,6 +83,9 @@ const props = defineProps({
 
                 <div class="w-full   text-white py-16 object-fill bg-center bg-cover"   id="buy">
                     <p class="text-4xl font-bold uppercase w-full text-center">Buy VidCoins</p>
+                    <p class="text-lg w-full text-center px-14 py-4 lg:w-7/12 mx-auto">
+                        20K VidCoins for £5.00
+                    </p>
                     <div class="flex flex-col gap-16 mx-16 my-16 items-center justify-center">
                     <!--    <div v-for="product in products" :key="product.id" class="h-max sm:h-52 w-80 xs:w-96 sm:w-full-->
                     <!--bg-white dark:bg-zinc-800-->
@@ -110,7 +113,7 @@ const props = defineProps({
                     bg-white dark:bg-zinc-800
                     rounded lg:w-2/3 lg:mx-auto min-h-64 flex flex-col sm:flex-row overflow-hidden">
                             <div class="py-5 w-full sm:w-2/5 flex flex-row items-center align-middle">
-                                <img src="http://localhost/images/vidcoins/mascot/PushingCrate.png" class="w-full max-h-44 mx-auto object-contain" />
+                                <img src="/images/vidcoins/mascot/PushingCrate.png" class="w-full max-h-44 mx-auto object-contain" />
                             </div>
                             <div class="w-full sm:w-3/5 flex flex-col justify-center">
                                 <div class="flex flex-col sm:flex-row pb-5 sm:py-10 px-5 xl:px-10">

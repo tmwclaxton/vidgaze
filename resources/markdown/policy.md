@@ -167,9 +167,13 @@ Since VidGaze is using these API Clients (inc. YouTube, Dailymotion, Vimeo, Twit
 
 ___
 
-## Contact Us
+## CONTACT US
 
-If you have any questions about this Privacy Policy, You can contact us:
+In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at:
 
-    By email: help@vidgaze.tv
-
+VidGaze Ltd. NI685005
+Ballyclare
+23 Highgrove Drive
+Northern Ireland
+Phone: 07837370669
+Email: help@vidgaze.tv or vidgaze@gmail.com

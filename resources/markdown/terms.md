@@ -267,9 +267,9 @@ If you are unsure get in touch we will probably refund you :)
 
 In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at:
 
-VidGaze
+VidGaze Ltd. NI685005
 Ballyclare
 23 Highgrove Drive
 Northern Ireland
 Phone: 07837370669
-vidgaze@gmail.com
+Email: help@vidgaze.tv or vidgaze@gmail.com

@@ -29,7 +29,7 @@ class RandomAwards implements ShouldQueue
     public function handle(): void
     {
         // grab videos that have views
-        $videos = Video::where('view_count', '>', 0)->inRandomOrder()->limit(rand(0, 30))->get();
+        $videos = Video::where('view_count', '>', 0)->inRandomOrder()->limit(rand(20, 60))->get();
         $awards = Award::all();
 
         foreach ($videos as $video) {

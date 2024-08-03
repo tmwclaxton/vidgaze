@@ -35,31 +35,39 @@ class deleteOldLiveViewers extends Command
         $liveClients = LiveClient::where('updated_at', '<=', Carbon::now()->subMinute(1)->toDateTimeString())->take(100)->get();
 
 
-        if (count($liveClients) === 0) {
-            $this->info('No old live viewers to delete');
-            return 0;
+        if (count($liveClients) > 0) {
+            foreach ($liveClients as $liveClient) {
+                if ($liveClient->type === 'video') {
+                    $video = Video::find($liveClient->item_id);
+                    if ($video) {
+                        if ( $video->live_viewer_count > 0) {
+                            $video->increment('live_viewer_count', -1);
+                        }
+                        $video->save();
+                    }
+                } elseif ($liveClient->type === 'stream') {
+                    $stream = Stream::find($liveClient->item_id);
+                    if ($stream) {
+                        if ( $stream->live_viewer_count > 0) {
+                            $stream->increment('live_viewer_count', -1);
+                        }
+                        $stream->save();
+                    }
+                }
+
+                $liveClient->delete();
+            }
         }
 
-        foreach ($liveClients as $liveClient) {
-            if ($liveClient->type === 'video') {
-                $video = Video::find($liveClient->item_id);
-                if ($video) {
-                    if ( $video->live_viewer_count > 0) {
-                        $video->increment('live_viewer_count', -1);
-                    }
-                    $video->save();
-                }
-            } elseif ($liveClient->type === 'stream') {
-                $stream = Stream::find($liveClient->item_id);
-                if ($stream) {
-                    if ( $stream->live_viewer_count > 0) {
-                        $stream->increment('live_viewer_count', -1);
-                    }
-                    $stream->save();
-                }
-            }
 
-            $liveClient->delete();
+        // extra code to remove fake live viewers
+        $videos = Video::where('live_viewer_count', '>', 0)->get();
+        foreach ($videos as $video) {
+            $liveClients = LiveClient::where('item_id', $video->id)->where('type', 'video')->get();
+            if (count($liveClients) < $video->live_viewer_count) {
+                $diff = $video->live_viewer_count - count($liveClients);
+                $video->decrement('live_viewer_count', $diff);
+            }
         }
 
          $this->info('Successfully deleted old live viewers');

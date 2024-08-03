@@ -1,8 +1,8 @@
 <template>
-    <div>
+    <div  v-if="objectAwards && objectAwards[0] != null">
         <!-- Conditional rendering based on the presence and count of objectAwards -->
         <div
-             class="w-max rounded p-1 flex align-middle mr-5 bg-zinc-200 dark:bg-zinc-900 leading-tight gap-x-1">
+             class="w-max rounded p-1 flex flex-row align-middle mr-5 bg-zinc-200 dark:bg-zinc-900 leading-tight gap-x-1 flex-wrap ">
 
             <!-- Loop through objectAwards to display each item -->
             <div v-for="(objectAward, key) in objectAwards" :key="key"
