@@ -55,6 +55,6 @@ jobs:
           ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
           IMAGE_TAG: "latest"
         run: |
-          docker tag arbitrage-bot/app ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+          docker tag vidgaze-prod/app ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
           docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
