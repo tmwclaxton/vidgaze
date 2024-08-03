@@ -1,7 +1,13 @@
 <script setup>
 import Footer from "@/Components/General/Footer.vue";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
 
 const name = "Marketplace"
+
+const props = defineProps({
+    products: Object,
+    awards: Object,
+});
 </script>
 <template>
     <Head :title="'Marketplace'"/>
@@ -24,7 +30,7 @@ const name = "Marketplace"
                         leading-tight text-left">
                         VidCoins are a virtual good you can use to award exemplary videos, streams or comments. Support
                         VidGaze and encourage
-                        your favorite contributors to keep making VidGaze better. &nbsp;Coming soon!
+                        your favorite contributors to keep making VidGaze better.
 
                     </p>
                 </div>
@@ -35,27 +41,90 @@ const name = "Marketplace"
                     </div>
                 </div>
             </div>
+
+          </div>
+
+
+
+
+
+        <div class="flex flex-col">
+            <!-- Page header -->
+            <div class="relative h-screen w-screen bg-white    flex flex-col py-auto justify-center align-middle   px-4 sm:px-6 lg:px-8">
+                <div class="py-24 px-auto w-full">
+                    <p class="text-4xl text-zinc-900 dark:text-white
+                subheading w-full text-center">
+                        Here’s what you can buy with VidCoins
+                    </p>
+                    <p class="text-zinc-900 text-lg w-full text-center px-14 py-4 lg:w-7/12 mx-auto">
+                        Spend your coins on these Awards reserved exclusively for the finest VidGaze contributors.
+                        Awarding a video, stream or comment highlights it for all to see, and makes them more likely to be recommended.
+                    </p>
+                    <div class="flex flex-col mt-10 gap-y-16 sm:gap-y-0 sm:flex-row px-16 justify-center gap-x-16">
+                        <div v-for="award in awards" :key="award.id" class="w-full sm:w-1/3 md:w-64">
+                            <img :src="award.icon_url" class="h-24 mx-auto" />
+                            <p class="font-bold text-center text-zinc-900  subheading w-full mt-5 text-2xl">
+                                {{ award.name }} Award
+                            </p>
+                            <p class="font-semibold text-zinc-900 text-center w-full mt-2 text-md">
+                                Shows a {{ award.name }} Award on the video, stream or comment and ... that’s it. You’ll need {{ award.coin_price }} VidCoins.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="flex flex-col">
+            <!-- Page header -->
+            <div class="relative h-screen w-screen   my-96  flex flex-col py-auto justify-center align-middle   px-4 sm:px-6 lg:px-8">
+
+                <div class="w-full   text-white py-16 object-fill bg-center bg-cover"   id="buy">
+                    <p class="text-4xl font-bold uppercase w-full text-center">VidCoins</p>
+                    <div class="flex flex-col gap-16 mx-16 my-16 items-center justify-center">
+                        <div v-for="product in products" :key="product.id" class="h-max sm:h-52 w-80 xs:w-96 sm:w-full
+                    bg-white dark:bg-zinc-800
+                    rounded lg:w-2/3 lg:mx-auto min-h-64 flex flex-col sm:flex-row overflow-hidden">
+                            <div class="py-5 w-full sm:w-2/5 flex flex-row items-center align-middle">
+                                <img :src="product.image_url" class="w-full max-h-44 mx-auto object-contain" />
+                            </div>
+                            <div class="w-full sm:w-3/5 flex flex-col justify-center">
+                                <div class="flex flex-col sm:flex-row pb-5 sm:py-10 px-5 xl:px-10">
+                                    <div class="w-full sm:w-2/3">
+                                        <p class="text-zinc-900 dark:text-white font-bold text-xl text-center sm:text-left">
+                                            {{ product.name }}
+                                        </p>
+                                        <p class="text-zinc-900 dark:text-white mt-1 text-center sm:text-left">
+                                            {{ product.description }}
+                                        </p>
+                                    </div>
+                                    <!--<div class="pt-5 sm:pt-0 px-2 w-full sm:w-1/3 flex flex-col justify-center align-middle items-center">-->
+                                    <!--    <form :action="`/checkout-session/${product.id}`" method="POST" class="my-auto pb-0">-->
+                                    <!--        <input type="hidden" name="_token" :value="csrfToken" />-->
+                                    <!--        <button type="submit" id="checkout-button" class="inline-flex items-center bg-zinc-900 dark:bg-zinc-800 text-zinc-900 dark:text-whiterounded-md font-semibold text-xs text-white uppercase p-2 px-5 font-semibold">-->
+                                    <!--            £{{ (product.price / 100).toFixed(2) }}-->
+                                    <!--        </button>-->
+                                    <!--    </form>-->
+                                    <!--</div>-->
+                                    <primary-button class="w-full sm:w-1/3 mt-5 sm:mt-0 mx-5">
+                                        Buy for £{{ (product.price / 100).toFixed(2) }}
+                                    </primary-button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
-
-        <!-- supported by -->
-        <!--<div class="relative w-screen min-h-screen flex flex-col  bg-white dark:bg-vidgaze-blue  py-auto justify-center align-middle select-none ">-->
-
-        <!--        &lt;!&ndash;coming soon in big letters&ndash;&gt;-->
-        <!--        <div class="max-w-7xl mx-auto text-center pb-12 md:pb-6 flex flex-col gap-y-3  ">-->
-        <!--            <h1 class="text-4xl lg:text-5xl text-white font-bold">Coming Soon</h1>-->
-        <!--        </div>-->
-
-        <!--</div>-->
-
-
-
-        <div class="relative w-screen  bg-white dark:bg-vidgaze-blue    ">
+            <div class="relative w-screen  bg-white dark:bg-vidgaze-blue    ">
             <Footer/>
         </div>
 
     </div>
+
 
 
 

@@ -59,3 +59,4 @@ if (config('app.env') == 'local') {
         return JoshPing::ping();
     });
 }
+

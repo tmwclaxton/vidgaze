@@ -34,6 +34,7 @@ import SuggestedVideos from "@/Pages/Viewer/Watch/Partials/SuggestedVideos.vue";
 import TitleComponent from "@/Components/General/TitleComponent.vue";
 import ExternalCommentSection from "@/Components/CommentSection/ExternalCommentSection.vue";
 import AwardsBar from "@/Pages/Viewer/Watch/Partials/AwardsBar.vue";
+import AwardsDropdown from "@/Components/Dropdown/AwardsDropdown.vue";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -160,6 +161,7 @@ onUnmounted(() => {
 <template>
         <Head v-if="item !== undefined"  :title="item.title"  />
 
+        <AwardsDropdown v-if="authStore.showAwardDropdown" :type="item.type" :object_id="item.id" />
         <div class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4 md:mx-24']">
             <!--player with theatre mode-->
             <div :class="[theatre ? 'col-span-12   w-full ' : ' col-span-12 lg:col-span-8  ']" class=" w-full  relative flex flex-col gap-y-4">
@@ -184,10 +186,18 @@ onUnmounted(() => {
                     <div  class="w-full">
                         <p class="text-lg font-bold leading-6 line-clamp-2 text dark:textDark" v-text="ready ? item.title : 'Loading...'"/>
                         <div class="px-3 sm:px-0 flex pt-2 -mb-2 justify-between text dark:textDark flex flex-row flex-wrap gap-8 ">
-                            <div v-if="ready" class="flex flex-col">
-                                <p v-if="item.type === 'video'" class=" pr-3 " v-text="item.view_count + ' · ' + item.time_published"/>
-                                <span class="pr-3  pt-0.5 font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
-                                      v-text="item.live_viewer_count + ' Watching'"/>
+                            <div  v-if="ready" class="flex flex-row lg:flex-col justify-between w-full lg:w-max">
+                                <div class="flex flex-col">
+                                    <p v-if="item.type === 'video'" class=" pr-3 "
+                                       v-text="item.view_count + ' · ' + item.time_published"/>
+                                    <span
+                                        class="pr-3  pt-0.5 font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
+                                        v-text="item.live_viewer_count + ' Watching'"/>
+
+
+                                </div>
+                                <AwardsBar class=" lg:mt-4" v-if="item.object_awards" :objectAwards="item.object_awards" :type="item.type" />
+
                             </div>
                             <div v-if="ready && item" class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
                                 <FeatureCreatorButton v-if="authStore.admin" :creator_id="item.creator.id"/>
@@ -196,24 +206,24 @@ onUnmounted(() => {
                                     <LikeDislikeButtons :item="item" :orientationVertical="false"/>
                                 </TertiaryButton>
 
-                                <div v-if="item.type === 'video'" @click="buyAward()" class="flex flex-row cursor-pointer align-middle items-center px-4 bg-zinc-200 dark:bg-zinc-900 rounded-lg">
+                                <div v-if="item.type === 'video'" @click="useAuthStore().toggleAwardDropdown()" class="h-10 flex flex-row cursor-pointer align-middle items-center px-4 bg-zinc-200 dark:bg-zinc-900 rounded-lg">
                                     <font-awesome-icon class="h-5" :icon="['fas', 'award']"/>
                                     <p class="pl-2">Award</p>
                                 </div>
 
-                                <div @click="share" class="flex flex-row cursor-pointer align-middle items-center">
+                                <div @click="share" class="flex flex-row cursor-pointer h-10  align-middle items-center">
                                     <ShareIcon class="h-5"/>
                                     <p class="pl-2">Share</p>
                                 </div>
 
 
-                                <div v-if="item.type === 'video' && authStore.user" @click="togglePlaylistModal()" class="flex flex-row cursor-pointer align-middle items-center" >
+                                <div v-if="item.type === 'video' && authStore.user" @click="togglePlaylistModal()" class="h-10 flex flex-row cursor-pointer align-middle items-center" >
                                     <LibraryIcon class="h-5"/>
                                     <p class="pl-2">Save</p>
                                 </div>
 
                                 <div
-                                    class="hidden lg:flex   flex-row cursor-pointer align-middle items-center"
+                                    class="h-10 hidden lg:flex   flex-row cursor-pointer align-middle items-center"
                                     @click="theatre = ! theatre">
                                     <TheatreIcon class="h-5"/>
                                     <p class="pl-2">Theatre</p>
@@ -222,7 +232,6 @@ onUnmounted(() => {
                             </div>
                         </div>
 
-                        <AwardsBar class="mt-4" v-if="item.object_awards" :objectAwards="item.object_awards" :type="item.type" />
 
                         <RowDivider class="my-2"/>
 

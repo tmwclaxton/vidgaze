@@ -30,8 +30,9 @@ class RandomViews implements ShouldQueue
 
         $averageViewCount = Video::avg('view_count');
 
-        $alreadyViewed = Video::where('view_count', '>', $averageViewCount)->inRandomOrder()->limit(rand(0,30))->get();
-        $notViewed = Video::where('view_count', '=', 0)->inRandomOrder()->limit(rand(20,50))->get();
+
+        $alreadyViewed = Video::where('view_count', '>', $averageViewCount + $averageViewCount / 4)->inRandomOrder()->limit(rand(0,30))->get();
+        $notViewed = Video::where('view_count', '<', $averageViewCount)->inRandomOrder()->limit(rand(20,50))->get();
         $videos = $alreadyViewed->merge($notViewed);
         foreach ($videos as $video) {
             $video->view_count += rand(1, 10);

@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Route;
 
         // I think we should only ever have 1 version of the auth stuff for security
         require __DIR__ . '/ApiV1Routes/auth.php';
+        require __DIR__ . '/ApiV1Routes/awards.php';
 
         require __DIR__ . '/ApiV1Routes/videos.php';
         require __DIR__ . '/ApiV1Routes/comments.php';

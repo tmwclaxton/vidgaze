@@ -10,10 +10,15 @@ export const useAuthStore = defineStore('AuthStore', {
             'admin': false,
             'subscription_ids': [],
             'sources': [],
+            'showAwardDropdown': false,
+            'selectedAward': null,
         }
     },
 
     actions: {
+        toggleAwardDropdown() {
+            this.showAwardDropdown = !this.showAwardDropdown;
+        },
         async getUser(toast = false) {
             const toastStore = useToastStore();
             if (localStorage.getItem('token')) {

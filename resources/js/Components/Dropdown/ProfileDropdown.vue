@@ -65,7 +65,10 @@ const authStore = useAuthStore();
                     </DropdownLink>
                     <DropdownLink :href="route('marketplace')" class="flex flex-row space-x-2">
                         <CoinsIcon class="w-5 h-5 flex-shrink-0"/>
-                        <span class="font-bold">Buy VidCoins</span>
+                        <div class="flex flex-col gap-y-1">
+                            <span class="font-bold">Buy VidCoins</span>
+                            <span class="text-xs">You have {{ authStore.user.creator.vidcoins }}</span>
+                        </div>
 
                     </DropdownLink>
                     <DropdownLink

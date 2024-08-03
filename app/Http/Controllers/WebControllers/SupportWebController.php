@@ -4,6 +4,8 @@ namespace App\Http\Controllers\WebControllers;
 
 use App\Http\Controllers\Controller;
 use App\Mail\SupportMail;
+use App\Models\Award;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
@@ -32,6 +34,9 @@ class SupportWebController extends Controller
     }
     public function marketplace()
     {
-        return Inertia::render('Marketplace/Marketplace');
+        return Inertia::render('Marketplace/Marketplace', [
+            'products' => Product::all(),
+            'awards' => Award::all()->sortByDesc('coin_price')->take(3)
+        ]);
     }
 }

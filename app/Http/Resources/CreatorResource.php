@@ -24,6 +24,8 @@ class CreatorResource extends JsonResource
             'avatar_url' => $this->avatar_url,
             'banner_url' => $this->banner_url,
             'karma' => number_format_short($this->karma),
+            'vidcoins' => number_format_short($this->coins) . " " . Str::plural('Vidcoin', $this->coins),
+            'vidcoins_int' => $this->coins,
             'subscriber_count' => number_format_short($this->subscriber_count)  . " " . Str::plural('Subscriber', $this->subscriber_count) ,
             'is_live' => $this->is_live ? true : false,
             'contact_email' => $this->contact_email,
