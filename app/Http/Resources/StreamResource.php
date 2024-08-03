@@ -2,9 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Models\StreamModels\StreamAward;
+use App\Models\VideoModels\VideoAward;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class StreamResource extends JsonResource
@@ -25,6 +28,10 @@ class StreamResource extends JsonResource
             'description' => $this->description,
             'language' => $this->language,
             'is_live' => $this->is_live ? true : false,
+            'object_awards' => StreamAward::where('stream_id', '=', $this->id)
+                ->groupBy('award_id')
+                ->select('award_id', DB::raw('count(*) as total'))
+                ->get()->sortByDesc('award.coin_price'),
             'tags' => $this->tags,
             'category' => new CategoryResource($this->category),
             'preferred_source' => capitalisePlatformName($this->preferred_source),

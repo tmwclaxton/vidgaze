@@ -66,6 +66,7 @@ const authStore = useAuthStore();
                     <DropdownLink :href="route('marketplace')" class="flex flex-row space-x-2">
                         <CoinsIcon class="w-5 h-5 flex-shrink-0"/>
                         <span class="font-bold">Buy VidCoins</span>
+
                     </DropdownLink>
                     <DropdownLink
                         :span="true"

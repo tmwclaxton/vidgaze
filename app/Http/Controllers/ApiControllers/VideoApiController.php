@@ -210,6 +210,8 @@ class VideoApiController extends Controller
             abort(403);
         }
 
+        $video->live_viewer_count = $video->live_viewer_count + 1;
+
         return response()->json([
             'video' => new VideoResource($video)
         ]);

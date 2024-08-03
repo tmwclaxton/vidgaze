@@ -33,6 +33,7 @@ import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import SuggestedVideos from "@/Pages/Viewer/Watch/Partials/SuggestedVideos.vue";
 import TitleComponent from "@/Components/General/TitleComponent.vue";
 import ExternalCommentSection from "@/Components/CommentSection/ExternalCommentSection.vue";
+import AwardsBar from "@/Pages/Viewer/Watch/Partials/AwardsBar.vue";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -195,10 +196,16 @@ onUnmounted(() => {
                                     <LikeDislikeButtons :item="item" :orientationVertical="false"/>
                                 </TertiaryButton>
 
+                                <div v-if="item.type === 'video'" @click="buyAward()" class="flex flex-row cursor-pointer align-middle items-center px-4 bg-zinc-200 dark:bg-zinc-900 rounded-lg">
+                                    <font-awesome-icon class="h-5" :icon="['fas', 'award']"/>
+                                    <p class="pl-2">Award</p>
+                                </div>
+
                                 <div @click="share" class="flex flex-row cursor-pointer align-middle items-center">
                                     <ShareIcon class="h-5"/>
                                     <p class="pl-2">Share</p>
                                 </div>
+
 
                                 <div v-if="item.type === 'video' && authStore.user" @click="togglePlaylistModal()" class="flex flex-row cursor-pointer align-middle items-center" >
                                     <LibraryIcon class="h-5"/>
@@ -214,6 +221,8 @@ onUnmounted(() => {
 
                             </div>
                         </div>
+
+                        <AwardsBar class="mt-4" v-if="item.object_awards" :objectAwards="item.object_awards" :type="item.type" />
 
                         <RowDivider class="my-2"/>
 

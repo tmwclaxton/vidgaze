@@ -25,6 +25,9 @@ class Kernel extends ConsoleKernel
         //$schedule->command('refresh:streams')->everyMinute();
         $schedule->command('delete:old_live_viewers')->everyMinute();
         //$schedule->command('refresh:subscriptions')->everyMinute();
+
+        $schedule->command('app:random-views')->everyFiveMinutes()->withoutOverlapping(1);
+        $schedule->command('app:random-awards')->everyThirtyMinutes()->withoutOverlapping(1);
     }
 
     /**

@@ -135,6 +135,11 @@ const dotsIconShow = computed(() => {
                                         <p class="line-clamp-1" v-text="(item.preferred_source)"/>
                                     </div>
 
+                                    <div v-if="item.type = 'video' && item.view_count !== '0 Views'" class=" info-tag dark:info-tag-dark flex flex-row gap-2 items-center align-middle pb-0.5 ">
+                                        <font-awesome-icon :icon="['fas', 'eye']" class="h-3 my-auto" />
+                                        <p class="line-clamp-1" v-text="(item.view_count)"/>
+                                    </div>
+
                                     <Link  v-if="item.category != null && !category_page" :href="route('category.show',{slug:item.category.slug})" class=" info-tag dark:info-tag-dark inline-flex mb-0.5 ">
                                         <!--<ClockIcon class="w-3 h-3 mr-1 .5 my-auto dark:hidden"/>-->
                                         <!--<ClockFillIcon class="w-3 h-3 mr-1 .5 my-auto hidden dark:flex"/>-->
@@ -146,7 +151,7 @@ const dotsIconShow = computed(() => {
                                     <div v-if="item.live_viewer_count > 0" class="
                                         capitalize flex flex-row items-center  text-xs font-semibold
                                         text text-red-600 dark:text-red-400   ">
-                                        <FireIcon class="w-3 h-3 my-auto mr-1 "/>
+                                        <FireIcon class="w-3 h-3 my-auto mr-2 "/>
                                         <p class="line-clamp-1 " v-text="item.live_viewer_count + ' Watching'"></p>
                                     </div>
                                 </div>
