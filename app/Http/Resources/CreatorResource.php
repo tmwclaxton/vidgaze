@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 
 class CreatorResource extends JsonResource
 {
+
     /**
      * Transform the resource into an array.
      *
@@ -26,6 +27,8 @@ class CreatorResource extends JsonResource
             'karma' => number_format_short($this->karma),
             'vidcoins' => number_format_short($this->coins) . " " . Str::plural('Vidcoin', $this->coins),
             'vidcoins_int' => $this->coins,
+            // use the name of the account to creator a 4 or 5 digit number that is unique to the account
+            'reference' => sprintf("%u", crc32($this->name)) % 11001 + 1000,
             'subscriber_count' => number_format_short($this->subscriber_count)  . " " . Str::plural('Subscriber', $this->subscriber_count) ,
             'is_live' => $this->is_live ? true : false,
             'contact_email' => $this->contact_email,

@@ -1,6 +1,7 @@
 <script setup>
 import Footer from "@/Components/General/Footer.vue";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
+import {useAuthStore} from "../../Stores/AuthStore";
 
 const name = "Marketplace"
 
@@ -78,37 +79,51 @@ const props = defineProps({
 
         <div class="flex flex-col">
             <!-- Page header -->
-            <div class="relative h-screen w-screen   my-96  flex flex-col py-auto justify-center align-middle   px-4 sm:px-6 lg:px-8">
+            <div class="relative h-screen w-screen   flex flex-col py-auto justify-center align-middle   px-4 sm:px-6 lg:px-8">
 
                 <div class="w-full   text-white py-16 object-fill bg-center bg-cover"   id="buy">
-                    <p class="text-4xl font-bold uppercase w-full text-center">VidCoins</p>
+                    <p class="text-4xl font-bold uppercase w-full text-center">Buy VidCoins</p>
                     <div class="flex flex-col gap-16 mx-16 my-16 items-center justify-center">
-                        <div v-for="product in products" :key="product.id" class="h-max sm:h-52 w-80 xs:w-96 sm:w-full
+                    <!--    <div v-for="product in products" :key="product.id" class="h-max sm:h-52 w-80 xs:w-96 sm:w-full-->
+                    <!--bg-white dark:bg-zinc-800-->
+                    <!--rounded lg:w-2/3 lg:mx-auto min-h-64 flex flex-col sm:flex-row overflow-hidden">-->
+                    <!--        <div class="py-5 w-full sm:w-2/5 flex flex-row items-center align-middle">-->
+                    <!--            <img :src="product.image_url" class="w-full max-h-44 mx-auto object-contain" />-->
+                    <!--        </div>-->
+                    <!--        <div class="w-full sm:w-3/5 flex flex-col justify-center">-->
+                    <!--            <div class="flex flex-col sm:flex-row pb-5 sm:py-10 px-5 xl:px-10">-->
+                    <!--                <div class="w-full sm:w-2/3">-->
+                    <!--                    <p class="text-zinc-900 dark:text-white font-bold text-xl text-center sm:text-left">-->
+                    <!--                        {{ product.name }}-->
+                    <!--                    </p>-->
+                    <!--                    <p class="text-zinc-900 dark:text-white mt-1 text-center sm:text-left">-->
+                    <!--                        {{ product.description }}-->
+                    <!--                    </p>-->
+                    <!--                </div>-->
+                    <!--                <primary-button class="w-full sm:w-1/3 mt-5 sm:mt-0 mx-5">-->
+                    <!--                    Buy for £{{ (product.price / 100).toFixed(2) }}-->
+                    <!--                </primary-button>-->
+                    <!--            </div>-->
+                    <!--        </div>-->
+                    <!--    </div>-->
+                        <div class="h-max sm:h-52 w-80 xs:w-96 sm:w-full
                     bg-white dark:bg-zinc-800
                     rounded lg:w-2/3 lg:mx-auto min-h-64 flex flex-col sm:flex-row overflow-hidden">
                             <div class="py-5 w-full sm:w-2/5 flex flex-row items-center align-middle">
-                                <img :src="product.image_url" class="w-full max-h-44 mx-auto object-contain" />
+                                <img src="http://localhost/images/vidcoins/mascot/PushingCrate.png" class="w-full max-h-44 mx-auto object-contain" />
                             </div>
                             <div class="w-full sm:w-3/5 flex flex-col justify-center">
                                 <div class="flex flex-col sm:flex-row pb-5 sm:py-10 px-5 xl:px-10">
                                     <div class="w-full sm:w-2/3">
                                         <p class="text-zinc-900 dark:text-white font-bold text-xl text-center sm:text-left">
-                                            {{ product.name }}
+                                            Any amount?
                                         </p>
-                                        <p class="text-zinc-900 dark:text-white mt-1 text-center sm:text-left">
-                                            {{ product.description }}
+                                        <p class="text-zinc-900 dark:text-white mt-1 text-center sm:text-left"
+                                           v-text="useAuthStore().user != null ? 'If you want to buy a specific amount of VidCoins, send direct to our Revolut handle @vidgaze and add this reference: ' + useAuthStore().user.creator.reference : 'Please log in if you want to buy a specific amount of VidCoins.'">
                                         </p>
                                     </div>
-                                    <!--<div class="pt-5 sm:pt-0 px-2 w-full sm:w-1/3 flex flex-col justify-center align-middle items-center">-->
-                                    <!--    <form :action="`/checkout-session/${product.id}`" method="POST" class="my-auto pb-0">-->
-                                    <!--        <input type="hidden" name="_token" :value="csrfToken" />-->
-                                    <!--        <button type="submit" id="checkout-button" class="inline-flex items-center bg-zinc-900 dark:bg-zinc-800 text-zinc-900 dark:text-whiterounded-md font-semibold text-xs text-white uppercase p-2 px-5 font-semibold">-->
-                                    <!--            £{{ (product.price / 100).toFixed(2) }}-->
-                                    <!--        </button>-->
-                                    <!--    </form>-->
-                                    <!--</div>-->
-                                    <primary-button class="w-full sm:w-1/3 mt-5 sm:mt-0 mx-5">
-                                        Buy for £{{ (product.price / 100).toFixed(2) }}
+                                    <primary-button class="w-full sm:w-1/3 mx-5 h-max my-auto text-center px-auto">
+                                        <p>Buy VidCoins</p>
                                     </primary-button>
                                 </div>
                             </div>
