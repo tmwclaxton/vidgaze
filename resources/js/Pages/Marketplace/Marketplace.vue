@@ -53,7 +53,7 @@ const props = defineProps({
             <!-- Page header -->
             <div class="relative h-screen w-screen bg-white    flex flex-col py-auto justify-center align-middle   px-4 sm:px-6 lg:px-8">
                 <div class="py-24 px-auto w-full">
-                    <p class="text-4xl text-zinc-900 dark:text-white
+                    <p class="text-4xl text-zinc-900
                 subheading w-full text-center">
                         Here’s what you can buy with VidCoins
                     </p>
