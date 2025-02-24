@@ -26,14 +26,10 @@ VidGaze uses a number of open source projects to work properly:
 - [InertiaJS] - Inertia.js is a lightweight JavaScript library that allows developers to build single-page applications (SPAs).
 - [MYSQL] - a relational database management system (RDBMS) developed by Oracle that is based on structured query language (SQL).
 
- 
+## How to use?
 
-## Usage
-
-```sh
-visit vidgaze.tv
-download VidGaze on the Apple App Store or the Google Play Store
-```
+* Visit https://www.vidgaze.tv
+* Download VidGaze on the Apple App Store or the Google Play Store
 
 ## Development
 
