@@ -1,6 +1,5 @@
-version: '3'
 services:
-    laravel:
+    vidgaze:
         build:
             context: ./docker/8.2
             dockerfile: Dockerfile

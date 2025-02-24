@@ -83,17 +83,17 @@ function redirect(which) {
                     <Searchbar v-if="!navStore.showingStudioLinks"  />
 
                     <!--Buy Vidcoins button-->
-                    <div v-if="!navStore.showingStudioLinks" class="hidden 2xl:flex sm:items-center mr-2 flex-shrink-0 group">
-                        <Link :href="route('marketplace')"  >
+<!--                    <div v-if="!navStore.showingStudioLinks" class="hidden 2xl:flex sm:items-center mr-2 flex-shrink-0 group">-->
+<!--                        <Link :href="route('marketplace')"  >-->
 
-                            <TopNavButton>
-                                <img src="/images/vidcoins/coins/PileofCoins2.png" alt="VidCoins"
-                                     class="h-4 w-auto group-hover:shake">
-                                <p>Get VidCoins</p>
-                            </TopNavButton>
+<!--                            <TopNavButton>-->
+<!--                                <img src="/images/vidcoins/coins/PileofCoins2.png" alt="VidCoins"-->
+<!--                                     class="h-4 w-auto group-hover:shake">-->
+<!--                                <p>Get VidCoins</p>-->
+<!--                            </TopNavButton>-->
 
-                        </Link>
-                    </div>
+<!--                        </Link>-->
+<!--                    </div>-->
                     <!--log in-->
                     <div v-if="authStore.user == null"
                          class="hidden sm:flex sm:items-center   flex-shrink-0 ml-auto">

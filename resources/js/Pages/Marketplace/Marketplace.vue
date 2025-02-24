@@ -87,50 +87,50 @@ const props = defineProps({
                         20K VidCoins for £5.00
                     </p>
                     <div class="flex flex-col gap-16 mx-16 my-16 items-center justify-center">
-                    <!--    <div v-for="product in products" :key="product.id" class="h-max sm:h-52 w-80 xs:w-96 sm:w-full-->
-                    <!--bg-white dark:bg-zinc-800-->
-                    <!--rounded lg:w-2/3 lg:mx-auto min-h-64 flex flex-col sm:flex-row overflow-hidden">-->
-                    <!--        <div class="py-5 w-full sm:w-2/5 flex flex-row items-center align-middle">-->
-                    <!--            <img :src="product.image_url" class="w-full max-h-44 mx-auto object-contain" />-->
-                    <!--        </div>-->
-                    <!--        <div class="w-full sm:w-3/5 flex flex-col justify-center">-->
-                    <!--            <div class="flex flex-col sm:flex-row pb-5 sm:py-10 px-5 xl:px-10">-->
-                    <!--                <div class="w-full sm:w-2/3">-->
-                    <!--                    <p class="text-zinc-900 dark:text-white font-bold text-xl text-center sm:text-left">-->
-                    <!--                        {{ product.name }}-->
-                    <!--                    </p>-->
-                    <!--                    <p class="text-zinc-900 dark:text-white mt-1 text-center sm:text-left">-->
-                    <!--                        {{ product.description }}-->
-                    <!--                    </p>-->
-                    <!--                </div>-->
-                    <!--                <primary-button class="w-full sm:w-1/3 mt-5 sm:mt-0 mx-5">-->
-                    <!--                    Buy for £{{ (product.price / 100).toFixed(2) }}-->
-                    <!--                </primary-button>-->
-                    <!--            </div>-->
-                    <!--        </div>-->
-                    <!--    </div>-->
-                        <div class="h-max sm:h-52 w-80 xs:w-96 sm:w-full
+                        <div v-for="product in products" :key="product.id" class="h-max sm:h-52 w-80 xs:w-96 sm:w-full
                     bg-white dark:bg-zinc-800
                     rounded lg:w-2/3 lg:mx-auto min-h-64 flex flex-col sm:flex-row overflow-hidden">
                             <div class="py-5 w-full sm:w-2/5 flex flex-row items-center align-middle">
-                                <img src="/images/vidcoins/mascot/PushingCrate.png" class="w-full max-h-44 mx-auto object-contain" />
+                                <img :src="product.image_url" class="w-full max-h-44 mx-auto object-contain" />
                             </div>
                             <div class="w-full sm:w-3/5 flex flex-col justify-center">
                                 <div class="flex flex-col sm:flex-row pb-5 sm:py-10 px-5 xl:px-10">
                                     <div class="w-full sm:w-2/3">
                                         <p class="text-zinc-900 dark:text-white font-bold text-xl text-center sm:text-left">
-                                            Any amount?
+                                            {{ product.name }}
                                         </p>
-                                        <p class="text-zinc-900 dark:text-white mt-1 text-center sm:text-left"
-                                           v-text="useAuthStore().user != null ? 'If you want to buy a specific amount of VidCoins, send direct to our Revolut handle @vidgaze and add this reference: ' + useAuthStore().user.creator.reference : 'Please log in if you want to buy a specific amount of VidCoins.'">
+                                        <p class="text-zinc-900 dark:text-white mt-1 text-center sm:text-left">
+                                            {{ product.description }}
                                         </p>
                                     </div>
-                                    <primary-button class="w-full sm:w-1/3 mx-5 h-max my-auto text-center px-auto">
-                                        <p>Buy VidCoins</p>
+                                    <primary-button class="w-full sm:w-1/3 mt-5 sm:mt-0 mx-5">
+                                        Buy for £{{ (product.price / 100).toFixed(2) }}
                                     </primary-button>
                                 </div>
                             </div>
                         </div>
+<!--                        <div class="h-max sm:h-52 w-80 xs:w-96 sm:w-full-->
+<!--                    bg-white dark:bg-zinc-800-->
+<!--                    rounded lg:w-2/3 lg:mx-auto min-h-64 flex flex-col sm:flex-row overflow-hidden">-->
+<!--                            <div class="py-5 w-full sm:w-2/5 flex flex-row items-center align-middle">-->
+<!--                                <img src="/images/vidcoins/mascot/PushingCrate.png" class="w-full max-h-44 mx-auto object-contain" />-->
+<!--                            </div>-->
+<!--                            <div class="w-full sm:w-3/5 flex flex-col justify-center">-->
+<!--                                <div class="flex flex-col sm:flex-row pb-5 sm:py-10 px-5 xl:px-10">-->
+<!--                                    <div class="w-full sm:w-2/3">-->
+<!--                                        <p class="text-zinc-900 dark:text-white font-bold text-xl text-center sm:text-left">-->
+<!--                                            Any amount?-->
+<!--                                        </p>-->
+<!--                                        <p class="text-zinc-900 dark:text-white mt-1 text-center sm:text-left"-->
+<!--                                           v-text="useAuthStore().user != null ? 'If you want to buy a specific amount of VidCoins, send direct to our Revolut handle @vidgaze and add this reference: ' + useAuthStore().user.creator.reference : 'Please log in if you want to buy a specific amount of VidCoins.'">-->
+<!--                                        </p>-->
+<!--                                    </div>-->
+<!--                                    <primary-button class="w-full sm:w-1/3 mx-5 h-max my-auto text-center px-auto">-->
+<!--                                        <p>Buy VidCoins</p>-->
+<!--                                    </primary-button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
                     </div>
                 </div>
             </div>
