@@ -10,4 +10,5 @@ enum Responses: string
     case ROLE_UPDATE_FAILED = "User Role Update Failed";
     case UNAUTHORISED = "Unauthorised Access";
     const MODERATOR_LIST_FAILED = "Failed to list moderators";
+    const MODERATOR_LIST_ACTIONS_FAILED = "Failed to list moderator actions";
 }
