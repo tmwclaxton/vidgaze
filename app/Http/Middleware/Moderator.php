@@ -20,7 +20,8 @@ class Moderator
             return redirect()->route('login');
         }
         //check if user is moderator or admin
-        if ($request->user()->role === 'moderator' || $request->user()->role === 'admin') {
+        $adminEmails = config('admins.emails');
+        if (in_array($request->user()->email, $adminEmails) || $request->user()->role === 'moderator' || $request->user()->role === 'admin') {
             // check if email is verified
             if (!$request->user()->hasVerifiedEmail()) {
                 return redirect()->route('verification.notice');

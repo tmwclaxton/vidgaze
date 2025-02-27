@@ -93,15 +93,6 @@ class CreatorApiController extends Controller
      */
     public function toggleFeatured(Request $request)
     {
-
-        // check token can admin
-        if (!Auth::user()->isAdmin()) {
-            return response()->json([
-                'toastType' => 'warning',
-                'message' => 'You need to be an admin to do that'
-            ]);
-        }
-
         $request->validate([
             'creator_id' => 'required|integer'
         ]);

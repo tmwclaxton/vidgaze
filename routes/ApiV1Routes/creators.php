@@ -3,6 +3,7 @@
 // modal routes //throttle to 20 requests per minute
 use App\Http\Controllers\ApiControllers\CreatorApiController;
 use App\Http\Controllers\ApiControllers\CreatorInteractionApiController;
+use App\Http\Middleware\Moderator;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('creator')->name('creator.')->group(function () {
@@ -16,7 +17,7 @@ Route::prefix('creator')->name('creator.')->group(function () {
         // toggle featured creator
 
         // toggle featured creator
-        Route::middleware(['auth:sanctum'])->group(function () {
+        Route::middleware(['auth:sanctum', Moderator::class])->group(function () {
             Route::post('/feature', [CreatorApiController::class, 'toggleFeatured'])
                 ->name('feature.toggle');
 
