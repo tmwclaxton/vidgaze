@@ -132,10 +132,11 @@ const fetchVideos = async () => {
                             <div></div>
                         </div>
                         <div
-                            class="flex flex-row gap-x-1 ml-auto mt-2">
+                            class="flex flex-row gap-x-1 ml-auto mt-2" v-if="useAuthStore().user !== null">
                             <StudioLink v-if="useAuthStore().user && useAuthStore().user.creator.slug === channel.slug" text="Customise Channel" :link="route('studio.customise')"/>
                             <StudioLink v-if="useAuthStore().user && useAuthStore().user.creator.slug === channel.slug" text="Manage Videos" :link="route('studio.content')"/>
-                            <FeatureCreatorButton v-if="useAuthStore().admin" :creator_id="channel.id"/>
+                            <FeatureCreatorButton v-if="useAuthStore().admin || useAuthStore().user.role === 'admin' || useAuthStore().user.role === 'moderator'"
+                                                  :creator_id="channel.id"/>
                         </div>
                     </div>
                 </div>
