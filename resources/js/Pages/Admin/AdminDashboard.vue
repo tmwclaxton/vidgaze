@@ -1,7 +1,29 @@
 <script setup>
 import PaddingLayout from '@/Layouts/Partials/ConsistentPadding.vue';
 import {useAuthStore} from "@/Stores/AuthStore";
+import {Link} from "@inertiajs/inertia-vue3";
+import {useToastStore} from "@/Stores/ToastStore";
+import {ref} from "vue";
+const toastStore = useToastStore();
 const authStore = useAuthStore();
+
+const slug = ref('');
+const role = ref('moderator');
+
+const changeUserRole = () => {
+    axios.post(route('api.admin.change_user_role'), {creator_slug: slug.value, role: role.value}).then(response => {
+        toastStore.add({
+            message: 'User role changed successfully.',
+            type: 'success',
+        });
+    }).catch(error => {
+        toastStore.add({
+            message: 'Sorry we couldn\'t change the user role!  Please try again.',
+            type: 'warning',
+        });
+    });
+}
+
 </script>
 <template>
 
@@ -16,27 +38,35 @@ const authStore = useAuthStore();
                 <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-200 mb-5 text-center select-none">Welcome back, {{ authStore.user.creator.name }}!</h1>
 
                 <!--Horizon and Telescope links-->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mx-auto max-w-md lg:max-w-screen-xl mb-5 select-none">
+                <div class=" mx-auto max-w-md lg:max-w-screen-xl mb-5 select-none">
 
-                    <a :href="route('horizon.index')"
-                          class=" flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-zinc-800 hover:bg-zinc-700  transition-colors duration-200">
-                        <span class="text-sm font-semibold uppercase tracking-wider">Horizon</span>
-                    </a>
-
-                    <a :href="route('telescope')"
-                          class=" flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-zinc-800 hover:bg-zinc-700 transition-colors duration-200">
-                        <span class="text-sm font-semibold uppercase tracking-wider">Telescope</span>
-                    </a>
-
-                    <Link :href="route('component-testing')"
-                          class=" flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-zinc-800 hover:bg-zinc-700 transition-colors duration-200">
-                        <span class="text-sm font-semibold uppercase tracking-wider">Front end testing</span>
-                    </Link>
-
-                    <div
-                        class=" flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-zinc-800 hover:bg-zinc-700 transition-colors duration-200">
-                        <span class="text-sm font-semibold uppercase tracking-wider">Josh your search code sucks ass</span>
+                    <!-- Change User Role, input field for user slug and select field for role -->
+                    <div class=" p-4 rounded-lg w-full flex flex-col gap-2 shadow-xl">
+                            <div class="uppercase text-sm text-zinc-400">
+                                Change User Role
+                            </div>
+                            <div class="flex space-x-2 items-center">
+                                <input v-model="slug"
+                                    type="text" class="w-40 p-2 border border-zinc-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="User Slug">
+                                <select v-model="role"
+                                    class="w-40 p-2 border border-zinc-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    <option value="admin">Admin</option>
+                                    <option value="moderator">Moderator</option>
+                                    <option value="user">User</option>
+                                </select>
+                            </div>
+                            <button @click="changeUserRole('creator-slug', 'role')"
+                                    class="w-40 p-2 bg-blue-500 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-blue-600 dark:focus:ring-blue-600 dark:focus:border-blue-600">
+                                Change Role
+                            </button>
                     </div>
+
+                    <!-- Moderator Actions record -->
+
+
+
+
+
 
                 </div>
 

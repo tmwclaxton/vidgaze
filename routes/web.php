@@ -32,7 +32,6 @@ require __DIR__ . '/WebsiteRoutes/user.php';
 //admin routes
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('/admin', function () { return Inertia::render('Admin/AdminDashboard'); })->name('admin.dashboard');
-    Route::get('/component-testing', function () { return Inertia::render('Admin/TestComponents'); })->name('component-testing');
 });
 
 // landing route
