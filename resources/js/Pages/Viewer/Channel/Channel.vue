@@ -122,6 +122,9 @@ const fetchVideos = async () => {
                             <span class="" v-text="channel.subscribers_count"></span>
                             <div class="mt-1 inline-flex space-x-1">
                                 <Badge v-for="source in channel.sources" :key="source" :text="source" :source="source" v-if="channel.sources[0] != null"/>
+                                <Badge v-if="channel.role === 'moderator'" text="Moderator" source="moderator"/>
+                                <Badge v-if="channel.role === 'admin'" text="Admin" source="admin"/>
+
                             </div>
                         </div>
                          <!--this is here for design fix -->

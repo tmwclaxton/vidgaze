@@ -25,11 +25,9 @@ use Illuminate\Support\Facades\Route;
 
     // wrap all routes in v1
     Route::prefix('v1')->name('api.')->group(function () {
-
-        // I think we should only ever have 1 version of the auth stuff for security
         require __DIR__ . '/ApiV1Routes/auth.php';
+        require __DIR__ . '/ApiV1Routes/administration.php';
         require __DIR__ . '/ApiV1Routes/awards.php';
-
         require __DIR__ . '/ApiV1Routes/videos.php';
         require __DIR__ . '/ApiV1Routes/comments.php';
         require __DIR__ . '/ApiV1Routes/podcasts.php';
@@ -128,7 +126,7 @@ use Illuminate\Support\Facades\Route;
                 'workerLogs' => $workerLogs,
                 'swooleLogs' => $swooleLogs
             ], 200);
-        })->name('health');
+        })->name('health')->middleware('auth:sanctum');
 
 
         // if in local environment add the ping route it should not be in production and if it is then JoshPing needs updated as its in gitignore

@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Admin
+class Moderator
 {
     /**
      * Handle an incoming request.
@@ -19,9 +19,8 @@ class Admin
         if (!$request->user()) {
             return redirect()->route('login');
         }
-        //check if user is admin
-        $adminEmails = config('admins.emails');
-        if (in_array($request->user()->email, $adminEmails) || $request->user()->role === 'admin') {
+        //check if user is moderator or admin
+        if ($request->user()->role === 'moderator' || $request->user()->role === 'admin') {
             // check if email is verified
             if (!$request->user()->hasVerifiedEmail()) {
                 return redirect()->route('verification.notice');
