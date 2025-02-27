@@ -53,10 +53,10 @@ const closeNavigation = () => {
 </script>
 
 <template>
-    <Link v-if="!span" :href="href" :class="classes" @click="closeNavigation" class="select-none cursor-pointer">
+    <Link v-if="!span" :href="href" :class="classes" @click="closeNavigation" class=" cursor-pointer">
         <slot />
     </Link>
-    <span v-else :class="classes" class=" select-none cursor-pointer ">
+    <span v-else :class="classes" class="  cursor-pointer ">
         <slot />
     </span>
 </template>

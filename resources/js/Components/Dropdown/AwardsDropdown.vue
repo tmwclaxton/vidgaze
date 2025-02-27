@@ -26,7 +26,7 @@
                          :class="{'border-blue-500 dark:border-blue-500': selectedAward.id === award.id}"
                          @click="selectAward(award)">
                         <img class="mx-auto h-10 mx-auto" :src="award.icon_url"/>
-                        <p class="k text-xs font-bold text-center mt-2 select-none">
+                        <p class="k text-xs font-bold text-center mt-2 ">
                             {{ numberFormatShort(award.coin_price) }}
                         </p>
                     </div>

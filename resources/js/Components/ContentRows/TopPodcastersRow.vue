@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-row gap-2 my-4 mb-8">
         <font-awesome-icon :icon="['fass', 'microphone']" class="w-6 h-6 my-auto" />
-        <p class="font-bold text-2xl select-none">VidGaze Podcasters</p>
+        <p class="font-bold text-2xl ">VidGaze Podcasters</p>
     </div>
 
     <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">

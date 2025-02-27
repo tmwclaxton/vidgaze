@@ -15,7 +15,7 @@
 <template>
 
     <div v-show="confirmModalStore.show" class="z-50 absolute left-1/2 right-1/2 flex-grow h-max flex flex-row justify-center">
-        <ConsistentContentHolder class="fixed my-auto inset-y-0 h-max bg-zinc-100 dark:bg-vidgaze-blue-dropdown rounded-xl select-none w-96">
+        <ConsistentContentHolder class="fixed my-auto inset-y-0 h-max bg-zinc-100 dark:bg-vidgaze-blue-dropdown rounded-xl  w-96">
             <!--Close modal-->
             <button @click="confirmModalStore.show = false" type="button" class="absolute top-3 right-2.5  p-1.5 ml-auto inline-flex items-center
             text-sm text-zinc-400 hover:text-zinc-900 dark:hover:text-white

@@ -8,10 +8,10 @@ const classes = "block w-full px-4 py-2 mt-0.5 text-left text-sm leading-5 text-
 </script>
 <!--@click="closeNavigation"-->
 <template>
-    <Link v-if="!span" :href="href" :class="classes"  class="select-none cursor-pointer">
+    <Link v-if="!span" :href="href" :class="classes"  class=" cursor-pointer">
         <slot />
     </Link>
-    <span v-else :class="classes" class=" select-none cursor-pointer ">
+    <span v-else :class="classes" class="  cursor-pointer ">
         <slot />
     </span>
 </template>

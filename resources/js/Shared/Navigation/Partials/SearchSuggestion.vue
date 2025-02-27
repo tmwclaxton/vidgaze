@@ -1,5 +1,5 @@
 <template>
-    <div class="search-suggestion select-none" >
+    <div class="search-suggestion " >
         <div class=" overflow-x-hidden  rounded-md ease-in-out duration-400 transition shadow-md shadow"
         :class="{'bg-zinc-700': selected, 'bg-zinc-800' : !selected}">
             <div scope="row" class="h-8 overflow-y-hidden flex px-3 py-2 text-base font-medium text text-white ">

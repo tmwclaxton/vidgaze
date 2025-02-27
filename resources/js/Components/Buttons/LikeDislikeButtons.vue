@@ -1,5 +1,5 @@
 <template>
-        <div @click="toggleLike" class="select-none flex gap-1 cursor-pointer justify-center "
+        <div @click="toggleLike" class=" flex gap-1 cursor-pointer justify-center "
              :class="[props.orientationVertical ? 'flex-col' : 'flex-row gap-x-3 ']">
             <ThumbsUpIcon class="transform transition-all duration-200  my-auto flex-shrink-0"  :class="[ props.orientationVertical ? 'mx-auto h-8' : 'h-6', likeButtonClasses]"  />
             <p class="font-bold text-sm text-center my-auto" v-text="itemHandler.like_count ?? 0" />
@@ -8,7 +8,7 @@
         <!--vertical hr-->
         <hr v-if="!props.orientationVertical" class="border border-zinc-300 group-hover:border-zinc-400 dark:border-gray-700 dark:group-hover:border-zinc-700 w-0.5 h-8 rounded transition ease-in-out" />
 
-        <div @click="toggleDislike" class="select-none flex gap-1 cursor-pointer justify-center "
+        <div @click="toggleDislike" class=" flex gap-1 cursor-pointer justify-center "
              :class="[props.orientationVertical ? 'flex-col' : 'flex-row gap-x-3']">
             <!--combine likeButtonClass and the props.ortientaitonVertical classes-->
             <ThumbsDownIcon class="transform transition duration-200 my-auto   " :class="[ props.orientationVertical ? 'mx-auto h-8' : 'w-6 h-6', dislikeButtonClasses]" />

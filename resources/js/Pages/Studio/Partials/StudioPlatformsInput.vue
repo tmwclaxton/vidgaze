@@ -60,7 +60,7 @@ const uploadable_platforms_value = computed(() => {
             <p class="text-xs mx-1 my-1">These are the platforms where your video will be published to</p>
 
 
-        <div class="ml-2 space-y-2 select-none">
+        <div class="ml-2 space-y-2 ">
             <div v-if="uploadable_platforms_value.includes('youtube')"
                 class="flex flex-row gap-2 items-center">
                 <input type="checkbox" id="youtube" value="youtube" v-model="platformsLocal"

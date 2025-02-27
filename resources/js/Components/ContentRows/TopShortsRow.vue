@@ -75,7 +75,7 @@ const handleResize = debounce(() => {
 <template>
     <div class="hid den md: flex flex-row gap-2  my-4 mb-8 ">
         <font-awesome-icon :icon="['fas', 'fire']"  class="my-auto h-6"/>
-        <p class="font-bold text-2xl select-none">Rising Shorts</p>
+        <p class="font-bold text-2xl ">Rising Shorts</p>
     </div>
 
     <div class="hid den md: grid  gap-7 mx-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8"  >
