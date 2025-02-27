@@ -7,30 +7,26 @@ use App\Enums\Kind;
 use App\Enums\Platform;
 use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
-use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\iCanUpload;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\iHaveVideos;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\iCanLogin;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
 use App\Helpers\Tools;
+use App\Helpers\UploadDTO;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
+use Laravel\Octane\Facades\Octane;
 
 class YouTube implements iSearchable, iIsPlatform
 {
-    protected $apifyClient;
-    protected $apifyApiKey;
+    protected string $scraperKey;
 
     public function __construct()
     {
-        $this->apifyApiKey = env('APIFY_API_KEY');
-        $this->apifyClient = new Client([
-            'base_uri' => 'https://api.apify.com/v2/',
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->apifyApiKey,
-                'Accept' => 'application/json',
-            ],
-        ]);
+        $this->scraperKey = env('SCRAPER_KEY'); // Retrieve the Scraper-Key from the environment
     }
 
     public static function getPlatform(): Platform
@@ -40,82 +36,192 @@ class YouTube implements iSearchable, iIsPlatform
 
     public static function getCreators(array $ids): array
     {
-        $self = new self();
+        $yt = new self();
+        if (!$ids) return [];
+        if (count($ids) > 50) {
+            throw new \Exception('Too many ids, max 50');
+        }
+
+
         $creators = [];
         foreach ($ids as $id) {
-            $response = $self->apifyClient->request('GET', "acts/apify~youtube-scraper/runs/last/dataset/items", [
-                'query' => ['query' => "channel:$id"],
-            ]);
-            $data = json_decode($response->getBody(), true);
-            if (!empty($data)) {
-                $creators[] = self::extractCreatorToDTO($data[0]);
+            $response = Http::withHeaders([
+                'Scraper-Key' => $yt->scraperKey,
+            ])->get("https://api.scraper.tech/channel.php?channel_id=$id");
+
+            if ($response->successful()) {
+                $data = $response->json()['data'];
+                $creators[] = self::extractCreatorToDTO($data);
             }
         }
+
         return $creators;
     }
 
-    public static function search(SearchQueryDTO $searchQueryDTO)
+    public static function searchCreators(SearchQueryDTO $searchQueryDTO)
     {
-        $self = new self();
-        $response = $self->apifyClient->request('GET', "acts/apify~youtube-scraper/runs/last/dataset/items", [
-            'query' => ['query' => $searchQueryDTO->query],
+        $yt = new self();
+        $response = Http::withHeaders([
+            'Scraper-Key' => $yt->scraperKey,
+        ])->get("https://api.scraper.tech/search_channels.php", [
+            'query' => $searchQueryDTO->query,
         ]);
-        $data = json_decode($response->getBody(), true);
+
+
+        $items = $response->json()['channels'];
+        $creator_ids = array_map(fn($item) => $item['channelId'], $items);
+        // filter to 2 creators
+        $creator_ids = array_slice($creator_ids, 0, 2);
+        $data = self::getCreators($creator_ids);
 
         $results = [];
-        foreach ($data as $item) {
-            $resultDTO = new ResultDTO(Platform::YouTube, Kind::Video);
-            $contentDTO = new ContentDTO(
-                Platform::YouTube,
-                Kind::Video,
-                $item['id']
-            );
-            $contentDTO->creator_id = $item['channelId'];
-            $contentDTO->name = $item['title'];
-            $contentDTO->description = $item['description'];
-            $contentDTO->duration = Tools::convertYouTubeDurationToSeconds($item['duration']);
-            $contentDTO->tags = $item['tags'] ?? [];
-            $contentDTO->publish_time = Carbon::parse($item['date']);
-            $contentDTO->thumbnail_url = $item['thumbnailUrl'];
-            $resultDTO->content = $contentDTO;
+        foreach ($data as $creator) {
+            $resultDTO = new ResultDTO(Platform::YouTube, Kind::Creator);
+            $resultDTO->creator = $creator;
             $results[] = $resultDTO;
         }
+
         return $results;
     }
 
+
+    // search for videos and streams (streams can be differentiated by not having a duration)
+//    curl -X GET "https://api.scraper.tech/search_videos.php?query=apple" \
+//     -H "scraper-key: 69516617770b3a34968e06b33cd2d234" \
+//     -m 30 \
+//     -o response.json
+
+    public static function searchVideos(SearchQueryDTO $searchQueryDTO)
+    {
+        $yt = new self();
+        $response = Http::withHeaders([
+            'Scraper-Key' => $yt->scraperKey,
+        ])->get("https://api.scraper.tech/search_videos.php", [
+            'query' => $searchQueryDTO->query,
+        ]);
+
+        $items = $response->json()['videos'];
+        $video_ids = array_map(fn($item) => $item['videoId'], $items);
+
+        // filter to 3 videos
+        $video_ids = array_slice($video_ids, 0, 3);
+
+        $data = self::getVideoOrStream($video_ids);
+
+        $results = [];
+        foreach ($data as $video) {
+            $resultDTO = new ResultDTO(Platform::YouTube, Kind::Video);
+            $resultDTO->content = $video;
+            $results[] = $resultDTO;
+        }
+
+        return $results;
+    }
+
+    // search we need to get both creators and videos using the searchVideos and searchCreators methods
+    public static function search(SearchQueryDTO $searchQueryDTO)
+    {
+
+
+
+    }
+
+
+//    public static function search(SearchQueryDTO $searchQueryDTO){
+//        $yt = new self();
+//        $response = $yt->client->search->listSearch(['snippet'], [
+//            'q' => $searchQueryDTO->query,
+//            'maxResults' => ($searchQueryDTO->max_results <= 50) ? $searchQueryDTO->max_results : 50,
+//        ]);
+//
+//        $items = $response->getItems();
+//        $separate_items = [
+//            'video_and_stream_ids' => [],
+//            'all_creator_ids' => [],
+//        ];
+//        foreach ($items as $item) {
+//            match ($item['id']['kind']) {
+//                'youtube#video' => $separate_items['video_and_stream_ids'][] = $item['id']['videoId'],
+//                'youtube#channel' => $separate_items['creator_ids'][] = ($item['snippet']['channelId']) ?: $item['id']['channelId'],
+//                'youtube#playlist' => $separate_items['playlist_ids'][] = $item['id']['playlistId'],
+//            };
+//            $separate_items['all_creator_ids'][] = ($item['snippet']['channelId']) ?: $item['id']['channelId'];
+//        }
+//
+//        $data =  Octane::concurrently([
+//            fn() => self::getCreators($separate_items['all_creator_ids']),
+//            fn() => self::getVideoOrStream($separate_items['video_and_stream_ids'], false)
+//        ],5000);
+//
+//        // foreach video and stream, add corresponding creator to DTO
+//        foreach ($data[1] as $item) {
+//            $item->creator = $data[0][array_search($item->content->creator_id, array_column($data[0], 'id'))];
+//        }
+//
+//        $creatorDTOs = array_filter($data[0], function ($creator) use ($separate_items) {
+//            return in_array($creator->id, $separate_items['creator_ids']);
+//        });
+//
+//        $results = [];
+//        foreach ($creatorDTOs as $creator) {
+//            $resultDTO = new ResultDTO(Platform::YouTube, Kind::Creator);
+//            $resultDTO->creator = $creator;
+//            $results[] = $resultDTO;
+//        }
+//        // only return creators in the creator_ids array (and other results)
+//        return array_merge($results, $data[1]);
+//    }
+
     public static function getVideoOrStream(array $ids, bool $returnJustContentDTO = true): array
     {
-        $self = new self();
+        $yt = new self();
+        if (!$ids) return [];
         $videos = [];
+
         foreach ($ids as $id) {
-            $response = $self->apifyClient->request('GET', "acts/apify~youtube-scraper/runs/last/dataset/items", [
-                'query' => ['query' => "video:$id"],
-            ]);
-            $data = json_decode($response->getBody(), true);
-            if (!empty($data)) {
-                $videos[] = $data[0];
+            $response = Http::withHeaders([
+                'Scraper-Key' => $yt->scraperKey,
+            ])->get("https://api.scraper.tech/video.php?video_id=$id");
+
+            if ($response->successful()) {
+                $data = $response->json()['data'];
+                $data['videoId'] = $id;
+                $videos[] = $data;
             }
         }
 
         return array_map(function ($video) use ($returnJustContentDTO) {
-            $kind = ($video['isLive'] ?? false) ? Kind::Stream : Kind::Video;
-
+            $kind = $video['formats'][0]['durationMs'] ? Kind::Video : Kind::Stream;
             $resultDTO = new ResultDTO(Platform::YouTube, $kind);
             $contentDTO = new ContentDTO(
                 Platform::YouTube,
                 $kind,
-                $video['id']
+                $video['videoId']
             );
 
             $contentDTO->creator_id = $video['channelId'];
-            $contentDTO->name = $video['title'];
+            $contentDTO->name = $video['name'];
             $contentDTO->description = $video['description'];
-            $contentDTO->duration = Tools::convertYouTubeDurationToSeconds($video['duration']);
-            $contentDTO->tags = $video['tags'] ?? [];
-            $contentDTO->publish_time = Carbon::parse($video['date']);
-            $contentDTO->thumbnail_url = $video['thumbnailUrl'];
+//            $contentDTO->duration = Tools::convertYouTubeDurationToSeconds($video['formats'][0]['durationMs']);
 
-            if ($kind === Kind::Stream) {
+            // convert ms to seconds
+            $contentDTO->duration = round($video['formats'][0]['durationMs'] / 1000);
+
+            try {
+                $contentDTO->publish_time = Carbon::parse($video['publishDate']);
+            } catch (\Exception $e) {
+                // put epoch time if date is not available so can be fixed later
+                $contentDTO->publish_time = Carbon::createFromTimestamp(0);
+            }
+
+            dd($video);
+            try {
+                $contentDTO->thumbnail_url = $video['thumbnails'][0]['url']; // Assuming first thumbnail
+            } catch (\Exception $e) {
+                $contentDTO->thumbnail_url = null;
+            }
+
+            if($kind == Kind::Stream){
                 $contentDTO->is_live = true;
             }
 
@@ -123,6 +229,7 @@ class YouTube implements iSearchable, iIsPlatform
 
             if ($returnJustContentDTO) return $contentDTO;
 
+            $resultDTO->kind = $kind;
             $resultDTO->creator = new CreatorDTO(Platform::YouTube, $video['channelId']);
             return $resultDTO;
         }, $videos);
@@ -131,65 +238,30 @@ class YouTube implements iSearchable, iIsPlatform
     public static function extractCreatorToDTO(array $data): CreatorDTO
     {
         $creatorDTO = new CreatorDTO(Platform::YouTube, $data['channelId']);
-        $creatorDTO->name = $data['channelName'];
-        $creatorDTO->avatar_url = $data['thumbnailUrl'];
-        $creatorDTO->banner_url = $data['bannerUrl'] ?? null;
-        $creatorDTO->description = $data['channelDescription'];
-        $creatorDTO->region = $data['location'] ?? null;
+        $creatorDTO->name = $data['name'];
+        $creatorDTO->avatar_url = $data['avatar'];
+        $creatorDTO->banner_url = $data['banner'];
+        $creatorDTO->description = $data['description'];
+        $creatorDTO->region = $data['country'] ?? null;
         $creatorDTO->language = $data['defaultLanguage'] ?? null;
         return $creatorDTO;
     }
 
     public static function getCreatorVideosBeforeDate(string $id, Carbon $date = null, $maxResults = 50, bool $includeStreams = true, bool $onlyStreams = false): array
     {
-        $self = new self();
-        $query = "channel:$id";
-        if ($date) {
-            $query .= " date:$date->toDateString()";
-        }
+        if ($maxResults > 50) throw new \Exception('Max results cannot be greater than 50');
+        $yt = new self();
 
-        $response = $self->apifyClient->request('GET', "acts/apify~youtube-scraper/runs/last/dataset/items", [
-            'query' => ['query' => $query, 'maxResults' => $maxResults],
-        ]);
-        $data = json_decode($response->getBody(), true);
+        $response = Http::withHeaders([
+            'Scraper-Key' => $yt->scraperKey,
+        ])->get("https://api.scraper.tech/feed.php?channel_id=$id");
 
-        // Filter based on streams
-        $filteredData = array_filter($data, function ($item) use ($includeStreams, $onlyStreams) {
-            $isStream = $item['isLive'] ?? false;
-            if ($onlyStreams) {
-                return $isStream;
-            }
-            if (!$includeStreams) {
-                return !$isStream;
-            }
-            return true;
-        });
-
-        // Map to ResultDTO
-        $results = array_map(function ($item) {
-            $kind = ($item['isLive'] ?? false) ? Kind::Stream : Kind::Video;
-
-            $resultDTO = new ResultDTO(Platform::YouTube, $kind);
-            $contentDTO = new ContentDTO(
-                Platform::YouTube,
-                $kind,
-                $item['id']
-            );
-            $contentDTO->creator_id = $item['channelId'];
-            $contentDTO->name = $item['title'];
-            $contentDTO->description = $item['description'];
-            $contentDTO->duration = Tools::convertYouTubeDurationToSeconds($item['duration']);
-            $contentDTO->tags = $item['tags'] ?? [];
-            $contentDTO->publish_time = Carbon::parse($item['date']);
-            $contentDTO->thumbnail_url = $item['thumbnailUrl'];
-
-            $resultDTO->content = $contentDTO;
-            return $resultDTO;
-        }, $filteredData);
+        $items = $response->json()['videos'];
+        $results = self::getVideoOrStream(array_map(fn($item) => $item['videoId'], $items));
 
         return [
-            'next' => $data ? Carbon::parse(end($data)['date']) : null,
-            'hasNext' => count($data) === $maxResults,
+            'next' => end($items) ? Carbon::make(end($items)['publishDate']) : null,
+            'hasNext' => count($items) >= $maxResults,
             'results' => $results,
         ];
     }
