@@ -118,10 +118,10 @@ onMounted(() => {
             <div class="  px-2 sm:rounded-lg w-full flex flex-col align-middle justify-center justify-items-center">
 
                 <!--Welcome message + name-->
-                <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-200 mb-5 text-center select-none">Welcome back, {{ authStore.user.creator.name }}!</h1>
+                <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-200 mb-5 text-center ">Welcome back, {{ authStore.user.creator.name }}!</h1>
 
                 <!--Horizon and Telescope links-->
-                <div class=" mx-auto max-w-md lg:max-w-screen-xl mb-5 select-none">
+                <div class=" mx-auto max-w-md lg:max-w-screen-xl mb-5 ">
 
                     <!-- Change User Role, input field for user slug and select field for role -->
                     <div class=" p-4 rounded-lg w-full flex flex-col gap-2 shadow-xl">

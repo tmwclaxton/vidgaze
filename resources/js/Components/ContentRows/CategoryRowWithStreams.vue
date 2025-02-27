@@ -49,7 +49,7 @@ onMounted(async () => {
                 <!--<StreamIcon class="w-6 h-6 my-auto"/>-->
                 <font-awesome-icon class="w-6 h-6 my-auto" :icon="['fas', 'gamepad']" />
 
-                <Link :href="route('category.show',{slug:category.slug})"  class="font-bold text-2xl select-none" v-text="category.name"/>
+                <Link :href="route('category.show',{slug:category.slug})"  class="font-bold text-2xl " v-text="category.name"/>
             </div>
 
             <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">

@@ -101,7 +101,7 @@ const fetchVideos = async () => {
                         class=" cursor-pointer absolute bg-zinc-900 border border-zinc-600 p-2 px-4 bg-opacity-70 rounded
                         top-5 right-5 font-bold gap-x-3 flex flex-row">
                         <font-awesome-icon :icon="['fas', 'share-alt']" class="w-4 text-white my-auto"/>
-                        <p class="hidden md:flex opacity-100 text-white select-none">Share VidGaze Channel</p>
+                        <p class="hidden md:flex opacity-100 text-white ">Share VidGaze Channel</p>
                     </div>
 
             </div>

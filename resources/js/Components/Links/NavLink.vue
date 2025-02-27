@@ -13,7 +13,7 @@ const classes = computed(() =>
 
 <template>
     <!--<span class="hidden border-b-2"></span>-->
-    <Link :href="href"  :class="'pb-1  pt-1 border-b-2 select-none ' + classes" >
+    <Link :href="href"  :class="'pb-1  pt-1 border-b-2  ' + classes" >
         <slot />
     </Link>
 </template>

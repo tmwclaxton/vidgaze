@@ -33,7 +33,7 @@ const getPodcastInfo = async () => {
 </script>
 
 <template>
-    <div @mouseenter="getPodcastInfo" class="cursor-pointer select-none rounded   w-full h-full ">
+    <div @mouseenter="getPodcastInfo" class="cursor-pointer  rounded   w-full h-full ">
         <div class=" relative  group">
             <Link href="">
                 <img class="w-full aspect-square block rounded "

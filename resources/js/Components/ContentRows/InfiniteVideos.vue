@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-row gap-2  my-4 mb-8 ">
         <font-awesome-icon :icon="['fas', 'compass']" class="my-auto h-6" />
-        <p class="font-bold text-2xl select-none">Explore</p>
+        <p class="font-bold text-2xl ">Explore</p>
     </div>
 
 

@@ -69,7 +69,7 @@ const nextItem = useQueueStore().nextItem;
                 <UpNextVideo v-if="nextItem !== null" :item="nextItem"/>
 
             </div>
-            <div id="buttons" class="  flex flex-row gap-x-4 select-none ">
+            <div id="buttons" class="  flex flex-row gap-x-4  ">
 
                 <div @click="nextUpScreen = false"
                      class="bg-zinc-900 rounded-full p-2 px-14 w-max cursor-pointer image-wrapper shine">
@@ -88,12 +88,12 @@ const nextItem = useQueueStore().nextItem;
         <!--suggestion screen-->
         <SuggestionsScreen v-else :item="props.item"/>
 
-        <Link :href="route('channel.show', {slug: props.item.creator.slug})" class="absolute top-5 left-5 hidden sm:flex flex-row select-none cursor-pointer">
+        <Link :href="route('channel.show', {slug: props.item.creator.slug})" class="absolute top-5 left-5 hidden sm:flex flex-row  cursor-pointer">
             <img :src="props.item.creator.avatar_url" class="w-8 h-8 rounded-full"/>
             <p  class="line-clamp-1 ml-2 my-auto text-white text dark:textDark text-lg uppercase font-bold" v-text="props.item.title"/>
         </Link>
         <div @click="resetPlayer"
-             class="absolute bottom-5 left-5 flex flex-row gap-x-2 select-none cursor-pointer">
+             class="absolute bottom-5 left-5 flex flex-row gap-x-2  cursor-pointer">
             <font-awesome-icon icon="rotate-right"  class="  h-4 my-auto aspect-square text-white"/>
             <p class="ml-1 text-white text dark:textDark uppercase font-bold">Restart</p>
         </div>

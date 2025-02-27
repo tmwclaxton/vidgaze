@@ -61,7 +61,7 @@ const removePlatform = () => {
 
 </script>
 <template>
-    <div @click="loginRedirect()" :class="buttonClasses" class="h-full w-max flex flex-row inline-flex items-center gap-2 select-none cursor-pointer
+    <div @click="loginRedirect()" :class="buttonClasses" class="h-full w-max flex flex-row inline-flex items-center gap-2  cursor-pointer
          border border-zinc-200 hover:border-zinc-300 dark:border-zinc-800 dark:hover:border-zinc-700
          dark:bg-vidgaze-blue dark:hover:bg-vidgaze-blue-nav dark:text-zinc-200 text-zinc-900 text-sm font-medium rounded-lg px-5 py-2.5 text-center ">
         <slot></slot>

@@ -76,7 +76,7 @@ const submit = async () => {
         <!--</div>-->
 
 
-        <!--<HorizontalLineText text="or" class="select-none"/>-->
+        <!--<HorizontalLineText text="or" class=""/>-->
 
         <form @submit.prevent="submit">
             <div>
@@ -144,7 +144,7 @@ const submit = async () => {
                 <div class="flex items-center">
                     <label class="flex items-center">
                          <Checkbox v-model:checked="form.terms" name="terms" id="terms"/>
-                        <span class="ml-2 text-sm text-zinc-600 dark:text-zinc-400 select-none">
+                        <span class="ml-2 text-sm text-zinc-600 dark:text-zinc-400 ">
                             I agree to the
                             <Link :href="route('terms')" class="font-bold">Terms of Service</Link>
                             and
