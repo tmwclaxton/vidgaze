@@ -38,8 +38,9 @@ class AdministratorController extends Controller
     // list moderators
     public function listModerators(Request $request): \Illuminate\Http\JsonResponse
     {
+        $page = $request->query('page') ?? 1;
         try {
-            $moderators = User::where('role', 'moderator')->get();
+            $moderators = User::where('role', 'moderator')->with('creator')->paginate(10, ['*'], 'page', $page);
             return response()->json($moderators);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -49,16 +50,17 @@ class AdministratorController extends Controller
         }
     }
 
-    // paginate mod actions
-    public function paginateModActions(Request $request): \Illuminate\Http\JsonResponse
+    // list mod actions
+    public function listModActions(Request $request): \Illuminate\Http\JsonResponse
     {
+        $page = $request->query('page') ?? 1;
         try {
-            $modActions = ModeratorAction::paginate(10);
+            $modActions = ModeratorAction::paginate(10, ['*'], 'page', $page);
             return response()->json($modActions);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return response()->json([
-                'errors' => ['general' => [Responses::MODERATOR_LIST_FAILED]]
+                'errors' => ['general' => [Responses::MODERATOR_LIST_ACTIONS_FAILED]]
             ], 500);
         }
     }
