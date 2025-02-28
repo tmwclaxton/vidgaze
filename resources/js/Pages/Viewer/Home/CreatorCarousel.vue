@@ -81,6 +81,7 @@ onMounted(() => {
                 });
             });
 
+            // shuffle everything except the first item
             carouselItems.value = [carouselItems.value[0], ..._.shuffle(carouselItems.value.slice(1))];
         })
         .catch(error => {
