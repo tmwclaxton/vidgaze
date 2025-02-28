@@ -109,12 +109,6 @@ onMounted(() => {
                          v-for="comment in CommentSectionStore.comments.filter(comment => comment.parent_comment_id === null)"
                          :comment="comment" :key="comment.id" :item="props.item" />
 
-                <!--<x-button wire:click="loadMore" name="rect_button"-->
-                <!--          class=" mt-1 w-full generic_button_2">-->
-                <!--    Load More Comments-->
-                <!--</x-button>-->
-                <!--<x-error-message image_url="/images/mascot/ThumbsUp.png" :explore="false" text="Looks like there aren't any comments yet.  Be the first!"/>-->
-
             </div>
 
             <QuaternaryButton v-if="CommentSectionStore.comments.length > 9"  @click="CommentSectionStore.fetchComments(category, null, null, true);">

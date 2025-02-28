@@ -50,7 +50,7 @@ const changeChatroom = (chatroom) => {
             <div class="border-l-2 border-gray-200 dark:border-gray-800 h-full"></div>
 
 
-            <div class="flex flex-col gap-y-5" v-if="currentChatroom !== null">
+            <div class="flex flex-col gap-y-5 w-full" v-if="currentChatroom !== null">
                 <div class="flex flex-row justify-between items-center">
                     <h1 class="text-2xl font-bold" v-text="currentChatroom.name"></h1>
                 </div>
