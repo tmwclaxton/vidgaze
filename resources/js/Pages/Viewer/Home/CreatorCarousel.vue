@@ -50,20 +50,25 @@ onMounted(() => {
     //     ];
     // }
 
+    carouselItems.value = [];
+
     // concatenate a few more sites
     carouselItems.value.push(
         {
             imgSrc: '/images/banners/VidGaze-Banner.png',
-            link: "" // TODO: update this link to the direction page later
+            link: "/" // TODO: update this link to the direction page later
         },
         {
             imgSrc: '/images/banners/Freedom-Banner.png',
-            link: "" // TODO: update this link to the freedom tech category page later
+            link: "/" // TODO: update this link to the freedom tech category page later
         },
-
         {
             imgSrc: '/images/banners/LAS-Banner.png',
             link: "https://www.lightningarbitragesolutions.com/"
+        },
+        {
+            imgSrc: '/images/banners/Canvassr-Banner.png',
+            link: "https://www.canvassr.org/"
         },
     );
 
@@ -76,7 +81,6 @@ onMounted(() => {
                 });
             });
 
-            // shuffle everything except the first item
             carouselItems.value = [carouselItems.value[0], ..._.shuffle(carouselItems.value.slice(1))];
         })
         .catch(error => {

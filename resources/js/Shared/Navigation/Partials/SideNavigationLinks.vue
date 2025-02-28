@@ -45,12 +45,18 @@ const name = 'ExpandableNavigationLinks';
 
             </ResponsiveNavLink>
         </div>
-        <!--<div class="ld:hid den">-->
-        <!--    <ResponsiveNavLink :href="route('streams.index')" :active="route().current('streams.index')">-->
-        <!--        <StreamIcon class="w-5 h-5 flex-shrink-0"/>-->
-        <!--        <span>Streams</span>-->
-        <!--    </ResponsiveNavLink>-->
-        <!--</div>-->
+        <div class="ld:hid den">
+            <ResponsiveNavLink :href="route('streams.index')" :active="route().current('streams.index')">
+                <StreamIcon class="w-5 h-5 flex-shrink-0"/>
+                <span>Streams</span>
+            </ResponsiveNavLink>
+        </div>
+        <div class="">
+            <ResponsiveNavLink :href="route('videos.shorts')" :active="route().current('videos.shorts')">
+                <font-awesome-icon :icon="['fas', 'fire']" class="w-5 h-5 flex-shrink-0"/>
+                <span>Shorts</span>
+            </ResponsiveNavLink>
+        </div>
         <div class="">
             <ResponsiveNavLink :href="route('videos.shorts')" :active="route().current('videos.shorts')">
                 <font-awesome-icon :icon="['fas', 'message']" class="w-5 h-5 flex-shrink-0"/>
@@ -64,15 +70,7 @@ const name = 'ExpandableNavigationLinks';
             </ResponsiveNavLink>
         </div>
 
-<!--        <div v-if="useAuthStore().user == null" class=" ">-->
-<!--            <ResponsiveNavLink :href="route('music.index')" :active="route().current('music.index')">-->
-<!--                <MusicIcon class="w-5 h-5 flex-shrink-0"/>-->
-<!--                <span>Music</span>-->
-<!--            </ResponsiveNavLink>-->
-<!--        </div>-->
-
         <!--subscriptions-->
-
         <div v-if="useAuthStore().user != null" class="lg:hid den">
             <ResponsiveNavLink :href="route('feed.subscriptions')" :active="route().current('feed.subscriptions')">
                 <SubscriptionsIcon class="w-5 h-5 flex-shrink-0"/>
