@@ -13,7 +13,7 @@
                     VidGaze is yours to own. It's not for the capitalists or for a few very wealthy people
                     to enshitify. It's for <span class="font-semibold ">you</span>. I want you to own a piece.
                     To do that, I need a way to give you a piece. So, there will be a small nominal fee of
-                    <span class="font-semibold text-cyan-600 dark:text-cyan-400">0.5 XMR</span>, which will be used to fund the project and
+                    <span class="font-semibold text-cyan-600 dark:text-cyan-400">1 XMR</span>, which will be used to fund the project and
                     cover server costs. Once (if ever) we reach <span class="font-semibold text-cyan-600 dark:text-cyan-400">10,000 owners</span>,
                     this fee will be removed, the servers & database will be relinquished (hopefully into a federated network),
                     and the project will be <span class="font-semibold ">yours</span> to do with as you please.
