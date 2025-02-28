@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('moderator_actions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('set null');
+            $table->foreignId('user_id')->constrained();
             $table->string('human_readable_action');
             $table->timestamps();
         });

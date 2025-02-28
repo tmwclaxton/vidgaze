@@ -58,7 +58,7 @@ const name = 'ExpandableNavigationLinks';
             </ResponsiveNavLink>
         </div>
         <div class="">
-            <ResponsiveNavLink :href="route('videos.shorts')" :active="route().current('videos.shorts')">
+            <ResponsiveNavLink :href="route('chatroom.show')" :active="route().current('chatroom.show')">
                 <font-awesome-icon :icon="['fas', 'message']" class="w-5 h-5 flex-shrink-0"/>
                 <span>Global Chat</span>
             </ResponsiveNavLink>

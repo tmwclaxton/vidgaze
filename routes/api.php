@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\Route;
         require __DIR__ . '/ApiV1Routes/playlists.php';
         require __DIR__ . '/ApiV1Routes/cron.php';
         require __DIR__ . '/ApiV1Routes/unions.php';
+        require __DIR__ . '/ApiV1Routes/chatrooms.php';
 
         //this is the route for creating share links
         Route::get('/shares', [ShareApiController::class, 'index'])->name('share.index');

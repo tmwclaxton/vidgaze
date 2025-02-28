@@ -17,7 +17,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
     getters: {
         // comment count iwht pluralization
         commentCount() {
-            return this.comments.length + " Comment" + (this.comments.length != 1 ? 's' : '');
+            return this.comments.length + " Comment" + (this.comments.length !== 1 ? 's' : '');
         }
     },
     actions: {
