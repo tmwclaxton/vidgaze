@@ -115,9 +115,6 @@ onUnmounted(() => {
                         <div class="  p-4 align-middle flex flex-row">
                             <img class="h-52   " src="https://www.scaleupinstitute.org.uk/wp-content/uploads/2019/11/techstart.png"/>
                         </div>
-                        <div class="  align-middle flex flex-row">
-                            <img class="h-52 " src="https://www.qub.ac.uk/home/media/Media,891905,smxx.png"/>
-                        </div>
                     </div>
                 </div>
             </div>

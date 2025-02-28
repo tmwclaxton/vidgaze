@@ -19,6 +19,7 @@ import LibraryIcon from '~/images/icons/library.svg';
 import {useNavStore} from "@/Stores/NavStore";
 import {watch} from "vue";
 import {useAuthStore} from "@/Stores/AuthStore";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 const navStore = useNavStore();
 
 //name of the component
@@ -52,23 +53,23 @@ const name = 'ExpandableNavigationLinks';
         <!--</div>-->
         <div class="">
             <ResponsiveNavLink :href="route('videos.shorts')" :active="route().current('videos.shorts')">
-                <ShortsIcon class="w-5 h-5 flex-shrink-0"/>
-                <span>Shorts</span>
+                <font-awesome-icon :icon="['fas', 'message']" class="w-5 h-5 flex-shrink-0"/>
+                <span>Global Chat</span>
             </ResponsiveNavLink>
         </div>
-        <div  v-if="useAuthStore().user == null" class="2xl:hid den ">
+        <div  class="2xl:hid den ">
             <ResponsiveNavLink :href="route('podcasts.index')" :active="route().current('podcasts.index')">
-                <PodcastIcon class="w-5 h-5 flex-shrink-0"/>
-                <span>Podcasts</span>
+                <font-awesome-icon :icon="['fas', 'chart-pie']" class="w-5 h-5 flex-shrink-0"/>
+                <span>Equity</span>
             </ResponsiveNavLink>
         </div>
 
-        <div v-if="useAuthStore().user == null" class=" ">
-            <ResponsiveNavLink :href="route('music.index')" :active="route().current('music.index')">
-                <MusicIcon class="w-5 h-5 flex-shrink-0"/>
-                <span>Music</span>
-            </ResponsiveNavLink>
-        </div>
+<!--        <div v-if="useAuthStore().user == null" class=" ">-->
+<!--            <ResponsiveNavLink :href="route('music.index')" :active="route().current('music.index')">-->
+<!--                <MusicIcon class="w-5 h-5 flex-shrink-0"/>-->
+<!--                <span>Music</span>-->
+<!--            </ResponsiveNavLink>-->
+<!--        </div>-->
 
         <!--subscriptions-->
 

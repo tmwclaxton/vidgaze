@@ -67,9 +67,6 @@ onMounted(() => {
         },
     );
 
-    // shuffle the carousel items
-    carouselItems.value = carouselItems.value.sort(() => Math.random() - 0.5);
-
     axios.get(route('api.creator.index', {featured: true}))
         .then(response => {
             response.data.creators.data.forEach((item) => {
@@ -78,6 +75,9 @@ onMounted(() => {
                     link: route('channel.show', {slug: item.slug})
                 });
             });
+
+            // shuffle everything except the first item
+            carouselItems.value = [carouselItems.value[0], ..._.shuffle(carouselItems.value.slice(1))];
         })
         .catch(error => {
             console.log(error);
