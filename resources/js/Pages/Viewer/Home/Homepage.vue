@@ -12,6 +12,7 @@ import TopShortsRow from "@/Components/ContentRows/TopShortsRow.vue";
 import VideosRow from "@/Components/ContentRows/VideosRow.vue";
 import InfiniteVideos from "@/Components/ContentRows/InfiniteVideos.vue";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
+import {useAuthStore} from "@/Stores/AuthStore";
 const contentRoutesStore = useContentRoutesStore();
 
 const trending_videos = ref([]);
@@ -93,7 +94,7 @@ const fetchVideos = async (videoArray) => {
 
             <!--<TopStreamsRow/>-->
 
-            <TopShortsRow/>
+            <TopShortsRow v-if="useAuthStore().areShortsEnabled()"/>
 
             <InfiniteVideos :videos="videos" />
 

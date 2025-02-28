@@ -398,7 +398,19 @@ class AuthApiController extends Controller
             'message' => 'Email verified'
         ], 200);
 //        return redirect()->intended(RouteServiceProvider::HOME)->with('status', 'Email verified');
-
-
     }
+
+    public function toggleShorts(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $user = $request->user();
+        $user->shorts_enabled = !$user->shorts_enabled;
+        $user->save();
+        return response()->json([
+            'toastType' => 'success',
+            'message' => 'Shorts toggled ' . ($user->shorts_enabled ? 'on' : 'off'),
+            'shorts_enabled' => $user->shorts_enabled
+        ], 200);
+    }
+
+
 }

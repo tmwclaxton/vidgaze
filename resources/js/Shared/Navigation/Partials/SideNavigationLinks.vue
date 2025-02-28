@@ -51,7 +51,7 @@ const name = 'ExpandableNavigationLinks';
                 <span>Streams</span>
             </ResponsiveNavLink>
         </div>
-        <div class="">
+        <div class="" v-if="useAuthStore().areShortsEnabled()">
             <ResponsiveNavLink :href="route('videos.shorts')" :active="route().current('videos.shorts')">
                 <font-awesome-icon :icon="['fas', 'fire']" class="w-5 h-5 flex-shrink-0"/>
                 <span>Shorts</span>

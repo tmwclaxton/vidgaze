@@ -10,7 +10,7 @@ import SettingsIcon from '~/images/icons/settings.svg';
 import ProfileIcon from '~/images/icons/profile.svg';
 import {useDark, useToggle} from "@vueuse/core";
 import ResponsiveNavBottomLink from "@/Components/Links/ResponsiveNavBottomLink.vue";
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import {usePage} from "@inertiajs/vue3";
 import {useNavStore} from "@/Stores/NavStore";
 import {useAuthStore} from "@/Stores/AuthStore";
@@ -24,6 +24,11 @@ const toggleDark = useToggle(isDark);
 //name of the component
 const name = 'SideBar';
 
+const keyRefresh = ref(0);
+const toggleShorts = () => {
+    useAuthStore().toggleShorts();
+    keyRefresh.value = Math.random();
+};
 
 
 // const isScreenLess = computed(() => {
@@ -52,7 +57,7 @@ const name = 'SideBar';
             >
 
                 <div class="">
-                    <ExpandableNavigationLinks  />
+                    <ExpandableNavigationLinks :key="keyRefresh" />
 
                     <div class="border-t border-zinc-600 my-1 "></div>
                     <div class="">
@@ -102,7 +107,7 @@ const name = 'SideBar';
 
 
                     <!--                dark/light mode-->
-                    <div class="text-white cursor-pointer space-y-1 pb-5" @click="toggleDark()">
+                    <div class="text-white cursor-pointer space-y-1 " @click="toggleDark()">
                         <span v-if="!isDark">
                             <ResponsiveNavLink :span="true">
                                     <SunIcon class="w-5 h-5 flex-shrink-0"/>
@@ -116,6 +121,14 @@ const name = 'SideBar';
                             </ResponsiveNavLink>
                         </span>
                     </div>
+
+                    <ResponsiveNavLink :span="true" @click="toggleShorts()">
+                        <font-awesome-icon v-if="useAuthStore().areShortsEnabled()"
+                                           :icon="['fas', 'toggle-on']" class="w-5 h-5 flex-shrink-0"/>
+                        <font-awesome-icon v-if="!useAuthStore().areShortsEnabled()"
+                                           :icon="['fas', 'toggle-off']" class="w-5 h-5 flex-shrink-0"/>
+                        <span>Toggle Shorts</span>
+                    </ResponsiveNavLink>
                 </div>
 
 

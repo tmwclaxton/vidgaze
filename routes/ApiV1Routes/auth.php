@@ -27,4 +27,6 @@ Route::prefix('auth')->group(function () {
     Route::post('/email/verify/', [AuthApiController::class, 'sendEmailVerificationLink'])->middleware(['auth:sanctum'])->name('verification.send');
     Route::get('/email/verify/', [AuthApiController::class, 'verifyEmail'])->name('verification.email.confirm');
 
+    // toggle shorts
+    Route::patch('/shorts/toggle', [AuthApiController::class, 'toggleShorts'])->middleware('auth:sanctum')->name('shorts.toggle');
 });
