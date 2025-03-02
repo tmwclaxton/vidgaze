@@ -11,6 +11,7 @@ use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 
@@ -49,6 +50,51 @@ class Rumble implements iSearchable, iIsPlatform
         return $creatorDTO;
     }
 
+//    public static function getVideo(string $id): ContentDTO
+//    {
+//        $response = Http::withHeaders([
+//            'Authorization' => 'Bearer ' . env('APIFY_TOKEN'),
+//        ])->post('https://api.apify.com/v2/acts/azzouzana~rumble-all-inclusive-scraper/run-sync-get-dataset-items', [
+//            'startUrls' => ["https://rumble.com/$id"],
+//        ]);
+//
+//        $data = $response->json();
+//        dd($data);
+//    }
+
+    /**
+     * @throws Exception
+     */
+    public static function grabEmbedLink(string $key, int $attempts = 6): array
+    {
+        $curl = curl_init();
+        curl_setopt_array($curl, [
+            CURLOPT_URL => "https://rumble.com/service.php?video=$key&start=0&name=media.embed&included_js_libs=main,web_services,events,error,facebook_events,htmx.org,navigation-state,modal-base,darkmode,random,local_storage,notify,popout,tooltip,rac-ad,context-menus,provider,swipe-slider,ui,ads-north,search-bar,ui_header,main-menu-item-hover,premium-popup&included_css_libs=global",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 2,
+            CURLOPT_FOLLOWLOCATION => true,
+        ]);
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        if (!$response) {
+            if ($attempts > 1) {
+                return self::grabEmbedLink($key, $attempts - 1);
+            }
+            throw new Exception("Failed to fetch embed link after 3 attempts.");
+        }
+
+        $response = json_decode($response, true);
+        $html = $response["html"] ?? '';
+
+        $json = explode('Rumble("play", ', $html)[1] ?? '';
+        $json = explode(');', $json)[0] ?? '';
+        $json = json_decode($json, true);
+
+        return [$json['video'], $attempts];
+    }
+
     public static function search(SearchQueryDTO $searchQueryDTO): array
     {
         $response = Http::withHeaders([
@@ -59,28 +105,61 @@ class Rumble implements iSearchable, iIsPlatform
 
         $items = $response->json();
 
+        // reverse the array to get the channels first
+        $items = array_reverse($items);
+
+        // limit the results to 10
+        $items = array_slice($items, 0, 2);
+
         return Arr::map($items, function ($value) {
-            $resultDTO = new ResultDTO(Platform::Rumble, Kind::Video);
-            $contentDTO = new ContentDTO(Platform::Rumble, Kind::Video, $value['id']);
-            $creatorDTO = new CreatorDTO(Platform::Rumble, $value['creator_id']);
+            if (!isset($value['object_type']) && !isset($value['type'])) {
+                return null;
+            }
 
-            $contentDTO->kind = Kind::Video;
-            $contentDTO->publish_time = Carbon::make($value['publish_time']);
-            $contentDTO->name = $value['name'];
-            $contentDTO->duration = $value['duration'];
-            $contentDTO->thumbnail_url = $value['thumbnail_url'];
-            $contentDTO->tags = array_filter($value['tags'], function ($item) {
-                return $item['name'] ?? false;
-            });
-            $contentDTO->description = $value['description'];
-            $contentDTO->creator_id = $value['creator_id'];
+            $type = $value['object_type'] ?? $value['type'];
 
-            $creatorDTO->name = $value['creator_name'];
-            $creatorDTO->description = $value['creator_description'] ?? "";
-            $creatorDTO->avatar_url = $value['creator_avatar_url'];
+            switch ($type) {
+                case 'video':
+                    $resultDTO = new ResultDTO(Platform::Rumble, Kind::Video);
+                    $key = explode('/', $value['videos'][0]['url'])[4]; // 6nqmlm
+                    try {
+                        $videoId = self::grabEmbedLink($key)[0];
+                    } catch (Exception $e) {
+                        return null;
+                    }
+                    $contentDTO = new ContentDTO(Platform::Rumble, Kind::Video, $videoId);
+                    $creator = $value['by'];
+                    $id = explode('/', $creator['relative_url'])[2]; // AlexJonesTV
+                    $creatorDTO = new CreatorDTO(Platform::Rumble, $id);
+                    $contentDTO->kind = Kind::Video;
+                    $contentDTO->publish_time = Carbon::make($value['upload_date']);
+                    $contentDTO->name = $value['title'];
+                    $contentDTO->duration = $value['duration'];
+                    $contentDTO->thumbnail_url = $value['thumb'];
+                    $contentDTO->description = "This video was uploaded by {{$creator['name']}} on Rumble.";
+                    $contentDTO->creator_id = $id;
 
-            $resultDTO->content = $contentDTO;
-            $resultDTO->creator = $creatorDTO;
+                    $creatorDTO->name = $value['by']['title'];
+                    $creatorDTO->description = "";
+                    $creatorDTO->avatar_url = $value['by']['thumb'];
+
+                    $resultDTO->content = $contentDTO;
+                    $resultDTO->creator = $creatorDTO;
+                  break;
+                case 'channel':
+                    $resultDTO = new ResultDTO(Platform::Rumble, Kind::Creator);
+                    $creatorDTO = new CreatorDTO(Platform::Rumble, $value['slug']);
+                    $creatorDTO->kind = Kind::Creator;
+                    $creatorDTO->name = $value['name'];
+                    $creatorDTO->description = $value['description'];
+                    $creatorDTO->avatar_url = $value['thumb'];
+                    $creatorDTO->banner_url = $value['backsplash'];
+
+                    $resultDTO->creator = $creatorDTO;
+                    break;
+                default:
+                    return null;
+            }
 
             return $resultDTO;
         });
