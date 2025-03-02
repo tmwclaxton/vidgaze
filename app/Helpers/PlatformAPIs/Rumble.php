@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class Rumble implements iSearchable, iIsPlatform
 {
@@ -85,14 +86,20 @@ class Rumble implements iSearchable, iIsPlatform
             throw new Exception("Failed to fetch embed link after 3 attempts.");
         }
 
-        $response = json_decode($response, true);
-        $html = $response["html"] ?? '';
+        try {
+            $response = json_decode($response, true);
+            $html = $response["html"];
 
-        $json = explode('Rumble("play", ', $html)[1] ?? '';
-        $json = explode(');', $json)[0] ?? '';
-        $json = json_decode($json, true);
+            $json = explode('Rumble("play", ', $html)[1] ?? '';
+            $json = explode(');', $json)[0] ?? '';
+            $json = json_decode($json, true);
 
-        return [$json['video'], $attempts];
+            $videoId = $json['video'];
+        } catch (Exception $e) {
+            dd($response, $e);
+        }
+
+        return [$videoId, $attempts];
     }
 
     public static function search(SearchQueryDTO $searchQueryDTO): array
@@ -108,8 +115,18 @@ class Rumble implements iSearchable, iIsPlatform
         // reverse the array to get the channels first
         $items = array_reverse($items);
 
+        // check if item has a type attribute if so, check if it a user, if so remove
+        $items = array_filter($items, function ($item) {
+            if (isset($item['type']) && $item['type'] === 'user') {
+                return false;
+            }
+            return true;
+        });
+
+
         // limit the results to 10
-        $items = array_slice($items, 0, 2);
+        $items = array_slice($items, 0, 10);
+//        dd($items);
 
         return Arr::map($items, function ($value) {
             if (!isset($value['object_type']) && !isset($value['type'])) {
@@ -119,49 +136,74 @@ class Rumble implements iSearchable, iIsPlatform
             $type = $value['object_type'] ?? $value['type'];
 
             switch ($type) {
-                case 'video':
+                case "video":
+                    // setup resultDTO
                     $resultDTO = new ResultDTO(Platform::Rumble, Kind::Video);
-                    $key = explode('/', $value['videos'][0]['url'])[4]; // 6nqmlm
+                    $resultDTO->platform = Platform::Rumble;
+
+                    // setup contentDTO
+                    // $key = explode('/', $value['videos'][0]['url'])[4]; // 6nqmlm
+                    // dd($key,$value);
+                    //
+                    // $videoId = self::grabEmbedLink($key)[0];
+
+                    //   "log" => array:1 [▼
+                    //    "view" => "/l/view...5u0cqw.1jbbowy"
+                    //  ]
+
                     try {
-                        $videoId = self::grabEmbedLink($key)[0];
+                        $view = $value['log']['view'];
+                        $videoId = explode('...', $view)[1];
+                        $videoId = explode('.', $videoId)[0];
+                        $videoId = 'v' . $videoId;
                     } catch (Exception $e) {
+                        Log::info("Failed to get videoId from rumble search result: " . $e->getMessage());
                         return null;
                     }
+
                     $contentDTO = new ContentDTO(Platform::Rumble, Kind::Video, $videoId);
+
+                    // setup creatorDTO
                     $creator = $value['by'];
                     $id = explode('/', $creator['relative_url'])[2]; // AlexJonesTV
                     $creatorDTO = new CreatorDTO(Platform::Rumble, $id);
-                    $contentDTO->kind = Kind::Video;
-                    $contentDTO->publish_time = Carbon::make($value['upload_date']);
-                    $contentDTO->name = $value['title'];
-                    $contentDTO->duration = $value['duration'];
-                    $contentDTO->thumbnail_url = $value['thumb'];
-                    $contentDTO->description = "This video was uploaded by {{$creator['name']}} on Rumble.";
-                    $contentDTO->creator_id = $id;
 
                     $creatorDTO->name = $value['by']['title'];
                     $creatorDTO->description = "";
                     $creatorDTO->avatar_url = $value['by']['thumb'];
 
+                    $contentDTO->kind = Kind::Video;
+                    $contentDTO->publish_time = Carbon::make($value['upload_date']);
+                    $contentDTO->name = $value['title'];
+                    $contentDTO->duration = $value['duration'];
+                    $contentDTO->thumbnail_url = $value['thumb'];
+                    $contentDTO->tags = $value['tags'] ?? [];
+                    $contentDTO->description = "This video was uploaded by {$creator['name']} on Rumble.";
+                    $contentDTO->creator_id = $id;
+
                     $resultDTO->content = $contentDTO;
                     $resultDTO->creator = $creatorDTO;
-                  break;
-                case 'channel':
+                    return $resultDTO;
+                case "channel":
                     $resultDTO = new ResultDTO(Platform::Rumble, Kind::Creator);
+                    $resultDTO->platform = Platform::Rumble;
+
                     $creatorDTO = new CreatorDTO(Platform::Rumble, $value['slug']);
                     $creatorDTO->kind = Kind::Creator;
                     $creatorDTO->name = $value['name'];
                     $creatorDTO->description = $value['description'];
                     $creatorDTO->avatar_url = $value['thumb'];
-                    $creatorDTO->banner_url = $value['backsplash'];
+                    $creatorDTO->banner_url = $value['backsplash'] ?? null;
 
                     $resultDTO->creator = $creatorDTO;
-                    break;
+                    return $resultDTO;
                 default:
-                    return null;
+                    Log::info("Rumble search result type not supported: $type");
             }
 
-            return $resultDTO;
+            return null;
+
+
         });
     }
 
