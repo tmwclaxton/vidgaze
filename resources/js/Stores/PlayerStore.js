@@ -5,6 +5,7 @@ import TwitchPlayer from "@/PlayerScripts/twitch";
 import DailymotionPlayer from "@/PlayerScripts/dailymotion";
 import {loadScript} from "vue-plugin-load-script";
 import {useQueueStore} from "@/Stores/QueueStore";
+import RumblePlayer from "@/PlayerScripts/rumble";
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
@@ -22,7 +23,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 this.isScriptLoaded('YouTube') &&
                 this.isScriptLoaded('Vimeo') &&
                 this.isScriptLoaded('Twitch') &&
-                this.isScriptLoaded('Dailymotion')
+                this.isScriptLoaded('Dailymotion') &&
+                this.isScriptLoaded('Rumble')
             ) {
                 return true;
             } else {
@@ -68,6 +70,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     case 'Dailymotion':
                         console.log(["DM", typeof dailymotion != 'undefined']);
                         return (typeof dailymotion != 'undefined')
+                    case 'Rumble':
+                        return true;
                 }
             } else {
                 switch (platform) {
@@ -79,6 +83,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
                         return Twitch !== undefined;
                     case 'Dailymotion':
                         return dailymotion !== undefined;
+                    case 'Rumble':
+                        return true;
                 }
             }
         },
@@ -163,6 +169,9 @@ export const usePlayerStore = defineStore('PlayerStore', {
                         break;
                     case "Twitch":
                         player = await new TwitchPlayer(object, playerDiv, startTime, autoplay, false, short);
+                        break;
+                    case "Rumble":
+                        player = await new RumblePlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime, short);
                         break;
                     default:
                         console.log("ERROR: preferred source not found");
