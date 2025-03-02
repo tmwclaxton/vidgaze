@@ -96,7 +96,7 @@ class Rumble implements iSearchable, iIsPlatform
 
             $videoId = $json['video'];
         } catch (Exception $e) {
-            dd($response, $e);
+            throw new Exception("Failed to parse embed link after 3 attempts.");
         }
 
         return [$videoId, $attempts];
@@ -113,20 +113,28 @@ class Rumble implements iSearchable, iIsPlatform
         $items = $response->json();
 
         // reverse the array to get the channels first
-        $items = array_reverse($items);
+//        $items = array_reverse($items);
 
+        $channelsWanted = 3;
         // check if item has a type attribute if so, check if it a user, if so remove
-        $items = array_filter($items, function ($item) {
+        $items = array_filter($items, function ($item) use (&$channelsWanted) {
             if (isset($item['type']) && $item['type'] === 'user') {
                 return false;
             }
+            if (isset($item['type']) && $item['type'] === 'channel') {
+                if ($channelsWanted > 0) {
+                    $channelsWanted -= 1;
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
             return true;
         });
 
-
         // limit the results to 10
-        $items = array_slice($items, 0, 10);
-//        dd($items);
+        $items = array_slice($items, 0, 20);
 
         return Arr::map($items, function ($value) {
             if (!isset($value['object_type']) && !isset($value['type'])) {

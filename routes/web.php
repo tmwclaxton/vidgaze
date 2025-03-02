@@ -65,13 +65,13 @@ if (config('app.env') == 'local') {
     });
 }
 
-//Route::get('/rumble-search-test', function () {
-//    $searchQuery = new \App\Helpers\SearchQueryDTO('bruno mars', 20, [Platform::Rumble]);
-//    $rumble = new \App\Helpers\PlatformAPIs\Rumble();
-//    $results = $rumble->search($searchQuery);
-//    dd($results);
-//
-//})->name('rumble.search.test');
+Route::get('/rumble-search-test', function () {
+    $searchQuery = new \App\Helpers\SearchQueryDTO('elites', 20, [Platform::Rumble]);
+    $rumble = new \App\Helpers\PlatformAPIs\Rumble();
+    $results = $rumble->search($searchQuery);
+    dd($results);
+
+})->name('rumble.search.test');
 //
 //Route::get('/rumble-video-test', function () {
 //    $rumble = new \App\Helpers\PlatformAPIs\Rumble();

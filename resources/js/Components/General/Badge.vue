@@ -8,6 +8,7 @@
         <!--<InstagramIcon v-if="source === 'Instagram'" class="w-3 h-3 mr-1.5"/>-->
         <VimeoIcon v-if="source === 'Vimeo'" class="w-3 h-3 mr-1.5" />
         <DailymotionIcon v-if="source === 'Dailymotion'" class="w-3 h-3 mr-1.5" />
+        <RumbleIcon src="/" v-if="source === 'Rumble'" class="w-3 h-3 mr-1.5" />
 
         <p class="line-clamp-1 leading-tight font-bold text-xs" v-text="text"></p>
     </div>
@@ -20,6 +21,7 @@ import FacebookIcon from '~/images/icons/facebook.svg';
 import InstagramIcon from '~/images/icons/instagram.svg';
 import VimeoIcon from '~/images/icons/vimeo.svg';
 import DailymotionIcon from '~/images/icons/dailymotion.svg';
+import RumbleIcon from '~/images/icons/rumble.svg';
 
 import { defineProps, computed } from 'vue';
 
@@ -44,6 +46,7 @@ const sourceClasses = {
     Twitch: 'bg-purple-400 dark:bg-purple-900',
     Dailymotion: 'bg-black dark:bg-black',
     Vimeo: 'bg-blue-500 dark:bg-blue-700',
+    Rumble: 'bg-green-900 dark:bg-green-900',
     TikTok: 'bg-black dark:bg-blue-800',
 };
 

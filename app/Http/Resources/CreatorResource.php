@@ -38,7 +38,7 @@ class CreatorResource extends JsonResource
             }),
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(),
             'updated_at' => Carbon::parse($this->updated_at)->diffForHumans(),
-            'role' => $this->user->role,
+            'role' => $this->user ? $this->user->role : null,
         ];
     }
 }
