@@ -256,10 +256,32 @@ class YouTube implements iSearchable, iIsPlatform
         ])->get("https://api.scraper.tech/feed.php?channel_id=$id");
 
         $items = $response->json()['videos'];
-        $results = self::getVideoOrStream(array_map(fn($item) => $item['videoId'], $items));
 
+        $results = array_map(function($value) use ($id) {
+            $contentDTO = new ContentDTO(
+                Platform::YouTube,
+                Kind::Video,
+                $value['videoId']
+            );
+
+            $contentDTO->creator_id = $id;
+            $contentDTO->name = $value['title'];
+            $contentDTO->description = "Description not available";
+            $contentDTO->duration = Tools::convertColonSeparatedTimeToSeconds($value['length']);
+            // grab time string at end of  "label" => "Giving you guys a chance.... by PewDiePie 2,298,372 views 2 months ago 21 minutes"
+            // i.e. everything after "views"
+            $timeString = substr($value['label'], strpos($value['label'], 'views') + 5);
+            $contentDTO->publish_time = Carbon::parse($timeString);
+            $contentDTO->thumbnail_url = "https://i.ytimg.com/vi/{$value['videoId']}/hqdefault.jpg";
+
+            return $contentDTO;
+        }, $items);
+
+        $lastItem = end($items);
+        $lastDateString = substr($lastItem['label'], strpos($lastItem['label'], 'views') + 5);
+        $lastDate = Carbon::parse($lastDateString);
         return [
-            'next' => end($items) ? Carbon::make(end($items)['publishDate']) : null,
+            'next' => $lastDate,
             'hasNext' => count($items) >= $maxResults,
             'results' => $results,
         ];
