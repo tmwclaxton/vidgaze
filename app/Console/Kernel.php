@@ -18,8 +18,14 @@ class Kernel extends ConsoleKernel
         // this refreshes the twitch category info every 6 hours
         //$schedule->command('refresh:twitch-category-info')->everySixHours();
         //$schedule->command('refresh:streams')->everyMinute();
+
+        // cmds: refresh:top-categories, refresh:twitch-category-info, refresh:streams
         $schedule->command('delete:old_live_viewers')->everyFifteenMinutes();
-        //$schedule->command('refresh:subscriptions')->everyMinute();
+        $schedule->command('refresh:subscriptions')->everyFifteenMinutes();
+        $schedule->command('refresh:top-categories')->everyThirtyMinutes();
+        $schedule->command('refresh:twitch-category-info')->everyThirtyMinutes();
+        $schedule->command('refresh:streams')->everyFiveMinutes();
+
 
     }
 

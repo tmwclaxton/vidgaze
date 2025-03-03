@@ -175,7 +175,11 @@ class Twitch implements iSearchable, iIsPlatform
             $contentDTO->language = $value->language;
             $contentDTO->is_live = true;
             $contentDTO->thumbnail_url = str_replace('{width}x{height}','1920x1080', $value->thumbnail_url);
-            $contentDTO->tags = $value->tags;
+            if ($value->tags === null) {
+                $contentDTO->tags = [];
+            } else {
+                $contentDTO->tags = $value->tags;
+            }
             $contentDTO->category_id = $value->game_id;
 
             $contentDTO->category = $categoryDTO;
