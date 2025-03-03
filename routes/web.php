@@ -65,13 +65,21 @@ if (config('app.env') == 'local') {
     });
 }
 
-//Route::get('/rumble-search-test', function () {
-//    $searchQuery = new \App\Helpers\SearchQueryDTO('elites', 20, [Platform::Rumble]);
-//    $rumble = new \App\Helpers\PlatformAPIs\Rumble();
-//    $results = $rumble->search($searchQuery);
+//Route::get('/search-test', function () {
+//    $platform = new \App\Helpers\PlatformAPIs\YouTube();
+//
+////    $searchChannel = $platform->getCreators(['UC-lHJZR3Gqxm24_Vd_AJ5Yw']);
+////    dd($searchChannel);
+//
+//    $searchVideo = $platform->getVideoOrStream(['FafXBaAEowM']);
+//    dd($searchVideo);
+//
+//
+//    $searchQuery = new \App\Helpers\SearchQueryDTO('pewdiepie', 20, [$platform->getPlatform()]);
+//    $results = $platform->searchVideos($searchQuery);
 //    dd($results);
 //
-//})->name('rumble.search.test');
+//})->name('search.test');
 //
 //Route::get('/rumble-video-test', function () {
 //    $rumble = new \App\Helpers\PlatformAPIs\Rumble();

@@ -214,11 +214,10 @@ class YouTube implements iSearchable, iIsPlatform
                 $contentDTO->publish_time = Carbon::createFromTimestamp(0);
             }
 
-            dd($video);
-            try {
-                $contentDTO->thumbnail_url = $video['thumbnails'][0]['url']; // Assuming first thumbnail
-            } catch (\Exception $e) {
-                $contentDTO->thumbnail_url = null;
+            if (isset($video['thumbnails'][0]['url'])) {
+                $contentDTO->thumbnail_url = $video['thumbnails'][0]['url'];
+            } else {
+                $contentDTO->thumbnail_url = "https://i.ytimg.com/vi/{$video['videoId']}/hqdefault.jpg";
             }
 
             if($kind == Kind::Stream){
