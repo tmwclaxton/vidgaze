@@ -149,16 +149,6 @@ class Rumble implements iSearchable, iIsPlatform
                     $resultDTO = new ResultDTO(Platform::Rumble, Kind::Video);
                     $resultDTO->platform = Platform::Rumble;
 
-                    // setup contentDTO
-                    // $key = explode('/', $value['videos'][0]['url'])[4]; // 6nqmlm
-                    // dd($key,$value);
-                    //
-                    // $videoId = self::grabEmbedLink($key)[0];
-
-                    //   "log" => array:1 [▼
-                    //    "view" => "/l/view...5u0cqw.1jbbowy"
-                    //  ]
-
                     try {
                         $view = $value['log']['view'];
                         $videoId = explode('...', $view)[1];
