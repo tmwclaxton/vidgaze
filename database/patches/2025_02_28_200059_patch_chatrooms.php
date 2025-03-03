@@ -33,7 +33,7 @@ return new class extends Migration
             ],
             [
                 'name' => 'Pol',
-                'description' => 'Welcome to the Pol chatroom'
+                'description' => 'Welcome to the politics chatroom'
             ],
 
         ];
