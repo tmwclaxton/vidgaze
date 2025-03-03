@@ -15,11 +15,12 @@ Route::prefix('creator')->name('creator.')->group(function () {
     // interaction routes
     Route::middleware(['throttle:60,1', 'auth:sanctum'])->group(function () {
         // toggle featured creator
+        // Moderator::class
+        Route::middleware(['auth:sanctum', Moderator::class])->post('/feature', [CreatorApiController::class, 'toggleFeatured'])
+            ->name('feature.toggle');
 
         // toggle featured creator
-        Route::middleware(['auth:sanctum', Moderator::class])->group(function () {
-            Route::post('/feature', [CreatorApiController::class, 'toggleFeatured'])
-                ->name('feature.toggle');
+        Route::middleware(['auth:sanctum'])->group(function () {
 
             //update creator
             Route::patch('/update', [CreatorApiController::class, 'update'])
@@ -38,7 +39,7 @@ Route::prefix('creator')->name('creator.')->group(function () {
                 ->name('disinterest.toggle');
 
             //this lets users subscribe and unsubscribe from a channel
-            Route::post('/{channelId}/subscribe', [CreatorInteractionApiController::class, 'toggleSubscription'])
+            Route::post('/{channelId}/subscribeToggle', [CreatorInteractionApiController::class, 'toggleSubscription'])
                 ->name('subscription.toggle');
 
             Route::post('/{channelId}/report', [CreatorInteractionApiController::class, 'toggleReport'])
