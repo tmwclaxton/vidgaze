@@ -6,6 +6,7 @@ use App\Enums\Platform;
 use App\Helpers\ContentDTO;
 use App\Helpers\ImageCheck;
 use App\Helpers\PlatformAPIs\Dailymotion;
+use App\Helpers\PlatformAPIs\Rumble;
 use App\Helpers\PlatformAPIs\Vimeo;
 use App\Helpers\PlatformAPIs\YouTube;
 use App\Helpers\ResultDTO;
@@ -93,15 +94,6 @@ class CreatorApiController extends Controller
      */
     public function toggleFeatured(Request $request)
     {
-
-        // check token can admin
-        if (!Auth::user()->isAdmin()) {
-            return response()->json([
-                'toastType' => 'warning',
-                'message' => 'You need to be an admin to do that'
-            ]);
-        }
-
         $request->validate([
             'creator_id' => 'required|integer'
         ]);
@@ -148,6 +140,7 @@ class CreatorApiController extends Controller
                 Platform::YouTube => YouTube::getCreatorVideosBeforeDate($source->external_channel_id, $page == null ? null : Carbon::create($page), $perPage),
                 Platform::Dailymotion => Dailymotion::getCreatorVideosBeforeDate($source->external_channel_id, $page == null ? null : Carbon::createFromTimestamp($page), $perPage),
                 Platform::Vimeo => Vimeo::getCreatorVideos($creator->sources()->first()->external_channel_id, $page, $perPage),
+                Platform::Rumble => Rumble::getCreatorVideos($creator->sources()->first()->external_channel_id, $page, $perPage),
                 default => throw new \Exception('Platform not supported')
             };
             $videos = ContentDTO::saveAll($response['results'], $creator->id);

@@ -6,6 +6,8 @@ use App\Enums\Kind;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CommentCollection;
 use App\Http\Resources\CommentResource;
+use App\Models\ChatRoom;
+use App\Models\ChatRoomComment;
 use App\Models\CommentModels\Comment;
 use App\Models\CreatorModels\Creator;
 use App\Models\CreatorModels\CreatorComment;
@@ -28,7 +30,8 @@ class CommentApiController extends Controller
         Kind::Video->value,
         Kind::PodcastEpisode->value,
         Kind::Stream->value,
-        Kind::Creator->value
+        Kind::Creator->value,
+        Kind::Chatroom->value
     ];
 
     protected array $allowedCategories = [
@@ -103,6 +106,9 @@ class CommentApiController extends Controller
                 break;
             case 'creator':
                 $query = Creator::find($item_id)->comments();
+                break;
+            case 'chatroom':
+                $query = Chatroom::find($item_id)->comments();
                 break;
             default:
                 return response()->json(['error' => 'Invalid item type'], 400);
@@ -202,6 +208,11 @@ class CommentApiController extends Controller
                 $item_model = CreatorComment::class;
                 $collumn = 'creator_id';
                 $item = Creator::find($item_id);
+                break;
+            case 'chatroom':
+                $item_model = ChatroomComment::class;
+                $collumn = 'chatroom_id';
+                $item = Chatroom::find($item_id);
                 break;
             default:
                 return response()->json([

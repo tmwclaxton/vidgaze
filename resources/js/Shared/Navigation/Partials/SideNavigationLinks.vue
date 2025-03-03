@@ -19,6 +19,7 @@ import LibraryIcon from '~/images/icons/library.svg';
 import {useNavStore} from "@/Stores/NavStore";
 import {watch} from "vue";
 import {useAuthStore} from "@/Stores/AuthStore";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 const navStore = useNavStore();
 
 //name of the component
@@ -44,34 +45,32 @@ const name = 'ExpandableNavigationLinks';
 
             </ResponsiveNavLink>
         </div>
-        <!--<div class="ld:hid den">-->
-        <!--    <ResponsiveNavLink :href="route('streams.index')" :active="route().current('streams.index')">-->
-        <!--        <StreamIcon class="w-5 h-5 flex-shrink-0"/>-->
-        <!--        <span>Streams</span>-->
-        <!--    </ResponsiveNavLink>-->
-        <!--</div>-->
-        <div class="">
+        <div class="ld:hid den">
+            <ResponsiveNavLink :href="route('streams.index')" :active="route().current('streams.index')">
+                <StreamIcon class="w-5 h-5 flex-shrink-0"/>
+                <span>Streams</span>
+            </ResponsiveNavLink>
+        </div>
+        <div class="" v-if="useAuthStore().areShortsEnabled()">
             <ResponsiveNavLink :href="route('videos.shorts')" :active="route().current('videos.shorts')">
-                <ShortsIcon class="w-5 h-5 flex-shrink-0"/>
+                <font-awesome-icon :icon="['fas', 'fire']" class="w-5 h-5 flex-shrink-0"/>
                 <span>Shorts</span>
             </ResponsiveNavLink>
         </div>
-        <div  v-if="useAuthStore().user == null" class="2xl:hid den ">
-            <ResponsiveNavLink :href="route('podcasts.index')" :active="route().current('podcasts.index')">
-                <PodcastIcon class="w-5 h-5 flex-shrink-0"/>
-                <span>Podcasts</span>
+        <div class="">
+            <ResponsiveNavLink :href="route('chatroom.show')" :active="route().current('chatroom.show')">
+                <font-awesome-icon :icon="['fas', 'message']" class="w-5 h-5 flex-shrink-0"/>
+                <span>Global Chat</span>
             </ResponsiveNavLink>
         </div>
-
-        <div v-if="useAuthStore().user == null" class=" ">
-            <ResponsiveNavLink :href="route('music.index')" :active="route().current('music.index')">
-                <MusicIcon class="w-5 h-5 flex-shrink-0"/>
-                <span>Music</span>
+        <div  class="2xl:hid den ">
+            <ResponsiveNavLink :href="route('equity')" :active="route().current('equity')">
+                <font-awesome-icon :icon="['fas', 'chart-pie']" class="w-5 h-5 flex-shrink-0"/>
+                <span>Equity</span>
             </ResponsiveNavLink>
         </div>
 
         <!--subscriptions-->
-
         <div v-if="useAuthStore().user != null" class="lg:hid den">
             <ResponsiveNavLink :href="route('feed.subscriptions')" :active="route().current('feed.subscriptions')">
                 <SubscriptionsIcon class="w-5 h-5 flex-shrink-0"/>

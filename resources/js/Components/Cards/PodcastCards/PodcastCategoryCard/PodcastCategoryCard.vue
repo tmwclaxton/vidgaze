@@ -4,7 +4,7 @@ const name = 'CategoryCard';
 </script>
 
 <template>
-    <div class="w-full relative rounded  overflow-hidden group cursor-pointer select-none">
+    <div class="w-full relative rounded  overflow-hidden group cursor-pointer ">
         <a href="">
             <img class="w-full block " src="https://e-cdns-images.dzcdn.net/images/misc/48ac252966b54256ecba73cd54e1d100/134x264-000000-80-0-0.jpg">
             <div

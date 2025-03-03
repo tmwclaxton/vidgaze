@@ -101,7 +101,7 @@ const fetchVideos = async () => {
                         class=" cursor-pointer absolute bg-zinc-900 border border-zinc-600 p-2 px-4 bg-opacity-70 rounded
                         top-5 right-5 font-bold gap-x-3 flex flex-row">
                         <font-awesome-icon :icon="['fas', 'share-alt']" class="w-4 text-white my-auto"/>
-                        <p class="hidden md:flex opacity-100 text-white select-none">Share VidGaze Channel</p>
+                        <p class="hidden md:flex opacity-100 text-white ">Share VidGaze Channel</p>
                     </div>
 
             </div>
@@ -122,6 +122,9 @@ const fetchVideos = async () => {
                             <span class="" v-text="channel.subscribers_count"></span>
                             <div class="mt-1 inline-flex space-x-1">
                                 <Badge v-for="source in channel.sources" :key="source" :text="source" :source="source" v-if="channel.sources[0] != null"/>
+                                <Badge v-if="channel.role === 'moderator'" text="Moderator" source="moderator"/>
+                                <Badge v-if="channel.role === 'admin'" text="Admin" source="admin"/>
+
                             </div>
                         </div>
                          <!--this is here for design fix -->
@@ -129,10 +132,11 @@ const fetchVideos = async () => {
                             <div></div>
                         </div>
                         <div
-                            class="flex flex-row gap-x-1 ml-auto mt-2">
+                            class="flex flex-row gap-x-1 ml-auto mt-2" v-if="useAuthStore().user !== null">
                             <StudioLink v-if="useAuthStore().user && useAuthStore().user.creator.slug === channel.slug" text="Customise Channel" :link="route('studio.customise')"/>
                             <StudioLink v-if="useAuthStore().user && useAuthStore().user.creator.slug === channel.slug" text="Manage Videos" :link="route('studio.content')"/>
-                            <FeatureCreatorButton v-if="useAuthStore().admin" :creator_id="channel.id"/>
+                            <FeatureCreatorButton v-if="useAuthStore().admin || useAuthStore().user.role === 'admin' || useAuthStore().user.role === 'moderator'"
+                                                  :creator_id="channel.id"/>
                         </div>
                     </div>
                 </div>

@@ -71,7 +71,7 @@ const copyToClipboard = (text) => {
 };
 </script>
 <template>
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-6 m-5 mx-10 select-none">
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-6 m-5 mx-10 ">
         <p class="flex flex-col items-center group cursor-pointer" @click="copyToClipboard(ShareModalStore.links.vidgaze)">
             <font-awesome-icon :icon="['fas', 'clipboard']"  class="text-3xl group-hover:-translate-y-1 transition ease-in-out duration-200" />
             <span class="text-sm font-medium mt-2">Link</span>

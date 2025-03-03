@@ -82,7 +82,7 @@ watch( () => publishing_time.value, (value) => {
                         :checked="visibility === 'private'"
                         @click="$emit('update:modelVisibility', 'private')"
                     >
-                    <label for="private" class="flex flex-col ml-2 cursor-pointer select-none select-none">
+                    <label for="private" class="flex flex-col ml-2 cursor-pointer  ">
                         <span class="cursor-pointer font-semibold text-sm font-medium text-zinc-900 dark:text-zinc-200">Private</span>
                         <span class="cursor-pointer text-xs">Only you and people you choose can watch your video </span>
                     </label>
@@ -98,7 +98,7 @@ watch( () => publishing_time.value, (value) => {
                         :checked="visibility === 'unlisted'"
                         @click="$emit('update:modelVisibility', 'unlisted')"
                     >
-                    <label for="unlisted" class="flex flex-col ml-2 cursor-pointer select-none">
+                    <label for="unlisted" class="flex flex-col ml-2 cursor-pointer ">
                         <span class="font-semibold text-sm font-medium text-zinc-900 dark:text-zinc-200">Unlisted</span>
                         <span class="text-xs">Anyone with the video link can watch your video</span>
                     </label>
@@ -114,7 +114,7 @@ watch( () => publishing_time.value, (value) => {
                         :checked="visibility === 'public'"
                         @click="$emit('update:modelVisibility', 'public')"
                     >
-                    <label for="public" class="flex flex-col ml-2 cursor-pointer select-none">
+                    <label for="public" class="flex flex-col ml-2 cursor-pointer ">
                         <span  class="font-semibold text-sm font-medium text-zinc-900 dark:text-zinc-200">Public</span>
                         <span class="text-xs">Everyone can watch your video</span>
                     </label>
@@ -133,7 +133,7 @@ watch( () => publishing_time.value, (value) => {
                         >
                         <label
                             for="scheduled"
-                            class="flex flex-col ml-2 cursor-pointer select-none">
+                            class="flex flex-col ml-2 cursor-pointer ">
                             <span class="cursor-pointer font-semibold text-sm font-medium text-zinc-900 dark:text-zinc-200">Schedule</span>
                             <span class="cursor-pointer text-xs">Select a date to make your video  <span class="font-bold">public</span></span>
                         </label>

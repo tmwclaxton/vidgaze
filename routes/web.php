@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Enums\Platform;
 use App\Helpers\JoshPing;
 use App\Http\Controllers\WebControllers\SupportWebController;
 use Illuminate\Support\Facades\Route;
@@ -28,11 +29,15 @@ require __DIR__ . '/WebsiteRoutes/categories.php';
 require __DIR__ . '/WebsiteRoutes/search.php';
 require __DIR__ . '/WebsiteRoutes/music.php';
 require __DIR__ . '/WebsiteRoutes/user.php';
+require __DIR__ . '/WebsiteRoutes/chatrooms.php';
+
+Route::get('/equity', function () {
+    return Inertia::render('Equity');
+})->name('equity');
 
 //admin routes
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('/admin', function () { return Inertia::render('Admin/AdminDashboard'); })->name('admin.dashboard');
-    Route::get('/component-testing', function () { return Inertia::render('Admin/TestComponents'); })->name('component-testing');
 });
 
 // landing route
@@ -60,3 +65,21 @@ if (config('app.env') == 'local') {
     });
 }
 
+//Route::get('/rumble-search-test', function () {
+//    $searchQuery = new \App\Helpers\SearchQueryDTO('elites', 20, [Platform::Rumble]);
+//    $rumble = new \App\Helpers\PlatformAPIs\Rumble();
+//    $results = $rumble->search($searchQuery);
+//    dd($results);
+//
+//})->name('rumble.search.test');
+//
+//Route::get('/rumble-video-test', function () {
+//    $rumble = new \App\Helpers\PlatformAPIs\Rumble();
+//    $results = $rumble->getVideo('v6pv0j6-rumble-trump-putin-plant.html?e9s=rel_v2_ep');
+//})->name('rumble.video.test');
+//
+//Route::get('/get-embed-link', function () {
+//    $rumble = new \App\Helpers\PlatformAPIs\Rumble();
+//    $results = $rumble->grabEmbedLink('6nqmlm');
+//    return $results;
+//})->name('rumble.embed.link');

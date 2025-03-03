@@ -6,8 +6,6 @@ use App\Models\Category;
 use App\Models\CommentModels\Comment;
 use App\Models\CreatorModels\Creator;
 use App\Models\PlaylistModels\Playlist;
-use App\Models\VideoDislike;
-use App\Models\VideoLike;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

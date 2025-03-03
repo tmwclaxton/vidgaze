@@ -171,7 +171,7 @@ const closeMiniPlayer = () => {
         </div>
 
         <!--player-->
-        <div class="flex justify-between select-none" v-bind:id="useQueueStore().refreshMiniPlayer">
+        <div class="flex justify-between " v-bind:id="useQueueStore().refreshMiniPlayer">
                 <div class="player w-full aspect-21/12 overflow-hidden bg-black">
                     <!--this is where the embed gets build inside-->
                     <div v-if="useQueueStore().currentPlayer !== null"
@@ -179,7 +179,7 @@ const closeMiniPlayer = () => {
                     <!--end screen or loading screen-->
                     <div class="w-full h-full bg-black flex flex-row text-white">
                         <div v-if="useQueueStore().items.length > 0 && useQueueStore().currentPlayer && useQueueStore().currentPlayer.endScreen"
-                            class="flex flex-col space-y-1 mx-auto my-auto cursor-pointer select-none"
+                            class="flex flex-col space-y-1 mx-auto my-auto cursor-pointer "
                              @click="queueStore.changeIndex(queueStore.index)">
                             <font-awesome-icon icon="rotate-right" class=" h-5"/>
                             <p class="text-sm font-bold">Restart Video</p>

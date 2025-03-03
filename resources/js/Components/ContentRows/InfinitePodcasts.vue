@@ -62,7 +62,7 @@ const skeletonCount = computed(() => {
     <div class="flex flex-row gap-2 my-4 mb-8">
         <font-awesome-icon :icon="['fas', 'fire']" class="w-6 h-6 my-auto" />
         <!--<font-awesome-icon :icon="['fas', 'otter']"  class="w-6 h-6 my-auto"/>-->
-        <p class="font-bold text-2xl select-none">Popular Podcasts</p>
+        <p class="font-bold text-2xl ">Popular Podcasts</p>
     </div>
 
     <div

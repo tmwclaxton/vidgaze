@@ -97,7 +97,7 @@ const noRepliesText = computed(() => {
 
 
                                 <div class=" flex flex-row items-center">
-                                    <p class="select-none">
+                                    <p class="">
                                         <Link :href="route('channel.show', props.comment.owner.slug)">
 
                                             <span class="text-sm   font-semibold hover:cursor-pointer  leading-tight  "
@@ -125,8 +125,8 @@ const noRepliesText = computed(() => {
                                 <p v-show="!editComment" class=" pr-2 pt-1 break-words   "
                                    v-bind:class="{' line-clamp-3': !isCollapsed}" v-html="props.comment.body"/>
 
-                                <!--<div v-if="props.comment.edited && !editComment" class="select-none">-->
-                                <!--    <span class="text-xs italic text-red-600 dark:text-red-400 font-semibold select-none">-->
+                                <!--<div v-if="props.comment.edited && !editComment" class="">-->
+                                <!--    <span class="text-xs italic text-red-600 dark:text-red-400 font-semibold ">-->
                                 <!--        Edited-->
                                 <!--    </span>-->
                                 <!--</div>-->
@@ -142,7 +142,7 @@ const noRepliesText = computed(() => {
                                         v-text="isCollapsed ? 'Show less' : 'Show more'"
                                 ></button>
 
-                                <div class="  flex flex-row flex-wrap gap-2  font-semibold pt-3 hover:cursor-pointer select-none">
+                                <div class="  flex flex-row flex-wrap gap-2  font-semibold pt-3 hover:cursor-pointer ">
 
 
                                     <TertiaryButton >
@@ -198,13 +198,13 @@ const noRepliesText = computed(() => {
                                      v-if="comment.reply_count > 0" @click="isCollapsed = !isCollapsed">
                                     <span v-if="isCollapsed"
                                           @click="CommentSectionStore.fetchComments('new', comment.id, null, true)"
-                                          class="select-none w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
+                                          class=" w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
                                         <font-awesome-icon :icon="['fas', 'caret-down']"
                                                            class="fill-blue-600 h-3 my-auto mr-2"/>
                                         <p class="font-bold">View {{ noRepliesText }}</p>
                                     </span>
                                     <span v-else
-                                          class="select-none w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
+                                          class=" w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
                                         <font-awesome-icon :icon="['fas', 'caret-up']"
                                                            class="fill-blue-600 h-3 my-auto mr-2"/>
                                             <p class="font-bold">Minimise</p>

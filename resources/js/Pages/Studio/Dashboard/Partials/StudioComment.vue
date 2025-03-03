@@ -29,7 +29,7 @@ const props = defineProps({
 
 
                 <div class=" flex flex-row items-center">
-                    <p class="select-none">
+                    <p class="">
                         <Link :href="route('channel.show', props.comment.owner.slug)" class="pointer-events-auto">
 
                                             <span class="text-sm   font-semibold hover:cursor-pointer  leading-tight  "
@@ -46,7 +46,7 @@ const props = defineProps({
                 <p class=" pr-2 pt-1 break-words   " v-html="props.comment.body"/>
 
 
-                <div class="  flex flex-row flex-wrap gap-2  font-semibold pt-3 hover:cursor-pointer select-none">
+                <div class="  flex flex-row flex-wrap gap-2  font-semibold pt-3 hover:cursor-pointer ">
 
 
                 </div>
