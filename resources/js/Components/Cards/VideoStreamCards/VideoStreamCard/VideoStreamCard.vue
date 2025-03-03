@@ -135,7 +135,7 @@ const dotsIconShow = computed(() => {
                                         <p class="line-clamp-1" v-text="(item.preferred_source)"/>
                                     </div>
 
-                                    <div v-if="item.type = 'video' && item.view_count !== '0 Views'" class=" info-tag dark:info-tag-dark flex flex-row gap-2 items-center align-middle pb-0.5 ">
+                                    <div v-if="item.type = 'video' && item.view_count !== undefined && item.view_count !== '0 Views'" class=" info-tag dark:info-tag-dark flex flex-row gap-2 items-center align-middle pb-0.5 ">
                                         <font-awesome-icon :icon="['fas', 'eye']" class="h-3 my-auto" />
                                         <p class="line-clamp-1" v-text="(item.view_count)"/>
                                     </div>
