@@ -9,6 +9,7 @@ use App\Helpers\PlatformAPIs\AuthYouTube;
 use App\Helpers\PlatformAPIs\Dailymotion;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iCanUpload;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
+use App\Helpers\PlatformAPIs\Rumble;
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\PlatformAPIs\Vimeo;
 use App\Helpers\PlatformAPIs\YouTube;
@@ -94,6 +95,7 @@ enum Platform: string
             Platform::Dailymotion,
             Platform::Vimeo,
             Platform::Twitch,
+            Platform::Rumble,
 //            Platform::Podcasts
         ]);
         if($asEnum){
@@ -113,7 +115,7 @@ enum Platform: string
             Platform::Dailymotion => new Dailymotion,
             Platform::Vimeo => new Vimeo,
             Platform::Twitch => new Twitch,
-//            Platform::Rumble => 'rm',
+            Platform::Rumble => new Rumble,
 //            Platform::Odysee => 'od',
 //            Platform::Podcasts => 'pc',
 //            Platform::SoundCloud => 'sc',

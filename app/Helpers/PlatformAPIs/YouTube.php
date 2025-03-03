@@ -197,7 +197,7 @@ class YouTube implements iSearchable, iIsPlatform
         $results = [];
         while($hasNext)
         {
-            $content = self::getreatorVideosBeforeDate($id,$lastPublishedAt);
+            $content = self::getCreatorVideosBeforeDate($id,$lastPublishedAt);
             $results = array_unique(array_merge($results, $content['results']),SORT_REGULAR);
             $lastPublishedAt = $content['lastPublishedAt'];
             $hasNext = $content['hasNext'];
