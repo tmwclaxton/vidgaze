@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('refresh:top-categories')->everyThirtyMinutes();
         $schedule->command('refresh:twitch-category-info')->everyThirtyMinutes();
         $schedule->command('refresh:streams')->everyFiveMinutes();
-
+        $schedule->command('app:delete-old-streams')->everyThirtyMinutes();
 
     }
 
