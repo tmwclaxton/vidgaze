@@ -2,6 +2,8 @@
 
 namespace App\Models\CommentModels;
 
+use App\Models\ChatRoom;
+use App\Models\ChatRoomComment;
 use App\Models\CreatorModels\Creator;
 use App\Models\CreatorModels\CreatorComment;
 use App\Models\PodcastEpisodeModels\PodcastEpisode;
@@ -48,13 +50,15 @@ class Comment extends Model
                 return $this->hasOneThrough(Stream::class, StreamComment::class, 'comment_id', 'id', 'id', 'stream_id')->first();
             case 'channel':
                 return $this->hasOneThrough(Creator::class, CreatorComment::class, 'comment_id', 'id', 'id', 'creator_id')->first();
+            case 'chatroom':
+                return $this->hasOneThrough(ChatRoom::class, ChatRoomComment::class, 'comment_id', 'id', 'id', 'chatroom_id')->first();
             default:
                 return null;
         }
     }
 
     public function parentItem() {
-        foreach(['video', 'podcast', 'stream', 'channel'] as $objectType) {
+        foreach(['video', 'podcast', 'stream', 'channel', 'chatroom'] as $objectType) {
             if($this->hasOneThroughObject($objectType)) {
                 return [
                     'parentType' => $objectType,
@@ -72,6 +76,8 @@ class Comment extends Model
             'video' => route('watch.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
             'stream' => route('stream.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
             'channel' => route('channel.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
+            'podcast' => route('podcast.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
+            'chatroom' => route('chatroom.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
             default => null,
         };
     }

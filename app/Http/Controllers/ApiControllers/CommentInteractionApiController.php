@@ -16,7 +16,7 @@ class CommentInteractionApiController extends Controller
     // validation rules for the comment interaction
     protected array $rules = [
         'item_id' => 'required|integer',
-        'item_type' => 'required|in:video,podcast,stream',
+        'item_type' => 'required|in:video,podcast,stream,creator,chatroom',
         'comment_id' => 'required|integer',
     ];
 
@@ -134,7 +134,7 @@ class CommentInteractionApiController extends Controller
         $request->validate(
             [
                 'item_id' => 'required|integer',
-                'item_type' => 'required|in:video,podcast,stream',
+                'item_type' => 'required|in:video,podcast,stream,creator,chatroom',
             ]
         );
 
@@ -159,6 +159,13 @@ class CommentInteractionApiController extends Controller
         } else if ($itemType == "podcast") {
             // join comment interactions, comments and podcast comments to get the interactions for the podcast
 
+        } else if ($itemType == "chatroom") {
+            // join comment interactions, comments and chatroom comments to get the interactions for the chatroom
+            $commentInteractions = CommentInteraction::join('comments', 'comments.id', '=', 'comment_interactions.comment_id')
+                ->join('chat_room_comments', 'chat_room_comments.comment_id', '=', 'comments.id')
+                ->where('chat_room_comments.chatroom_id', '=', $itemId)
+                ->where('comment_interactions.creator_id', '=', Auth::user()->creator->id)
+                ->get();
         } else {
             return response()->json([
                 'error' => 'Invalid item type',

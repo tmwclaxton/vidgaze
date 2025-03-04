@@ -25,7 +25,7 @@ class SearchApiController extends Controller
     public static function startQuery(Request $request)
     {
         $searchQuery = $request->q;
-        $query = new SearchQueryDTO($searchQuery, 5);
+        $query = new SearchQueryDTO($searchQuery, 10);
         Search::searchJobs($query);
     }
 
@@ -45,7 +45,7 @@ class SearchApiController extends Controller
             ]);
         }
 
-        $query = new SearchQueryDTO($searchQuery, 5);
+        $query = new SearchQueryDTO($searchQuery, 20);
 
         $results = Search::searchResults($query);
 

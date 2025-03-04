@@ -24,4 +24,16 @@ class Tools
         return $seconds;
     }
 
+    // convert colon separated time to seconds
+    public static function convertColonSeparatedTimeToSeconds($time): int
+    {
+        $time = explode(':', $time);
+        $seconds = 0;
+        $time = array_reverse($time);
+        foreach ($time as $key => $value) {
+            $seconds += $value * (60 ** $key);
+        }
+        return $seconds;
+    }
+
 }

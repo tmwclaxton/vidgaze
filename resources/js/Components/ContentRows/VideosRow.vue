@@ -3,7 +3,7 @@
         <slot>
 
         </slot>
-        <p class="font-bold text-2xl select-none" v-text="title"></p>
+        <p class="font-bold text-2xl " v-text="title"></p>
     </div>
 
     <!--Show a row of popular videos-->

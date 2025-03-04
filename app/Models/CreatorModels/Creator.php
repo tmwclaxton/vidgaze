@@ -4,6 +4,7 @@ namespace App\Models\CreatorModels;
 
 use App\Enums\Platform;
 use App\Helpers\PlatformAPIs\Dailymotion;
+use App\Helpers\PlatformAPIs\Rumble;
 use App\Helpers\PlatformAPIs\Twitch;
 use App\Helpers\PlatformAPIs\Vimeo;
 use App\Helpers\PlatformAPIs\YouTube;
@@ -54,6 +55,7 @@ class Creator extends Model
                 Platform::YouTube->name => YouTube::updateAllChannelContent($source->external_channel_id),
                 Platform::Dailymotion->name => Dailymotion::updateAllChannelContent($source->external_channel_id),
                 Platform::Vimeo->name => Vimeo::updateAllChannelContent($source->external_channel_id),
+                Platform::Rumble->name => Rumble::updateAllChannelContent($source->external_channel_id),
                 default => dd('not in match statement')
             };
         }
@@ -65,6 +67,8 @@ class Creator extends Model
             match($source->source_name){
                 Platform::YouTube->name => YouTube::updateAllChannelContent($source->external_channel_id),
                 Platform::Dailymotion->name => Dailymotion::updateAllChannelContent($source->external_channel_id),
+                Platform::Vimeo->name => Vimeo::updateAllChannelContent($source->external_channel_id),
+                Platform::Rumble->name => Rumble::updateAllChannelContent($source->external_channel_id),
                 default => dd('not in match statement')
             };
         }

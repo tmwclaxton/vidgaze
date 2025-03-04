@@ -19,6 +19,39 @@ export const useAuthStore = defineStore('AuthStore', {
         toggleAwardDropdown() {
             this.showAwardDropdown = !this.showAwardDropdown;
         },
+        toggleShorts() {
+            // axios.patch(route('api.shorts.toggle')).then(response => {
+            //     this.user.shorts_enabled = response.data.shorts_enabled;
+            //     localStorage.setItem('shorts', response.data.shorts_enabled);
+            // }).catch(error => {
+            //     this.handleErrors(error);
+            // });
+            if (this.user === null) {
+                const enabled = localStorage.getItem('shorts') === 'true' ? 'false' : 'true';
+                localStorage.setItem('shorts', enabled);
+            } else {
+                axios.patch(route('api.shorts.toggle')).then(response => {
+                    this.user.shorts_enabled = response.data.shorts_enabled;
+                }).catch(error => {
+                    this.handleErrors(error);
+                });
+            }
+        },
+        areShortsEnabled() {
+            // if not logged in grab from local storage
+            let shortsEnabled = false;
+            if (this.user === null) {
+                if (localStorage.getItem('shorts') === null) {
+                    shortsEnabled = false;
+                } else {
+                    shortsEnabled = localStorage.getItem('shorts') === 'true';
+                }
+                return shortsEnabled;
+            } else {
+                return this.user.shorts_enabled;
+            }
+        },
+
         async getUser(toast = false) {
             const toastStore = useToastStore();
             if (localStorage.getItem('token')) {

@@ -199,7 +199,7 @@ onUnmounted(() => {
                                 <AwardsBar class=" lg:mt-4" v-if="item.object_awards && item.object_awards > 0" :objectAwards="item.object_awards" :type="item.type" />
 
                             </div>
-                            <div v-if="ready && item" class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold select-none">
+                            <div v-if="ready && item" class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold ">
                                 <FeatureCreatorButton v-if="authStore.admin" :creator_id="item.creator.id"/>
 
                                 <TertiaryButton v-if="item.type === 'video'">

@@ -72,7 +72,7 @@ onMounted(() => {
         <!--number of comments and order by input (should only be visible when over 5 comments)-->
         <div class="grid  grid-cols-2">
 
-            <p class="  select-none text-base font-bold" v-text="CommentSectionStore.commentCount"/>
+            <p class="   text-base font-bold" v-text="CommentSectionStore.commentCount"/>
 
             <SelectInput class=" ml-auto w-40"
                           :modelValue="'default'"
@@ -91,16 +91,19 @@ onMounted(() => {
                     <!--<p class="text-red-500 font-semibold text-center">{{$error}}</p>-->
 
                 </div>
-                <div class="select-none w-full text dark:textDark  text-xs font-semibold opacity-50 text-center mt-5">
-                    This site is protected by reCAPTCHA. Google
-                    <a href="https://policies.google.com/privacy">Privacy Policy</a> and
-                    <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+                <div class=" w-full text dark:textDark  text-xs font-semibold opacity-50 text-center mt-5">
+<!--                    This site is protected by reCAPTCHA. Google-->
+<!--                    <a href="https://policies.google.com/privacy">Privacy Policy</a> and-->
+<!--                    <a href="https://policies.google.com/terms">Terms of Service</a> apply.-->
+
+                <!--- to add images img:https://static.vecteezy.com/system/resources/thumbnails/036/324/708/small/ai-generated-picture-of-a-tiger-walking-in-the-forest-photo.jpg --->
+                       <p>To add an image use this format img:(url) i.e. "img:(www.google.com/logo)"</p>
                 </div>
             </div>
 
             <a v-else v-bind:href="route('login')"
-               class="text dark:textDark select-none text-sm leading-tight my-3 w-full border-b-1 border-zinc-300"><span
-                class="font-semibold select-none"> Log in </span> to comment
+               class="text dark:textDark  text-sm leading-tight my-3 w-full border-b-1 border-zinc-300"><span
+                class="font-semibold "> Log in </span> to comment
             </a>
 
             <div class="flex flex-col w-full mt-5 mb-2" v-if="CommentSectionStore.comments.length > 0">
@@ -108,12 +111,6 @@ onMounted(() => {
                 <Comment v-if="CommentSectionStore.comments.length > 0"
                          v-for="comment in CommentSectionStore.comments.filter(comment => comment.parent_comment_id === null)"
                          :comment="comment" :key="comment.id" :item="props.item" />
-
-                <!--<x-button wire:click="loadMore" name="rect_button"-->
-                <!--          class=" mt-1 w-full generic_button_2">-->
-                <!--    Load More Comments-->
-                <!--</x-button>-->
-                <!--<x-error-message image_url="/images/mascot/ThumbsUp.png" :explore="false" text="Looks like there aren't any comments yet.  Be the first!"/>-->
 
             </div>
 

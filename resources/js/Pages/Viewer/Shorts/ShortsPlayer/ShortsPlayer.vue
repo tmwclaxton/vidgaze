@@ -158,7 +158,7 @@ onUnmounted(() => {
 
 
                 <!--Buttons-->
-                <div v-if="hideCommentsButton" class="flex flex-col gap-4 select-none justify-end text dark:textDark ml-6">
+                <div v-if="hideCommentsButton" class="flex flex-col gap-4  justify-end text dark:textDark ml-6">
 
                     <LikeDislikeButtons v-if="video" :item="video" :orientationVertical="true"/>
 

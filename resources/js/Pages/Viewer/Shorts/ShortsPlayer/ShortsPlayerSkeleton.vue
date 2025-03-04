@@ -32,7 +32,7 @@ const name = 'ShortsPlayerSkeleton';
 
                 </div>
                 <!--Buttons-->
-                <div class="flex flex-col gap-4 select-none justify-end text dark:textDark">
+                <div class="flex flex-col gap-4  justify-end text dark:textDark">
                     <div v-for="n in 4" class="flex flex-col gap-1 p-2 ml-6 cursor-pointer w-14 aspect-square rounded-full bg-zinc-200 dark:bg-zinc-800 animate-pulse ">
                     </div>
                 </div>

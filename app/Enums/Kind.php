@@ -16,6 +16,7 @@ enum Kind : string
     case PodcastEpisode = 'podcast_episode';
     case Album = 'album';
     case Track = 'track';
+    case Chatroom = 'chatroom';
 
 
     public static function fromValue(string | Kind $value) : Kind
@@ -44,6 +45,8 @@ enum Kind : string
                 return self::Album;
             case 'track':
                 return self::Track;
+            case 'chatroom':
+                return self::Chatroom;
             default:
                 throw new InvalidArgumentException('Invalid value for Kind');
         }

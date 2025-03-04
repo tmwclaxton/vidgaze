@@ -60,11 +60,11 @@ const submit = async () => {
         <!--        Sign in with Apple-->
         <!--    </AppleButton>-->
         <!--</div>-->
-        <!--<HorizontalLineText text="or" class="select-none"/>-->
+        <!--<HorizontalLineText text="or" class=""/>-->
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Your Email" class="select-none"/>
+                <InputLabel for="email" value="Your Email" class=""/>
 
                 <TextInput
                     id="email"
@@ -80,7 +80,7 @@ const submit = async () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" class="select-none"/>
+                <InputLabel for="password" value="Password" class=""/>
 
                 <TextInput
                     id="password"

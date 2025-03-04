@@ -56,7 +56,7 @@ watch(() => props.value, () => {
                         id="is_for_kids"
                         type="radio"
                         name="audience"
-                        class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600"
+                        class=" cursor-pointer w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600"
                         value="kids"
                         v-model="audience"
                         :checked="audience === 'kids'"
@@ -72,7 +72,7 @@ watch(() => props.value, () => {
                         id="not_for_kids"
                         type="radio"
                         name="audience"
-                        class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600"
+                        class=" cursor-pointer w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600"
                         value="all"
                         v-model="audience"
                         :checked="audience === 'all'"
@@ -86,7 +86,7 @@ watch(() => props.value, () => {
                 </div>
                 <template v-if="audience !== 'kids'">
                     <div>
-                        <div @click="expand = !expand;" class="select-none flex flex-row cursor-pointer mt-3 mb-1">
+                        <div @click="expand = !expand;" class=" flex flex-row cursor-pointer mt-3 mb-1">
                             <!--<x-icon class="fill w-3 mr-2" name="extend-down"/>-->
                             <font-awesome-icon :icon="['fas', 'chevron-down']" class="fill w-3 mr-2"/>
                             <p class="text-xs font-bold ">Age Restriction (advanced)</p>
@@ -98,7 +98,7 @@ watch(() => props.value, () => {
                                     id="mature"
                                     type="radio"
                                     name="audience"
-                                    class="select-none cursor-pointer w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600"
+                                    class=" cursor-pointer w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 without-ring dark:bg-zinc-700 dark:border-zinc-600"
                                     value="mature"
                                     v-model="audience"
                                     :checked="audience === 'mature'"

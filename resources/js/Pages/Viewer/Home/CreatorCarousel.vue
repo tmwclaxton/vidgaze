@@ -41,14 +41,36 @@ function handleMouseLeave() {
 
 onMounted(() => {
     // if user is logged in, don't show join vidgaze banner
-    if (!useAuthStore().user) {
-        carouselItems.value = [
-            {
-                imgSrc: '/images/banners/join_vidgaze.png',
-                link: route('register')
-            }
-        ];
-    }
+    // if (!useAuthStore().user) {
+    //     carouselItems.value = [
+    //         {
+    //             imgSrc: '/images/banners/join_vidgaze.png',
+    //             link: route('register')
+    //         },
+    //     ];
+    // }
+
+    carouselItems.value = [];
+
+    // concatenate a few more sites
+    carouselItems.value.push(
+        {
+            imgSrc: '/images/banners/VidGaze-Banner.png',
+            link: "/" // TODO: update this link to the direction page later
+        },
+        {
+            imgSrc: '/images/banners/Freedom-Banner.png',
+            link: "/" // TODO: update this link to the freedom tech category page later
+        },
+        {
+            imgSrc: '/images/banners/LAS-Banner.png',
+            link: "https://www.lightningarbitragesolutions.com/"
+        },
+        {
+            imgSrc: '/images/banners/Canvassr-Banner.png',
+            link: "https://www.canvassr.org/"
+        },
+    );
 
     axios.get(route('api.creator.index', {featured: true}))
         .then(response => {
@@ -58,6 +80,9 @@ onMounted(() => {
                     link: route('channel.show', {slug: item.slug})
                 });
             });
+
+            // shuffle everything except the first item
+            carouselItems.value = [carouselItems.value[0], ..._.shuffle(carouselItems.value.slice(1))];
         })
         .catch(error => {
             console.log(error);
@@ -82,7 +107,7 @@ onMounted(() => {
         <div ref="carouselWrapper"
              class="overflow-y-hidden overflow-x-hidden snap-mandatory snap-x  h-full w-full flex flex-row relative transition-all delay-75 duration-700 ease-in-out  opacity-100 point-events-auto" >
             <!-- Item -->
-            <Link class="flex-shrink-0 h-full w-full relative snap-center  "
+            <a class="flex-shrink-0 h-full w-full relative snap-center  "
                  v-for="(item, index) in carouselItems"
                  :key="index"
                  :class="{'    ': activeIndex !== index,'  ': activeIndex === index}"
@@ -91,7 +116,7 @@ onMounted(() => {
                 <img :src="item.imgSrc" class="block w-full h-full max-h-72 cursor-pointer" />
 
                  <!--<div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/50 h-screen w-full"></div>-->
-            </Link>
+            </a>
         </div>
         <!-- Slider controls -->
         <div class="absolute z-30 flex space-x-3 -translate-x-1/2 bottom-5 left-1/2 pointer-events-none cursor-pointer ">

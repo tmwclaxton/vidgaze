@@ -3,6 +3,14 @@
 
 VidGaze is a website and mobile-ready video-streaming app designed to empower content creators and make viewing content from multiple platforms a delightful experience. 
 
+![VideGaze Welcome Page](/readme_resources/cover.png)
+
+## Features
+
+- Watch YouTube, Dailymotion, Vimeo, Twitch, Rumble and more (Odysee on the horizon) all in one place!
+- Upload videos to any platform with a simple multi-uploader form (limited in scope)
+- Cross-platform content managament (limited in scope)
+
 ## How to launch the VidGaze container:
 
 1. Clone the repo
@@ -11,12 +19,6 @@ VidGaze is a website and mobile-ready video-streaming app designed to empower co
 4. Run `sail artisan db:wipe`
 5. Run `sail artisan migrate`
 6. Run `sail artisan migrate --path=database/patches`
-
-## Features
-
-- Watch YouTube, Dailymotion, Vimeo, Odysee (not added), Twitch, Rumble (not added) and more all in one app
-- Upload videos to any platform with a simple multi-uploader form (limited in scope)
-- Cross-platform content managament (limited in scope)
 
 ## Tech
 
@@ -29,11 +31,11 @@ VidGaze uses a number of open source projects to work properly:
 ## How to use?
 
 * Visit https://www.vidgaze.tv
-* Download VidGaze on the Apple App Store or the Google Play Store
+* Download VidGaze on the Apple App Store or the Google Play Store (Coming soon :P)
 
 ## Development
 
-Want to contribute? Great!
+Want to contribute as a developer / moderator / promotor? Great!
 
 Send us an email at vidgaze@gmail.com
 

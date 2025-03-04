@@ -63,7 +63,53 @@ const noRepliesText = computed(() => {
     }
 });
 
+function formatLinksInText(text) {
+    // Match and replace normal URLs (ignore URLs prefixed with "img:" inside ())
+    const urlRegex = /(?<!img:\()[^\s()]*https?:\/\/[^\s()]+/gi;
+    let formattedText = text.replace(urlRegex, (url) => {
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: #1E90FF; text-decoration: underline;">${url}</a>`;
+    });
 
+    const imgRegex = /img:\((https?:\/\/[^\s()]+)\)/gi;
+    formattedText = formattedText.replace(imgRegex, (match, url, imgIndex) => {
+        return `
+        <div id="img-container-${props.comment.id}-${imgIndex}">
+            <button onclick="toggleImage('${props.comment.id}', ${imgIndex})"
+                style="background: #3f363a; padding: 5px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 5px; color: white;">
+                Reveal Image (May be offensive)
+            </button>
+            <img id="img-${props.comment.id}-${imgIndex}" src="${url}"
+                alt="User-provided image"
+                style="max-width: 100%; height: auto; border-radius: 8px; margin-top: 8px; margin-bottom: 8px;
+                max-height: 400px; object-fit: contain; filter: blur(10px); transition: filter 0.3s ease;">
+        </div>
+    `;
+    });
+
+    return formattedText;
+}
+
+// Function to toggle image blur
+window.toggleImage = function (commentId, imgIndex) {
+    const img = document.getElementById(`img-${commentId}-${imgIndex}`);
+    const button = document.querySelector(`#img-container-${commentId}-${imgIndex} button`);
+
+    if (img.style.filter === "blur(10px)") {
+        img.style.filter = "none";
+        button.innerText = "Hide Image";
+    } else {
+        img.style.filter = "blur(10px)";
+        button.innerText = "Reveal Image (May be offensive)";
+    }
+};
+
+
+
+
+
+const formattedBody = computed(() => {
+    return formatLinksInText(props.comment.body);
+});
 
 </script>
 
@@ -97,7 +143,7 @@ const noRepliesText = computed(() => {
 
 
                                 <div class=" flex flex-row items-center">
-                                    <p class="select-none">
+                                    <p class="">
                                         <Link :href="route('channel.show', props.comment.owner.slug)">
 
                                             <span class="text-sm   font-semibold hover:cursor-pointer  leading-tight  "
@@ -122,11 +168,11 @@ const noRepliesText = computed(() => {
 
 
                                 <!--comment body here -->
-                                <p v-show="!editComment" class=" pr-2 pt-1 break-words   "
-                                   v-bind:class="{' line-clamp-3': !isCollapsed}" v-html="props.comment.body"/>
+                                <p v-show="!editComment" class=" pr-2 pt-1 break-words" v-bind:class="{' line-clamp-3': !isCollapsed}" v-html="formattedBody"/>
 
-                                <!--<div v-if="props.comment.edited && !editComment" class="select-none">-->
-                                <!--    <span class="text-xs italic text-red-600 dark:text-red-400 font-semibold select-none">-->
+
+                                <!--<div v-if="props.comment.edited && !editComment" class="">-->
+                                <!--    <span class="text-xs italic text-red-600 dark:text-red-400 font-semibold ">-->
                                 <!--        Edited-->
                                 <!--    </span>-->
                                 <!--</div>-->
@@ -142,7 +188,7 @@ const noRepliesText = computed(() => {
                                         v-text="isCollapsed ? 'Show less' : 'Show more'"
                                 ></button>
 
-                                <div class="  flex flex-row flex-wrap gap-2  font-semibold pt-3 hover:cursor-pointer select-none">
+                                <div class="  flex flex-row flex-wrap gap-2  font-semibold pt-3 hover:cursor-pointer ">
 
 
                                     <TertiaryButton >
@@ -198,13 +244,13 @@ const noRepliesText = computed(() => {
                                      v-if="comment.reply_count > 0" @click="isCollapsed = !isCollapsed">
                                     <span v-if="isCollapsed"
                                           @click="CommentSectionStore.fetchComments('new', comment.id, null, true)"
-                                          class="select-none w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
+                                          class=" w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
                                         <font-awesome-icon :icon="['fas', 'caret-down']"
                                                            class="fill-blue-600 h-3 my-auto mr-2"/>
                                         <p class="font-bold">View {{ noRepliesText }}</p>
                                     </span>
                                     <span v-else
-                                          class="select-none w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
+                                          class=" w-max mt-1 hover:cursor-pointer text-blue-600 dark:text-blue-400 flex justify-start font-semibold pt-2">
                                         <font-awesome-icon :icon="['fas', 'caret-up']"
                                                            class="fill-blue-600 h-3 my-auto mr-2"/>
                                             <p class="font-bold">Minimise</p>

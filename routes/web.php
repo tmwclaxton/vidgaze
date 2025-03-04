@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Enums\Platform;
 use App\Helpers\JoshPing;
 use App\Http\Controllers\WebControllers\SupportWebController;
 use Illuminate\Support\Facades\Route;
@@ -28,11 +29,15 @@ require __DIR__ . '/WebsiteRoutes/categories.php';
 require __DIR__ . '/WebsiteRoutes/search.php';
 require __DIR__ . '/WebsiteRoutes/music.php';
 require __DIR__ . '/WebsiteRoutes/user.php';
+require __DIR__ . '/WebsiteRoutes/chatrooms.php';
+
+Route::get('/equity', function () {
+    return Inertia::render('Equity');
+})->name('equity');
 
 //admin routes
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('/admin', function () { return Inertia::render('Admin/AdminDashboard'); })->name('admin.dashboard');
-    Route::get('/component-testing', function () { return Inertia::render('Admin/TestComponents'); })->name('component-testing');
 });
 
 // landing route
@@ -59,4 +64,26 @@ if (config('app.env') == 'local') {
         return JoshPing::ping();
     });
 }
+
+//Route::get('/search-test', function () {
+//    $platform = new \App\Helpers\PlatformAPIs\YouTube();
+//    $searchQuery = new \App\Helpers\SearchQueryDTO('pewdiepie', 20, [$platform->getPlatform()]);
+//    $results = $platform->search($searchQuery);
+//    dd($results);
+
+//    $searchCreators = $platform->searchCreators($searchQuery);
+//    dd($searchCreators);
+//    $searchChannels = $platform->getCreators(['UC-lHJZR3Gqxm24_Vd_AJ5Yw']);
+//    dd($searchChannels);
+
+//    $searchVideo = $platform->getVideoOrStream(['FafXBaAEowM']);
+//    dd($searchVideo);
+
+//    $getChannel = $platform->getCreatorVideosBeforeDate('UC-lHJZR3Gqxm24_Vd_AJ5Yw');
+//    dd($getChannel);
+
+//    $results = $platform->searchVideos($searchQuery);
+//    dd($results);
+
+//})->name('search.test');
 

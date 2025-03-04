@@ -37,10 +37,10 @@ const name = 'BottomNavBar';
                         <font-awesome-icon :icon="['fas', 'video']" class="w-5 h-5 mx-auto"/>
                         <p class="text-sm text-center font-bold">Videos</p>
                     </Link>
-                    <Link :href="route('streams.index')" class="flex flex-col flex-grow justify-between justify-items-center align-middle ">
-                        <StreamIcon class="w-5 h-5 mx-auto"/>
-                        <p class="  text-sm text-center font-bold">Streams</p>
-                    </Link>
+<!--                    <Link :href="route('streams.index')" class="flex flex-col flex-grow justify-between justify-items-center align-middle ">-->
+<!--                        <StreamIcon class="w-5 h-5 mx-auto"/>-->
+<!--                        <p class="  text-sm text-center font-bold">Streams</p>-->
+<!--                    </Link>-->
                     <!--<Link :href="route('videos.shorts')" class="flex flex-col flex-grow justify-between justify-items-center align-middle ">-->
                     <!--    <font-awesome-icon :icon="['fas', 'fire']" class="w-5 h-5 mx-auto"/>-->
                     <!--    <p class="  text-sm text-center font-bold">Shorts</p>-->

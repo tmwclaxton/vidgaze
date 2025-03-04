@@ -10,7 +10,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <div class="cursor-pointer select-none  w-full  ">
+    <div class="cursor-pointer   w-full  ">
         <div class=" relative  group rounded-full overflow-hidden">
             <img class="w-full aspect-square block    " v-bind:src="creator.avatar_url"/>
             <div class="absolute bg-black rounded bg-opacity-0 group-hover:bg-opacity-40 w-full h-full

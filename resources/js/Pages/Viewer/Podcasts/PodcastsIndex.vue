@@ -59,7 +59,7 @@ export default {
         <!--<div class="flex flex-row gap-2  my-4 mb-8 ">-->
 
         <!--    <font-awesome-icon :icon="['fas', 'burst']" class="my-auto h-6"/>-->
-        <!--    <p class="font-bold text-2xl select-none">Categories</p>-->
+        <!--    <p class="font-bold text-2xl ">Categories</p>-->
         <!--</div>-->
 
         <!--<div class=" grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">-->
@@ -74,7 +74,7 @@ export default {
 
         <!--<div class="flex flex-row gap-2  my-4 mb-8 ">-->
         <!--    <font-awesome-icon :icon="['fas', 'dice']"  class="w-6 h-6 my-auto" />-->
-        <!--    <p class="font-bold text-2xl select-none">Something Different?</p>-->
+        <!--    <p class="font-bold text-2xl ">Something Different?</p>-->
         <!--</div>-->
 
         <!--<div class=" grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">-->

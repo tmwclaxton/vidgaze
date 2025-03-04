@@ -17,7 +17,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
     getters: {
         // comment count iwht pluralization
         commentCount() {
-            return this.comments.length + " Comment" + (this.comments.length != 1 ? 's' : '');
+            return this.comments.length + " Comment" + (this.comments.length !== 1 ? 's' : '');
         }
     },
     actions: {
@@ -101,12 +101,19 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                 return;
             }
 
+            const encodedBody = encodeURIComponent(body);
+
+            // Convert the encoded body to a hexadecimal string
+            const hexBody = Array.from(encodedBody).map(char =>
+                char.charCodeAt(0).toString(16).padStart(2, '0')
+            ).join('');
+
             // make request using ziggy to route name comments.store
             axios.post(route('api.comment.store', {
                 item_id: this.item.id,
                 item_type: this.item.type,
                 parent_comment_id: parent_comment_id,
-                body: body
+                "body": hexBody
             }))
             .then(response => {
                 // Handle successful comment creation
@@ -140,7 +147,14 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
             const shareStore = useShareModalStore();
 
             shareStore.showMenu = true; // show share menu
-            const link = route('watch.show', { slug: this.item.slug, comment: comment.id });
+            let link = null;
+            if (this.item_type === 'chatroom') {
+                link = route('chatroom.show', { chatroom: this.item.id, comment: comment.id });
+            } else {
+                link = route('watch.show', { slug: this.item.slug, comment: comment.id });
+            }
+
+
             const title = "Check out this comment on VidGaze" + this.item.title
             shareStore.getShareLinks(link, title);
         },
@@ -182,11 +196,19 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
         editComment(comment_id, body) {
             const toastStore = useToastStore();
 
+            // encode body
+            const encodedBody = encodeURIComponent(body);
+
+            // Convert the encoded body to a hexadecimal string
+            const hexBody = Array.from(encodedBody).map(char =>
+                char.charCodeAt(0).toString(16).padStart(2, '0')
+            ).join('');
+
             axios.patch(route('api.comment.update', {
                 comment_id: comment_id,
                 item_id: this.item.id,
                 item_type: this.item_type,
-                body: body
+                "body": hexBody
             }))
                 .then(response => {
                     // console.log(response.data);

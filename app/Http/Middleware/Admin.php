@@ -21,11 +21,15 @@ class Admin
         }
         //check if user is admin
         $adminEmails = config('admins.emails');
-        if (in_array($request->user()->email, $adminEmails)) {
+        if (in_array($request->user()->email, $adminEmails) || $request->user()->role === 'admin') {
+            // check if email is verified
+            if (!$request->user()->hasVerifiedEmail()) {
+                return redirect()->route('verification.notice');
+            }
             return $next($request);
         } else {
             //redirect to home with error message
-            return redirect()->route('home')->with('error', 'You are not authorized to view this page.');
+            return redirect()->route('home')->with('error', 'You are not authorised to view this page.');
         }
     }
 }

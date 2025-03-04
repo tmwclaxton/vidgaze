@@ -26,6 +26,8 @@ class UserResource extends JsonResource
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(),
             'updated_at' => Carbon::parse($this->updated_at)->diffForHumans(),
             'creator' => new CreatorResource( $this->creator ),
+            'role' => $this->role,
+            'shorts_enabled' => $this->shorts_enabled,
 
         ];
     }

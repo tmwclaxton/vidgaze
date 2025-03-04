@@ -62,7 +62,7 @@ const dotsIconShow = computed(() => {
     <div :id="'box_' + itemType + '_' + item.id" class="relative group min-h-64 w-full">
         <!--hide content hidden button and cover-->
         <div :id="'hide_' + itemType + '_' + item.id" @click="hideItemToggle" class="w-0 h-0 opacity-0 pointer-events-none " ></div>
-        <div  v-if="hideItem" class="w-full h-full rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex flex-col align-middle justify-center items-center select-none">
+        <div  v-if="hideItem" class="w-full h-full rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex flex-col align-middle justify-center items-center ">
             <p class="text-md font-bold">Content Hidden</p>
             <div  @click="hideItemToggle()" class="text-blue-600 dark:text-blue-400 font-semibold cursor-pointer">
                 Show
@@ -135,7 +135,7 @@ const dotsIconShow = computed(() => {
                                         <p class="line-clamp-1" v-text="(item.preferred_source)"/>
                                     </div>
 
-                                    <div v-if="item.type = 'video' && item.view_count !== '0 Views'" class=" info-tag dark:info-tag-dark flex flex-row gap-2 items-center align-middle pb-0.5 ">
+                                    <div v-if="item.type = 'video' && item.view_count !== undefined && item.view_count !== '0 Views'" class=" info-tag dark:info-tag-dark flex flex-row gap-2 items-center align-middle pb-0.5 ">
                                         <font-awesome-icon :icon="['fas', 'eye']" class="h-3 my-auto" />
                                         <p class="line-clamp-1" v-text="(item.view_count)"/>
                                     </div>

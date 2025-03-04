@@ -79,7 +79,7 @@ watch(mode, () => {
         </div>
         <div v-if="suggestions && suggestions.length > 0" @click="loadMore">
             <QuaternaryButton @click="loadMore" class="font-bold rounded-sm text-sm py-2.5 mb-2 w-full shine px-0">
-                <p  class="text-center select-none">Load More Videos</p>
+                <p  class="text-center ">Load More Videos</p>
             </QuaternaryButton>
         </div>
     </div>

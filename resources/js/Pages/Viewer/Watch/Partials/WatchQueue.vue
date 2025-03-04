@@ -51,7 +51,7 @@ const closeMiniPlayer = () => {
     <consistent-content-holder v-if="useQueueStore().items.length > 0">
         <div class="flex flex-row justify-between border-b border-zinc-200 dark:border-zinc-700">
             <div class="flex-col mb-1  ">
-                <div class="p-2 generic-background select-none  dark:bg-zinc-900">
+                <div class="p-2 generic-background   dark:bg-zinc-900">
 
                     <Link v-if="useQueueStore().playlist" :href="route('playlist.show', {slug: useQueueStore().playlist.slug})">
                         <p class="font-bold text-2xl" v-text="useQueueStore().playlist.name"></p>
