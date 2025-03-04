@@ -96,7 +96,7 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
         async getCategories(per_page = 10, category_ids = null, ensure_details = false) {
             // change ensure_details to 1 or 0
             ensure_details = ensure_details ? 1 : 0;
-            const response = await axios.get(route('api.category.index'),  {
+            const response = await axios.get(route('api.category.index.streams'),  {
                 params: {
                     per_page: per_page,
                     category_ids,

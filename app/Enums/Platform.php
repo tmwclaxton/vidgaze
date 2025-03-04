@@ -30,6 +30,8 @@ enum Platform: string
     case Spotify = 'spotify';
     case Instagram = 'instagram';
 
+    const Facebook = 'facebook';
+
     public static function fromValue(string $value) : Platform
     {
         return match ($value) {
@@ -44,6 +46,7 @@ enum Platform: string
             'soundcloud' => self::SoundCloud,
             'spotify' => self::Spotify,
             'instagram' => self::Instagram,
+            'facebook' => self::Facebook,
             default => throw new InvalidArgumentException('Invalid value for Platform'),
         };
     }
@@ -62,6 +65,7 @@ enum Platform: string
             Platform::SoundCloud => 'sc',
             Platform::Spotify => 'sp',
             Platform::Instagram => 'ig',
+            Platform::Facebook => 'fb',
         };
     }
 
@@ -79,6 +83,7 @@ enum Platform: string
             Platform::SoundCloud => 'soundcloud_category_id',
             Platform::Spotify => 'spotify_category_id',
             Platform::Instagram => 'instagram_category_id',
+            Platform::Facebook => 'facebook_category_id',
         };
     }
 
@@ -96,6 +101,7 @@ enum Platform: string
             Platform::Vimeo,
             Platform::Twitch,
             Platform::Rumble,
+//            Platform::Facebook,
 //            Platform::Podcasts
         ]);
         if($asEnum){
@@ -121,6 +127,7 @@ enum Platform: string
 //            Platform::SoundCloud => 'sc',
 //            Platform::Spotify => 'sp',
 //            Platform::Instagram => 'ig',
+//            Platform::Facebook => 'fb',
         };
     }
 

@@ -13,6 +13,11 @@ import VideosRow from "@/Components/ContentRows/VideosRow.vue";
 import InfiniteVideos from "@/Components/ContentRows/InfiniteVideos.vue";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 import {useAuthStore} from "@/Stores/AuthStore";
+import RumbleIcon from '~/images/icons/rumble.svg';
+import VimeoIcon from '~/images/icons/vimeo.svg';
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+
+
 const contentRoutesStore = useContentRoutesStore();
 
 const trending_videos = ref([]);
@@ -88,13 +93,40 @@ const fetchVideos = async (videoArray) => {
 
         <ConsistentPadding class="-mt-4">
 
-            <VideosRow :videos="trending_videos" title="Trending Videos">
-                <font-awesome-icon :icon="['fas', 'burst']" class="my-auto h-6"/>
-            </VideosRow>
+<!--            <VideosRow :videos="trending_videos" title="Trending Videos">-->
+<!--                <font-awesome-icon :icon="['fas', 'burst']" class="my-auto h-6"/>-->
+<!--            </VideosRow>-->
 
             <!--<TopStreamsRow/>-->
 
+
+
+            <VideosRow :videos="null" title="Vimeo Spotlight">
+                <VimeoIcon class="my-auto h-6"/>
+            </VideosRow>
+
+            <VideosRow :videos="null" title="Hot on Rumble">
+                <RumbleIcon class="my-auto h-6"/>
+            </VideosRow>
+
+            <VideosRow :videos="null" title="Wealth Inequality">
+                <p class="-mt-0.5 text-3xl">
+                    ☭
+                </p>
+            </VideosRow>
+
+            <VideosRow :videos="null" title="Freedom Technology">
+                <font-awesome-icon :icon="['fas', 'microchip']" class="my-auto h-6"/>
+            </VideosRow>
+
             <TopShortsRow v-if="useAuthStore().areShortsEnabled()"/>
+
+
+            <VideosRow :videos="null" title="Top in Music">
+                <font-awesome-icon :icon="['fas', 'music']" class="my-auto h-6"/>
+            </VideosRow>
+
+
 
             <InfiniteVideos :videos="videos" />
 

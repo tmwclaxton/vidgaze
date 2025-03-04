@@ -232,12 +232,12 @@ return new class extends Migration {
                     [
                         'slug' => $category['slug'],
                         'name' => $category['name'],
-                        'description' => $category['description'] ?? '',
-                        'thumbnail_url'=> $category['thumbnail_url'] ?? '',
-                        'youtube_category_id'=> $category['youtube_category_id'] ?? '',
-                        'twitch_category_id'=> $category['twitch_category_id'] ?? '',
-                        'dailymotion_category_id'=> $category['dailymotion_category_id'] ?? '',
-                        'tags_json'=> $category['tags_json'] ?? json_encode([]),
+                        'description' => $category['description'] ?? null,
+                        'thumbnail_url'=> $category['thumbnail_url'] ?? null,
+                        'youtube_category_id'=> $category['youtube_category_id'] ?? null,
+                        'twitch_category_id'=> $category['twitch_category_id'] ?? null,
+                        'dailymotion_category_id'=> $category['dailymotion_category_id'] ?? null,
+                        'tags_json'=> $category['tags_json'] ?? null,
                         'updated_at'=> $category['updated_at'] ?? Carbon::now()->subHours(1)->toDateTimeString()
                     ]
                 );
