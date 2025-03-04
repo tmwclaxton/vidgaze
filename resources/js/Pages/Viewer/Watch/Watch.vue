@@ -196,7 +196,7 @@ onUnmounted(() => {
 
 
                                 </div>
-                                <AwardsBar class=" lg:mt-4" v-if="item.object_awards && item.object_awards > 0" :objectAwards="item.object_awards" :type="item.type" />
+<!--                                <AwardsBar class=" lg:mt-4" v-if="item.object_awards && item.object_awards.length > 0" :objectAwards="item.object_awards" :type="item.type" />-->
 
                             </div>
                             <div v-if="ready && item" class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold ">
@@ -206,10 +206,10 @@ onUnmounted(() => {
                                     <LikeDislikeButtons :item="item" :orientationVertical="false"/>
                                 </TertiaryButton>
 
-                                <div v-if="item.type === 'video'" @click="useAuthStore().toggleAwardDropdown()" class="h-10 flex flex-row cursor-pointer align-middle items-center px-4 bg-zinc-200 dark:bg-zinc-900 rounded-lg">
-                                    <font-awesome-icon class="h-5" :icon="['fas', 'award']"/>
-                                    <p class="pl-2">Award</p>
-                                </div>
+<!--                                <div v-if="item.type === 'video'" @click="useAuthStore().toggleAwardDropdown()" class="h-10 flex flex-row cursor-pointer align-middle items-center px-4 bg-zinc-200 dark:bg-zinc-900 rounded-lg">-->
+<!--                                    <font-awesome-icon class="h-5" :icon="['fas', 'award']"/>-->
+<!--                                    <p class="pl-2">Award</p>-->
+<!--                                </div>-->
 
                                 <div @click="share" class="flex flex-row cursor-pointer h-10  align-middle items-center">
                                     <ShareIcon class="h-5"/>
