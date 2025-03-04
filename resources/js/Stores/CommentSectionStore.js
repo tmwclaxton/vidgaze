@@ -101,12 +101,19 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
                 return;
             }
 
+            const encodedBody = encodeURIComponent(body);
+
+            // Convert the encoded body to a hexadecimal string
+            const hexBody = Array.from(encodedBody).map(char =>
+                char.charCodeAt(0).toString(16).padStart(2, '0')
+            ).join('');
+
             // make request using ziggy to route name comments.store
             axios.post(route('api.comment.store', {
                 item_id: this.item.id,
                 item_type: this.item.type,
                 parent_comment_id: parent_comment_id,
-                body: body
+                "body": hexBody
             }))
             .then(response => {
                 // Handle successful comment creation
@@ -189,11 +196,19 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
         editComment(comment_id, body) {
             const toastStore = useToastStore();
 
+            // encode body
+            const encodedBody = encodeURIComponent(body);
+
+            // Convert the encoded body to a hexadecimal string
+            const hexBody = Array.from(encodedBody).map(char =>
+                char.charCodeAt(0).toString(16).padStart(2, '0')
+            ).join('');
+
             axios.patch(route('api.comment.update', {
                 comment_id: comment_id,
                 item_id: this.item.id,
                 item_type: this.item_type,
-                body: body
+                "body": hexBody
             }))
                 .then(response => {
                     // console.log(response.data);

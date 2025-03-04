@@ -92,9 +92,12 @@ onMounted(() => {
 
                 </div>
                 <div class=" w-full text dark:textDark  text-xs font-semibold opacity-50 text-center mt-5">
-                    This site is protected by reCAPTCHA. Google
-                    <a href="https://policies.google.com/privacy">Privacy Policy</a> and
-                    <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+<!--                    This site is protected by reCAPTCHA. Google-->
+<!--                    <a href="https://policies.google.com/privacy">Privacy Policy</a> and-->
+<!--                    <a href="https://policies.google.com/terms">Terms of Service</a> apply.-->
+
+                <!--- to add images img:https://static.vecteezy.com/system/resources/thumbnails/036/324/708/small/ai-generated-picture-of-a-tiger-walking-in-the-forest-photo.jpg --->
+                       <p>To add an image use this format img:(url) i.e. "img:(www.google.com/logo)"</p>
                 </div>
             </div>
 

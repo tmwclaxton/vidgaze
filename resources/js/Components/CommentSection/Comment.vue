@@ -63,7 +63,54 @@ const noRepliesText = computed(() => {
     }
 });
 
+function formatLinksInText(text) {
+    // Match and replace normal URLs (ignore URLs prefixed with "img:" inside ())
+    const urlRegex = /(?<!img:\()[^\s()]*https?:\/\/[^\s()]+/gi;
+    let formattedText = text.replace(urlRegex, (url) => {
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: #1E90FF; text-decoration: underline;">${url}</a>`;
+    });
 
+    const imgRegex = /img:\((https?:\/\/[^\s()]+)\)/gi;
+    formattedText = formattedText.replace(imgRegex, (match, url, imgIndex) => {
+        return `
+        <div id="img-container-${props.comment.id}-${imgIndex}">
+            <button onclick="toggleImage('${props.comment.id}', ${imgIndex})"
+                style="background: #3f363a; padding: 5px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 5px; color: white;">
+                Reveal Image (May be offensive)
+            </button>
+            <img id="img-${props.comment.id}-${imgIndex}" src="${url}"
+                alt="User-provided image"
+                style="max-width: 100%; height: auto; border-radius: 8px; display: none; margin-top: 8px; margin-bottom: 8px; max-height: 400px; object-fit: contain;">
+        </div>
+    `;
+    });
+
+
+    return formattedText;
+}
+
+
+// Function to toggle image visibility
+window.toggleImage = function (commentId, imgIndex) {
+    const img = document.getElementById(`img-${commentId}-${imgIndex}`);
+    const button = document.querySelector(`#img-container-${commentId}-${imgIndex} button`);
+
+    if (img.style.display === "none") {
+        img.style.display = "block";
+        button.innerText = "Hide Image";
+    } else {
+        img.style.display = "none";
+        button.innerText = "Reveal Image (May be offensive)";
+    }
+};
+
+
+
+
+
+const formattedBody = computed(() => {
+    return formatLinksInText(props.comment.body);
+});
 
 </script>
 
@@ -122,8 +169,8 @@ const noRepliesText = computed(() => {
 
 
                                 <!--comment body here -->
-                                <p v-show="!editComment" class=" pr-2 pt-1 break-words   "
-                                   v-bind:class="{' line-clamp-3': !isCollapsed}" v-html="props.comment.body"/>
+                                <p v-show="!editComment" class=" pr-2 pt-1 break-words" v-bind:class="{' line-clamp-3': !isCollapsed}" v-html="formattedBody"/>
+
 
                                 <!--<div v-if="props.comment.edited && !editComment" class="">-->
                                 <!--    <span class="text-xs italic text-red-600 dark:text-red-400 font-semibold ">-->
