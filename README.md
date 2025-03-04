@@ -7,7 +7,7 @@ VidGaze is a website and mobile-ready video-streaming app designed to empower co
 
 ## Features
 
-- Watch YouTube, Dailymotion, Vimeo, Odysee (not added), Twitch, Rumble (not added) and more all in one app
+- Watch YouTube, Dailymotion, Vimeo, Twitch, Rumble and more (Odysee on the horizon) all in one place!
 - Upload videos to any platform with a simple multi-uploader form (limited in scope)
 - Cross-platform content managament (limited in scope)
 
