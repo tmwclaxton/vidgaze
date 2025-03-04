@@ -67,35 +67,23 @@ if (config('app.env') == 'local') {
 
 //Route::get('/search-test', function () {
 //    $platform = new \App\Helpers\PlatformAPIs\YouTube();
-//
-////    $searchChannels = $platform->getCreators(['UC-lHJZR3Gqxm24_Vd_AJ5Yw']);
-////    dd($searchChannels);
-//
-////    $searchVideo = $platform->getVideoOrStream(['FafXBaAEowM']);
-////    dd($searchVideo);
-//
+//    $searchQuery = new \App\Helpers\SearchQueryDTO('pewdiepie', 20, [$platform->getPlatform()]);
+//    $results = $platform->search($searchQuery);
+//    dd($results);
+
+//    $searchCreators = $platform->searchCreators($searchQuery);
+//    dd($searchCreators);
+//    $searchChannels = $platform->getCreators(['UC-lHJZR3Gqxm24_Vd_AJ5Yw']);
+//    dd($searchChannels);
+
+//    $searchVideo = $platform->getVideoOrStream(['FafXBaAEowM']);
+//    dd($searchVideo);
+
 //    $getChannel = $platform->getCreatorVideosBeforeDate('UC-lHJZR3Gqxm24_Vd_AJ5Yw');
 //    dd($getChannel);
-//
-//    $searchQuery = new \App\Helpers\SearchQueryDTO('pewdiepie', 20, [$platform->getPlatform()]);
+
 //    $results = $platform->searchVideos($searchQuery);
 //    dd($results);
-//
+
 //})->name('search.test');
 
-//Route::get('/colon-test', function () {
-//    $tools = new \App\Helpers\Tools();
-//    $seconds = $tools->convertColonSeparatedTimeToSeconds('05:01');
-//    dd($seconds);
-//})->name('colon.test');
-//
-//Route::get('/rumble-video-test', function () {
-//    $rumble = new \App\Helpers\PlatformAPIs\Rumble();
-//    $results = $rumble->getVideo('v6pv0j6-rumble-trump-putin-plant.html?e9s=rel_v2_ep');
-//})->name('rumble.video.test');
-//
-//Route::get('/get-embed-link', function () {
-//    $rumble = new \App\Helpers\PlatformAPIs\Rumble();
-//    $results = $rumble->grabEmbedLink('6nqmlm');
-//    return $results;
-//})->name('rumble.embed.link');

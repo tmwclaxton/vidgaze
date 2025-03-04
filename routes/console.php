@@ -26,3 +26,9 @@ Artisan::command('inspire', function () {
 // Schedule::command('app:random-awards')
 //     ->description('Give random awards to videos')
 //     ->everyMinute()->withoutOverlapping(1);
+
+Artisan::command('app:clear-logs', function () {
+    $this->comment('Clearing logs...');
+    exec('echo "" > storage/logs/laravel.log');
+    $this->comment('Logs cleared');
+})->purpose('Clear logs');
