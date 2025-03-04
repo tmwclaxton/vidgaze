@@ -56,9 +56,41 @@ class SearchApiController extends Controller
         $playlists = array_key_exists("playlists", $results) ? new PlaylistCollection($results['playlists']) : [];
         $podcasts = array_key_exists("podcasts", $results) ? new PodcastCollection($results['podcasts']) : [];
         // shuffle videos in a repeatable way // we need to shuffle for YouTube API approval
-        if (count($videos) > 0) {
-            $videos = $videos->shuffle(crc32($searchQuery));
+//        if (count($videos) > 0) {
+//            $videos = $videos->shuffle(crc32($searchQuery));
+//        }
+
+        // pattern for videos: 2 yt vids, 3 rumble vids, 2 vimeos, 2 dailymotion, then shuffle the rest in a predictable way
+
+        // iterate through videos and check their preferred_source
+        $yt_vids = [];
+        $rumble_vids = [];
+        $vimeo_vids = [];
+        $dailymotion_vids = [];
+        $other_vids = [];
+
+        foreach ($videos as $video) {
+            if ($video->preferred_source == 'youtube' && count($yt_vids) < 2) {
+                $yt_vids[] = $video;
+            } elseif ($video->preferred_source == 'rumble' && count($rumble_vids) < 3) {
+                $rumble_vids[] = $video;
+            } elseif ($video->preferred_source == 'vimeo' && count($vimeo_vids) < 2) {
+                $vimeo_vids[] = $video;
+            } elseif ($video->preferred_source == 'dailymotion' && count($dailymotion_vids) < 2) {
+                $dailymotion_vids[] = $video;
+            } else {
+                $other_vids[] = $video;
+            }
         }
+
+
+        // shuffle the rest of the videos in a predictable way
+        $other_vids = collect($other_vids)->shuffle(crc32($searchQuery))->toArray();
+
+        // merge all the videos
+        $videos = collect(array_merge($yt_vids, $rumble_vids, $vimeo_vids, $dailymotion_vids, $other_vids));
+
+
 
         // hide important info from the user by using resource collections
         $creators = new CreatorCollection($creators);
