@@ -80,26 +80,25 @@ function formatLinksInText(text) {
             </button>
             <img id="img-${props.comment.id}-${imgIndex}" src="${url}"
                 alt="User-provided image"
-                style="max-width: 100%; height: auto; border-radius: 8px; display: none; margin-top: 8px; margin-bottom: 8px; max-height: 400px; object-fit: contain;">
+                style="max-width: 100%; height: auto; border-radius: 8px; margin-top: 8px; margin-bottom: 8px;
+                max-height: 400px; object-fit: contain; filter: blur(10px); transition: filter 0.3s ease;">
         </div>
     `;
     });
 
-
     return formattedText;
 }
 
-
-// Function to toggle image visibility
+// Function to toggle image blur
 window.toggleImage = function (commentId, imgIndex) {
     const img = document.getElementById(`img-${commentId}-${imgIndex}`);
     const button = document.querySelector(`#img-container-${commentId}-${imgIndex} button`);
 
-    if (img.style.display === "none") {
-        img.style.display = "block";
+    if (img.style.filter === "blur(10px)") {
+        img.style.filter = "none";
         button.innerText = "Hide Image";
     } else {
-        img.style.display = "none";
+        img.style.filter = "blur(10px)";
         button.innerText = "Reveal Image (May be offensive)";
     }
 };
