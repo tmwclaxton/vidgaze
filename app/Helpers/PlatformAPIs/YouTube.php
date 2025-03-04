@@ -106,14 +106,14 @@ class YouTube implements iSearchable, iIsPlatform
         // filter to 3 videos
         $video_ids = array_slice($video_ids, 0, 3);
 
-        $data = self::getVideoOrStream($video_ids);
-
+        $data = self::getVideoOrStream($video_ids,false);
         $results = [];
-        foreach ($data as $video) {
-            $resultDTO = new ResultDTO(Platform::YouTube, Kind::Video);
-            $resultDTO->content = $video;
-            $results[] = $resultDTO;
-        }
+//        foreach ($data as $part) {
+//            $resultDTO = new ResultDTO(Platform::YouTube, Kind::Video);
+//            $resultDTO->content = $video;
+//            $resultDTO->creator =
+//            $results[] = $resultDTO;
+//        }
 
         return $results;
     }
@@ -121,9 +121,15 @@ class YouTube implements iSearchable, iIsPlatform
     // search we need to get both creators and videos using the searchVideos and searchCreators methods
     public static function search(SearchQueryDTO $searchQueryDTO)
     {
+        // to make this work, we need to search for creators and videos separately
 
+        // search concurrently
+        $data = Octane::concurrently([
+            fn() => self::searchCreators($searchQueryDTO),
+            fn() => self::searchVideos($searchQueryDTO),
+        ], 5000);
 
-
+        return array_merge($data[0], $data[1]);
     }
 
 
@@ -229,7 +235,15 @@ class YouTube implements iSearchable, iIsPlatform
             if ($returnJustContentDTO) return $contentDTO;
 
             $resultDTO->kind = $kind;
-            $resultDTO->creator = new CreatorDTO(Platform::YouTube, $video['channelId']);
+            $creatorDTO = new CreatorDTO(Platform::YouTube, $video['channelId']);
+            $channelID = $video['channelId'];
+
+            // make a request to get the creator's data
+            $channel = self::getCreators([$channelID]);
+            $creatorDTO = $channel[0];
+
+            $resultDTO->creator = $creatorDTO;
+
             return $resultDTO;
         }, $videos);
     }
