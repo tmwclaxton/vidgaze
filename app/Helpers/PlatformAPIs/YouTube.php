@@ -254,4 +254,60 @@ class YouTube implements iSearchable, iIsPlatform
         $creatorDTO->language = $data['defaultLanguage'] ?? null;
         return $creatorDTO;
     }
+
+
+    public static function getCreatorVideosBeforeDate(string $id, Carbon $date = null, $maxResults = 50, bool $includeStreams = true, bool $onlyStreams = false): array
+    {
+        if ($maxResults > 50) throw new \Exception('Max results cannot be greater than 50');
+        $yt = new self();
+
+        $response = Http::withHeaders([
+            'Scraper-Key' => $yt->scraperKey,
+        ])->get("https://api.scraper.tech/feed.php?channel_id=$id");
+
+        $items = $response->json()['videos'];
+
+        $results = array_map(function($value) use ($id) {
+            $contentDTO = new ContentDTO(
+                Platform::YouTube,
+                Kind::Video,
+                $value['videoId']
+            );
+
+            $contentDTO->creator_id = $id;
+            $contentDTO->name = $value['title'];
+            $contentDTO->description = "Description not available";
+            $contentDTO->duration = Tools::convertColonSeparatedTimeToSeconds($value['length']);
+            // grab time string at end of  "label" => "Giving you guys a chance.... by PewDiePie 2,298,372 views 2 months ago 21 minutes"
+            // i.e. everything after "views"
+            $timeString = substr($value['label'], strpos($value['label'], 'views') + 5);
+            $contentDTO->publish_time = Carbon::parse($timeString);
+            $contentDTO->thumbnail_url = "https://i.ytimg.com/vi/{$value['videoId']}/hqdefault.jpg";
+
+            return $contentDTO;
+        }, $items);
+
+        $lastItem = end($items);
+        $lastDateString = substr($lastItem['label'], strpos($lastItem['label'], 'views') + 5);
+        $lastDate = Carbon::parse($lastDateString);
+        return [
+            'next' => $lastDate,
+            'hasNext' => count($items) >= $maxResults,
+            'results' => $results,
+        ];
+    }
+
+    public static function getAllCreatorVideos(string $id): array
+    {
+        $hasNext = true;
+        $lastPublishedAt = null;
+        $results = [];
+        while ($hasNext) {
+            $content = self::getCreatorVideosBeforeDate($id, $lastPublishedAt);
+            $results = array_unique(array_merge($results, $content['results']), SORT_REGULAR);
+            $lastPublishedAt = $content['next'];
+            $hasNext = $content['hasNext'];
+        }
+        return $results;
+    }
 }
