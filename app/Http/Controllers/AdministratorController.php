@@ -19,7 +19,7 @@ class AdministratorController extends Controller
     {
         $validated = $request->validate([
             'creator_slug' => 'required|exists:creators,slug',
-            'role' => 'required|in:user,moderator',
+            'role' => 'required|in:user,moderator,admin'
         ]);
         try {
             $creator = Creator::where('slug', $validated['creator_slug'])->firstOrFail();
@@ -40,7 +40,7 @@ class AdministratorController extends Controller
     {
         $page = $request->query('page') ?? 1;
         try {
-            $moderators = User::where('role', 'moderator')->with('creator')->paginate(10, ['*'], 'page', $page);
+            $moderators = User::where('role', 'moderator')->orWhere('role','admin')->with('creator')->paginate(10, ['*'], 'page', $page);
             return response()->json($moderators);
         } catch (\Exception $e) {
             Log::error($e->getMessage());

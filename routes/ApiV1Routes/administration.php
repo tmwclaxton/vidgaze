@@ -2,6 +2,7 @@
 // Administration Routes
 
 use App\Http\Controllers\AdministratorController;
+use App\Http\Controllers\PinController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
@@ -22,6 +23,11 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
 Route::middleware(['auth:sanctum', 'moderator'])->group(function () {
     Route::prefix('moderator')->name('moderator.')->group(function () {
+
+        Route::post('pin_video', [PinController::class, 'pinVideo'])->name('pin_video');
+        Route::post('unpin_video', [PinController::class, 'unpinVideo'])->name('unpin_video');
+
+
     });
 });
 

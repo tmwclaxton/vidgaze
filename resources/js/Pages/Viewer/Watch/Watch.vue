@@ -222,6 +222,12 @@ onUnmounted(() => {
                                     <p class="pl-2">Save</p>
                                 </div>
 
+                                <div v-if="(user.channel.role === 'moderator' || user.channel.role === 'admin')
+                                && item.type === 'video' && authStore.user" @click="togglePlaylistModal()" class="h-10 flex flex-row cursor-pointer align-middle items-center" >
+                                    <font-awesome-icon class="h-5" :icon="['fas', 'map-pin']"/>
+                                    <p class="pl-2">Pin</p>
+                                </div>
+
                                 <div
                                     class="h-10 hidden lg:flex   flex-row cursor-pointer align-middle items-center"
                                     @click="theatre = ! theatre">
