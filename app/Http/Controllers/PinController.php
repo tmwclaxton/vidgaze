@@ -8,23 +8,38 @@ use Illuminate\Http\Request;
 
 class PinController extends Controller
 {
+
+    public function getPinStatus(Request $request): \Illuminate\Http\JsonResponse
+    {
+        // grab video id
+
+        $request->validate([
+            'video_id' => 'required|integer|exists:videos,id'
+        ]);
+
+        $video = Video::find($request->video_id);
+
+        return response()->json([
+            'category_id' => $video->category_id,
+            'pinned' => $video->pinned,
+            'pin_expires_at' => $video->pin_expires_at
+        ]);
+    }
+
     public function pinVideo(Request $request): \Illuminate\Http\JsonResponse
     {
         // grab video id, category id, duration
 
         $request->validate([
             'video_id' => 'required|integer|exists:videos,id',
-            'category_id' => 'required|integer|exists:categories,id',
             'duration' => 'required|integer'
         ]);
 
         $video = Video::find($request->video_id);
-        $category = Category::find($request->category_id);
 
         // set pinned to true, set pin_expires_at to current time + duration
         $video->pinned = true;
         $video->pin_expires_at = now()->addSeconds($request->duration);
-        $video->category_id = $category->id;
 
         $video->save();
 
@@ -35,10 +50,8 @@ class PinController extends Controller
 
     public function unpinVideo(Request $request): \Illuminate\Http\JsonResponse
     {
-        // grab video id
-
         $request->validate([
-            'video_id' => 'required|integer|exists:videos,id'
+            'video_id' => 'required|integer|exists:videos,id',
         ]);
 
         $video = Video::find($request->video_id);
@@ -53,6 +66,7 @@ class PinController extends Controller
             'message' => 'Video unpinned successfully'
         ]);
     }
+
 
     public function resetPinStatuses(): \Illuminate\Http\JsonResponse
     {

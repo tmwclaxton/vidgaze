@@ -15,7 +15,7 @@
                     To do that, I need a way to give you a piece. So, there will be a small nominal fee of
                     <span class="font-semibold text-cyan-600 dark:text-cyan-400">1 XMR</span>, which will be used to fund the project and
                     cover server costs. Once (if ever) we reach <span class="font-semibold text-cyan-600 dark:text-cyan-400">50,000 owners</span>,
-                    this fee will be removed, the servers & database will be relinquished (hopefully into a federated network),
+                    this fee will be removed, the centralised control of the servers & database will be relinquished (hopefully into a federated network),
                     and the project will be <span class="font-semibold ">yours</span> to do with as you please.
                 </p>
 

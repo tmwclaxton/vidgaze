@@ -82,6 +82,15 @@ function togglePlaylistModal()  {
     playlistToggled.value = !playlistToggled.value;
 }
 
+function togglePinModal() {
+    if (props.type !== 'video') {
+        return;
+    }
+    contentModalStore.itemType = item.value.type;
+    contentModalStore.item = item.value;
+    contentModalStore.showPinModal = true;
+}
+
 const share = () => {
     if (showShare.value) {
         shareModalStore.showMenu = false;
@@ -222,8 +231,8 @@ onUnmounted(() => {
                                     <p class="pl-2">Save</p>
                                 </div>
 
-                                <div v-if="(user.channel.role === 'moderator' || user.channel.role === 'admin')
-                                && item.type === 'video' && authStore.user" @click="togglePlaylistModal()" class="h-10 flex flex-row cursor-pointer align-middle items-center" >
+                                <div v-if="authStore.user && (authStore.user.creator.role === 'moderator' || authStore.user.creator.role === 'admin')
+                                && item.type === 'video' && authStore.user" @click="togglePinModal()" class="h-10 flex flex-row cursor-pointer align-middle items-center" >
                                     <font-awesome-icon class="h-5" :icon="['fas', 'map-pin']"/>
                                     <p class="pl-2">Pin</p>
                                 </div>
