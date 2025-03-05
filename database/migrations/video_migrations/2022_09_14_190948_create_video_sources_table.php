@@ -23,8 +23,9 @@ return new class extends Migration
                     Platform::Vimeo->value,
                     Platform::Rumble->value,
                     Platform::Odysee->value,
-                    Platform::Twitch->value]
-            );
+                    Platform::Twitch->value,
+                    Platform::Facebook->value,
+            ]);
             $table->string('external_id');
             $table->timestamps();
             $table->unique(['source_name', 'external_id']);
