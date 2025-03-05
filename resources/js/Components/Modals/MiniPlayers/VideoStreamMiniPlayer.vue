@@ -198,7 +198,7 @@ const closeMiniPlayer = () => {
             <div class="flex flex-row justify-between">
                 <!--video title-->
                 <div class="flex flex-col">
-                    <Link :href="queueStore.items[queueStore.index].type ==='video' ? route('watch.show', {slug: queueStore.items[queueStore.index].slug}) : route('stream.show', {slug: queueStore.items[queueStore.index].slug})"
+                    <Link :href="queueStore.items[queueStore.index].item_type ==='video' ? route('watch.show', {slug: queueStore.items[queueStore.index].slug}) : route('stream.show', {slug: queueStore.items[queueStore.index].slug})"
                         class="text-sm font-semibold text-left" >
                         <p v-text="queueStore.items[queueStore.index].title"></p>
                     </Link>

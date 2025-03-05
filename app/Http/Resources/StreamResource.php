@@ -28,10 +28,10 @@ class StreamResource extends JsonResource
             'description' => $this->description,
             'language' => $this->language,
             'is_live' => $this->is_live ? true : false,
-            'object_awards' => StreamAward::where('stream_id', '=', $this->id)
-                ->groupBy('award_id')
-                ->select('award_id', DB::raw('count(*) as total'))
-                ->get()->sortByDesc('award.coin_price'),
+//            'object_awards' => StreamAward::where('stream_id', '=', $this->id)
+//                ->groupBy('award_id')
+//                ->select('award_id', DB::raw('count(*) as total'))
+//                ->get()->sortByDesc('award.coin_price'),
             'tags' => $this->tags,
             'category' => new CategoryResource($this->category),
             'preferred_source' => capitalisePlatformName($this->preferred_source),
@@ -41,6 +41,7 @@ class StreamResource extends JsonResource
             'creator' => new CreatorResource( $this->creator()->first() ),
             'external_id' => capitalisePlatformName($this->preferred_source) === "Twitch" ? $this->creator()->first()->name : $this->getPreferredSourceID(),
             'type' => 'stream',
+            'item_type' => 'stream',
         ];
     }
 }

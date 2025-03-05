@@ -129,7 +129,7 @@ export default class Player {
                 const viewPoint = await this.getCurrentPosition();
                 this.viewRecordDuration += interval;
                 // check if we have all the data we need to record the view
-                if (!(this.object.id && this.object.type && this.viewRecordDuration && viewPoint)) {
+                if (!(this.object.id && this.object.item_type && this.viewRecordDuration && viewPoint)) {
                     this.isViewRecording = false;
                     clearInterval(this.viewRecordTimer);
                     console.log("missing data to record view: " + this.external_id + ' resetting view record');
@@ -138,7 +138,7 @@ export default class Player {
                     //using ziggy to get the view record route view.listener
                 await axios.post(route('api.view.listener'), {
                     item_id: this.object.id,
-                    type: this.object.type,
+                    type: this.object.item_type,
                     watch_duration: parseInt(this.viewRecordDuration),
                     view_point: parseInt(viewPoint),
                     client_identifier: uuid
