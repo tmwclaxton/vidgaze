@@ -49,6 +49,9 @@ onMounted(async () => {
 
     vimeoPinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Vimeo');
     rumblePinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Rumble');
+    musicPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.music);
+    techPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.tech);
+    wealthPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.wealth);
 });
 
 onUnmounted(() => {
@@ -134,18 +137,18 @@ const fetchVideos = async (videoArray) => {
                 <RumbleIcon class="my-auto h-6"/>
             </VideosRow>
 
-            <VideosRow :videos="null" title="Wealth Inequality">
+            <VideosRow :videos="wealthPinned" title="Wealth Inequality">
                 <img src="/images/monoply.png" class="my-auto h-12 -mt-1"/>
             </VideosRow>
 
-            <VideosRow :videos="null" title="Freedom Technology">
+            <VideosRow :videos="techPinned" title="Freedom Technology">
                 <font-awesome-icon :icon="['fas', 'microchip']" class="my-auto h-6"/>
             </VideosRow>
 
             <TopShortsRow v-if="useAuthStore().areShortsEnabled()"/>
 
 
-            <VideosRow :videos="null" title="Top in Music">
+            <VideosRow :videos="musicPinned" title="Top in Music">
                 <font-awesome-icon :icon="['fas', 'music']" class="my-auto h-6"/>
             </VideosRow>
 

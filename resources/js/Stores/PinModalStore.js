@@ -66,6 +66,14 @@ export const usePinModalStore = defineStore('PinModalStore', {
         },
 
         async addCategoryToVideo() {
+            // check if category is selected
+            if (!this.selectedCategory) {
+                useToastStore().add({
+                    message: 'Category not specified',
+                    type: 'normal',
+                });
+                return;
+            }
 
             await axios.post(route('api.moderator.add_category'), {
                 video_id: this.video_id,

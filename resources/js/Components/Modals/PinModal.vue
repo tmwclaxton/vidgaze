@@ -17,6 +17,7 @@ import {useToastStore} from "@/Stores/ToastStore";
 import CreatePlaylistPartial from "@/Components/Modals/Partials/CreatePlaylistPartial.vue";
 import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
+import DangerButton from "@/Components/Buttons/DangerButton.vue";
 const toastStore =  useToastStore();
 
 onMounted(() => {
@@ -47,6 +48,18 @@ const set = () => {
     pinModalStore.addCategoryToVideo();
 }
 
+const removePin = () => {
+    pinModalStore.unpinVideo();
+}
+
+const removeCategory = () => {
+    pinModalStore.removeCategoryFromVideo();
+}
+
+const removeBoth = () => {
+    pinModalStore.unpinVideo();
+    pinModalStore.removeCategoryFromVideo();
+}
 
 
 </script>
@@ -66,18 +79,19 @@ const set = () => {
 
                 <div class="flex flex-row w-96 border-y-1 border-zinc-300 dark:border-zinc-800 my-1 ">
                     <div class="flex flex-col">
-                        <p class="border-b-2 border-zinc-300 dark:border-zinc-800" v-if="pinModalStore.selectedCategory !== null" v-text="'Category: ' + pinModalStore.selectedCategory.name"/>
+                        <p class="border-b-2 border-zinc-300 dark:border-zinc-800" v-if="pinModalStore.selectedCategory !== null && pinModalStore.selectedCategory !== undefined"
+                           v-text="'Category: ' + pinModalStore.selectedCategory.name"/>
 
                         <div class="h-52 overflow-y-auto  mr-1 pr-2  ">
                             <Option v-if="pinModalStore.categories" class="items-center w-full"
-                                    v-bind:class="{'bg-zinc-100 dark:bg-zinc-800': pinModalStore.selectedCategory !== null && pinModalStore.selectedCategory.id === category.id}"
+                                    v-bind:class="{'bg-zinc-100 dark:bg-zinc-800': pinModalStore.selectedCategory !== null && pinModalStore.selectedCategory !== undefined && pinModalStore.selectedCategory.id === category.id}"
                                     v-for="category in pinModalStore.categories.data" :key="category.id"
                                     @click="pinModalStore.selectedCategory = category">
                                 <!--                        <Checkbox :checked="playlist.videos_present_in_playlist" class="my-auto" :id="'playlist_' + playlist.id" :name="'playlist_' + playlist.id" :value="playlist.id" />-->
 
 
                                 <p v-text="category.name"
-                                   v-bind:class="{'underline ': pinModalStore.selectedCategory !== null && pinModalStore.selectedCategory.id === category.id}"></p>
+                                   v-bind:class="{'underline ': pinModalStore.selectedCategory !== null && pinModalStore.selectedCategory !== undefined && pinModalStore.selectedCategory.id === category.id}"></p>
 
                                 <!--                        <span class="flex-grow"/>-->
                                 <!--                        <font-awesome-icon :icon="['fas', 'lock']" v-if="playlist.visibility === 'private'"/>-->
@@ -97,6 +111,18 @@ const set = () => {
                         <PrimaryButton class="w-max mx-auto mt-2  h-max" @click="set">
                             <p class="mx-auto">Set</p>
                         </PrimaryButton>
+
+                        <DangerButton class="w-max mx-auto mt-2  h-max" @click="removePin" v-if="pinModalStore.pinDetails.pinned">
+                            <p class="mx-auto">Remove Pin</p>
+                        </DangerButton>
+                        <DangerButton class="w-max mx-auto mt-2  h-max" @click="removeCategory" v-if="pinModalStore.pinDetails.category_id !== null">
+                            <p class="mx-auto">Remove Category</p>
+                        </DangerButton>
+                        <DangerButton class="w-max mx-auto mt-2  h-max" @click="removeBoth" v-if="pinModalStore.pinDetails.category_id !== null && pinModalStore.pinDetails.pinned">
+                            <p class="mx-auto">Remove Both</p>
+                        </DangerButton>
+
+
 
                     </div>
                 </div>

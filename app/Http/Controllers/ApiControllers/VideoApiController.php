@@ -234,7 +234,7 @@ class VideoApiController extends Controller
         $request->validate([
             'per_page' => 'integer|min:1|max:50',
 //            'page' => 'integer|min:1',
-            'category_slug' => 'nullable|integer|exists:categories,slug',
+            'category_slug' => 'nullable|string|exists:categories,slug',
             'platform' => 'nullable|string|in:' . implode(',', $this->allowedPlatforms),
         ]);
 
