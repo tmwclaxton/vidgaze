@@ -48,6 +48,7 @@ onMounted(async () => {
     });
 
     vimeoPinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Vimeo');
+    rumblePinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Rumble');
 });
 
 onUnmounted(() => {
@@ -129,7 +130,7 @@ const fetchVideos = async (videoArray) => {
                 <VimeoIcon class="my-auto h-6"/>
             </VideosRow>
 
-            <VideosRow :videos="null" title="Hot on Rumble">
+            <VideosRow :videos="rumblePinned" title="Hot on Rumble">
                 <RumbleIcon class="my-auto h-6"/>
             </VideosRow>
 
