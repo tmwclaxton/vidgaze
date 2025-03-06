@@ -81,6 +81,20 @@ const fetchVideos = async (videoArray) => {
     }
 
 };
+
+const vimeoPinned = ref([]);
+const rumblePinned = ref([]);
+const musicPinned = ref([]);
+const techPinned = ref([]);
+const wealthPinned = ref([]);
+
+const categorySlugs = {
+    'music': 'music',
+    'tech': 'freedom_technology',
+    'wealth': 'wealth_inequality',
+};
+
+
 </script>
 <template>
     <div>

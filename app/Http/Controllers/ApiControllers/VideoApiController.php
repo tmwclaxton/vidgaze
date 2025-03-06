@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ApiControllers;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\VideoCollection;
 use App\Http\Resources\VideoResource;
+use App\Models\Category;
 use App\Models\CreatorModels\CreatorInteraction;
 use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoAward;
@@ -233,9 +234,15 @@ class VideoApiController extends Controller
         $request->validate([
             'per_page' => 'integer|min:1|max:50',
             'page' => 'integer|min:1',
-            'category_id' => 'nullable|integer|exists:categories,id',
+            'category_slug' => 'nullable|integer|exists:categories,slug',
             'platform' => 'nullable|string|in:' . implode(',', $this->allowedPlatforms),
         ]);
+
+        if ($request->category_slug) {
+            $category = Category::where('slug', $request->category_slug)->first();
+        } else {
+            $category = null;
+        }
 
         $per_page = $request->per_page ?? 6;
         $page = $request->page ?? 1;
@@ -245,8 +252,8 @@ class VideoApiController extends Controller
         $query->where('pinned', true);
 
         // Filter by category
-        if ($request->category_id) {
-            $query->where('category_id', $request->category_id);
+        if ($category) {
+            $query->where('category_id', $category->id);
         }
 
         // Filter by video platform
