@@ -65,6 +65,9 @@ class CategoryApiController extends Controller
 
         $query->where('twitch_category_id', '=', null);
 
+        $query->orWhere('slug', '=', 'music');
+
+
         $categories = $query
             ->get();
 

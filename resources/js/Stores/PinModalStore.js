@@ -126,8 +126,27 @@ export const usePinModalStore = defineStore('PinModalStore', {
             this.category_id = null;
             this.duration = 0;
             this.showMenu = false;
-        }
+        },
 
+        async getPinnedVideos(per_page = 10, page = 1, category_slug = null, platform = null) {
+            let pinnedVideos = [];
+            await axios.get(route('api.video.pinned'), {
+                params: {
+                    per_page: per_page,
+                    page: page,
+                    category_slug: category_slug,
+                    platform: platform,
+                }
+            }).then(response => {
+                console.log(response.data);
+                pinnedVideos = response.data.videos.data;
+            }).catch(error => {
+                console.log(error);
+            });
+
+            return pinnedVideos;
+
+        }
 
 
     }

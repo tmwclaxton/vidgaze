@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('refresh:twitch-category-info')->everyThirtyMinutes();
         $schedule->command('refresh:streams')->everyFiveMinutes();
         $schedule->command('app:delete-old-streams')->everyThirtyMinutes();
-
+        $schedule->command('app:get-vimeo-featured-videos')->daily();
     }
 
     /**

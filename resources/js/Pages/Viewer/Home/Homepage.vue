@@ -13,11 +13,12 @@ import VideosRow from "@/Components/ContentRows/VideosRow.vue";
 import InfiniteVideos from "@/Components/ContentRows/InfiniteVideos.vue";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 import {useAuthStore} from "@/Stores/AuthStore";
+import {usePinModalStore} from "@/Stores/PinModalStore";
 import RumbleIcon from '~/images/icons/rumble.svg';
 import VimeoIcon from '~/images/icons/vimeo.svg';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
-
+const pinModalStore = usePinModalStore();
 const contentRoutesStore = useContentRoutesStore();
 
 const trending_videos = ref([]);
@@ -25,12 +26,28 @@ const videos = ref([]);
 const shorts = ref([]);
 const category = ref('');
 
+const vimeoPinned = ref([]);
+const rumblePinned = ref([]);
+const musicPinned = ref([]);
+const techPinned = ref([]);
+const wealthPinned = ref([]);
+
+const categorySlugs = {
+    'music': 'music',
+    'tech': 'freedom_technology',
+    'wealth': 'wealth_inequality',
+};
+
+
+
 onMounted(async () => {
     await fetchTrendingVideos().then(async () => {
         await debouncedFetchVideos(); // call it immediately on mount
 
         window.addEventListener('scroll', handleScroll);
     });
+
+    vimeoPinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Vimeo');
 });
 
 onUnmounted(() => {
@@ -82,17 +99,7 @@ const fetchVideos = async (videoArray) => {
 
 };
 
-const vimeoPinned = ref([]);
-const rumblePinned = ref([]);
-const musicPinned = ref([]);
-const techPinned = ref([]);
-const wealthPinned = ref([]);
 
-const categorySlugs = {
-    'music': 'music',
-    'tech': 'freedom_technology',
-    'wealth': 'wealth_inequality',
-};
 
 
 </script>
@@ -118,7 +125,7 @@ const categorySlugs = {
 
 
 
-            <VideosRow :videos="null" title="Vimeo Spotlight">
+            <VideosRow :videos="vimeoPinned" title="Vimeo Spotlight">
                 <VimeoIcon class="my-auto h-6"/>
             </VideosRow>
 

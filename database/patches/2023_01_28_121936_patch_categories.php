@@ -11,6 +11,11 @@ return new class extends Migration {
     {
         $categories = [
             [
+                'name' => 'VidGaze Picks',
+                'slug' => 'vidgaze_picks',
+                'tags_json' => json_encode(['Recommended','Popular','Trending']),
+            ],
+            [
                 'name' => 'Wealth Inequality',
                 'slug' => 'wealth_inequality',
                 'tags_json' => json_encode(['Late Stage Capitalism','Economics','Socialism', 'Unions', 'Class Struggle']),

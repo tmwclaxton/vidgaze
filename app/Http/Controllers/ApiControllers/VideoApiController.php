@@ -233,7 +233,7 @@ class VideoApiController extends Controller
     public function getPinnedVideos(Request $request) {
         $request->validate([
             'per_page' => 'integer|min:1|max:50',
-            'page' => 'integer|min:1',
+//            'page' => 'integer|min:1',
             'category_slug' => 'nullable|integer|exists:categories,slug',
             'platform' => 'nullable|string|in:' . implode(',', $this->allowedPlatforms),
         ]);
@@ -245,7 +245,7 @@ class VideoApiController extends Controller
         }
 
         $per_page = $request->per_page ?? 6;
-        $page = $request->page ?? 1;
+//        $page = $request->page ?? 1;
 
         $query = Video::query();
 
@@ -262,7 +262,13 @@ class VideoApiController extends Controller
         }
 
         // get the pinned videos
-        $videos = $query->forPage($page, $per_page)->get();
+//        $videos = $query->forPage($page, $per_page)->get();
+
+        // random order
+        $query->inRandomOrder();
+
+        // limit the number of videos
+        $videos = $query->take($per_page)->get();
 
         // return the collection
         $videos = new VideoCollection($videos);
