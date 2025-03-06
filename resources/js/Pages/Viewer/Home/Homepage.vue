@@ -15,6 +15,7 @@ import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 import {useAuthStore} from "@/Stores/AuthStore";
 import RumbleIcon from '~/images/icons/rumble.svg';
 import VimeoIcon from '~/images/icons/vimeo.svg';
+import MonoplyIcon from '~/images/icons/monoply.svg';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 
@@ -110,9 +111,7 @@ const fetchVideos = async (videoArray) => {
             </VideosRow>
 
             <VideosRow :videos="null" title="Wealth Inequality">
-                <p class="-mt-0.5 text-3xl">
-                    ☭
-                </p>
+                <img src="/images/monoply.png" class="my-auto h-12 -mt-1"/>
             </VideosRow>
 
             <VideosRow :videos="null" title="Freedom Technology">

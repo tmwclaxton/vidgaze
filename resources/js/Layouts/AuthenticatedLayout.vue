@@ -14,6 +14,7 @@ import {usePlayerStore} from "@/Stores/PlayerStore";
 import {useAuthStore} from "@/Stores/AuthStore";
 import PlaylistPageModal from "@/Components/Modals/PlaylistPageModal.vue";
 import BottomNavBar from "@/Shared/Navigation/BottomNavBar.vue";
+import PinModal from "@/Components/Modals/PinModal.vue";
 const playerStore = usePlayerStore();
 const authStore = useAuthStore();
 const navStore = useNavStore();
@@ -65,6 +66,7 @@ onMounted(() => {
                     <slot/>
                     <!--Modals we want centered with side bar-->
                     <PlaylistModal/>
+                    <PinModal/>
                     <ShareModel/>
                     <ConfirmModal />
                 </div>

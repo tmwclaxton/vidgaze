@@ -35,12 +35,14 @@ import TitleComponent from "@/Components/General/TitleComponent.vue";
 import ExternalCommentSection from "@/Components/CommentSection/ExternalCommentSection.vue";
 import AwardsBar from "@/Pages/Viewer/Watch/Partials/AwardsBar.vue";
 import AwardsDropdown from "@/Components/Dropdown/AwardsDropdown.vue";
+import {usePinModalStore} from "@/Stores/PinModalStore";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
 const playlistModalStore = usePlaylistModalStore();
 const shareModalStore = useShareModalStore();
 const contentModalStore = useContentModalStore();
+const pinModalStore = usePinModalStore();
 const NavStore = useNavStore();
 const authStore = useAuthStore();
 const name = 'Watch';
@@ -70,6 +72,7 @@ const props = defineProps({
 
 function togglePlaylistModal()  {
     if (props.type !== 'video') {
+        console.log('not a video');
         return;
     }
     playlistModalStore.videoIds = [item.value.id];
@@ -83,12 +86,19 @@ function togglePlaylistModal()  {
 }
 
 function togglePinModal() {
-    if (props.type !== 'video') {
+    console.log('toggling pin modal');
+    if (authStore.user === null) {
+        console.log('not logged in');
         return;
     }
-    contentModalStore.itemType = item.value.type;
-    contentModalStore.item = item.value;
-    contentModalStore.showPinModal = true;
+    if (props.type !== 'video') {
+        console.log('not a video');
+        return;
+    }
+    pinModalStore.showMenu = true;
+    pinModalStore.video_id = item.value.id;
+    pinModalStore.getPinDetails(item.value.id);
+
 }
 
 const share = () => {
@@ -209,7 +219,7 @@ onUnmounted(() => {
 
                             </div>
                             <div v-if="ready && item" class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold ">
-                                <FeatureCreatorButton v-if="authStore.admin" :creator_id="item.creator.id"/>
+                                <FeatureCreatorButton v-if="authStore.user && (authStore.user.creator.role === 'moderator' || authStore.user.creator.role === 'admin')" :creator_id="item.creator.id"/>
 
                                 <TertiaryButton v-if="item.type === 'video'">
                                     <LikeDislikeButtons :item="item" :orientationVertical="false"/>

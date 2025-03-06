@@ -7,6 +7,7 @@ Route::prefix('/category')->name('category.')->middleware('throttle:60,1')->grou
 
 
     Route::get('/grabStreamCategories', [CategoryApiController::class, 'grabStreamCategories'])->name('index.streams');
+    Route::get('/grabVideoCategories', [CategoryApiController::class, 'grabVideoCategories'])->name('index.videos');
     Route::get('/{slug}', [CategoryApiController::class, 'show'])->name('show');
 
 });

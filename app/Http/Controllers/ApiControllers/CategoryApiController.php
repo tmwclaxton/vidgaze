@@ -60,19 +60,10 @@ class CategoryApiController extends Controller
 
     public function grabVideoCategories(Request $request): JsonResponse
     {
-        $request->validate([
-            'per_page' => 'integer|min:1|max:100',
-            'category_ids' => 'string|nullable|regex:/^([0-9]+,)*[0-9]+$/',
-            'ensure_details' => 'boolean|nullable',
-        ]);
-        $per_page = $request->per_page ?? 20;
 
         $query = Category::query();
 
         $query->where('twitch_category_id', '=', null);
-
-
-        $query->take($per_page);
 
         $categories = $query
             ->get();

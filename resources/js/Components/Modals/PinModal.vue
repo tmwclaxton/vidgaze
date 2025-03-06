@@ -1,0 +1,97 @@
+<script setup>
+import TickIcon from '#icons/tick.svg';
+import ClockIcon from '#icons/clock.svg';
+import ShareIcon from '#icons/share.svg';
+import PlaylistIcon from '#icons/add2playlist.svg';
+import ExitIcon from '#icons/exit.svg';
+import Checkbox from "@/Components/Inputs/Checkbox.vue";
+import OptionHolder from "@/Components/Modals/Partials/OptionHolder.vue";
+import Option from "@/Components/Modals/Partials/Option.vue";
+import { ref, onMounted } from 'vue';
+import { vOnClickOutside } from '@vueuse/components';
+import TextInput from "@/Components/Inputs/TextInput.vue";
+import SelectInput from "@/Components/Inputs/SelectInput.vue";
+import {usePinModalStore} from "@/Stores/PinModalStore";
+const pinModalStore = usePinModalStore();
+import {useToastStore} from "@/Stores/ToastStore";
+import CreatePlaylistPartial from "@/Components/Modals/Partials/CreatePlaylistPartial.vue";
+import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
+const toastStore =  useToastStore();
+
+onMounted(() => {
+    pinModalStore.getVideoCategories();
+});
+
+const name = "PinModal";
+
+
+
+const ignoreElRef = ref();
+const onClickOutsideHandler = [
+    (ev) => {
+        // console.log(ev)
+        close();
+    },
+    { ignore: [ignoreElRef] }
+]
+
+const close = () => {
+    if (pinModalStore.showMenu) {
+        pinModalStore.showMenu = false;
+    }
+}
+
+
+
+</script>
+
+
+<template>
+    <div v-if="pinModalStore.showMenu"  class="pointer-events-none z-40 absolute left-1/2 right-1/2 flex-grow h-max w-max flex flex-row justify-center">
+        <div class="pointer-events-none  fixed my-auto inset-y-0 h-max flex">
+            <OptionHolder class="min-w-64  shadow-md h-max mx-auto pointer-events-auto" v-on-click-outside="onClickOutsideHandler" >
+                <!--<div class="w-full flex flex-row p-4  ">-->
+                <div class="flex justify-between px-4 py-2  w-full">
+                    <p class="text-lg my-auto font-semibold ">Pin Video</p>
+                    <ExitIcon class="w-6 aspect-square ml-auto my-auto cursor-pointer" @click="close"/>
+                </div>
+
+                <hr class="">
+
+                <div class="flex flex-row w-96 border-y-1 border-zinc-300 dark:border-zinc-800 my-1">
+                    <div class="h-52 overflow-y-auto border-r-2 mr-1 pr-2border-zinc-200 dark:border-zinc-800">
+                        <Option class="items-center w-full" v-bind:class="{'bg-zinc-100 dark:bg-zinc-800': pinModalStore.category.id === category.id}"
+                                v-for="category in pinModalStore.categories.data"  :key="category.id" @click="pinModalStore.category = category">
+                            <!--                        <Checkbox :checked="playlist.videos_present_in_playlist" class="my-auto" :id="'playlist_' + playlist.id" :name="'playlist_' + playlist.id" :value="playlist.id" />-->
+                            <p v-text="category.name"/>
+                            <!--                        <span class="flex-grow"/>-->
+                            <!--                        <font-awesome-icon :icon="['fas', 'lock']" v-if="playlist.visibility === 'private'"/>-->
+                            <!--                        <font-awesome-icon :icon="['fas', 'earth-americas']" v-if="playlist.visibility === 'public'"/>-->
+                            <!--                        <font-awesome-icon :icon="['fas', 'link']" v-if="playlist.visibility === 'unlisted'"/>-->
+                        </Option>
+                    </div>
+                    <div class="flex flex-col w-52">
+
+                        <div class="flex flex-row gap-x-2">
+                            <p>Duration (seconds)</p>
+                            <TextInput class="w-full h-max" v-model="pinModalStore.duration" label="Duration"
+                                       type="number"
+                                       placeholder="Duration"/>
+                        </div>
+                        <PrimaryButton class="w-max mx-auto mt-2  h-max" @click="pinModalStore.pinVideo">
+                            <p class="mx-auto">Pin</p>
+                        </PrimaryButton>
+
+                    </div>
+                </div>
+
+
+
+            </OptionHolder>
+
+        </div>
+
+    </div>
+</template>
+
