@@ -15,7 +15,6 @@ import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 import {useAuthStore} from "@/Stores/AuthStore";
 import RumbleIcon from '~/images/icons/rumble.svg';
 import VimeoIcon from '~/images/icons/vimeo.svg';
-import MonoplyIcon from '~/images/icons/monoply.svg';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 
@@ -91,6 +90,9 @@ const fetchVideos = async (videoArray) => {
             <div class="flex-grow hidden md:flex">
                 <CreatorCarousel />
             </div>
+<!--            <p class="px-16 mx-auto text-lg text-center w-full font-bold">-->
+<!--                "Just remember to ascribe fully to an ideology is to give up your autonomy"-->
+<!--            </p>-->
 
         <ConsistentPadding class="-mt-4">
 

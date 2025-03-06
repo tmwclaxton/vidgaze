@@ -22,7 +22,7 @@ class PinController extends Controller
         return response()->json([
             'category_id' => $video->category_id,
             'pinned' => $video->pinned,
-            'pin_expires_at' => $video->pin_expires_at
+            'pin_duration' => $video->pin_expires_at ? now()->diffInSeconds($video->pin_expires_at) : null
         ]);
     }
 

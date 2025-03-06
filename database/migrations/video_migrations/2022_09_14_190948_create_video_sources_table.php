@@ -24,7 +24,7 @@ return new class extends Migration
                     Platform::Rumble->value,
                     Platform::Odysee->value,
                     Platform::Twitch->value,
-                    Platform::Facebook->value,
+                    Platform::FaceBook->value
             ]);
             $table->string('external_id');
             $table->timestamps();

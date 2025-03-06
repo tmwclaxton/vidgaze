@@ -34,6 +34,7 @@ class VideoApiController extends Controller
         'YouTube',
         'Dailymotion',
         'Vimeo',
+        'Rumble',
     ];
 
 
@@ -225,6 +226,43 @@ class VideoApiController extends Controller
 
         return response()->json([
             'video' => $videoResource
+        ]);
+    }
+
+    public function getPinnedVideos(Request $request) {
+        $request->validate([
+            'per_page' => 'integer|min:1|max:50',
+            'page' => 'integer|min:1',
+            'category_id' => 'nullable|integer|exists:categories,id',
+            'platform' => 'nullable|string|in:' . implode(',', $this->allowedPlatforms),
+        ]);
+
+        $per_page = $request->per_page ?? 6;
+        $page = $request->page ?? 1;
+
+        $query = Video::query();
+
+        $query->where('pinned', true);
+
+        // Filter by category
+        if ($request->category_id) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        // Filter by video platform
+        if ($request->platform) {
+            $query->where('preferred_source', $request->platform);
+        }
+
+        // get the pinned videos
+        $videos = $query->forPage($page, $per_page)->get();
+
+        // return the collection
+        $videos = new VideoCollection($videos);
+
+        return response()->json([
+            'results' => $videos->count(),
+            'videos' => $videos
         ]);
     }
 

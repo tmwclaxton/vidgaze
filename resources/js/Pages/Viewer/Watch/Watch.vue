@@ -97,7 +97,7 @@ function togglePinModal() {
     }
     pinModalStore.showMenu = true;
     pinModalStore.video_id = item.value.id;
-    pinModalStore.getPinDetails(item.value.id);
+    pinModalStore.getPinDetails();
 
 }
 

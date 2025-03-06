@@ -7,7 +7,6 @@ export const usePinModalStore = defineStore('PinModalStore', {
     state: () => {
         return {
             'video_id': null,
-            'category': null,
             'duration': 172800,
             'categories': [],
             'pinDetails': [],
@@ -31,6 +30,14 @@ export const usePinModalStore = defineStore('PinModalStore', {
                 video_id: this.video_id,
             }).then(response => {
                 this.pinDetails = response.data;
+                // this.category = this.pinDetails.category_id;
+                if (this.categories.data.length > 0) {
+                    console.log(this.categories.data[0].id);
+                    this.selectedCategory = this.categories.data.find(category => category.id === this.pinDetails.category_id);
+                } else {
+                    console.log('No categories');
+                }
+                this.duration = this.pinDetails.pin_duration ? this.pinDetails.pin_duration : 172800;
             }).catch(error => {
                 useToastStore().add({
                     message: error.response.data.message,
@@ -43,6 +50,44 @@ export const usePinModalStore = defineStore('PinModalStore', {
             await axios.post(route('api.moderator.pin_video'), {
                 video_id: this.video_id,
                 duration: this.duration,
+            }).then(response => {
+                useToastStore().add({
+                    message: response.data.message,
+                    type: 'success',
+                });
+                this.showMenu = false;
+                this.reset();
+            }).catch(error => {
+                useToastStore().add({
+                    message: error.response.data.message,
+                    type: 'warning',
+                });
+            });
+        },
+
+        async addCategoryToVideo() {
+
+            await axios.post(route('api.moderator.add_category'), {
+                video_id: this.video_id,
+                category_id: this.selectedCategory.id,
+            }).then(response => {
+                useToastStore().add({
+                    message: response.data.message,
+                    type: 'success',
+                });
+                this.showMenu = false;
+                this.reset();
+            }).catch(error => {
+                useToastStore().add({
+                    message: error.response.data.message,
+                    type: 'warning',
+                });
+            });
+        },
+
+        async removeCategoryFromVideo() {
+            await axios.post(route('api.moderator.remove_category'), {
+                video_id: this.video_id,
             }).then(response => {
                 useToastStore().add({
                     message: response.data.message,
@@ -78,7 +123,7 @@ export const usePinModalStore = defineStore('PinModalStore', {
 
         reset() {
             this.video_id = null;
-            this.category = null;
+            this.category_id = null;
             this.duration = 0;
             this.showMenu = false;
         }

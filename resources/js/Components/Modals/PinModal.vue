@@ -42,6 +42,11 @@ const close = () => {
     }
 }
 
+const set = () => {
+    pinModalStore.pinVideo();
+    pinModalStore.addCategoryToVideo();
+}
+
 
 
 </script>
@@ -59,28 +64,38 @@ const close = () => {
 
                 <hr class="">
 
-                <div class="flex flex-row w-96 border-y-1 border-zinc-300 dark:border-zinc-800 my-1">
-                    <div class="h-52 overflow-y-auto border-r-2 mr-1 pr-2border-zinc-200 dark:border-zinc-800">
-                        <Option class="items-center w-full" v-bind:class="{'bg-zinc-100 dark:bg-zinc-800': pinModalStore.category.id === category.id}"
-                                v-for="category in pinModalStore.categories.data"  :key="category.id" @click="pinModalStore.category = category">
-                            <!--                        <Checkbox :checked="playlist.videos_present_in_playlist" class="my-auto" :id="'playlist_' + playlist.id" :name="'playlist_' + playlist.id" :value="playlist.id" />-->
-                            <p v-text="category.name"/>
-                            <!--                        <span class="flex-grow"/>-->
-                            <!--                        <font-awesome-icon :icon="['fas', 'lock']" v-if="playlist.visibility === 'private'"/>-->
-                            <!--                        <font-awesome-icon :icon="['fas', 'earth-americas']" v-if="playlist.visibility === 'public'"/>-->
-                            <!--                        <font-awesome-icon :icon="['fas', 'link']" v-if="playlist.visibility === 'unlisted'"/>-->
-                        </Option>
+                <div class="flex flex-row w-96 border-y-1 border-zinc-300 dark:border-zinc-800 my-1 ">
+                    <div class="flex flex-col">
+                        <p class="border-b-2 border-zinc-300 dark:border-zinc-800" v-if="pinModalStore.selectedCategory !== null" v-text="'Category: ' + pinModalStore.selectedCategory.name"/>
+
+                        <div class="h-52 overflow-y-auto  mr-1 pr-2  ">
+                            <Option v-if="pinModalStore.categories" class="items-center w-full"
+                                    v-bind:class="{'bg-zinc-100 dark:bg-zinc-800': pinModalStore.selectedCategory !== null && pinModalStore.selectedCategory.id === category.id}"
+                                    v-for="category in pinModalStore.categories.data" :key="category.id"
+                                    @click="pinModalStore.selectedCategory = category">
+                                <!--                        <Checkbox :checked="playlist.videos_present_in_playlist" class="my-auto" :id="'playlist_' + playlist.id" :name="'playlist_' + playlist.id" :value="playlist.id" />-->
+
+
+                                <p v-text="category.name"
+                                   v-bind:class="{'underline ': pinModalStore.selectedCategory !== null && pinModalStore.selectedCategory.id === category.id}"></p>
+
+                                <!--                        <span class="flex-grow"/>-->
+                                <!--                        <font-awesome-icon :icon="['fas', 'lock']" v-if="playlist.visibility === 'private'"/>-->
+                                <!--                        <font-awesome-icon :icon="['fas', 'earth-americas']" v-if="playlist.visibility === 'public'"/>-->
+                                <!--                        <font-awesome-icon :icon="['fas', 'link']" v-if="playlist.visibility === 'unlisted'"/>-->
+                            </Option>
+                        </div>
                     </div>
-                    <div class="flex flex-col w-52">
+                    <div class="flex flex-col w-52 border-zinc-300 dark:border-zinc-800 pl-2 border-l-2">
 
                         <div class="flex flex-row gap-x-2">
-                            <p>Duration (seconds)</p>
+                            <p>Pin Duration (seconds)</p>
                             <TextInput class="w-full h-max" v-model="pinModalStore.duration" label="Duration"
                                        type="number"
                                        placeholder="Duration"/>
                         </div>
-                        <PrimaryButton class="w-max mx-auto mt-2  h-max" @click="pinModalStore.pinVideo">
-                            <p class="mx-auto">Pin</p>
+                        <PrimaryButton class="w-max mx-auto mt-2  h-max" @click="set">
+                            <p class="mx-auto">Set</p>
                         </PrimaryButton>
 
                     </div>
