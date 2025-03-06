@@ -3,7 +3,7 @@
 
 VidGaze is a website and mobile-ready video-streaming app designed to empower content creators and make viewing content from multiple platforms a delightful experience. 
 
-![VideGaze Welcome Page](/readme_resources/cover.png)
+![VideGaze Welcome Page](/public/images/banners/VidGaze-Banner.png)
 
 ## Features
 
