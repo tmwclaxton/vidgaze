@@ -16,6 +16,6 @@ class ChatRoom extends Model
     public function comments(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
     {
         // chatroom -> chatRoomComment -> comments
-        return $this->hasManyThrough(Comment::class, ChatRoomComment::class, 'chatroom_id', 'id', 'id', 'comment_id');
+        return $this->hasManyThrough(Comment::class, ChatRoomComment::class, 'chat_room_id', 'id', 'id', 'comment_id');
     }
 }

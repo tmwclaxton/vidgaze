@@ -163,7 +163,7 @@ class CommentInteractionApiController extends Controller
             // join comment interactions, comments and chatroom comments to get the interactions for the chatroom
             $commentInteractions = CommentInteraction::join('comments', 'comments.id', '=', 'comment_interactions.comment_id')
                 ->join('chat_room_comments', 'chat_room_comments.comment_id', '=', 'comments.id')
-                ->where('chat_room_comments.chatroom_id', '=', $itemId)
+                ->where('chat_room_comments.chat_room_id', '=', $itemId)
                 ->where('comment_interactions.creator_id', '=', Auth::user()->creator->id)
                 ->get();
         } else {

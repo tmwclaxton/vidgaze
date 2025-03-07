@@ -198,27 +198,27 @@ class CommentApiController extends Controller
         switch ($item_type) {
             case 'video':
                 $item_model = VideoComment::class;
-                $collumn = 'video_id';
+                $column = 'video_id';
                 $item = Video::find($item_id);
                 break;
             case 'stream':
                 $item_model = StreamComment::class;
-                $collumn = 'stream_id';
+                $column = 'stream_id';
                 $item = Stream::find($item_id);
                 break;
             case 'podcast_episode':
                 $item_model = PodcastEpisodeComment::class;
-                $collumn = 'podcast_episode_id';
+                $column = 'podcast_episode_id';
                 $item = PodcastEpisode::find($item_id);
                 break;
             case 'creator':
                 $item_model = CreatorComment::class;
-                $collumn = 'creator_id';
+                $column = 'creator_id';
                 $item = Creator::find($item_id);
                 break;
             case 'chatroom':
                 $item_model = ChatroomComment::class;
-                $collumn = 'chatroom_id';
+                $column = 'chat_room_id';
                 $item = Chatroom::find($item_id);
                 break;
             default:
@@ -250,7 +250,7 @@ class CommentApiController extends Controller
         }
 
         $item_model::create([
-            $collumn => $item_id,
+            $column => $item_id,
             'comment_id' => $comment->id,
         ]);
 

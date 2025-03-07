@@ -21,6 +21,6 @@ class ChatRoomComment extends Model
     }
     public function chatroom(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(ChatRoom::class, 'chatroom_id');
+        return $this->belongsTo(ChatRoom::class, 'chat_room_id');
     }
 }

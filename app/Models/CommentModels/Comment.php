@@ -51,7 +51,7 @@ class Comment extends Model
             case 'channel':
                 return $this->hasOneThrough(Creator::class, CreatorComment::class, 'comment_id', 'id', 'id', 'creator_id')->first();
             case 'chatroom':
-                return $this->hasOneThrough(ChatRoom::class, ChatRoomComment::class, 'comment_id', 'id', 'id', 'chatroom_id')->first();
+                return $this->hasOneThrough(ChatRoom::class, ChatRoomComment::class, 'comment_id', 'id', 'id', 'chat_room_id')->first();
             default:
                 return null;
         }
