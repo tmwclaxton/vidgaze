@@ -208,9 +208,10 @@ class YouTube implements iSearchable, iIsPlatform
             $contentDTO->description = $video['description'];
             $contentDTO->duration = round($video['formats'][0]['durationMs'] / 1000);
             try {
-                $contentDTO->publish_time = Carbon::parse($video['publishDate'] ?? '1970-01-01');
+                $contentDTO->publish_time = Carbon::parse($video['publishDate']);
             } catch (\Exception $e) {
-                $contentDTO->publish_time = Carbon::parse('1970-01-01');
+                // set 1st January 2000 as default publish time
+                $contentDTO->publish_time = Carbon::now();
             }
             $contentDTO->thumbnail_url = $video['thumbnails'][0]['url'] ?? "https://i.ytimg.com/vi/{$video['videoId']}/hqdefault.jpg";
 

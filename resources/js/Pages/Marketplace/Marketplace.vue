@@ -82,33 +82,31 @@ const props = defineProps({
             <div class="relative h-screen w-screen   flex flex-col py-auto justify-center align-middle   px-4 sm:px-6 lg:px-8">
 
                 <div class="w-full   text-white py-16 object-fill bg-center bg-cover"   id="buy">
-                    <p class="text-4xl font-bold uppercase w-full text-center">Buy VidCoins</p>
-                    <p class="text-lg w-full text-center px-14 py-4 lg:w-7/12 mx-auto">
-                        20K VidCoins for £5.00
-                    </p>
+                    <p class="text-4xl font-bold uppercase w-full text-center">Buy VidCoins (Not Available) fuck fake currency</p>
+
                     <div class="flex flex-col gap-16 mx-16 my-16 items-center justify-center">
-                        <div v-for="product in products" :key="product.id" class="h-max sm:h-52 w-80 xs:w-96 sm:w-full
-                    bg-white dark:bg-zinc-800
-                    rounded lg:w-2/3 lg:mx-auto min-h-64 flex flex-col sm:flex-row overflow-hidden">
-                            <div class="py-5 w-full sm:w-2/5 flex flex-row items-center align-middle">
-                                <img :src="product.image_url" class="w-full max-h-44 mx-auto object-contain" />
-                            </div>
-                            <div class="w-full sm:w-3/5 flex flex-col justify-center">
-                                <div class="flex flex-col sm:flex-row pb-5 sm:py-10 px-5 xl:px-10">
-                                    <div class="w-full sm:w-2/3">
-                                        <p class="text-zinc-900 dark:text-white font-bold text-xl text-center sm:text-left">
-                                            {{ product.name }}
-                                        </p>
-                                        <p class="text-zinc-900 dark:text-white mt-1 text-center sm:text-left">
-                                            {{ product.description }}
-                                        </p>
-                                    </div>
-                                    <primary-button class="w-full sm:w-1/3 mt-5 sm:mt-0 mx-5">
-                                        Buy for £{{ (product.price / 100).toFixed(2) }}
-                                    </primary-button>
-                                </div>
-                            </div>
-                        </div>
+<!--                        <div v-for="product in products" :key="product.id" class="h-max sm:h-52 w-80 xs:w-96 sm:w-full-->
+<!--                    bg-white dark:bg-zinc-800-->
+<!--                    rounded lg:w-2/3 lg:mx-auto min-h-64 flex flex-col sm:flex-row overflow-hidden">-->
+<!--                            <div class="py-5 w-full sm:w-2/5 flex flex-row items-center align-middle">-->
+<!--                                <img :src="product.image_url" class="w-full max-h-44 mx-auto object-contain" />-->
+<!--                            </div>-->
+<!--                            <div class="w-full sm:w-3/5 flex flex-col justify-center">-->
+<!--                                <div class="flex flex-col sm:flex-row pb-5 sm:py-10 px-5 xl:px-10">-->
+<!--                                    <div class="w-full sm:w-2/3">-->
+<!--                                        <p class="text-zinc-900 dark:text-white font-bold text-xl text-center sm:text-left">-->
+<!--                                            {{ product.name }}-->
+<!--                                        </p>-->
+<!--                                        <p class="text-zinc-900 dark:text-white mt-1 text-center sm:text-left">-->
+<!--                                            {{ product.description }}-->
+<!--                                        </p>-->
+<!--                                    </div>-->
+<!--                                    <primary-button class="w-full sm:w-1/3 mt-5 sm:mt-0 mx-5">-->
+<!--                                        Buy for £{{ (product.price / 100).toFixed(2) }}-->
+<!--                                    </primary-button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
 <!--                        <div class="h-max sm:h-52 w-80 xs:w-96 sm:w-full-->
 <!--                    bg-white dark:bg-zinc-800-->
 <!--                    rounded lg:w-2/3 lg:mx-auto min-h-64 flex flex-col sm:flex-row overflow-hidden">-->

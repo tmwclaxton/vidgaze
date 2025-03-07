@@ -64,12 +64,13 @@ const noRepliesText = computed(() => {
 });
 
 function formatLinksInText(text) {
-    // Match and replace normal URLs (ignore URLs prefixed with "img:" inside ())
-    const urlRegex = /(?<!img:\()[^\s()]*https?:\/\/[^\s()]+/gi;
+    // Match and replace normal URLs (ignore URLs prefixed with "img:" or "vid:" inside ())
+    const urlRegex = /(?<!(img:|vid:)\()[^\s()]*https?:\/\/[^\s()]+/gi;
     let formattedText = text.replace(urlRegex, (url) => {
         return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: #1E90FF; text-decoration: underline;">${url}</a>`;
     });
 
+    // Handle image patterns
     const imgRegex = /img:\((https?:\/\/[^\s()]+)\)/gi;
     formattedText = formattedText.replace(imgRegex, (match, url, imgIndex) => {
         return `
@@ -82,6 +83,25 @@ function formatLinksInText(text) {
                 alt="User-provided image"
                 style="max-width: 100%; height: auto; border-radius: 8px; margin-top: 8px; margin-bottom: 8px;
                 max-height: 400px; object-fit: contain; filter: blur(10px); transition: filter 0.3s ease;">
+        </div>
+    `;
+    });
+
+    // Handle video patterns
+    const vidRegex = /vid:\((https?:\/\/[^\s()]+)\)/gi;
+    formattedText = formattedText.replace(vidRegex, (match, url, vidIndex) => {
+        return `
+        <div id="vid-container-${props.comment.id}-${vidIndex}" class="video-container" style="margin: 8px 0;">
+            <button onclick="toggleVideo('${props.comment.id}', ${vidIndex})"
+                style="background: #3f363a; padding: 5px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 5px; color: white;">
+                Reveal Video (May be offensive)
+            </button>
+            <video id="vid-${props.comment.id}-${vidIndex}"
+                   style="max-width: 100%;  max-height: 400px; border-radius: 8px; filter: blur(10px); transition: filter 0.3s ease;"
+                   controls>
+                <source src="${url}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
         </div>
     `;
     });
@@ -103,7 +123,19 @@ window.toggleImage = function (commentId, imgIndex) {
     }
 };
 
+// Add video toggle function
+window.toggleVideo = function (commentId, vidIndex) {
+    const video = document.getElementById(`vid-${commentId}-${vidIndex}`);
+    const button = document.querySelector(`#vid-container-${commentId}-${vidIndex} button`);
 
+    if (video.style.filter === "blur(10px)") {
+        video.style.filter = "none";
+        button.innerText = "Hide Video";
+    } else {
+        video.style.filter = "blur(10px)";
+        button.innerText = "Reveal Video (May be offensive)";
+    }
+};
 
 
 

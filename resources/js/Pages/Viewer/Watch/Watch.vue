@@ -35,12 +35,14 @@ import TitleComponent from "@/Components/General/TitleComponent.vue";
 import ExternalCommentSection from "@/Components/CommentSection/ExternalCommentSection.vue";
 import AwardsBar from "@/Pages/Viewer/Watch/Partials/AwardsBar.vue";
 import AwardsDropdown from "@/Components/Dropdown/AwardsDropdown.vue";
+import {usePinModalStore} from "@/Stores/PinModalStore";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
 const playlistModalStore = usePlaylistModalStore();
 const shareModalStore = useShareModalStore();
 const contentModalStore = useContentModalStore();
+const pinModalStore = usePinModalStore();
 const NavStore = useNavStore();
 const authStore = useAuthStore();
 const name = 'Watch';
@@ -70,6 +72,7 @@ const props = defineProps({
 
 function togglePlaylistModal()  {
     if (props.type !== 'video') {
+        console.log('not a video');
         return;
     }
     playlistModalStore.videoIds = [item.value.id];
@@ -80,6 +83,22 @@ function togglePlaylistModal()  {
         playlistModalStore.showMenu = false;
     }
     playlistToggled.value = !playlistToggled.value;
+}
+
+function togglePinModal() {
+    console.log('toggling pin modal');
+    if (authStore.user === null) {
+        console.log('not logged in');
+        return;
+    }
+    if (props.type !== 'video') {
+        console.log('not a video');
+        return;
+    }
+    pinModalStore.showMenu = true;
+    pinModalStore.video_id = item.value.id;
+    pinModalStore.getPinDetails();
+
 }
 
 const share = () => {
@@ -196,20 +215,20 @@ onUnmounted(() => {
 
 
                                 </div>
-                                <AwardsBar class=" lg:mt-4" v-if="item.object_awards && item.object_awards > 0" :objectAwards="item.object_awards" :type="item.type" />
+<!--                                <AwardsBar class=" lg:mt-4" v-if="item.object_awards && item.object_awards.length > 0" :objectAwards="item.object_awards" :type="item.type" />-->
 
                             </div>
                             <div v-if="ready && item" class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold ">
-                                <FeatureCreatorButton v-if="authStore.admin" :creator_id="item.creator.id"/>
+                                <FeatureCreatorButton v-if="authStore.user && (authStore.user.creator.role === 'moderator' || authStore.user.creator.role === 'admin')" :creator_id="item.creator.id"/>
 
                                 <TertiaryButton v-if="item.type === 'video'">
                                     <LikeDislikeButtons :item="item" :orientationVertical="false"/>
                                 </TertiaryButton>
 
-                                <div v-if="item.type === 'video'" @click="useAuthStore().toggleAwardDropdown()" class="h-10 flex flex-row cursor-pointer align-middle items-center px-4 bg-zinc-200 dark:bg-zinc-900 rounded-lg">
-                                    <font-awesome-icon class="h-5" :icon="['fas', 'award']"/>
-                                    <p class="pl-2">Award</p>
-                                </div>
+<!--                                <div v-if="item.type === 'video'" @click="useAuthStore().toggleAwardDropdown()" class="h-10 flex flex-row cursor-pointer align-middle items-center px-4 bg-zinc-200 dark:bg-zinc-900 rounded-lg">-->
+<!--                                    <font-awesome-icon class="h-5" :icon="['fas', 'award']"/>-->
+<!--                                    <p class="pl-2">Award</p>-->
+<!--                                </div>-->
 
                                 <div @click="share" class="flex flex-row cursor-pointer h-10  align-middle items-center">
                                     <ShareIcon class="h-5"/>
@@ -220,6 +239,12 @@ onUnmounted(() => {
                                 <div v-if="item.type === 'video' && authStore.user" @click="togglePlaylistModal()" class="h-10 flex flex-row cursor-pointer align-middle items-center" >
                                     <LibraryIcon class="h-5"/>
                                     <p class="pl-2">Save</p>
+                                </div>
+
+                                <div v-if="authStore.user && (authStore.user.creator.role === 'moderator' || authStore.user.creator.role === 'admin')
+                                && item.type === 'video' && authStore.user" @click="togglePinModal()" class="h-10 flex flex-row cursor-pointer align-middle items-center" >
+                                    <font-awesome-icon class="h-5" :icon="['fas', 'map-pin']"/>
+                                    <p class="pl-2">Pin</p>
                                 </div>
 
                                 <div

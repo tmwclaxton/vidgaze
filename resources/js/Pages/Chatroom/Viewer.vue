@@ -54,7 +54,7 @@ const changeChatroom = (chatroom) => {
                 <div class="flex flex-row justify-between items-center">
                     <h1 class="text-2xl font-bold" v-text="currentChatroom.name"></h1>
                 </div>
-                <CommentSection  :item="currentChatroom" :key="keyUpdator" />
+                <CommentSection  :item="currentChatroom" :key="keyUpdator" :default-category="'new'" />
 
             </div>
         </div>

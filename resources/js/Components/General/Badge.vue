@@ -42,7 +42,7 @@ const props = defineProps({
 
 // Defined background color classes based on source light/dark mode and source
 const sourceClasses = {
-    YouTube: 'bg-red-400 dark:bg-vidgaze-blue-nav',
+    YouTube: 'bg-red-400 dark:bg-red-900',
     Twitch: 'bg-purple-400 dark:bg-purple-900',
     Dailymotion: 'bg-black dark:bg-black',
     Vimeo: 'bg-blue-500 dark:bg-blue-700',

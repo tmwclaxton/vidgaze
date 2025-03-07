@@ -16,7 +16,7 @@ const categoryOptions = [
     {value: 'controversial', label: 'Controversial'},
     {value: 'old', label: 'Old'},
 ];
-const category = ref('best');
+
 
 const props = defineProps({
     item: {
@@ -27,8 +27,15 @@ const props = defineProps({
         type: Boolean,
         required: false,
         default: false
+    },
+    defaultCategory: {
+        type: String,
+        required: false,
+        default: 'best'
     }
 });
+
+const category = ref(props.defaultCategory);
 
 // watch for changes in category and fetch comments again
 watch(category, (value) => {
@@ -45,6 +52,7 @@ onMounted(() => {
     }
     CommentSectionStore.item = props.item;
     CommentSectionStore.item_type = props.item.type;
+
 
     // grab interactions first then comments
     setTimeout(() => {
@@ -75,7 +83,7 @@ onMounted(() => {
             <p class="   text-base font-bold" v-text="CommentSectionStore.commentCount"/>
 
             <SelectInput class=" ml-auto w-40"
-                          :modelValue="'default'"
+                          :modelValue="category"
                          v-model="category" @update:model-value="value => category = value" :options="categoryOptions" :title="'Order By'"/>
 
 

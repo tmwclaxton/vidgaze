@@ -81,12 +81,11 @@ onMounted(() => {
                 });
             });
 
-            // shuffle everything except the first item
-            carouselItems.value = [carouselItems.value[0], ..._.shuffle(carouselItems.value.slice(1))];
+            if (carouselItems.length > 1) {
+                // shuffle everything except the first item
+                carouselItems.value = [carouselItems.value[0], ..._.shuffle(carouselItems.value.slice(1))];
+            }
         })
-        .catch(error => {
-            console.log(error);
-        } );
 
 
     setInterval(() => {
@@ -153,4 +152,5 @@ onMounted(() => {
             </span>
         </div>
     </div>
+
 </template>

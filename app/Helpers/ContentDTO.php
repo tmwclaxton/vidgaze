@@ -142,7 +142,7 @@ class ContentDTO
                     'preferred_source' => $this->platform->value,
                     'audience' => $this->audience->value ?? Audience::ALL,
                     'is_live' => $this->is_live??null,
-                    'category_id' => $this->category->saveCategory()->id,
+                    'category_id' => isset($this->category) ? $this->category->saveCategory()->id : null,
                 ]);
                 StreamSource::create([
                     'source_name' => $this->platform->value,

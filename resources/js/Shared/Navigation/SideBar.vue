@@ -142,23 +142,23 @@ const toggleShorts = () => {
                             <span class="w-full">About</span>
                         </ResponsiveNavBottomLink>
                     <!--add support page-->
-                        <ResponsiveNavBottomLink :href="route('about') + '#support'"  >
-                                <!--<font-awesome-icon :icon="['fass', 'phone']" class="w-4 h-4 flex-shrink-0"-->
-                                <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
-                                <span class="w-full">Support</span>
-                        </ResponsiveNavBottomLink>
-                    <!--add policy page-->
-                        <ResponsiveNavBottomLink :href="route('privacy')" :active="route().current('privacy')">
-                                <!--<font-awesome-icon :icon="['fass', 'scroll']" class="w-4 h-4 flex-shrink-0"-->
-                                <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
-                            <span class="w-full">Privacy</span>
-                        </ResponsiveNavBottomLink>
-                    <!--add terms page-->
-                        <ResponsiveNavBottomLink :href="route('terms')" :active="route().current('terms')">
-                                <!--<font-awesome-icon :icon="['fass', 'asterisk']" class="w-4 h-4 flex-shrink-0"-->
-                                <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
-                                <span class="w-full">Terms</span>
-                        </ResponsiveNavBottomLink>
+<!--                        <ResponsiveNavBottomLink :href="route('about') + '#support'"  >-->
+<!--                                &lt;!&ndash;<font-awesome-icon :icon="['fass', 'phone']" class="w-4 h-4 flex-shrink-0"&ndash;&gt;-->
+<!--                                &lt;!&ndash;                   :class="{ 'hidden ': !showingNavigationDropdown}" />&ndash;&gt;-->
+<!--                                <span class="w-full">Support</span>-->
+<!--                        </ResponsiveNavBottomLink>-->
+<!--                    &lt;!&ndash;add policy page&ndash;&gt;-->
+<!--                        <ResponsiveNavBottomLink :href="route('privacy')" :active="route().current('privacy')">-->
+<!--                                &lt;!&ndash;<font-awesome-icon :icon="['fass', 'scroll']" class="w-4 h-4 flex-shrink-0"&ndash;&gt;-->
+<!--                                &lt;!&ndash;                   :class="{ 'hidden ': !showingNavigationDropdown}" />&ndash;&gt;-->
+<!--                            <span class="w-full">Privacy</span>-->
+<!--                        </ResponsiveNavBottomLink>-->
+<!--                    &lt;!&ndash;add terms page&ndash;&gt;-->
+<!--                        <ResponsiveNavBottomLink :href="route('terms')" :active="route().current('terms')">-->
+<!--                                &lt;!&ndash;<font-awesome-icon :icon="['fass', 'asterisk']" class="w-4 h-4 flex-shrink-0"&ndash;&gt;-->
+<!--                                &lt;!&ndash;                   :class="{ 'hidden ': !showingNavigationDropdown}" />&ndash;&gt;-->
+<!--                                <span class="w-full">Terms</span>-->
+<!--                        </ResponsiveNavBottomLink>-->
                     </div>
 
                 </div>

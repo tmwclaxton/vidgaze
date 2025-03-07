@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 
 class CategoryWebController extends Controller
 {
+    public function index() {
+        return inertia('Viewer/Category/Categories', []);
+    }
     public function show($slug) {
         return inertia('Viewer/Category/Category', [
             'slug' => $slug,

@@ -34,13 +34,17 @@ use Illuminate\Support\Str;
             'dislike_count' => $this->dislike_count,
             'creator' => new CreatorResource($this->creator()->first()),
             'visibility' => $this->visibility,
-            'object_awards' => null,
-
+//            'object_awards' => VideoAward::where('video_id', '=', $this->id)
+////                ->groupBy('award_id')
+////                ->select('award_id', DB::raw('count(*) as total'))
+////                ->get()->sortByDesc('award.coin_price'),
+           'object_awards' => null,
             'comment_count' => number_format_short($this->comment_count) . " " . Str::plural('Comment', $this->comment_count),
             // capitalize the first letter of the preference and if youtube capitalize the 'T' in 'YouTube'
             'preferred_source' => capitalisePlatformName($this->preferred_source),
             'external_id' => $this->getPreferredSourceID(),
-            'type' => 'video',
+            'type' => 'video', // !todo deprecate this when u get chance, must be reserved weird behaviour
+            'item_type' => 'video',
             'time_uploaded' => Carbon::parse($this->time_uploaded)->toDateTimeString(),
             'time_published' => Carbon::parse($this->time_published)->diffForHumans(),
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(),

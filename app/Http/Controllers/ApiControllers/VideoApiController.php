@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ApiControllers;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\VideoCollection;
 use App\Http\Resources\VideoResource;
+use App\Models\Category;
 use App\Models\CreatorModels\CreatorInteraction;
 use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoAward;
@@ -34,6 +35,7 @@ class VideoApiController extends Controller
         'YouTube',
         'Dailymotion',
         'Vimeo',
+        'Rumble',
     ];
 
 
@@ -225,6 +227,55 @@ class VideoApiController extends Controller
 
         return response()->json([
             'video' => $videoResource
+        ]);
+    }
+
+    public function getPinnedVideos(Request $request) {
+        $request->validate([
+            'per_page' => 'integer|min:1|max:50',
+//            'page' => 'integer|min:1',
+            'category_slug' => 'nullable|string|exists:categories,slug',
+            'platform' => 'nullable|string|in:' . implode(',', $this->allowedPlatforms),
+        ]);
+
+        if ($request->category_slug) {
+            $category = Category::where('slug', $request->category_slug)->first();
+        } else {
+            $category = null;
+        }
+
+        $per_page = $request->per_page ?? 6;
+//        $page = $request->page ?? 1;
+
+        $query = Video::query();
+
+        $query->where('pinned', true);
+
+        // Filter by category
+        if ($category) {
+            $query->where('category_id', $category->id);
+        }
+
+        // Filter by video platform
+        if ($request->platform) {
+            $query->where('preferred_source', $request->platform);
+        }
+
+        // get the pinned videos
+//        $videos = $query->forPage($page, $per_page)->get();
+
+        // random order
+        $query->inRandomOrder();
+
+        // limit the number of videos
+        $videos = $query->take($per_page)->get();
+
+        // return the collection
+        $videos = new VideoCollection($videos);
+
+        return response()->json([
+            'results' => $videos->count(),
+            'videos' => $videos
         ]);
     }
 

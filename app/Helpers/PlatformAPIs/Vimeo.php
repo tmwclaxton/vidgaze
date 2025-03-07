@@ -58,55 +58,7 @@ class Vimeo implements iSearchable, iIsPlatform
                 'fields' => 'uri,name,description,duration,release_time,pictures,tags,user',
 //                'page' => $pageToken,
             ]);
-            $items = $response['body']['data'];
-
-            return Arr::map($items, function ($value) {
-                $resultDTO = new ResultDTO(Platform::Vimeo, Kind::Video);
-                $contentDTO = new ContentDTO(Platform::Vimeo, Kind::Video,
-                    str_replace("/videos/", "", $value['uri'])
-                );
-                $creatorDTO = new CreatorDTO(Platform::Vimeo,
-                    str_replace("/users/", "", $value['user']['uri'])
-                );
-                $resultDTO->platform = Platform::Vimeo;
-
-                $contentDTO->kind = Kind::Video;
-                $contentDTO->publish_time = Carbon::parse($value['release_time']);
-                $contentDTO->name = $value['name'];
-                $contentDTO->duration = $value['duration'];
-                $contentDTO->thumbnail_url = $value['pictures']['base_link'];
-                // remove null values from $value['tags']
-
-                $value['tags'] = array_filter($value['tags'], function ($item) {
-                    return $item['name']?? false;
-                });
-                $contentDTO->tags = array_map(fn($item)=>$item['name'], $value['tags']);
-                $contentDTO->description = $value['description'];
-                $contentDTO->creator_id = str_replace("/users/", "", $value['user']['uri']);
-
-                $creatorDTO->name = $value['user']['name'];
-                $creatorDTO->description = $value['user']['bio']??"";
-                $creatorDTO->avatar_url = end($value['user']['pictures']['sizes'])['link'];
-
-                $resultDTO->content = $contentDTO;
-                $resultDTO->creator = $creatorDTO;
-                return $resultDTO;
-
-//                switch ($value['type']){
-//                    case  'video':
-//                    case 'live':
-
-//                        break;
-//                    case  'channel':
-//                        $DTO->kind = Kind::Creator;
-//                        break;
-//                    case  'playlist':
-//                        $DTO->kind = Kind::Playlist;
-//                        $DTO->playlist_id = $value['id']['playlistId'];
-//                }
-
-
-            });
+        return self::extractedContentAndUserDtoMap($response['body']['data']);
 
 
     }
@@ -132,8 +84,44 @@ class Vimeo implements iSearchable, iIsPlatform
             ];
         }
 
-        $results = array_map(function($value){
-            $contentDTO = new ContentDTO(Platform::Vimeo, Kind::Video,  str_replace("/videos/", "", $value['uri']));
+        $results = self::returnContentDTOarrayMap($response['data']);
+
+        return [
+            'next' => $page + 1,
+            'hasNext' => boolval($response['paging']['next']),
+            'results' => $results, // ContentDTO
+        ];
+    }
+
+    // grab featured videos
+    public static function getFeaturedVideos(int $maxResults = 10): array
+    {
+        $api = new Vimeo();
+//        $response = $api->client->request('/videos?filter=trending&direction=desc',[
+//            'per_page' => $maxResults,
+//            'fields' => 'uri,name,description,duration,release_time,pictures,tags,user',
+//        ]);
+
+        // /videos?direction=desc&fields=%5Buri%2Cname%2Cdescription%2Cduration%2Crelease_time%2Cpictures%2Ctags%2Cuser%5D&filter=trending&per_page=10&sort=date&page=1
+        $response = $api->client->request('/videos',[
+            'filter' => 'trending',
+            'sort' => 'date',
+            'direction' => 'desc',
+            'per_page' => $maxResults,
+            'fields' => 'uri,name,description,duration,release_time,pictures,tags,user',
+        ]);
+
+        return self::extractedContentAndUserDtoMap($response['body']['data']);
+    }
+
+    /**
+     * @param $data
+     * @return ContentDTO[]
+     */
+    public static function returnContentDTOarrayMap($data): array
+    {
+        $results = array_map(function ($value) {
+            $contentDTO = new ContentDTO(Platform::Vimeo, Kind::Video, str_replace("/videos/", "", $value['uri']));
 
             $contentDTO->kind = Kind::Video;
             $contentDTO->name = $value['name'];
@@ -141,15 +129,52 @@ class Vimeo implements iSearchable, iIsPlatform
             $contentDTO->publish_time = Carbon::make($value['release_time']);
             $contentDTO->thumbnail_url = $value['pictures']['base_link'];
             $contentDTO->creator_id = str_replace("/users/", "", $value['user']['uri']);
-            $contentDTO->tags = array_map(fn($item)=>$item['name'],$value['tags']);
+            $contentDTO->tags = array_map(fn($item) => $item['name'], $value['tags']);
 
             return $contentDTO;
-        }, $response['data']);
+        }, $data);
+        return $results;
+    }
 
-        return [
-            'next' => $page + 1,
-            'hasNext' => boolval($response['paging']['next']),
-            'results' => $results, // ContentDTO
-        ];
+    /**
+     * @param $data
+     * @return array
+     */
+    public static function extractedContentAndUserDtoMap($data): array
+    {
+        $items = $data;
+
+        return Arr::map($items, function ($value) {
+            $resultDTO = new ResultDTO(Platform::Vimeo, Kind::Video);
+            $contentDTO = new ContentDTO(Platform::Vimeo, Kind::Video,
+                str_replace("/videos/", "", $value['uri'])
+            );
+            $creatorDTO = new CreatorDTO(Platform::Vimeo,
+                str_replace("/users/", "", $value['user']['uri'])
+            );
+            $resultDTO->platform = Platform::Vimeo;
+
+            $contentDTO->kind = Kind::Video;
+            $contentDTO->publish_time = Carbon::parse($value['release_time']);
+            $contentDTO->name = $value['name'];
+            $contentDTO->duration = $value['duration'];
+            $contentDTO->thumbnail_url = $value['pictures']['base_link'];
+            // remove null values from $value['tags']
+
+            $value['tags'] = array_filter($value['tags'], function ($item) {
+                return $item['name'] ?? false;
+            });
+            $contentDTO->tags = array_map(fn($item) => $item['name'], $value['tags']);
+            $contentDTO->description = $value['description'];
+            $contentDTO->creator_id = str_replace("/users/", "", $value['user']['uri']);
+
+            $creatorDTO->name = $value['user']['name'];
+            $creatorDTO->description = $value['user']['bio'] ?? "";
+            $creatorDTO->avatar_url = end($value['user']['pictures']['sizes'])['link'];
+
+            $resultDTO->content = $contentDTO;
+            $resultDTO->creator = $creatorDTO;
+            return $resultDTO;
+        });
     }
 }

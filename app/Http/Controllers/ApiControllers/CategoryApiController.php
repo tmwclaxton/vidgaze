@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Models\VideoModels\Video;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -18,7 +19,7 @@ class CategoryApiController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function index(Request $request)
+    public function grabStreamCategories(Request $request)
     {
         $request->validate([
             'per_page' => 'integer|min:1|max:100',
@@ -57,6 +58,31 @@ class CategoryApiController extends Controller
         ]);
     }
 
+    public function grabVideoCategories(Request $request): JsonResponse
+    {
+
+        $query = Category::query();
+
+        $query->where('twitch_category_id', '=', null);
+
+        $query->orWhere('slug', '=', 'music');
+
+
+        $categories = $query
+            ->get();
+
+        if (empty($categories)) {
+            return response()->json([
+                'message' => 'No categories found',
+            ], 404);
+        }
+
+        return response()->json([
+            'categories' => new CategoryCollection($categories),
+        ]);
+    }
+
+
     public function show($slug) {
         // grab the stream
         $category = Category::query()->where('slug', '=', $slug)->firstOrFail();
@@ -75,6 +101,45 @@ class CategoryApiController extends Controller
 
     }
 
+    public function removeCategoryFromVideo(Request $request): \Illuminate\Http\JsonResponse
+    {
+        // grab video id
+        $request->validate([
+            'video_id' => 'required|integer|exists:videos,id',
+        ]);
+
+        $video = Video::find($request->video_id);
+
+        // set category_id to null
+        $video->category_id = null;
+
+        $video->save();
+
+        return response()->json([
+            'message' => 'Category removed successfully'
+        ]);
+    }
+
+    public function addCategoryToVideo(Request $request): \Illuminate\Http\JsonResponse
+    {
+        // grab video id, category id
+        $request->validate([
+            'video_id' => 'required|integer|exists:videos,id',
+            'category_id' => 'required|integer|exists:categories,id',
+        ]);
+
+        $video = Video::find($request->video_id);
+        $category = Category::find($request->category_id);
+
+        // set category_id to category id
+        $video->category_id = $category->id;
+
+        $video->save();
+
+        return response()->json([
+            'message' => 'Category added successfully'
+        ]);
+    }
 
 
 }

@@ -9,103 +9,150 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up()
     {
-
-        Category::updateOrCreate(['id' => 1],[
-            'name' => 'Movies',
-            'slug' => 'movies',
-            'youtube_category_id' => '1',
-            'dailymotion_category_id' => 'shortfilms',
-        ]);
-        Category::updateOrCreate(['id' => 2],[
-            'name' => 'Cars',
-            'slug' => 'cars',
-            'youtube_category_id' => '2',
-            'dailymotion_category_id' => 'auto',
-        ]);
-        Category::updateOrCreate(['id' => 3],[
-            'name' => 'Music',
-            'slug' => 'music',
-            'youtube_category_id' => '10',
-            'dailymotion_category_id' => 'music',
-            'twitch_category_id_category_id' => '26936',
-        ]);
-        Category::updateOrCreate(['id' => 4],[
-            'name' => 'Pets & Animals',
-            'slug' => 'pets_and_animals',
-            'youtube_category_id' => '15',
-            'dailymotion_category_id' => 'animals',
-        ]);
-        Category::updateOrCreate(['id' => 5],[
-            'name' => 'Sports',
-            'slug' => 'sports',
-            'youtube_category_id' => '17',
-            'dailymotion_category_id' => 'sport',
-            'twitch_category_id' => '518203'
-        ]);
-        Category::updateOrCreate(['id' => 6],[
-            'name' => 'Travel & Events',
-            'slug' => 'travel_and_events',
-            'youtube_category_id' => '19',
-            'dailymotion_category_id' => 'travel',
-        ]);
-        Category::updateOrCreate(['id' => 7],[
-            'name' => 'Gaming',
-            'slug' => 'gaming',
-            'youtube_category_id' => '20',
-            'dailymotion_category_id' => 'videogames',
-        ]);
-        Category::updateOrCreate(['id' => 8],[
-            'name' => 'People & Blogs',
-            'slug' => 'people_and_blogs',
-            'youtube_category_id' => '22',
-            'dailymotion_category_id' => 'people',
-            'twitch_category_id' => '509658' // created below so if you uncomment, bear in mind just chatting category
-        ]);
-        Category::updateOrCreate(['id' => 9],[
-            'name' => 'Comedy',
-            'slug' => 'comedy',
-            'youtube_category_id' => '23',
-            'dailymotion_category_id' => 'fun',
-        ]);
-        Category::updateOrCreate(['id' => 10],[
-            'name' => 'Entertainment',
-            'slug' => 'entertainment',
-            'youtube_category_id' => '24',
-            'dailymotion_category_id' => 'fun',
-        ]);
-        Category::updateOrCreate(['id' => 11],[
-            'name' => 'News & Politics',
-            'slug' => 'news_and_politics',
-            'youtube_category_id' => '25',
-            'dailymotion_category_id' => 'news',
-        ]);
-        Category::updateOrCreate(['id' => 12],[
-            'name' => 'How-to & Lifestyle',
-            'slug' => 'how-to_and_lifestyle',
-            'youtube_category_id' => '26',
-            'dailymotion_category_id' => 'lifestyle',
-        ]);
-        Category::updateOrCreate(['id' => 13],[
-            'name' => 'Education',
-            'slug' => 'education',
-            'youtube_category_id' => '27',
-            'dailymotion_category_id' => 'school',
-        ]);
-        Category::updateOrCreate(['id' => 14],[
-            'name' => 'Science & Technology',
-            'slug' => 'science_and_technology',
-            'youtube_category_id' => '28',
-            'dailymotion_category_id' => 'tech',
-        ]);
-        Category::updateOrCreate(['id' => 15],[
-            'name' => 'Nonprofits & Activism',
-            'slug' => 'nonprofits_and_activism',
-            'youtube_category_id' => '29',
-            'dailymotion_category_id' => 'news',
-        ]);
-
-
         $categories = [
+            [
+                'name' => 'VidGaze Picks',
+                'slug' => 'vidgaze_picks',
+                'tags_json' => json_encode(['Recommended','Popular','Trending']),
+            ],
+            [
+                'name' => 'Wealth Inequality',
+                'slug' => 'wealth_inequality',
+                'tags_json' => json_encode(['Late Stage Capitalism','Economics','Socialism', 'Unions', 'Class Struggle']),
+            ],
+            [
+                'name' => 'Crypto Currency',
+                'slug' => 'crypto_currency',
+                'tags_json' => json_encode(['Bitcoin','Monero','Ethereum','Cryptocurrency','Blockchain']),
+            ],
+            [
+                'name' => 'Geopolitics',
+                'slug' => 'geopolitics',
+                'tags_json' => json_encode(['Foreign Policy','War','Peace','Diplomacy','International Relations']),
+            ],
+            [
+                'name' => 'Education',
+                'slug' => 'education',
+                'tags_json' => json_encode(['School','Learning','Teaching','Education']),
+            ],
+            [
+                'name' => 'Freedom Technology',
+                'slug' => 'freedom_technology',
+                'tags_json' => json_encode(['Open Source','Free Software','Privacy','Security','Decentralization','Piracy','Censorship']),
+            ],
+            [
+                'name' => 'Socialism',
+                'slug' => 'socialism',
+                'tags_json' => json_encode(['Inequality','Capitalist Oligarchy','Communism','Marxism','Revolution']),
+            ],
+            [
+                'name' => 'Philosophy',
+                'slug' => 'philosophy',
+                'tags_json' => json_encode(['Ethics','Logic','Metaphysics','Epistemology','Aesthetics']),
+            ],
+            [
+                'name' => 'Alternate News',
+                'slug' => 'alternate_news',
+                'tags_json' => json_encode(['Independent Media','Alternative News','Fake News','Propaganda']),
+            ],
+            [
+                'name' => 'Legacy Media',
+                'slug' => 'legacy_media',
+                'tags_json' => json_encode(['Mainstream Media','Corporate Media','Propaganda','Fake News']),
+            ],
+            [
+                'name' => 'Movies',
+                'slug' => 'movies',
+                'youtube_category_id' => '1',
+                'dailymotion_category_id' => 'shortfilms',
+            ],
+            [
+                'name' => 'Cars',
+                'slug' => 'cars',
+                'youtube_category_id' => '2',
+                'dailymotion_category_id' => 'auto',
+            ],
+            [
+                'name' => 'Music',
+                'slug' => 'music',
+                'youtube_category_id' => '10',
+                'dailymotion_category_id' => 'music',
+                'twitch_category_id' => '26936',
+            ],
+            [
+                'name' => 'Pets & Animals',
+                'slug' => 'pets_and_animals',
+                'youtube_category_id' => '15',
+                'dailymotion_category_id' => 'animals',
+            ],
+            [
+                'name' => 'Sports',
+                'slug' => 'sports',
+                'youtube_category_id' => '17',
+                'dailymotion_category_id' => 'sport',
+                'twitch_category_id' => '518203',
+            ],
+            [
+                'name' => 'Travel & Events',
+                'slug' => 'travel_and_events',
+                'youtube_category_id' => '19',
+                'dailymotion_category_id' => 'travel',
+            ],
+            [
+                'name' => 'Gaming',
+                'slug' => 'gaming',
+                'youtube_category_id' => '20',
+                'dailymotion_category_id' => 'videogames',
+            ],
+            [
+                'name' => 'People & Blogs',
+                'slug' => 'people_and_blogs',
+                'youtube_category_id' => '22',
+                'dailymotion_category_id' => 'people',
+                'twitch_category_id' => '509658',
+            ],
+            [
+                'name' => 'Comedy',
+                'slug' => 'comedy',
+                'youtube_category_id' => '23',
+                'dailymotion_category_id' => 'fun',
+            ],
+            [
+                'name' => 'Entertainment',
+                'slug' => 'entertainment',
+                'youtube_category_id' => '24',
+                'dailymotion_category_id' => 'fun',
+            ],
+            [
+                'name' => 'News & Politics',
+                'slug' => 'news_and_politics',
+                'youtube_category_id' => '25',
+                'dailymotion_category_id' => 'news',
+            ],
+            [
+                'name' => 'How-to & Lifestyle',
+                'slug' => 'how-to_and_lifestyle',
+                'youtube_category_id' => '26',
+                'dailymotion_category_id' => 'lifestyle',
+            ],
+            [
+                'name' => 'Education',
+                'slug' => 'education',
+                'youtube_category_id' => '27',
+                'dailymotion_category_id' => 'school',
+            ],
+            [
+                'name' => 'Science & Technology',
+                'slug' => 'science_and_technology',
+                'youtube_category_id' => '28',
+                'dailymotion_category_id' => 'tech',
+            ],
+            [
+                'name' => 'Nonprofits & Activism',
+                'slug' => 'nonprofits_and_activism',
+                'youtube_category_id' => '29',
+                'dailymotion_category_id' => 'news',
+            ],
             [
                 'slug' => 'league_of_legends',
                 'name' => 'League of Legends',
@@ -115,8 +162,6 @@ return new class extends Migration {
                 'twitch_category_id' => '21779',
                 'dailymotion_category_id' => '',
                 'tags_json' => json_encode(['MOBA','Action']),
-                'updated_at' => Carbon::now()->subHours(1)->toDateTimeString()
-
             ],
             [
                 'slug' => 'just_chatting',
@@ -127,8 +172,6 @@ return new class extends Migration {
                 'twitch_category_id' => '509658',
                 'dailymotion_category_id' => null,
                 'tags_json' => json_encode(['IRL']),
-                'updated_at' => Carbon::now()->subHours(1)->toDateTimeString()
-
             ],
             [
                 'slug' => 'minecraft',
@@ -139,7 +182,6 @@ return new class extends Migration {
                 'twitch_category_id' => '27471',
                 'dailymotion_category_id' => null,
                 'tags_json' => json_encode(['Survival','Open World']),
-                'updated_at' => Carbon::now()->subHours(1)->toDateTimeString()
             ],[
                 'slug' => 'valorant',
                 'name' => 'Valorant',
@@ -149,7 +191,6 @@ return new class extends Migration {
                 'twitch_category_id' => '516575',
                 'dailymotion_category_id' => null,
                 'tags_json' => json_encode(['Shooter','FPS']),
-                'updated_at' => Carbon::now()->subHours(1)->toDateTimeString()
             ],[
                 'slug' => 'dota_2',
                 'name' => 'Dota 2',
@@ -159,7 +200,6 @@ return new class extends Migration {
                 'twitch_category_id' => '29595',
                 'dailymotion_category_id' => null,
                 'tags_json' => json_encode(['Moba','Action']),
-                'updated_at' => Carbon::now()->subHours(1)->toDateTimeString()
             ],[
                 'slug' => 'GTA_V',
                 'name' => 'GTA V',
@@ -169,7 +209,6 @@ return new class extends Migration {
                 'twitch_category_id' => '32982',
                 'dailymotion_category_id' => null,
                 'tags_json' => json_encode(['Shooter','Open World']),
-                'updated_at' => Carbon::now()->subHours(1)->toDateTimeString()
             ],[
                 'slug' => 'apex_legends',
                 'name' => 'Apex Legends',
@@ -179,7 +218,6 @@ return new class extends Migration {
                 'twitch_category_id' => '511224',
                 'dailymotion_category_id' => null,
                 'tags_json' => json_encode(['FPS','Shooter']),
-                'updated_at' => Carbon::now()->subHours(1)->toDateTimeString()
             ],[
                 'slug' => 'CSGO',
                 'name' => 'Counter-Strike',
@@ -189,7 +227,6 @@ return new class extends Migration {
                 'twitch_category_id' => '32399',
                 'dailymotion_category_id' => null,
                 'tags_json' => json_encode(['FPS','Shooter']),
-                'updated_at' => Carbon::now()->subHours(1)->toDateTimeString()
             ],
         ];
 
@@ -200,13 +237,13 @@ return new class extends Migration {
                     [
                         'slug' => $category['slug'],
                         'name' => $category['name'],
-                        'description' => $category['description'],
-                        'thumbnail_url'=> $category['thumbnail_url'],
-                        'youtube_category_id'=> $category['youtube_category_id'],
-                        'twitch_category_id'=> $category['twitch_category_id'],
-                        'dailymotion_category_id'=> $category['dailymotion_category_id'],
-                        'tags_json'=> $category['tags_json'],
-                        'updated_at'=> $category['updated_at']
+                        'description' => $category['description'] ?? null,
+                        'thumbnail_url'=> $category['thumbnail_url'] ?? null,
+                        'youtube_category_id'=> $category['youtube_category_id'] ?? null,
+                        'twitch_category_id'=> $category['twitch_category_id'] ?? null,
+                        'dailymotion_category_id'=> $category['dailymotion_category_id'] ?? null,
+                        'tags_json'=> $category['tags_json'] ?? null,
+                        'updated_at'=> $category['updated_at'] ?? Carbon::now()->subHours(1)->toDateTimeString()
                     ]
                 );
             }
@@ -214,5 +251,12 @@ return new class extends Migration {
 
 
 
+
+
+    }
+
+    public function down()
+    {
+        Category::truncate();
     }
 };

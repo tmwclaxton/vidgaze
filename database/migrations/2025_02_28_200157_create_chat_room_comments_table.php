@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('chat_room_comments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('chatroom_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('chat_room_id')->constrained()->cascadeOnDelete();
             $table->foreignId('comment_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
