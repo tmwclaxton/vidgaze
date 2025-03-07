@@ -8,6 +8,7 @@ use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\isValidatable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
 use Carbon\Carbon;
@@ -16,7 +17,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class Rumble implements iSearchable, iIsPlatform
+class Rumble implements iSearchable, iIsPlatform, isValidatable
 {
     private $apifyToken;
 
@@ -250,5 +251,10 @@ class Rumble implements iSearchable, iIsPlatform
             'hasNext' => boolval($data['paging']['next']),
             'results' => $results,
         ];
+    }
+
+    public static function validate(array $results): array
+    {
+        // TODO: Implement validate() method.
     }
 }

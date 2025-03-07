@@ -8,6 +8,7 @@ use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\isValidatable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
 use App\Helpers\Tools;
@@ -15,7 +16,7 @@ use Carbon\Carbon;
 use Dailymotion as DailymotionSDK;
 use Illuminate\Support\Arr;
 
-class Dailymotion implements iSearchable, iIsPlatform
+class Dailymotion implements iSearchable, iIsPlatform, isValidatable
 {
     public DailymotionSDK $client;
 
@@ -185,4 +186,8 @@ class Dailymotion implements iSearchable, iIsPlatform
         ];
     }
 
+    public static function validate(array $results): array
+    {
+        // TODO: Implement validate() method.
+    }
 }

@@ -8,6 +8,7 @@ use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\isValidatable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
 use Carbon\Carbon;
@@ -16,7 +17,7 @@ use TwitchApi\HelixGuzzleClient;
 use TwitchApi\TwitchApi;
 use App\Models\CreatorModels\TwitchLogin;
 
-class Twitch implements iSearchable, iIsPlatform
+class Twitch implements iSearchable, iIsPlatform, isValidatable
 {
     public TwitchApi $client;
 
@@ -209,4 +210,8 @@ class Twitch implements iSearchable, iIsPlatform
     }
 
 
+    public static function validate(array $results): array
+    {
+        // TODO: Implement validate() method.
+    }
 }

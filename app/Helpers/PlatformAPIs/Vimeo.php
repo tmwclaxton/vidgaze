@@ -7,6 +7,7 @@ use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\isValidatable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
 use Carbon\Carbon;
@@ -14,7 +15,7 @@ use Illuminate\Support\Arr;
 use Vimeo\Vimeo as VimeoSDK;
 
 
-class Vimeo implements iSearchable, iIsPlatform
+class Vimeo implements iSearchable, iIsPlatform, isValidatable
 {
 
     public VimeoSDK $client;
@@ -176,5 +177,10 @@ class Vimeo implements iSearchable, iIsPlatform
             $resultDTO->creator = $creatorDTO;
             return $resultDTO;
         });
+    }
+
+    public static function validate(array $results): array
+    {
+        // TODO: Implement validate() method.
     }
 }

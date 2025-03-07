@@ -8,6 +8,7 @@ use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\isValidatable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
 use App\Helpers\Tools;
@@ -15,7 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Laravel\Octane\Facades\Octane;
 
-class YouTube implements iSearchable, iIsPlatform
+class YouTube implements iSearchable, iIsPlatform, isValidatable
 {
     protected string $scraperKey;
 
@@ -310,5 +311,10 @@ class YouTube implements iSearchable, iIsPlatform
             $hasNext = $content['hasNext'];
         }
         return $results;
+    }
+
+    public static function validate(array $results): array
+    {
+        // TODO: Implement validate() method.
     }
 }
