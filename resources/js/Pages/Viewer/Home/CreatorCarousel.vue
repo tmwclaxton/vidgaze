@@ -58,10 +58,10 @@ onMounted(() => {
             imgSrc: '/images/banners/VidGaze-Banner.png',
             link: "/" // TODO: update this link to the direction page later
         },
-        {
-            imgSrc: '/images/banners/Freedom-Banner.png',
-            link: "/" // TODO: update this link to the freedom tech category page later
-        },
+        // {
+        //     imgSrc: '/images/banners/Freedom-Banner.png',
+        //     link: "/" // TODO: update this link to the freedom tech category page later
+        // },
         {
             imgSrc: '/images/banners/LAS-Banner.png',
             link: "https://www.lightningarbitragesolutions.com/"
