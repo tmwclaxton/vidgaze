@@ -85,15 +85,17 @@ function retrieveResults(searchQuery) {
 const finished = ref(false);
 onMounted(() => {
     startSearch(searchQuery);
+    retrieveResults(searchQuery);
+
     // every second retrieve results, and stop after 10 seconds
     const interval = setInterval(() => {
         retrieveResults(searchQuery);
-    }, 2000);
+    }, 4000);
     setTimeout(() => {
         clearInterval(interval);
         finished.value = true;
         loading.value = false;
-    }, 20000);
+    }, 30000);
 });
 </script>
 <template>
