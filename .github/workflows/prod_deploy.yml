@@ -42,7 +42,7 @@ jobs:
         run: |
           export WWWUSER=${WWWUSER:-$UID}
           export WWWGROUP=${WWWGROUP:-$(id -g)}
-          docker build --platform linux/arm64 --file DockerfileProd --build-arg WWWGROUP=${WWWGROUP} --build-arg WWWUSER=${WWWUSER} --tag vidgaze-prod/app .
+          docker build --file DockerfileProd --build-arg WWWGROUP=${WWWGROUP} --build-arg WWWUSER=${WWWUSER} --tag vidgaze-prod/app .
 
       - name: Re-login to Amazon ECR
         id: re-login-ecr
