@@ -37,6 +37,11 @@ onMounted(async () => {
         });
     }
 
+    // order pinned videos by most videos
+    pinnedVideos.value.sort((a, b) => {
+        return b.videos.length - a.videos.length;
+    });
+
 
 
 
