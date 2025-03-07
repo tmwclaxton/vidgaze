@@ -15,6 +15,7 @@ import MusicIcon from '~/images/icons/music.svg';
 import StreamIcon from '~/images/icons/livestreams.svg';
 import PodcastIcon from '~/images/icons/podcast.svg';
 import SubscriptionsIcon from '~/images/icons/subscriptions.svg';
+import CategoriesIcon from '~/images/icons/categories.svg';
 import LibraryIcon from '~/images/icons/library.svg';
 import {useNavStore} from "@/Stores/NavStore";
 import {watch} from "vue";
@@ -49,6 +50,12 @@ const name = 'ExpandableNavigationLinks';
             <ResponsiveNavLink :href="route('streams.index')" :active="route().current('streams.index')">
                 <StreamIcon class="w-5 h-5 flex-shrink-0"/>
                 <span>Streams</span>
+            </ResponsiveNavLink>
+        </div>
+        <div class="ld:hid den">
+            <ResponsiveNavLink :href="route('category.index')" :active="route().current('category.index')">
+                <CategoriesIcon class="w-5 h-5 flex-shrink-0"/>
+                <span>Categories</span>
             </ResponsiveNavLink>
         </div>
         <div class="" v-if="useAuthStore().areShortsEnabled()">
