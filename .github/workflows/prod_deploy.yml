@@ -2,12 +2,12 @@ name: "Production Deploy"
 
 on:
   workflow_dispatch:
-  # push:
-    # branches: [ "master" ]
+   push:
+     branches: [ "master" ]
 
 env:
-  AWS_REGION: "eu-west-2"
-  ECR_REPOSITORY: "vidgaze-production-ecr-repository"
+  AWS_REGION: "us-east-1"
+  ECR_REPOSITORY: "vidgaze-production"
 
 jobs:
   build:
