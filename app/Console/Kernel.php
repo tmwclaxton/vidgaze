@@ -30,6 +30,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:get-vimeo-featured-videos')->daily();
         $schedule->command('app:get-rumble-featured-videos')->daily();
         $schedule->command('app:delete-old-pins')->daily();
+        $schedule->command('app:categorise-videos')->everyFiveMinutes();
     }
 
     /**
