@@ -56,7 +56,7 @@ onMounted(() => {
     carouselItems.value.push(
         {
             imgSrc: '/images/banners/VidGaze-Banner.png',
-            link: "/" // TODO: update this link to the direction page later
+            link: "https://github.com/tmwclaxton/vidgaze" // TODO: update this link to the direction page later
         },
         // {
         //     imgSrc: '/images/banners/Freedom-Banner.png',
