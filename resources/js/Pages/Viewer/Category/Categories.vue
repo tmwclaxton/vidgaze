@@ -59,7 +59,7 @@ const handleScroll = () => {
     const bodyHeight = document.body.offsetHeight;
 
     // Check if user has scrolled near the bottom of the page
-    if (scrollPosition >= bodyHeight - 100) {
+    if (scrollPosition >= bodyHeight - 500) {
         debouncedFetchNextCategories();
     }
 };

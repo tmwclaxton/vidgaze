@@ -163,10 +163,6 @@ class VideoApiController extends Controller
             //return ($video_ids);
         }
 
-        // eager load the creator
-        $query->with('creator');
-
-
         $videos = $query->take($per_page)->get();
 
 
@@ -276,7 +272,7 @@ class VideoApiController extends Controller
         // if the videos are less than the per_page, get random videos based on the category
         if ($videos->count() < $per_page && $category) {
             $amt = $per_page - $videos->count();
-            $randomVideos = Video::where('pinned', true)->where('category_id', $category->id)
+            $randomVideos = Video::where('category_id', $category->id)
                 ->whereNotIn('id', $videos->pluck('id'))
                 ->inRandomOrder()->take($amt)->get();
 
@@ -291,6 +287,46 @@ class VideoApiController extends Controller
             'results' => $videos->count(),
             'videos' => $videos
         ]);
+    }
+
+    public function getVideosByCategory(Request $request) {
+        $request->validate([
+            'per_page' => 'integer|min:1|max:50',
+            'video_ids' => 'string|nullable',
+            'slug' => 'string|exists:categories,slug',
+        ]);
+
+        $per_page = $request->per_page ?? 20;
+        $video_ids = $request->video_ids ?? [];
+        $category_slug = $request->slug;
+
+        if (!is_array($video_ids) ) {
+            $video_ids = explode(',', $video_ids);
+        }
+
+        $category = Category::where('slug', $category_slug)->first();
+
+        $query = Video::query();
+
+        $query->where('category_id', $category->id);
+
+        // Don't retrieve the same videos
+        if ( $video_ids != [] ) {
+            $query->whereNotIn('id', $video_ids);
+        }
+
+        // Only get public videos
+        $query->where('visibility', 'public');
+
+        // get the videos
+        $videos = $query->take($per_page)->get();
+
+        return response()->json([
+            'results' => $videos->count(),
+            'videos' => new VideoCollection($videos)
+        ]);
+
+
     }
 
 }

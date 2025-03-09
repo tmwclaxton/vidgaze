@@ -9,6 +9,8 @@ Route::prefix('/video')->name('video.')->group(function () {
 
     Route::get('/index', [VideoApiController::class, 'index'])->name('index');
     Route::get('/pinned', [VideoApiController::class, 'getPinnedVideos'])->name('pinned');
+    Route::get('/category-videos', [VideoApiController::class, 'getVideosByCategory'])->name('category-videos');
+
 
     Route::get('{slug}', [VideoApiController::class, 'show'])->middleware('auth.sanctum.switch')->name('show');
 
