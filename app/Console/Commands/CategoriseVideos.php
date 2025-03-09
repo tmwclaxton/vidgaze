@@ -80,7 +80,7 @@ class CategoriseVideos extends Command
                     $video->update(['category_id' => $category->id]);
 
                     // If the video is less than 1 week old, pin it
-                    if (Carbon::parse($video->time_published)->diffInDays(now()) < 7) {
+                    if (Carbon::parse($video->time_published)->diffInDays(now()) < 28) {
                         $video->pinned = true;
                         $video->pin_expires_at = now()->addDays(3);
                         $count['pinned']++;

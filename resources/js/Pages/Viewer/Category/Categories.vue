@@ -1,75 +1,108 @@
-
-
 <script setup>
-import {onMounted, onUnmounted, ref} from "vue";
-import CreatorCarousel from "@/Pages/Viewer/Home/CreatorCarousel.vue";
+import { onMounted, onUnmounted, ref } from "vue";
+import { debounce } from "lodash";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
-import {debounce} from "lodash";
-
-import TopStreamsRow from "@/Components/ContentRows/TopStreamsRow.vue";
-import TopShortsRow from "@/Components/ContentRows/TopShortsRow.vue";
-
 import VideosRow from "@/Components/ContentRows/VideosRow.vue";
-import InfiniteVideos from "@/Components/ContentRows/InfiniteVideos.vue";
-import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
-import {useAuthStore} from "@/Stores/AuthStore";
-import {usePinModalStore} from "@/Stores/PinModalStore";
-import RumbleIcon from '~/images/icons/rumble.svg';
-import VimeoIcon from '~/images/icons/vimeo.svg';
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import { usePinModalStore } from "@/Stores/PinModalStore";
 
 const pinModalStore = usePinModalStore();
-const contentRoutesStore = useContentRoutesStore();
+const pinnedVideos = ref([]); // Holds all video data grouped by category
+const currentIndex = ref(0); // Tracks which group of categories are currently being fetched
+const categoriesPerBatch = 5; // Load 5 categories per request
 
+// State to manage infinite scrolling
+const isLoading = ref(false); // Prevents multiple fetches if a fetch is already in progress
+const allCategoriesFetched = ref(false); // Flag to indicate all categories are loaded
 
-const pinnedVideos = ref([]);
+// Debounced function to fetch the next batch of categories
+const debouncedFetchNextCategories = debounce(async () => {
+    if (isLoading.value || allCategoriesFetched.value) return;
 
+    isLoading.value = true;
 
+    try {
+        // Get the next batch of 5 categories (or fewer if we're at the end)
+        const nextBatch = pinModalStore.categories.data.slice(
+            currentIndex.value,
+            currentIndex.value + categoriesPerBatch
+        );
+
+        if (nextBatch.length === 0) {
+            // No more categories to fetch
+            allCategoriesFetched.value = true;
+        } else {
+            // Fetch pinned videos for each category in the batch
+            const batchPromises = nextBatch.map(async (category) => {
+                const videos = await pinModalStore.getPinnedVideos(6, 1, category.slug);
+                return { category, videos };
+            });
+
+            // Await all batch fetch requests
+            const results = await Promise.all(batchPromises);
+
+            // Add fetched videos to the pinnedVideos array
+            pinnedVideos.value = pinnedVideos.value.concat(results);
+
+            // Update index to skip the fetched batch
+            currentIndex.value += categoriesPerBatch;
+        }
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+    } finally {
+        isLoading.value = false;
+    }
+}, 500); // Prevent repeated firing with debounced behavior
+
+// Handle scrolling
+const handleScroll = () => {
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const bodyHeight = document.body.offsetHeight;
+
+    // Check if user has scrolled near the bottom of the page
+    if (scrollPosition >= bodyHeight - 100) {
+        debouncedFetchNextCategories();
+    }
+};
 
 onMounted(async () => {
+    // Fetch all categories on mount
     await pinModalStore.getVideoCategories();
-    // // iterate over the categories and get the pinned videos for each
-    for (const category of pinModalStore.categories.data) {
-        const videos = await pinModalStore.getPinnedVideos(6, 1, category.slug);
-        pinnedVideos.value.push({
-            category: category,
-            videos: videos
-        });
-    }
 
-    // order pinned videos by most videos
-    pinnedVideos.value.sort((a, b) => {
-        return b.videos.length - a.videos.length;
-    });
+    // Prefetch the first batch of categories
+    await debouncedFetchNextCategories();
 
-
-
-
-    // vimeoPinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Vimeo');
-    // rumblePinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Rumble');
-    // musicPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.music);
-    // techPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.tech);
-    // wealthPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.wealth);
+    // Attach the scroll listener for infinite scrolling
+    window.addEventListener("scroll", handleScroll);
 });
 
-
-
-
+onUnmounted(() => {
+    // Cleanup scroll listener and debounce handler on unmount
+    window.removeEventListener("scroll", handleScroll);
+    debouncedFetchNextCategories.cancel();
+});
 </script>
+
 <template>
     <div>
         <Head title="Categories" />
 
         <ConsistentPadding class="-mt-4">
-
-
-
-
-            <VideosRow v-for="item in pinnedVideos" :videos="item.videos" :key="item.category.id" :title="item.category.name">
+            <!-- Render each category and its videos -->
+            <VideosRow
+                v-for="item in pinnedVideos"
+                :videos="item.videos"
+                :key="item.category.id"
+                :title="item.category.name"
+            >
             </VideosRow>
 
+            <!-- Show a loading spinner if fetching -->
+            <div v-if="isLoading" class="text-center py-4">Loading...</div>
 
-
+            <!-- Show a message when all categories are fetched -->
+            <div v-if="allCategoriesFetched" class="text-center py-4 text-gray-600">
+                All categories loaded.
+            </div>
         </ConsistentPadding>
     </div>
 </template>
