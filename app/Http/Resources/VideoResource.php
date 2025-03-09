@@ -33,6 +33,7 @@ use Illuminate\Support\Str;
             'like_count' => $this->like_count,
             'dislike_count' => $this->dislike_count,
             'creator' => new CreatorResource($this->creator),
+            'category' => new CategoryResource($this->category),
             'visibility' => $this->visibility,
            'object_awards' => null,
             'comment_count' => number_format_short($this->comment_count) . " " . Str::plural('Comment', $this->comment_count),

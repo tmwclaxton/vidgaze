@@ -93,6 +93,7 @@ onUnmounted(() => {
                 :videos="item.videos"
                 :key="item.category.id"
                 :title="item.category.name"
+                :showCategoryTag="false"
             >
             </VideosRow>
 

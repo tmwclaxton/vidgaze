@@ -19,7 +19,7 @@ class Video extends Model
 
     //no mass assignment!
     protected $guarded = ['id'];
-    protected $with = ['creator'];
+    protected $with = ['creator', 'category'];
     protected $dates = [
         'time_uploaded',
         'time_published',

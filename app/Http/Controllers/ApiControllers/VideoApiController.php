@@ -274,7 +274,7 @@ class VideoApiController extends Controller
         $videos = $query->take($per_page)->get();
 
         // if the videos are less than the per_page, get random videos based on the category
-        if ($videos->count() < $per_page) {
+        if ($videos->count() < $per_page && $category) {
             $amt = $per_page - $videos->count();
             $randomVideos = Video::where('pinned', true)->where('category_id', $category->id)
                 ->whereNotIn('id', $videos->pluck('id'))

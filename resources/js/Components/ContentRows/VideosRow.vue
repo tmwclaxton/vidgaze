@@ -11,7 +11,7 @@
         <template v-if="videos !== null && videos.length > 0"
             v-for="(video, index) in videos"
                   :key="video.id">
-            <VideoStreamCard v-if="video != undefined" :item="video" :channel_page="channel_page" />
+            <VideoStreamCard v-if="video != undefined" :item="video" :channel_page="channel_page" :category_page="showCategoryTag" />
         </template>
         <!--skeleton loading-->
         <template v-else v-for="i in 6">
@@ -49,6 +49,11 @@ const props = defineProps({
         type: Boolean,
         required: false,
         default: true
-    }
+    },
+    showCategoryTag: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
 });
 </script>
