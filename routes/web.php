@@ -4,9 +4,14 @@
 use App\Enums\Platform;
 use App\Helpers\JoshPing;
 use App\Helpers\ResultDTO;
+use App\Http\Controllers\Tools\NanoController;
 use App\Http\Controllers\WebControllers\SupportWebController;
+use App\Models\Category;
+use App\Models\VideoModels\Video;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Redis;
 
 /*
 |--------------------------------------------------------------------------
