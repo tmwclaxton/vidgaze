@@ -270,6 +270,17 @@ class VideoApiController extends Controller
         // limit the number of videos
         $videos = $query->take($per_page)->get();
 
+        // if the videos are less than the per_page, get random videos based on the category
+        if ($videos->count() < $per_page) {
+            $amt = $per_page - $videos->count();
+            $randomVideos = Video::where('pinned', true)->where('category_id', $category->id)
+                ->whereNotIn('id', $videos->pluck('id'))
+                ->inRandomOrder()->take($amt)->get();
+
+            $videos = $videos->merge($randomVideos);
+        }
+
+
         // return the collection
         $videos = new VideoCollection($videos);
 
