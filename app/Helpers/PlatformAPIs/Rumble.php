@@ -10,6 +10,7 @@ use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
+use App\Helpers\Tools;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Arr;
@@ -63,44 +64,7 @@ class Rumble implements iSearchable, iIsPlatform
 //        dd($data);
 //    }
 
-    /**
-     * @throws Exception
-     */
-    public static function grabEmbedLink(string $key, int $attempts = 6): array
-    {
-        $curl = curl_init();
-        curl_setopt_array($curl, [
-            CURLOPT_URL => "https://rumble.com/service.php?video=$key&start=0&name=media.embed&included_js_libs=main,web_services,events,error,facebook_events,htmx.org,navigation-state,modal-base,darkmode,random,local_storage,notify,popout,tooltip,rac-ad,context-menus,provider,swipe-slider,ui,ads-north,search-bar,ui_header,main-menu-item-hover,premium-popup&included_css_libs=global",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 2,
-            CURLOPT_FOLLOWLOCATION => true,
-        ]);
 
-        $response = curl_exec($curl);
-        curl_close($curl);
-
-        if (!$response) {
-            if ($attempts > 1) {
-                return self::grabEmbedLink($key, $attempts - 1);
-            }
-            throw new Exception("Failed to fetch embed link after 3 attempts.");
-        }
-
-        try {
-            $response = json_decode($response, true);
-            $html = $response["html"];
-
-            $json = explode('Rumble("play", ', $html)[1] ?? '';
-            $json = explode(');', $json)[0] ?? '';
-            $json = json_decode($json, true);
-
-            $videoId = $json['video'];
-        } catch (Exception $e) {
-            throw new Exception("Failed to parse embed link after 3 attempts.");
-        }
-
-        return [$videoId, $attempts];
-    }
 
     public static function search(SearchQueryDTO $searchQueryDTO): array
     {
@@ -136,7 +100,7 @@ class Rumble implements iSearchable, iIsPlatform
         // limit the results to 10
         $items = array_slice($items, 0, 20);
 
-        return Arr::map($items, function ($value) {
+        return Tools::validateDTOs(Arr::map($items, function ($value) {
             if (!isset($value['object_type']) && !isset($value['type'])) {
                 return null;
             }
@@ -202,7 +166,7 @@ class Rumble implements iSearchable, iIsPlatform
             return null;
 
 
-        });
+        }));
     }
 
     public static function getCreatorVideos(string $id, int $page = null, $maxResults = 100): array
@@ -231,7 +195,7 @@ class Rumble implements iSearchable, iIsPlatform
             ];
         }
 
-        $results = array_map(function ($value) {
+        $results = Tools::validateDTOs(array_map(function ($value) {
             $contentDTO = new ContentDTO(Platform::Rumble, Kind::Video, $value['id']);
 
             $contentDTO->kind = Kind::Video;
@@ -243,7 +207,7 @@ class Rumble implements iSearchable, iIsPlatform
             $contentDTO->tags = array_map(fn($item) => $item['name'], $value['tags']);
 
             return $contentDTO;
-        }, $data['data']);
+        }, $data['data']));
 
         return [
             'next' => $page + 1,

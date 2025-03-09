@@ -13,6 +13,7 @@ use App\Helpers\SearchQueryDTO;
 use App\Helpers\Tools;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Laravel\Octane\Facades\Octane;
 
 class YouTube implements iSearchable, iIsPlatform
@@ -118,7 +119,7 @@ class YouTube implements iSearchable, iIsPlatform
             $results[] = $resultDTO;
         }
 
-        return $results;
+        return Tools::validateDTOs($results);
     }
 
     public static function searchVideos(SearchQueryDTO $searchQueryDTO)
@@ -143,7 +144,7 @@ class YouTube implements iSearchable, iIsPlatform
             $results[] = $resultDTO;
         }
 
-        return $results;
+        return Tools::validateDTOs($results);
     }
 
     public static function getVideoOrStream(array $ids, bool $returnJustContentDTO = true): array
@@ -311,4 +312,6 @@ class YouTube implements iSearchable, iIsPlatform
         }
         return $results;
     }
+
+
 }
