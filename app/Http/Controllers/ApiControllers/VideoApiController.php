@@ -163,6 +163,9 @@ class VideoApiController extends Controller
             //return ($video_ids);
         }
 
+        // eager load the creator
+        $query->with('creator');
+
 
         $videos = $query->take($per_page)->get();
 

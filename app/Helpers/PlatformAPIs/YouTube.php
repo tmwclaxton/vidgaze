@@ -8,15 +8,15 @@ use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
-use App\Helpers\PlatformAPIs\PlatformInterfaces\isValidatable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
 use App\Helpers\Tools;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Laravel\Octane\Facades\Octane;
 
-class YouTube implements iSearchable, iIsPlatform, isValidatable
+class YouTube implements iSearchable, iIsPlatform
 {
     protected string $scraperKey;
 
@@ -119,7 +119,7 @@ class YouTube implements iSearchable, iIsPlatform, isValidatable
             $results[] = $resultDTO;
         }
 
-        return $results;
+        return Tools::validateDTOs($results);
     }
 
     public static function searchVideos(SearchQueryDTO $searchQueryDTO)
@@ -144,7 +144,7 @@ class YouTube implements iSearchable, iIsPlatform, isValidatable
             $results[] = $resultDTO;
         }
 
-        return $results;
+        return Tools::validateDTOs($results);
     }
 
     public static function getVideoOrStream(array $ids, bool $returnJustContentDTO = true): array
@@ -313,8 +313,5 @@ class YouTube implements iSearchable, iIsPlatform, isValidatable
         return $results;
     }
 
-    public static function validate(array $results): array
-    {
-        // TODO: Implement validate() method.
-    }
+
 }

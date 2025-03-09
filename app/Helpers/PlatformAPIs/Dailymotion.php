@@ -16,7 +16,7 @@ use Carbon\Carbon;
 use Dailymotion as DailymotionSDK;
 use Illuminate\Support\Arr;
 
-class Dailymotion implements iSearchable, iIsPlatform, isValidatable
+class Dailymotion implements iSearchable, iIsPlatform
 {
     public DailymotionSDK $client;
 
@@ -110,7 +110,7 @@ class Dailymotion implements iSearchable, iIsPlatform, isValidatable
         );
 
 //            dd($response);
-        return Arr::map($response['list'], function ($item){
+        return Tools::validateDTOs(Arr::map($response['list'], function ($item){
             $resultDTO = new ResultDTO(Platform::Dailymotion, Kind::Video);
 
             $contentDTO = new ContentDTO(Platform::Dailymotion, Kind::Video, $item['id']);
@@ -137,7 +137,7 @@ class Dailymotion implements iSearchable, iIsPlatform, isValidatable
             $resultDTO->content = $contentDTO;
             $resultDTO->creator = $creatorDTO;
             return $resultDTO;
-        });
+        }));
 //            return [
 //                "pageTokenInfo" => self::getPageTokenInfo($response, $pageToken),
 //                "results" => self::convertResponseToDTOs($response['list'])
@@ -163,7 +163,7 @@ class Dailymotion implements iSearchable, iIsPlatform, isValidatable
         ];
         $response = $api->client->get('/user/'.$id.'/videos', $queryParams);
 
-        $results = Arr::map( $response['list'], function($value){
+        $results = Tools::validateDTOs(Arr::map( $response['list'], function($value){
             $contentDTO = new ContentDTO(Platform::Dailymotion, Kind::Video, $value['id']);
 
             $contentDTO->name = $value['title'];
@@ -177,17 +177,12 @@ class Dailymotion implements iSearchable, iIsPlatform, isValidatable
 
 
             return $contentDTO;
-        });
+        }));
 
         return [
             'next' => end($response['list'])['created_time'] ?? null, // timestamp
             'hasNext' => boolval($response['has_more']),
             'results' => $results,  // ContentDTO
         ];
-    }
-
-    public static function validate(array $results): array
-    {
-        // TODO: Implement validate() method.
     }
 }
