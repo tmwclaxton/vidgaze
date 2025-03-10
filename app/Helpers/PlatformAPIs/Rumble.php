@@ -215,4 +215,66 @@ class Rumble implements iSearchable, iIsPlatform
             'results' => $results,
         ];
     }
+
+    public static function getEditorPicks(int $maxResults = 40) {
+        // https://rumble.com/editor-picks
+    }
+
+    public static function getFeaturedVideos(int $maxResults = 40)
+    {
+        $apiToken = env('APIFY_TOKEN');
+        $startUrls = ["https://rumble.com/videos?sort=views&date=today"];
+
+        // Step 1: Start Actor run
+        $actorRunResponse = Http::post("https://api.apify.com/v2/acts/azzouzana~rumble-all-inclusive-scraper/runs?token=$apiToken", [
+            "startUrls" => $startUrls,
+        ]);
+
+        if (!$actorRunResponse->successful()) {
+            Log::error("Failed to start Rumble scraper Actor run: " . $actorRunResponse->body());
+            throw new Exception("Failed to start Rumble scraper Actor run.");
+        }
+
+        $runId = $actorRunResponse->json()['data']['id'];
+
+        // Step 2: Poll for the run's status
+        $isCompleted = false;
+        $maxRetries = 60; // Timeout after 60 retries (~60 seconds)
+        $retries = 0;
+
+        while (!$isCompleted && $retries < $maxRetries) {
+            try {
+                $runStatusResponse = Http::get("https://api.apify.com/v2/acts/azzouzana~rumble-all-inclusive-scraper/runs/$runId?token=$apiToken");
+            } catch (Exception $e) {
+                Log::error("Failed to check status of Rumble Actor run: " . $e->getMessage());
+                throw new Exception("Failed to check status of Rumble Actor run.");
+            }
+
+            if (!$runStatusResponse->successful()) {
+                Log::error("Failed to check status of Rumble Actor run: " . $runStatusResponse->body());
+                throw new Exception("Failed to check status of Rumble Actor run.");
+            }
+
+            $status = $runStatusResponse->json()['data']['status'];
+            if ($status === 'SUCCEEDED') {
+                $isCompleted = true;
+            } elseif (in_array($status, ['FAILED', 'TIMING_OUT', 'ABORTED'])) {
+                Log::error("Rumble Actor run failed with status: $status");
+                throw new Exception("Rumble Actor run failed with status: $status");
+            }
+
+            // Wait for 1 second before checking again
+            sleep(1);
+            $retries++;
+        }
+
+        if (!$isCompleted) {
+            Log::error("Rumble Actor run did not complete in time.");
+            throw new Exception("Rumble Actor run did not complete in time.");
+        }
+
+        // Step 3: Fetch the dataset items
+        $datasetItemsResponse = Http::get("https://api.apify.com/v2/acts/azzouzana~rumble-all-inclusive-scraper/runs/$runId/dataset/items?token=$apiToken");
+
+    }
 }
