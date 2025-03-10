@@ -35,6 +35,9 @@ class CategoriseVideos extends Command
         $categories = Category::all();
         $categoryNames = $categories->pluck('name')->toArray();
 
+        //remove "VidGaze Picks" from the list of categories
+        $categoryNames = array_diff($categoryNames, ['VidGaze Picks']);
+
         // Create an instance of the NanoGPT service
         $nanoGPTService = new NanoController();
 
@@ -53,7 +56,7 @@ class CategoriseVideos extends Command
                     . "Title: {$video->title}\n"
                     . "Description: {$video->description}\n"
                     . "Creator: {$video->creator()->first()->name}\n\n"
-                    . "If the video is about Unionisation, Freedom of Speech or XMR please categorize it as 'VidGaze Picks'.\n\n"
+//                    . "If the video is about Unionisation, Freedom of Speech or XMR please categorize it as 'VidGaze Picks'.\n\n"
                     . "Return only the category name or 'null' if no category matches.";
 
                 // Generate AI response using NanoGPT
