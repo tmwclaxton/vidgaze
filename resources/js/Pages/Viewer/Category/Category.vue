@@ -43,7 +43,7 @@ const getVideos = async () => {
     let videoIDs = videos.value.map((video) => video.id);
     // convert videoIDs to string
     videoIDs = videoIDs.join(",");
-    const videosResponse = await useContentRoutesStore().getCategoryVideos(category.value.slug, 12, videoIDs);
+    const videosResponse = await useContentRoutesStore().getCategoryVideos(category.value.slug, 36, videoIDs);
 
     // concat videos to existing videos but make sure there are no duplicates
     videos.value = videos.value.concat(videosResponse.filter((video) => !videoIDs.includes(video.id)));

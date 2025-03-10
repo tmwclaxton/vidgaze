@@ -44,7 +44,7 @@ const props = defineProps({
     title: {
         type: String,
         required: false,
-        default: 'Videos',
+        default: null,
     },
     rowDivider: {
         type: Boolean,
@@ -56,6 +56,11 @@ const props = defineProps({
         required: false,
         default: false,
     },
+    waitTillLoaded: {
+        type: Boolean,
+        required: false,
+        default: false,
+    }
 });
 
 // Reactive property to track the loading state
@@ -63,6 +68,11 @@ const isLoaded = ref(false);
 
 // Watch for changes in `videos`, and mark as loaded when videos are populated
 watchEffect(() => {
+    if (!props.waitTillLoaded) {
+        isLoaded.value = true;
+        return;
+    }
+
     if (props.videos !== null && props.videos.length > 0) {
         isLoaded.value = true;
     }
