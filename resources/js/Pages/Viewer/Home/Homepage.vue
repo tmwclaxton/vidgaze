@@ -29,29 +29,34 @@ const category = ref('');
 const vimeoPinned = ref([]);
 const rumblePinned = ref([]);
 const musicPinned = ref([]);
-const techPinned = ref([]);
+const cryptoPinned = ref([]);
 const wealthPinned = ref([]);
+const alternatePinned = ref([]);
 
 const categorySlugs = {
     'music': 'music',
-    'tech': 'freedom_technology',
+    'crypto': 'crypto_currency',
     'wealth': 'wealth_inequality',
+    'alternate': 'alternate_news'
 };
 
 
 
 onMounted(async () => {
+    // vimeoPinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Vimeo');
+    // rumblePinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Rumble');
+    musicPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.music);
+    cryptoPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.crypto);
+    wealthPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.wealth);
+    alternatePinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.alternate);
+
+
     await fetchTrendingVideos().then(async () => {
         await debouncedFetchVideos(); // call it immediately on mount
 
         window.addEventListener('scroll', handleScroll);
     });
 
-    vimeoPinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Vimeo');
-    rumblePinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Rumble');
-    musicPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.music);
-    techPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.tech);
-    wealthPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.wealth);
 });
 
 onUnmounted(() => {
@@ -129,28 +134,34 @@ const fetchVideos = async (videoArray) => {
 
 
 
-            <VideosRow :videos="vimeoPinned" title="Vimeo Spotlight">
-                <VimeoIcon class="my-auto h-6"/>
-            </VideosRow>
+<!--            <VideosRow :videos="vimeoPinned" title="Vimeo Spotlight">-->
+<!--                <VimeoIcon class="my-auto h-6"/>-->
+<!--            </VideosRow>-->
 
-            <VideosRow :videos="rumblePinned" title="Hot on Rumble">
-                <RumbleIcon class="my-auto h-6"/>
+<!--            <VideosRow :videos="rumblePinned" title="Hot on Rumble">-->
+<!--                <RumbleIcon class="my-auto h-6"/>-->
+<!--            </VideosRow>-->
+
+            <VideosRow :videos="musicPinned" title="Top in Music">
+                <font-awesome-icon :icon="['fas', 'music']" class="my-auto h-6"/>
             </VideosRow>
 
             <VideosRow :videos="wealthPinned" title="Wealth Inequality" :showCategoryTag="false">
                 <img src="/images/monoply.png" class="my-auto h-12 -mt-1"/>
             </VideosRow>
 
-            <VideosRow :videos="techPinned" title="Freedom Technology" :showCategoryTag="false">
-                <font-awesome-icon :icon="['fas', 'microchip']" class="my-auto h-6"/>
+            <VideosRow :videos="cryptoPinned" title="Crypto Currency" :showCategoryTag="false">
+                <font-awesome-icon :icon="['fas', 'coins']" class="my-auto h-6"/>
+            </VideosRow>
+
+            <VideosRow :videos="alternatePinned" title="Alternate News" :showCategoryTag="false">
+                <font-awesome-icon :icon="['fas', 'newspaper']" class="my-auto h-6"/>
             </VideosRow>
 
             <TopShortsRow v-if="useAuthStore().areShortsEnabled()"/>
 
 
-            <VideosRow :videos="musicPinned" title="Top in Music">
-                <font-awesome-icon :icon="['fas', 'music']" class="my-auto h-6"/>
-            </VideosRow>
+
 
 
 
