@@ -7,6 +7,8 @@ use App\Helpers\ResultDTO;
 use App\Http\Controllers\Tools\NanoController;
 use App\Http\Controllers\WebControllers\SupportWebController;
 use App\Models\Category;
+use App\Models\CreatorModels\Creator;
+use App\Models\CreatorModels\CreatorSource;
 use App\Models\VideoModels\Video;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
@@ -70,39 +72,3 @@ if (config('app.env') == 'local') {
         return JoshPing::ping();
     });
 }
-
-//Route::get('/search-test', function () {
-//    $platform = new \App\Helpers\PlatformAPIs\Vimeo();
-//    $results = $platform->getFeaturedVideos();
-//
-////    ResultDTO::saveAll($results)
-//
-//    $savedResults = ResultDTO::saveAll($results);
-//
-//    // iterate through and changed pinned to true and pin_expires_at to 1 week from now
-//    foreach ($savedResults as $result) {
-//        $result->pinned = true;
-//        $result->pin_expires_at = now()->addWeek();
-//        $result->save();
-//    }
-
-//    $searchQuery = new \App\Helpers\SearchQueryDTO('pewdiepie', 20, [$platform->getPlatform()]);
-//    $results = $platform->search($searchQuery);
-//    dd($results);
-
-//    $searchCreators = $platform->searchCreators($searchQuery);
-//    dd($searchCreators);
-//    $searchChannels = $platform->getCreators(['UC-lHJZR3Gqxm24_Vd_AJ5Yw']);
-//    dd($searchChannels);
-//
-//    $searchVideo = $platform->getVideoOrStream(['FafXBaAEowM']);
-//    dd($searchVideo);
-//
-//    $getChannel = $platform->getCreatorVideosBeforeDate('UC-lHJZR3Gqxm24_Vd_AJ5Yw');
-//    dd($getChannel);
-//
-//    $results = $platform->searchVideos($searchQuery);
-//    dd($results);
-
-//})->name('search.test');
-
