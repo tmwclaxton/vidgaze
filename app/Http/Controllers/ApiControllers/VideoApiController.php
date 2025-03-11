@@ -145,6 +145,7 @@ class VideoApiController extends Controller
             $query->whereIn('preferred_source', $selectedVideoPlatforms);
         }
 
+        $query->whereNotNull('category_id');
 
         if (Auth::user()) {
             $channelDisinterestIDs = CreatorInteraction::where('viewer_id', Auth::user()->creator->id)->where('disinterested', '=', true)
