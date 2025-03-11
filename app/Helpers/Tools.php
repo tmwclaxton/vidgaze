@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Enums\Kind;
 use DateInterval;
 use DateTime;
 use Illuminate\Support\Facades\Log;
@@ -49,23 +50,25 @@ class Tools
 
             // Validate Content (Video/Stream)
             $content = $result->content ?? null;
-            if ($content instanceof ContentDTO) {
-                $errors = [];
+            if (($result->kind === Kind::Video || $result->kind === Kind::Stream)) {
+                if ($result->content instanceof ContentDTO) {
+                    $errors = [];
 
-                // Required fields for ContentDTO
-                if (empty($content->id)) $errors[] = "Content ID is missing.";
-                if (empty($content->name)) $errors[] = "Content name is missing.";
-                if (empty($content->creator_id)) $errors[] = "Creator ID is missing for content (Video).";
-                if (empty($content->publish_time)) $errors[] = "Publish time is missing.";
-                if ($content->thumbnail_url === null) $errors[] = "Thumbnail URL is missing.";
+                    // Required fields for ContentDTO
+                    if (empty($content->id)) $errors[] = "Content ID is missing.";
+                    if (empty($content->name)) $errors[] = "Content name is missing.";
+                    if (empty($content->creator_id)) $errors[] = "Creator ID is missing for content (Video).";
+                    if (empty($content->publish_time)) $errors[] = "Publish time is missing.";
+                    if ($content->thumbnail_url === null) $errors[] = "Thumbnail URL is missing.";
 
-                if (!empty($errors)) {
-                    Log::error("Content validation failed for ContentDTO ID: {$content->id}", $errors);
+                    if (!empty($errors)) {
+                        Log::error("Content validation failed for ContentDTO ID: {$content->id}", $errors);
+                        continue;
+                    }
+                } else {
+                    Log::error("ResultDTO is missing a valid ContentDTO.");
                     continue;
                 }
-            } else {
-                Log::error("ResultDTO is missing a valid ContentDTO.");
-                continue;
             }
 
             // Validate Creator
