@@ -47,7 +47,9 @@ const dotsIconShow = computed(() => {
         <div  v-if="!hideItem">
             <div class="relative aspect-[10/16] overflow-hidden rounded-xl">
                 <Link :href="'shorts?short=' + item.slug">
-                    <img class="object-none w-full  h-full bg-zinc-900" v-bind:src="item.thumbnail_url"   alt=""/>
+                    <div class="bg-black w-full h-full flex">
+                        <img class="object-fit w-full  my-auto bg-zinc-900" v-bind:src="item.thumbnail_url"   alt=""/>
+                    </div>
                 </Link>
 
 
