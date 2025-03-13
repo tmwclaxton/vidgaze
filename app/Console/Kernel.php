@@ -21,17 +21,18 @@ class Kernel extends ConsoleKernel
 
         // cmds: refresh:top-categories, refresh:twitch-category-info, refresh:streams
 
-        $schedule->command('delete:old_live_viewers')->everyFifteenMinutes();
-        $schedule->command('refresh:subscriptions')->everyFifteenMinutes();
-        $schedule->command('refresh:top-categories')->everyThirtyMinutes();
-        $schedule->command('refresh:twitch-category-info')->everyThirtyMinutes();
-        $schedule->command('refresh:streams')->everyFiveMinutes();
-        $schedule->command('app:delete-old-streams')->everyThirtyMinutes();
-        $schedule->command('app:get-vimeo-featured-videos')->daily();
-        $schedule->command('app:get-rumble-featured-videos')->daily();
-        $schedule->command('app:delete-old-pins')->daily();
-        $schedule->command('app:categorise-videos')->everyTwoMinutes();
-        $schedule->command('app:get-rumble-banners')->everyTwoHours();
+        $schedule->command('delete:old_live_viewers')->everyFifteenMinutes()->withoutOverlapping();
+        $schedule->command('refresh:subscriptions')->everyFifteenMinutes()->withoutOverlapping();
+        $schedule->command('refresh:top-categories')->everyThirtyMinutes()->withoutOverlapping();
+        $schedule->command('refresh:twitch-category-info')->everyThirtyMinutes()->withoutOverlapping();
+        $schedule->command('refresh:streams')->everyFiveMinutes()->withoutOverlapping();
+        $schedule->command('app:delete-old-streams')->everyThirtyMinutes()->withoutOverlapping();
+        $schedule->command('app:get-vimeo-featured-videos')->daily()->withoutOverlapping();
+        $schedule->command('app:get-rumble-featured-videos')->daily()->withoutOverlapping();
+        $schedule->command('app:delete-old-pins')->daily()->withoutOverlapping();
+        $schedule->command('app:categorise-videos')->everyTwoMinutes()->withoutOverlapping();
+        $schedule->command('app:get-rumble-banners')->everyTwoHours()->withoutOverlapping();
+        $schedule->command('app:search-videos-for-categories')->hourly()->withoutOverlapping();
     }
 
     /**

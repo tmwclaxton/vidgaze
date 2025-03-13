@@ -30,62 +30,68 @@ class SearchVideosForCategories extends Command
      */
     public function handle()
     {
-        // Retrieve all categories except 'VidGaze Picks'
-        $categories = Category::all()->reject(fn($category) => $category->name === 'VidGaze Picks')->shuffle();
+        // Retrieve oldest last_updated
+        $category = Category::whereNull('twitch_category_id')->where('name', '!=', 'VidGaze Picks')->orderBy('updated_at')->first();
 
         // Initialize the NanoGPT service
         $nanoGPTService = new NanoController();
 
-        foreach ($categories as $category) {
-            try {
-                // Prepare category details
-                $categoryName = $category->name;
-                $categoryTags = json_encode($category->tags_json);
+        // update last_updated
+        $category->updated_at = now();
+        $category->save();
 
-                // Step 1: Ask AI for background/context on the category and tags
-                $contextPrompt = "Tell me something interesting about:\n\n"
-                    . "Category: {$categoryName}\n"
-                    . "Tags: {$categoryTags}\n\n"
-                    . "Provide a brief yet insightful summary.";
+        try {
+            // Prepare category details
+            $categoryName = $category->name;
+            $categoryTags = json_encode($category->tags_json);
 
-                $contextResponse = $nanoGPTService->getChatCompletion([
-                    ['role' => 'system', 'content' => 'You are an informative AI that provides insightful overviews of topics.'],
-                    ['role' => 'user', 'content' => $contextPrompt],
-                ], 'chatgpt-4o-latest');
+            // Step 1: Ask AI for background/context on the category and tags
+            $contextPrompt = "Tell me something interesting about:\n\n"
+                . "Category: {$categoryName}\n"
+                . "Tags: {$categoryTags}\n\n"
+                . "Provide a brief yet insightful summary.";
 
-                // Extract AI-generated context
-                $contextText = trim($contextResponse['choices'][0]['message']['content']);
+            $contextResponse = $nanoGPTService->getChatCompletion([
+                ['role' => 'system', 'content' => 'You are a creative and informative AI that provides unique overviews of topics'],
+                ['role' => 'user', 'content' => $contextPrompt],
+            ], 'gemini-2.0-flash-001', [], true);
 
-                // Step 2: Use the AI-provided context to generate an engaging search query
-                $queryPrompt = "Based on the following category, tags, and additional context, "
-                    . "generate a natural, trending, and high-relevance YouTube search query "
-                    . "that aligns with what people are actively searching for.\n\n"
-                    . "Category: {$categoryName}\n"
-                    . "Tags: {$categoryTags}\n"
-                    . "Context: {$contextText}\n\n"
-                    . "Current date: " . now()->format('Y-m-d') . "\n\n"
-                    . "Return only the optimized search query, without any additional text.";
+            // Extract AI-generated context
+            $contextText = trim($contextResponse['choices'][0]['message']['content']);
 
-                $queryResponse = $nanoGPTService->getChatCompletion([
-                    ['role' => 'system', 'content' => 'You are a YouTube viewer who wants to watch a cool video and has to come up with a short search query.'],
-                    ['role' => 'user', 'content' => $queryPrompt],
-                ], 'chatgpt-4o-latest');
+            // Step 2: Use the AI-provided context to generate an engaging search query
+            $queryPrompt = "Based on the following category, tags, and additional context, "
+                . "generate a creative YouTube search query.\n\n"
+                . "Category: {$categoryName}\n"
+                . "Tags: {$categoryTags}\n"
+                . "Context: {$contextText}\n\n"
+                . "Current date: " . now()->format('Y-m-d') . "\n\n"
+                . "Return only the optimized search query, without any additional text.";
 
-                // Extract the AI-generated search query
-                $query = trim($queryResponse['choices'][0]['message']['content']);
+            $queryResponse = $nanoGPTService->getChatCompletion([
+                ['role' => 'system', 'content' => 'You are a YouTube viewer who wants to watch a cool video and has to come up with a short search query.'],
+                ['role' => 'user', 'content' => $queryPrompt],
+            ], 'gemini-2.0-flash-001',[], true);
 
-                if (empty($query)) {
-                    continue;
-                }
+            // Extract the AI-generated search query
+            $query = trim($queryResponse['choices'][0]['message']['content']);
 
-                // Debugging: Display the generated query (Remove this in production)
-//                $searchQuery = $query;
-//                $query = new SearchQueryDTO($searchQuery, 10);
-//                Search::searchJobs($query);
-
-            } catch (\Throwable $th) {
-                Log::error("Error generating search query for category '{$categoryName}': " . $th->getMessage());
+            if (empty($query)) {
+                Log::error("Empty search query generated for category '{$categoryName}'");
+                return;
             }
+
+            $searchQuery = $query;
+            $query = new SearchQueryDTO($searchQuery, 10);
+            Search::searchJobs($query);
+
+            // wait 25 seconds then run searchResults
+            sleep(25);
+            $results = Search::searchResults($query);
+
+        }
+        catch (\Throwable $th) {
+            Log::error("Error generating search query for category '{$categoryName}': " . $th->getMessage());
         }
     }
 
