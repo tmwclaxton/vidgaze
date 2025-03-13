@@ -13,7 +13,7 @@ class Category extends Model
     use HasFactory;
 
     // TODO: no mass assignment!
-    protected $guarded = [''];
+    protected $guarded = ['id'];
 
 
 

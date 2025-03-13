@@ -32,12 +32,9 @@ use Illuminate\Support\Str;
             'thumbnail_url' => $this->thumbnail_url,
             'like_count' => $this->like_count,
             'dislike_count' => $this->dislike_count,
-            'creator' => new CreatorResource($this->creator()->first()),
+            'creator' => new CreatorResource($this->creator),
+            'category' => new CategoryResource($this->category),
             'visibility' => $this->visibility,
-//            'object_awards' => VideoAward::where('video_id', '=', $this->id)
-////                ->groupBy('award_id')
-////                ->select('award_id', DB::raw('count(*) as total'))
-////                ->get()->sortByDesc('award.coin_price'),
            'object_awards' => null,
             'comment_count' => number_format_short($this->comment_count) . " " . Str::plural('Comment', $this->comment_count),
             // capitalize the first letter of the preference and if youtube capitalize the 'T' in 'YouTube'
@@ -60,7 +57,7 @@ use Illuminate\Support\Str;
                 'thumbnail_url' => $this->thumbnail_url,
                 'like_count' => $this->like_count,
                 'dislike_count' => $this->dislike_count,
-                'creator' => $this->creator()->first(),
+                'creator' => new CreatorResource($this->creator),
                 'visibility' => $this->visibility,
                 'comment_count' => $this->comment_count,
                 'preferred_source' => $this->preferred_source,

@@ -8,6 +8,7 @@ use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\isValidatable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
 use App\Helpers\Tools;
@@ -109,7 +110,7 @@ class Dailymotion implements iSearchable, iIsPlatform
         );
 
 //            dd($response);
-        return Arr::map($response['list'], function ($item){
+        return Tools::validateDTOs(Arr::map($response['list'], function ($item){
             $resultDTO = new ResultDTO(Platform::Dailymotion, Kind::Video);
 
             $contentDTO = new ContentDTO(Platform::Dailymotion, Kind::Video, $item['id']);
@@ -129,6 +130,8 @@ class Dailymotion implements iSearchable, iIsPlatform
             $creatorDTO->avatar_url = $item['owner.avatar_720_url'];
             $creatorDTO->banner_url = $item['owner.cover_url'];
 
+            $contentDTO->creator_id = $item['owner.id'];
+
 //                $creatorDTO->avatar_url = $item['owner.avatar_720_url'];
 //                $creatorDTO->banner_url = $item['owner.cover_url'];
 
@@ -136,7 +139,7 @@ class Dailymotion implements iSearchable, iIsPlatform
             $resultDTO->content = $contentDTO;
             $resultDTO->creator = $creatorDTO;
             return $resultDTO;
-        });
+        }));
 //            return [
 //                "pageTokenInfo" => self::getPageTokenInfo($response, $pageToken),
 //                "results" => self::convertResponseToDTOs($response['list'])
@@ -162,7 +165,7 @@ class Dailymotion implements iSearchable, iIsPlatform
         ];
         $response = $api->client->get('/user/'.$id.'/videos', $queryParams);
 
-        $results = Arr::map( $response['list'], function($value){
+        $results = Tools::validateDTOs(Arr::map( $response['list'], function($value){
             $contentDTO = new ContentDTO(Platform::Dailymotion, Kind::Video, $value['id']);
 
             $contentDTO->name = $value['title'];
@@ -176,7 +179,7 @@ class Dailymotion implements iSearchable, iIsPlatform
 
 
             return $contentDTO;
-        });
+        }));
 
         return [
             'next' => end($response['list'])['created_time'] ?? null, // timestamp
@@ -184,5 +187,4 @@ class Dailymotion implements iSearchable, iIsPlatform
             'results' => $results,  // ContentDTO
         ];
     }
-
 }

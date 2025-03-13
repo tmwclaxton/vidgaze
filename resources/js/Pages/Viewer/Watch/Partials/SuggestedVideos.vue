@@ -23,17 +23,18 @@ const props = defineProps({
 });
 
 const suggestions = ref([]);
-const mode = ref("recommended");
+const mode = ref("category");
 const page = ref(null);
 
 onMounted(async () => {
     await loadMore();
 });
 
+
 const loadMore = async () => {
-    if (mode.value === "recommended" || props.creator === null) {
+    if (mode.value === "category" || props.creator === null) {
         const videoIds = suggestions.value.map(video => video.id).join(',');
-        const extraItems = await useContentRoutesStore().getVideos("random", 10, videoIds);
+        const extraItems = await useContentRoutesStore().getCategoryVideos(props.video.category.slug, 10, videoIds);
         suggestions.value = suggestions.value.concat(extraItems);
     } else if (mode.value === "channel") {
         console.log(props.creator);
@@ -61,9 +62,9 @@ watch(mode, () => {
 <template>
     <div class="">
         <div class="flex flex-row flex-wrap">
-            <QuaternaryButton class="mr-2" @click="mode = 'recommended'">
-                <font-awesome-icon :icon="['fas', 'fire']" class="my-auto"/>
-                <span class="font-semibold">Random</span>
+            <QuaternaryButton v-if="video.category !== undefined" class="mr-2" @click="mode = 'category'">
+                <font-awesome-icon :icon="['fas', 'icons']" class="my-auto"/>
+                <span class="font-semibold" v-text="video.category.name"/>
             </QuaternaryButton>
             <QuaternaryButton class="mr-2" @click="mode = 'channel'">
                 <font-awesome-icon :icon="['fas', 'heart']" class="my-auto"/>

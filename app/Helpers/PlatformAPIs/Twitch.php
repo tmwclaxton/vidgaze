@@ -208,5 +208,4 @@ class Twitch implements iSearchable, iIsPlatform
         return $streams;
     }
 
-
 }

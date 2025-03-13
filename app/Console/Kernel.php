@@ -31,6 +31,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:get-rumble-featured-videos')->daily();
         $schedule->command('app:delete-old-pins')->daily();
         $schedule->command('app:categorise-videos')->everyTwoMinutes();
+        $schedule->command('app:get-rumble-banners')->everyTwoHours();
     }
 
     /**

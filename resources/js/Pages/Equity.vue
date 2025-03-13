@@ -13,9 +13,9 @@
                     VidGaze is yours to own. It's not for the capitalists or for a few very wealthy people
                     to enshitify. It's for <span class="font-semibold ">you</span>. I want you to own a piece.
                     To do that, I need a way to give you a piece. So, there will be a small nominal fee of
-                    <span class="font-semibold text-cyan-600 dark:text-cyan-400">1 XMR</span>, which will be used to fund the project and
+                    <span class="font-semibold text-cyan-600 dark:text-cyan-400">1 XMR</span>, which will be used to fund me, the project and
                     cover server costs. Once (if ever) we reach <span class="font-semibold text-cyan-600 dark:text-cyan-400">50,000 owners</span>,
-                    this fee will be removed, the centralised control of the servers & database will be relinquished (hopefully into a federated network),
+                    this fee to me will be removed, the centralised control of the servers & database will be relinquished (hopefully into a federated network),
                     and the project will be <span class="font-semibold ">yours</span> to do with as you please.
                 </p>
 
@@ -31,6 +31,13 @@
                         <span class="text-cyan-600 dark:text-cyan-400 mr-3">•</span>
                         <p class="text-base leading-relaxed">
                             Equity cannot be sold or transferred. Once you pass away, it goes back to the pool.
+                        </p>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-cyan-600 dark:text-cyan-400 mr-3">•</span>
+                        <p class="text-base leading-relaxed">
+                            Until we reach 50,000 owners, I will have a veto on decisions, to stop
+                            any bad actors or silly mistakes; however, I will not have power to change the original equity agreement here.
                         </p>
                     </div>
                 </div>

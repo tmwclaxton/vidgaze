@@ -2,8 +2,10 @@
 
 namespace App\Helpers;
 
+use App\Enums\Kind;
 use DateInterval;
 use DateTime;
+use Illuminate\Support\Facades\Log;
 
 class Tools
 {
@@ -34,6 +36,64 @@ class Tools
             $seconds += $value * (60 ** $key);
         }
         return $seconds;
+    }
+
+    public static function validateDTOs(array $results): array
+    {
+        $validatedResults = [];
+        foreach ($results as $result) {
+            // Check if it's a valid ResultDTO with kind and platform
+            if (!($result instanceof ResultDTO)) {
+                Log::error("Invalid ResultDTO object detected.");
+                continue;
+            }
+
+            // Validate Content (Video/Stream)
+            $content = $result->content ?? null;
+            if (($result->kind === Kind::Video || $result->kind === Kind::Stream)) {
+                if ($result->content instanceof ContentDTO) {
+                    $errors = [];
+
+                    // Required fields for ContentDTO
+                    if (empty($content->id)) $errors[] = "Content ID is missing.";
+                    if (empty($content->name)) $errors[] = "Content name is missing.";
+                    if (empty($content->creator_id)) $errors[] = "Creator ID is missing for content (Video).";
+                    if (empty($content->publish_time)) $errors[] = "Publish time is missing.";
+                    if ($content->thumbnail_url === null) $errors[] = "Thumbnail URL is missing.";
+
+                    if (!empty($errors)) {
+                        Log::error("Content validation failed for ContentDTO ID: {$content->id}", $errors);
+                        continue;
+                    }
+                } else {
+                    Log::error("ResultDTO is missing a valid ContentDTO.");
+                    continue;
+                }
+            }
+
+            // Validate Creator
+            $creator = $result->creator ?? null;
+            if ($creator instanceof CreatorDTO) {
+                $errors = [];
+
+                // Required fields for CreatorDTO
+                if (empty($creator->id)) $errors[] = "Creator ID is missing.";
+                if (empty($creator->name)) $errors[] = "Creator name is missing.";
+
+                if (!empty($errors)) {
+                    Log::error("Creator validation failed for CreatorDTO ID: {$creator->id}", $errors);
+                    continue;
+                }
+            } else {
+                Log::error("ResultDTO ID: {$content->id} is missing a valid CreatorDTO.");
+                continue;
+            }
+
+            // If everything validates, add it to the validated results
+            $validatedResults[] = $result;
+        }
+
+        return $validatedResults;
     }
 
 }

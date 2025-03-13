@@ -31,7 +31,7 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
         },
 
 
-        // get videos
+        // get videos, btw these categories like ordering by popular, trending, etc not the video categories
         async getVideos(category = "popular", per_page = 20, video_ids = [], shorts = false, first_video_slug = null, creator_id = null) {
             // convert shorts to 1 or 0
             shorts = shorts ? 1 : 0;
@@ -52,6 +52,18 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
                 return [];
             }
 
+            return response.data.videos.data;
+        },
+
+        async getCategoryVideos(category_slug, per_page = 20, video_ids = null) {
+            const response = await axios.get(route('api.video.category-videos', {
+                slug: category_slug,
+                per_page: per_page,
+                video_ids: video_ids
+            }))
+            .catch((error) => {
+                console.log(error);
+            });
             return response.data.videos.data;
         },
 

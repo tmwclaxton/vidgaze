@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref} from "vue";
 import { debounce } from "lodash";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import VideosRow from "@/Components/ContentRows/VideosRow.vue";
@@ -13,9 +13,7 @@ const categoriesPerBatch = 5; // Load 5 categories per request
 // State to manage infinite scrolling
 const isLoading = ref(false); // Prevents multiple fetches if a fetch is already in progress
 const allCategoriesFetched = ref(false); // Flag to indicate all categories are loaded
-
-// Debounced function to fetch the next batch of categories
-const debouncedFetchNextCategories = debounce(async () => {
+const fetchNextCategories = async () => {
     if (isLoading.value || allCategoriesFetched.value) return;
 
     isLoading.value = true;
@@ -51,7 +49,12 @@ const debouncedFetchNextCategories = debounce(async () => {
     } finally {
         isLoading.value = false;
     }
-}, 500); // Prevent repeated firing with debounced behavior
+} // Prevent repeated firing with debounced behavior
+
+
+// Debounced function to fetch the next batch of categories
+const debouncedFetchNextCategories = debounce(fetchNextCategories, 500);
+
 
 // Handle scrolling
 const handleScroll = () => {
@@ -59,7 +62,7 @@ const handleScroll = () => {
     const bodyHeight = document.body.offsetHeight;
 
     // Check if user has scrolled near the bottom of the page
-    if (scrollPosition >= bodyHeight - 100) {
+    if (scrollPosition >= bodyHeight - 500) {
         debouncedFetchNextCategories();
     }
 };
@@ -69,7 +72,7 @@ onMounted(async () => {
     await pinModalStore.getVideoCategories();
 
     // Prefetch the first batch of categories
-    await debouncedFetchNextCategories();
+    await fetchNextCategories();
 
     // Attach the scroll listener for infinite scrolling
     window.addEventListener("scroll", handleScroll);
@@ -92,8 +95,13 @@ onUnmounted(() => {
                 v-for="item in pinnedVideos"
                 :videos="item.videos"
                 :key="item.category.id"
-                :title="item.category.name"
+                :showCategoryTag="true"
+                :wait-till-loaded="true"
             >
+                <Link :href="route('category.show',{slug:item.category.slug})"
+                      class="hover:underline text-3xl font-bold">
+                    {{ item.category.name }}
+                </Link>
             </VideosRow>
 
             <!-- Show a loading spinner if fetching -->

@@ -145,6 +145,7 @@ class VideoApiController extends Controller
             $query->whereIn('preferred_source', $selectedVideoPlatforms);
         }
 
+        $query->whereNotNull('category_id');
 
         if (Auth::user()) {
             $channelDisinterestIDs = CreatorInteraction::where('viewer_id', Auth::user()->creator->id)->where('disinterested', '=', true)
@@ -162,7 +163,6 @@ class VideoApiController extends Controller
             $query->whereNotIn('id', $video_ids);
             //return ($video_ids);
         }
-
 
         $videos = $query->take($per_page)->get();
 
@@ -248,38 +248,43 @@ class VideoApiController extends Controller
 //        $page = $request->page ?? 1;
 
         $query = Video::query();
-
         $query->where('pinned', true);
 
-        // Filter by category
+// Apply your filters
         if ($category) {
             $query->where('category_id', $category->id);
         }
 
-        // Filter by video platform
         if ($request->platform) {
             $query->where('preferred_source', $request->platform);
         }
 
-        // get the pinned videos
-//        $videos = $query->forPage($page, $per_page)->get();
+        // Get the IDs of all matching videos
+        $pinnedIds = $query->pluck('id')->toArray();
 
-        // random order
-        $query->inRandomOrder();
+        $additionalIds = [];
+        // If we need more videos
+        if (count($pinnedIds) < $per_page && $category) {
+            // Get additional video IDs
+            $additionalIds = Video::where('category_id', $category->id)
+                ->whereNotIn('id', $pinnedIds)
+                ->pluck('id')
+                ->toArray();
 
-        // limit the number of videos
-        $videos = $query->take($per_page)->get();
-
-        // if the videos are less than the per_page, get random videos based on the category
-        if ($videos->count() < $per_page) {
-            $amt = $per_page - $videos->count();
-            $randomVideos = Video::where('pinned', true)->where('category_id', $category->id)
-                ->whereNotIn('id', $videos->pluck('id'))
-                ->inRandomOrder()->take($amt)->get();
-
-            $videos = $videos->merge($randomVideos);
         }
+        // Merge all IDs
+        $allIds = array_merge($pinnedIds, $additionalIds);
 
+        // Shuffle them
+        shuffle($allIds);
+
+        // Take only what we need
+        $selectedIds = array_slice($allIds, 0, $per_page);
+
+        // Get the videos in the specified order
+        $videos = Video::whereIn('id', $selectedIds)
+            ->orderByRaw("FIELD(id, " . implode(',', $selectedIds) . ")")
+            ->get();
 
         // return the collection
         $videos = new VideoCollection($videos);
@@ -288,6 +293,49 @@ class VideoApiController extends Controller
             'results' => $videos->count(),
             'videos' => $videos
         ]);
+    }
+
+    public function getVideosByCategory(Request $request) {
+        $request->validate([
+            'per_page' => 'integer|min:1|max:50',
+            'video_ids' => 'string|nullable',
+            'slug' => 'string|exists:categories,slug',
+        ]);
+
+        $per_page = $request->per_page ?? 20;
+        $video_ids = $request->video_ids ?? [];
+        $category_slug = $request->slug;
+
+        if (!is_array($video_ids) ) {
+            $video_ids = explode(',', $video_ids);
+        }
+
+        $category = Category::where('slug', $category_slug)->first();
+
+        $query = Video::query();
+
+        $query->where('category_id', $category->id);
+
+        // Don't retrieve the same videos
+        if ( $video_ids != [] ) {
+            $query->whereNotIn('id', $video_ids);
+        }
+
+        // Only get public videos
+        $query->where('visibility', 'public');
+
+        // randomize the order
+        $query->inRandomOrder();
+
+        // get the videos
+        $videos = $query->take($per_page)->get();
+
+        return response()->json([
+            'results' => $videos->count(),
+            'videos' => new VideoCollection($videos)
+        ]);
+
+
     }
 
 }

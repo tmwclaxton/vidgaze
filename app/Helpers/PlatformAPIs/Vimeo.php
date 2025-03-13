@@ -7,8 +7,10 @@ use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
+use App\Helpers\PlatformAPIs\PlatformInterfaces\isValidatable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
+use App\Helpers\Tools;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Vimeo\Vimeo as VimeoSDK;
@@ -120,7 +122,7 @@ class Vimeo implements iSearchable, iIsPlatform
      */
     public static function returnContentDTOarrayMap($data): array
     {
-        $results = array_map(function ($value) {
+        $results = Tools::validateDTOs(array_map(function ($value) {
             $contentDTO = new ContentDTO(Platform::Vimeo, Kind::Video, str_replace("/videos/", "", $value['uri']));
 
             $contentDTO->kind = Kind::Video;
@@ -132,7 +134,7 @@ class Vimeo implements iSearchable, iIsPlatform
             $contentDTO->tags = array_map(fn($item) => $item['name'], $value['tags']);
 
             return $contentDTO;
-        }, $data);
+        }, $data));
         return $results;
     }
 
@@ -144,7 +146,7 @@ class Vimeo implements iSearchable, iIsPlatform
     {
         $items = $data;
 
-        return Arr::map($items, function ($value) {
+        return Tools::validateDTOs(Arr::map($items, function ($value) {
             $resultDTO = new ResultDTO(Platform::Vimeo, Kind::Video);
             $contentDTO = new ContentDTO(Platform::Vimeo, Kind::Video,
                 str_replace("/videos/", "", $value['uri'])
@@ -175,6 +177,7 @@ class Vimeo implements iSearchable, iIsPlatform
             $resultDTO->content = $contentDTO;
             $resultDTO->creator = $creatorDTO;
             return $resultDTO;
-        });
+        }));
     }
+
 }
