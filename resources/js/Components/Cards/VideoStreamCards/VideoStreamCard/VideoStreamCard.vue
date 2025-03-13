@@ -59,7 +59,8 @@ const dotsIconShow = computed(() => {
 </script>
 
 <template>
-    <div :id="'box_' + itemType + '_' + item.id" class="relative group min-h-64 w-full">
+    <div :id="'box_' + itemType + '_' + item.id"
+         class="relative group min-h-64 w-full xl:hover:transform xl:hover:scale-105 duration-300 ease-in-out cursor-pointer  dark:bg-zinc-900 rounded-md shadow-lg overflow-hidden shadow-zinc-300 dark:shadow-zinc-900">
         <!--hide content hidden button and cover-->
         <div :id="'hide_' + itemType + '_' + item.id" @click="hideItemToggle" class="w-0 h-0 opacity-0 pointer-events-none " ></div>
         <div  v-if="hideItem" class="w-full h-full rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex flex-col align-middle justify-center items-center ">
