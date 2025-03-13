@@ -130,6 +130,8 @@ class Dailymotion implements iSearchable, iIsPlatform
             $creatorDTO->avatar_url = $item['owner.avatar_720_url'];
             $creatorDTO->banner_url = $item['owner.cover_url'];
 
+            $contentDTO->creator_id = $item['owner.id'];
+
 //                $creatorDTO->avatar_url = $item['owner.avatar_720_url'];
 //                $creatorDTO->banner_url = $item['owner.cover_url'];
 
