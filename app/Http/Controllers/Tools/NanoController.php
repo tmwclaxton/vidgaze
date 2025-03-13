@@ -37,15 +37,26 @@ class NanoController
      *
      * @throws \Exception Throws exception if the API request fails.
      */
-    public function getChatCompletion(array $messages, string $model = 'deepseek-r1-nano', array $options = [])
+    public function getChatCompletion(array $messages, string $model = 'deepseek-r1-nano', array $options = [], bool $randomness = false)
     {
+        $baseParams = [
+            'max_tokens' => $options['max_tokens'] ?? 150,
+            'temperature' => $options['temperature'] ?? 1.0,
+            'top_p' => $options['top_p'] ?? 1.0,
+        ];
+
+        if ($randomness) {
+            $baseParams['temperature'] = rand(1, 100) / 100;
+            $baseParams['top_p'] = rand(1, 100) / 100;
+        }
+
         // Prepare the payload for the API request
         $payload = array_merge([
             'model' => $model,
             'messages' => $messages,
-            'temperature' => 1.0,    // Optional: Add randomness to control response creativity
-            'max_tokens' => 150,     // Optional: Set maximum length of the generated response
-            'top_p' => 1.0,          // Optional: Use nucleus sampling
+            'temperature' => $baseParams['temperature'],
+            'max_tokens' => $baseParams['max_tokens'],
+            'top_p' => $baseParams['top_p'],
         ], $options);
 
         try {
