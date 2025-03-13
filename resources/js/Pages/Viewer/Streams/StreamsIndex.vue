@@ -20,7 +20,7 @@ const categoriesForRows = ref([]);
 const fetchCategoriesForRows = async () => {
     const categoryIds = categoriesForRows.value.map(category => category.id).join(',');
     categoriesForRows.value = categoriesForRows.value.concat(
-        await contentRoutesStore.getCategories(8, categoryIds, true)
+        await contentRoutesStore.getCategories(12, categoryIds, true)
     );
 };
 
@@ -32,7 +32,7 @@ const handleScroll = () => {
     // console.log(scrollPosition, bodyHeight)
 
     // check if user has reached the bottom of the page
-    if (scrollPosition >= bodyHeight - 500) {
+    if (scrollPosition >= bodyHeight - 800) {
         // console.log('bottom of page')
         debouncedFetchCategoriesForRows(); // call the debounced version of fetch categories
 

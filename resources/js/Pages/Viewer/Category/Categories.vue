@@ -98,7 +98,8 @@ onUnmounted(() => {
                 :showCategoryTag="true"
                 :wait-till-loaded="true"
             >
-                <Link :href="route('category.show',{slug:item.category.slug})" class="text-2xl font-bold text-gray-800 dark:text-gray-200">
+                <Link :href="route('category.show',{slug:item.category.slug})"
+                      class="hover:underline text-3xl font-bold">
                     {{ item.category.name }}
                 </Link>
             </VideosRow>

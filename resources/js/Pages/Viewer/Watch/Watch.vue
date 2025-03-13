@@ -48,7 +48,7 @@ const authStore = useAuthStore();
 const name = 'Watch';
 
 const theatre = ref(false);
-const item = ref([]);
+const item = ref(null);
 
 const comments = ref(null)
 const isDescriptionCollapsed = ref(true);
@@ -178,7 +178,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-        <Head v-if="item !== undefined"  :title="item.title"  />
+        <Head v-if="item !== null"  :title="item.title"  />
 
         <AwardsDropdown v-if="authStore.showAwardDropdown" :type="item.type" :object_id="item.id" />
         <div class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4 md:mx-24']">
@@ -199,7 +199,7 @@ onUnmounted(() => {
                     </div>
                 </div>
 
-                <div :class="[theatre ? 'px-2 sm:px-5 ' : 'px-0 sm:px-0 ']" class="">
+                <div v-if="item !== null" :class="[theatre ? 'px-2 sm:px-5 ' : 'px-0 sm:px-0 ']" class="">
 
                     <!--video details-->
                     <div  class="w-full">
@@ -207,8 +207,15 @@ onUnmounted(() => {
                         <div class="px-3 sm:px-0 flex pt-2 -mb-2 justify-between text dark:textDark flex flex-row flex-wrap gap-8 ">
                             <div  v-if="ready" class="flex flex-row lg:flex-col justify-between w-full lg:w-max">
                                 <div class="flex flex-col">
-                                    <p v-if="item.type === 'video'" class=" pr-3 "
-                                       v-text="item.view_count + ' · ' + item.time_published"/>
+                                    <div v-if="item.type === 'video'" class="flex flex-row pr-3 gap-x-1">
+                                        <p v-text="item.view_count + ' · ' + item.time_published"/>
+                                        <Link v-if="item.category !== null && item.category.slug !== undefined"
+                                            class="flex flex-row gap-x-2"  :href="route('category.show',{slug:item.category.slug})">
+                                            <span>·</span>
+                                            <span class="font-bold">{{ item.category.name}}</span>
+                                        </Link>
+                                    </div>
+
                                     <span
                                         class="pr-3  pt-0.5 font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
                                         v-text="item.live_viewer_count + ' Watching'"/>
@@ -314,10 +321,10 @@ onUnmounted(() => {
                 <WatchQueue v-if="props.type !== 'stream'"  :item="item" :ready="ready"/>
 
                 <!--suggested videos-->
-                <SuggestedVideos  v-if="props.type !== 'stream'"  :video="item" :creator="item.creator" :ready="ready"/>
+                <SuggestedVideos  v-if="item !== null && props.type !== 'stream'"  :video="item" :creator="item.creator" :ready="ready"/>
 
                 <!--stream chat-->
-                <div v-if="props.type === 'stream'" class="flex flex-col gap-4 h-[calc(100vh-10rem)]">
+                <div v-if="item !== null && props.type === 'stream'" class="flex flex-col gap-4 h-[calc(100vh-10rem)]">
                     <ExternalCommentSection :source="item.preferred_source" external_id="item.external_id"/>
                 </div>
             </div>

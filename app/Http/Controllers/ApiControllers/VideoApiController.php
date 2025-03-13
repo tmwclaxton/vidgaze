@@ -324,6 +324,9 @@ class VideoApiController extends Controller
         // Only get public videos
         $query->where('visibility', 'public');
 
+        // randomize the order
+        $query->inRandomOrder();
+
         // get the videos
         $videos = $query->take($per_page)->get();
 

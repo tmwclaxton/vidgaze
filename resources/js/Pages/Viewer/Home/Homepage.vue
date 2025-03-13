@@ -70,7 +70,7 @@ const handleScroll = () => {
     // console.log(scrollPosition, bodyHeight)
 
     // check if user has reached the bottom of the page
-    if (scrollPosition >= bodyHeight - 100) {
+    if (scrollPosition >= bodyHeight - 800) {
         // console.log('bottom of page')
         debouncedFetchVideos(); // call the debounced version of fetchVideos
     }
