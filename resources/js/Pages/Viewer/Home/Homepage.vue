@@ -30,13 +30,13 @@ const vimeoPinned = ref([]);
 const rumblePinned = ref([]);
 const musicPinned = ref([]);
 const cryptoPinned = ref([]);
-const wealthPinned = ref([]);
+const gamingPinned = ref([]);
 const alternatePinned = ref([]);
 
 const categorySlugs = {
     'music': 'music',
     'crypto': 'crypto_currency',
-    'wealth': 'wealth_inequality',
+    'gaming': 'gaming',
     'alternate': 'alternate_news'
 };
 
@@ -47,7 +47,7 @@ onMounted(async () => {
     // rumblePinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Rumble');
     musicPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.music);
     cryptoPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.crypto);
-    wealthPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.wealth);
+    gamingPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.gaming);
     alternatePinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.alternate);
 
 
@@ -146,8 +146,8 @@ const fetchVideos = async (videoArray) => {
                 <font-awesome-icon :icon="['fas', 'music']" class="my-auto h-6"/>
             </VideosRow>
 
-            <VideosRow :videos="wealthPinned" title="Wealth Inequality" :showCategoryTag="false">
-                <img src="/images/monoply.png" class="my-auto h-12 -mt-1"/>
+            <VideosRow :videos="gamingPinned" title="Gaming" :showCategoryTag="false">
+                <font-awesome-icon :icon="['fas', 'gamepad']" class="my-auto h-6"/>
             </VideosRow>
 
             <VideosRow :videos="cryptoPinned" title="Crypto Currency" :showCategoryTag="false">
