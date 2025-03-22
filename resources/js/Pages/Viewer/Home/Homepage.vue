@@ -28,6 +28,7 @@ const category = ref('');
 
 const vimeoPinned = ref([]);
 const rumblePinned = ref([]);
+const vidgazePicks = ref([]);
 const musicPinned = ref([]);
 const cryptoPinned = ref([]);
 const gamingPinned = ref([]);
@@ -37,7 +38,8 @@ const categorySlugs = {
     'music': 'music',
     'crypto': 'crypto_currency',
     'gaming': 'gaming',
-    'alternate': 'alternate_news'
+    'alternate': 'alternate_news',
+    'vidgaze': 'vidgaze_picks'
 };
 
 
@@ -45,17 +47,18 @@ const categorySlugs = {
 onMounted(async () => {
     // vimeoPinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Vimeo');
     // rumblePinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Rumble');
+    vidgazePicks.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.vidgaze);
     musicPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.music);
     cryptoPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.crypto);
     gamingPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.gaming);
     alternatePinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.alternate);
 
+    await debouncedFetchVideos(); // call it immediately on mount
 
-    await fetchTrendingVideos().then(async () => {
-        await debouncedFetchVideos(); // call it immediately on mount
-
-        window.addEventListener('scroll', handleScroll);
-    });
+    window.addEventListener('scroll', handleScroll);
+    // await fetchTrendingVideos().then(async () => {
+    //
+    // });
 
 });
 
@@ -85,16 +88,15 @@ const debouncedFetchVideos = debounce(() => {
     }
 }, 500);
 
-const fetchTrendingVideos = async () => {
-    trending_videos.value = [];
-    await contentRoutesStore.getVideos('random', 6)
-        .then(response => {
-            trending_videos.value = response
-        }).catch(error => {
-            console.log(error)
-        });
-
-};
+// const fetchTrendingVideos = async () => {
+//     trending_videos.value = [];
+//     await contentRoutesStore.getVideos('random', 6)
+//         .then(response => {
+//             trending_videos.value = response
+//         }).catch(error => {
+//             console.log(error)
+//         });
+// };
 const fetchVideos = async (videoArray) => {
 
     const videoIds = videoArray.map(video => video.id).join(',');
@@ -126,9 +128,9 @@ const fetchVideos = async (videoArray) => {
 
         <ConsistentPadding class="-mt-4">
 
-<!--            <VideosRow :videos="trending_videos" title="Trending Videos">-->
-<!--                <font-awesome-icon :icon="['fas', 'burst']" class="my-auto h-6"/>-->
-<!--            </VideosRow>-->
+            <VideosRow :videos="vidgazePicks" title="VidGaze Picks">
+                <font-awesome-icon :icon="['fas', 'burst']" class="my-auto h-6"/>
+            </VideosRow>
 
             <!--<TopStreamsRow/>-->
 
