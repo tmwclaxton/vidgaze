@@ -108,7 +108,7 @@ return [
         'stream_source' => false,
         'auth_class' => null,
         'platform_class' => \App\Helpers\PlatformAPIs\Odysee::class,
-        'frontend_player' => null,
+        'frontend_player' => 'Odysee',
         'integration_notes' => 'Claim by channel name/@id; player + API discovery TBD.',
     ],
     'podcasts' => [
@@ -186,7 +186,7 @@ return [
         'stream_source' => false,
         'auth_class' => null,
         'platform_class' => \App\Helpers\PlatformAPIs\BitChute::class,
-        'frontend_player' => null,
+        'frontend_player' => 'BitChute',
         'integration_notes' => 'Claim by channel name (e.g. from bitchute.com/channel/...); search/embed TBD.',
     ],
 ];

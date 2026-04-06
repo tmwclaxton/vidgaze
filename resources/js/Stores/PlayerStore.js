@@ -6,6 +6,8 @@ import DailymotionPlayer from "@/PlayerScripts/dailymotion";
 import {loadScript} from "vue-plugin-load-script";
 import {useQueueStore} from "@/Stores/QueueStore";
 import RumblePlayer from "@/PlayerScripts/rumble";
+import OdyseePlayer from "@/PlayerScripts/odysee";
+import BitChutePlayer from "@/PlayerScripts/bitchute";
 import {PLATFORM_EMBED_LABELS} from "@/config/platformEmbedRegistry";
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
@@ -62,6 +64,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
                         console.log(["DM", typeof dailymotion != 'undefined']);
                         return (typeof dailymotion != 'undefined')
                     case 'Rumble':
+                    case 'Odysee':
+                    case 'BitChute':
                         return true;
                     default:
                         return false;
@@ -77,6 +81,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
                     case 'Dailymotion':
                         return dailymotion !== undefined;
                     case 'Rumble':
+                    case 'Odysee':
+                    case 'BitChute':
                         return true;
                     default:
                         return false;
@@ -167,6 +173,12 @@ export const usePlayerStore = defineStore('PlayerStore', {
                         break;
                     case "Rumble":
                         player = await new RumblePlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime, short);
+                        break;
+                    case "Odysee":
+                        player = await new OdyseePlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime, short);
+                        break;
+                    case "BitChute":
+                        player = await new BitChutePlayer(object, playerDiv, startTime, autoplay, checkViewHistoryStartTime, short);
                         break;
                     default:
                         console.log("ERROR: preferred source not found");

@@ -53,51 +53,19 @@ RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.4
 RUN groupadd --force -g $WWWGROUP sail
 RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
 
+
 RUN mkdir /etc/supervisor/logs
 RUN touch /etc/supervisor/logs/worker.log
 
-COPY docker/8.4/start-container /usr/local/bin/start-container
-COPY docker/8.4/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY docker/8.4/php.ini /etc/php/8.4/cli/conf.d/99-sail.ini
-COPY docker/8.4/vidgaze-workers /etc/supervisor/conf.d/vidgaze-workers
+COPY start-container /usr/local/bin/start-container
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY vidgaze-workers /etc/supervisor/conf.d/vidgaze-workers
 
-# Irrelevant in the dev environment (because of mounted volume), necessary for production
-# Copy Laravel app files
-COPY . /var/www/html
-
-# check storage folder and logs folder exists
-RUN if [ ! -d "/var/www/html/storage" ]; then mkdir /var/www/html/storage; fi
-RUN if [ ! -d "/var/www/html/storage/logs" ]; then mkdir /var/www/html/storage/logs; fi
-RUN if [ ! -d "/var/www/html/storage/framework" ]; then mkdir /var/www/html/storage/framework; fi
-RUN if [ ! -d "/var/www/html/storage/framework/cache" ]; then mkdir /var/www/html/storage/framework/cache; fi
-RUN if [ ! -d "/var/www/html/storage/framework/cache/data" ]; then mkdir /var/www/html/storage/framework/cache/data; fi
-RUN if [ ! -d "/var/www/html/storage/framework/sessions" ]; then mkdir /var/www/html/storage/framework/sessions; fi
-RUN if [ ! -d "/var/www/html/storage/framework/views" ]; then mkdir /var/www/html/storage/framework/views; fi
-
-# create laravel log file
-RUN touch /var/www/html/storage/logs/laravel.log
-RUN touch /var/www/html/storage/logs/swoole_http.log
-
-# if vendor directory does not exist, create it
-RUN if [ ! -d "/var/www/html/vendor" ]; then mkdir /var/www/html/vendor; fi
-# run composer install
-RUN composer install --no-interaction --no-plugins --no-scripts --prefer-dist --optimize-autoloader
-
-## this will
-RUN php artisan config:clear
-RUN php artisan cache:clear
-RUN #php artisan route:clear  # I think if these 2 lines are run it causes missing app key error cause env is exported by AppRunner
-RUN #php artisan optimize
-
-RUN php artisan storage:link
-
-# run npm install
-RUN npm install --no-audit --no-progress
-# npm run build
-RUN npm run build
-
+COPY php.ini /etc/php/8.4/cli/conf.d/99-sail.ini
 RUN chmod +x /usr/local/bin/start-container
 
 EXPOSE 8000
+
+
 
 ENTRYPOINT ["start-container"]

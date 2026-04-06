@@ -1,7 +1,13 @@
 import Player from './player.js';
-import { usePlayerStore } from "@/Stores/PlayerStore";
+
+const RUMBLE_ORIGIN = 'https://rumble.com';
 
 export default class RumblePlayer extends Player {
+    constructor(...args) {
+        super(...args);
+        this._boundMessage = this.handleMessage.bind(this);
+    }
+
     async create() {
         await this.getStartTimePlayer().then(() => {
             // Create an iframe element for the Rumble video
@@ -28,15 +34,20 @@ export default class RumblePlayer extends Player {
                 }
             };
 
-            // Listen for messages from the Rumble iframe
-            window.addEventListener('message', this.handleMessage.bind(this));
+            window.addEventListener('message', this._boundMessage);
 
             this.createPlayer();
         });
     }
 
     handleMessage(event) {
+        if (!event.origin || !event.origin.startsWith(RUMBLE_ORIGIN)) {
+            return;
+        }
         const data = event.data;
+        if (!data || typeof data !== 'object' || !('event' in data)) {
+            return;
+        }
 
         if (data.event === 'play') {
             this.playing = true;
@@ -52,10 +63,11 @@ export default class RumblePlayer extends Player {
     }
 
     async removePlayer() {
-        if (this.ready === false) {
-            return false;
+        window.removeEventListener('message', this._boundMessage);
+        if (this.player) {
+            this.player.remove();
+            this.player = null;
         }
-        this.player.remove();
         this.resetPlayerValues();
         return true;
     }

@@ -8,4 +8,6 @@ export const PLATFORM_EMBED_LABELS = Object.freeze([
     'Twitch',
     'Dailymotion',
     'Rumble',
+    'Odysee',
+    'BitChute',
 ]);

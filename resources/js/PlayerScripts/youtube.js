@@ -1,6 +1,5 @@
 // import player.js
 import Player from './player.js';
-import {usePlayerStore} from "@/Stores/PlayerStore";
 import {toRaw} from "vue";
 
 export default class YouTubePlayer extends Player {
@@ -10,12 +9,13 @@ export default class YouTubePlayer extends Player {
             this.player = new window.YT.Player(this.playerDiv, {
                 videoId: this.external_id,
                 playerVars: {
-                    'autoplay': this.autoplay ? 1 : 0,
-                    'controls': 1,
-                    'modestbranding': 1,
-                    'rel': 0,
-                    'showinfo': 0,
-                    'start': parseInt(this.start_time),
+                    autoplay: this.autoplay ? 1 : 0,
+                    controls: 1,
+                    modestbranding: 1,
+                    // rel=0 limits related videos to same channel only (not “no related” — that option was removed by YouTube)
+                    rel: 0,
+                    start: parseInt(this.start_time, 10) || 0,
+                    playsinline: 1,
                 },
                 events: {
                     // when YouTube video ends run the endVideo function
