@@ -31,8 +31,8 @@ class FaceBook implements iSearchable, iIsPlatform
     }
 
 
-    public static function search(SearchQueryDTO $searchQuery)
+    public static function search(SearchQueryDTO $searchQuery): array
     {
-        // TODO: Implement search() method.
+        return [];
     }
 }

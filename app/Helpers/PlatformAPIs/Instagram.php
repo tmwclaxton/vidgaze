@@ -15,8 +15,8 @@ class Instagram implements iIsPlatform, iSearchable
         return Platform::Instagram;
     }
 
-    public static function search(SearchQueryDTO $searchQuery)
+    public static function search(SearchQueryDTO $searchQuery): array
     {
-        // TODO: Implement search() method.
+        return [];
     }
 }

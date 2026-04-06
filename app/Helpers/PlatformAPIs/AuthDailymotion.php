@@ -2,11 +2,10 @@
 
 namespace App\Helpers\PlatformAPIs;
 
-
+use App\Enums\Platform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iCanLogin;
 use App\Helpers\Tools;
 use Dailymotion as DailymotionSDK;
-use phpDocumentor\Reflection\Types\Self_;
 
 class AuthDailymotion extends Dailymotion implements iCanLogin
 {
@@ -46,13 +45,11 @@ class AuthDailymotion extends Dailymotion implements iCanLogin
         if(!$creator){
             abort(403, 'You must be logged in to link your Dailymotion account');
         }
-        if(!$creator->dailymotion_channel_id){
-
-            return self::getAuthApi()->getAuthorizationUrl();
-        }
-        else{
+        if ($creator->sources->contains('source_name', Platform::Dailymotion->value)) {
             abort(403, 'You have already claimed a Dailymotion channel');
         }
+
+        return self::getAuthApi()->getAuthorizationUrl();
     }
 
     public static function getRefreshAccessToken($refreshToken): array
@@ -69,16 +66,4 @@ class AuthDailymotion extends Dailymotion implements iCanLogin
         return [];
     }
 
-    public static function getAccessTokenWithCode($code)
-    {
-        $dm = self::getAuthApi();
-//        $dm->requestAccessToken($code);
-        $access_token = $dm->getAccessToken();
-
-        return [
-            'access_token' => $access_token['access_token'],
-            'refresh_token' => $access_token['refresh_token'],
-            'expires_in' => $access_token['expires_in'],
-        ];
-    }
 }

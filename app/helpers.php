@@ -99,14 +99,16 @@ function number_format_short($n, $precision = 1)
 
 function capitalisePlatformName($platform)
 {
-    // if youtube capitalise the first letter and the 't' in tube, for everything else just capitalise the first letter
-    if ($platform == 'youtube') {
+    if ($platform === 'youtube') {
         $platform = ucfirst($platform);
-        $platform = str_replace('tube', 'Tube', $platform);
-    } else {
-        $platform = ucfirst($platform);
+
+        return str_replace('tube', 'Tube', $platform);
     }
-    return $platform;
+    if ($platform === 'bitchute') {
+        return 'BitChute';
+    }
+
+    return ucfirst($platform);
 }
 
 function generateRandomString($length = 10)

@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->name('studio.')->prefix('/studio')->group(fun
 
     Route::get('login/{platform}', [LinkingApiController::class, 'logIn'])->name('login');
     Route::get('link/{platform}', [LinkingApiController::class, 'link'])->name('link');
+    Route::post('claim/{platform}', [LinkingApiController::class, 'claim'])->name('claim');
     Route::delete('unlink/{platform}', [LinkingApiController::class, 'unlink'])->name('unlink');
 
     Route::get('content', [StudioContentApiController::class, 'content'])->name('content');

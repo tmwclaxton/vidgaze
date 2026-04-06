@@ -18,7 +18,7 @@ class VideoFactory extends Factory
      */
     public function definition()
     {
-        $items = ['youtube','dailymotion','vimeo','rumble','odysee'];
+        $items = ['youtube','dailymotion','vimeo','rumble','odysee','bitchute'];
         return [
             'creator_id' => Creator::factory(),
             'title' => $this->faker->sentence(),

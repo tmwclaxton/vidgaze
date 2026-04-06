@@ -36,6 +36,7 @@ class VideoApiController extends Controller
         'Dailymotion',
         'Vimeo',
         'Rumble',
+        'BitChute',
     ];
 
 

@@ -50,26 +50,26 @@ class Creator extends Model
     }
     public function updateAllContentByApi() : void
     {
-        foreach ($this->sources()->get() as $source){
-            match($source->source_name){
-                Platform::YouTube->name => YouTube::updateAllChannelContent($source->external_channel_id),
-                Platform::Dailymotion->name => Dailymotion::updateAllChannelContent($source->external_channel_id),
-                Platform::Vimeo->name => Vimeo::updateAllChannelContent($source->external_channel_id),
-                Platform::Rumble->name => Rumble::updateAllChannelContent($source->external_channel_id),
-                default => dd('not in match statement')
+        foreach ($this->sources()->get() as $source) {
+            match ($source->source_name) {
+                Platform::YouTube->value => YouTube::updateAllChannelContent($source->external_channel_id),
+                Platform::Dailymotion->value => Dailymotion::updateAllChannelContent($source->external_channel_id),
+                Platform::Vimeo->value => Vimeo::updateAllChannelContent($source->external_channel_id),
+                Platform::Rumble->value => Rumble::updateAllChannelContent($source->external_channel_id),
+                default => null,
             };
         }
     }
 
     public function updateContentByApiBeforeDate(\Carbon $date)
     {
-        foreach ($this->sources()->get() as $source){
-            match($source->source_name){
-                Platform::YouTube->name => YouTube::updateAllChannelContent($source->external_channel_id),
-                Platform::Dailymotion->name => Dailymotion::updateAllChannelContent($source->external_channel_id),
-                Platform::Vimeo->name => Vimeo::updateAllChannelContent($source->external_channel_id),
-                Platform::Rumble->name => Rumble::updateAllChannelContent($source->external_channel_id),
-                default => dd('not in match statement')
+        foreach ($this->sources()->get() as $source) {
+            match ($source->source_name) {
+                Platform::YouTube->value => YouTube::updateAllChannelContent($source->external_channel_id),
+                Platform::Dailymotion->value => Dailymotion::updateAllChannelContent($source->external_channel_id),
+                Platform::Vimeo->value => Vimeo::updateAllChannelContent($source->external_channel_id),
+                Platform::Rumble->value => Rumble::updateAllChannelContent($source->external_channel_id),
+                default => null,
             };
         }
     }
@@ -78,7 +78,7 @@ class Creator extends Model
     public static function findOrCreate(string $externalChannelID, Platform $source) : Creator
     {
         $creator_source = CreatorSource::where('external_channel_id', '=', $externalChannelID)
-            ->where('source_name', '=', $source->name)->first();
+            ->where('source_name', '=', $source->value)->first();
         if(!$creator_source)
         {
             return match($source){

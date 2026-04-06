@@ -8,13 +8,7 @@ use App\Helpers\PlatformAPIs\AuthVimeo;
 use App\Helpers\PlatformAPIs\AuthYouTube;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iCanUpload;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
-use App\Helpers\PlatformAPIs\Rumble;
-use App\Helpers\PlatformAPIs\Twitch;
-use App\Helpers\PlatformAPIs\Vimeo;
-use App\Helpers\PlatformAPIs\YouTube;
-use App\Helpers\PlatformAPIs\Dailymotion;
-use App\Helpers\PlatformAPIs\FaceBook;
-use Google\Service\ShoppingContent\TransitTableTransitTimeRowTransitTimeValue;
+use App\Support\PlatformRegistry;
 use InvalidArgumentException;
 
 enum Platform: string
@@ -32,9 +26,10 @@ enum Platform: string
     case SoundCloud = 'soundcloud';
     case Spotify = 'spotify';
     case Instagram = 'instagram';
+    case TikTok = 'tiktok';
+    case BitChute = 'bitchute';
 
-
-    public static function fromValue(string $value) : Platform
+    public static function fromValue(string $value): Platform
     {
         return match ($value) {
             'vidgaze' => self::VidGaze,
@@ -49,13 +44,15 @@ enum Platform: string
             'spotify' => self::Spotify,
             'instagram' => self::Instagram,
             'facebook' => self::FaceBook,
+            'tiktok' => self::TikTok,
+            'bitchute' => self::BitChute,
             default => throw new InvalidArgumentException('Invalid value for Platform'),
         };
     }
 
     function getPrefix(): string
     {
-        return match ($this){
+        return match ($this) {
             Platform::VidGaze => 'vg',
             Platform::YouTube => 'yt',
             Platform::Dailymotion => 'dm',
@@ -68,12 +65,14 @@ enum Platform: string
             Platform::Spotify => 'sp',
             Platform::Instagram => 'ig',
             Platform::FaceBook => 'fb',
+            Platform::TikTok => 'tt',
+            Platform::BitChute => 'bc',
         };
     }
 
     function getCategoryIdAttribute(): string
     {
-        return match ($this){
+        return match ($this) {
             Platform::VidGaze => 'vidgaze_category_id',
             Platform::YouTube => 'youtube_category_id',
             Platform::Dailymotion => 'dailymotion_category_id',
@@ -86,86 +85,54 @@ enum Platform: string
             Platform::Spotify => 'spotify_category_id',
             Platform::Instagram => 'instagram_category_id',
             Platform::FaceBook => 'facebook_category_id',
+            Platform::TikTok => 'tiktok_category_id',
+            Platform::BitChute => 'bitchute_category_id',
         };
     }
 
-    public function jsonSerialize(): string {
+    public function jsonSerialize(): string
+    {
         return serialize($this);
     }
 
-
-
     public static function getSupportedPlatforms(bool $asEnum = false, bool $asPrefix = false): \Illuminate\Support\Collection
     {
-        $supported = collect([
-            Platform::YouTube,
-            Platform::Dailymotion,
-            Platform::Vimeo,
-            Platform::Twitch,
-            Platform::Rumble,
-//            Platform::FaceBook,
-//            Platform::Podcasts
-        ]);
-        if($asEnum){
-            return $supported;
-        }
-        if($asPrefix){
-            return $supported->map(fn($platform) => $platform->getPrefix());
-        }
-        return $supported->map(fn($platform) => $platform->value);
+        return PlatformRegistry::supportedForVideoIndex($asEnum, $asPrefix);
     }
 
     function getPlatformClass(): iIsPlatform
     {
-        return match ($this){
-//            Platform::VidGaze => 'vg',
-            Platform::YouTube => new YouTube(),
-            Platform::Dailymotion => new Dailymotion,
-            Platform::Vimeo => new Vimeo,
-            Platform::Twitch => new Twitch,
-            Platform::Rumble => new Rumble,
-            Platform::FaceBook => new FaceBook,
-//            Platform::Odysee => 'od',
-//            Platform::Podcasts => 'pc',
-//            Platform::SoundCloud => 'sc',
-//            Platform::Spotify => 'sp',
-//            Platform::Instagram => 'ig',
-        };
+        $class = PlatformRegistry::platformApiClass($this);
+        if ($class === null || ! is_a($class, iIsPlatform::class, true)) {
+            throw new InvalidArgumentException("No platform API implementation registered for {$this->value}");
+        }
+
+        return new $class;
     }
 
     function getPlatformAuthObject($accessToken): iIsPlatform | iCanUpload
     {
-        return match ($this){
+        return match ($this) {
             Platform::YouTube => new AuthYouTube($accessToken),
             Platform::Vimeo => new AuthVimeo($accessToken),
             Platform::Twitch => new AuthTwitch($accessToken),
             Platform::Dailymotion => new AuthDailymotion($accessToken),
+            default => throw new InvalidArgumentException("No authenticated API object for {$this->value}"),
         };
     }
 
     function getPlatformAuthClass(): string
     {
-        return match ($this){
-            Platform::YouTube => AuthYouTube::class,
-            Platform::Vimeo => AuthVimeo::class,
-            Platform::Twitch => AuthTwitch::class,
-            Platform::Dailymotion => AuthDailymotion::class,
-        };
+        $class = PlatformRegistry::authClassForLogin($this);
+        if ($class === null) {
+            throw new InvalidArgumentException("Platform {$this->value} does not support OAuth login");
+        }
+
+        return $class;
     }
 
     public static function getUploadablePlatforms(bool $asEnum = true, bool $asPrefix = false): \Illuminate\Support\Collection
     {
-        $uploadable = collect([
-            Platform::YouTube,
-            //Platform::Dailymotion,
-            Platform::Vimeo,
-        ]);
-        if($asEnum){
-            return $uploadable;
-        }
-        if($asPrefix){
-            return $uploadable->map(fn($platform) => $platform->getPrefix());
-        }
-        return $uploadable->map(fn($platform) => $platform->value);
+        return PlatformRegistry::uploadable($asEnum, $asPrefix);
     }
 }

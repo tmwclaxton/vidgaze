@@ -45,7 +45,7 @@ class UploadDTO
     public function setPlatforms(array $platforms)
     {
         return array_filter($platforms, function ($platform) {
-            return in_array($platform, Platform::getUploadablePlatforms()->toArray());
+            return in_array($platform, Platform::getUploadablePlatforms(false)->toArray(), true);
         });
     }
 

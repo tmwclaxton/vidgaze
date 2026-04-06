@@ -14,7 +14,7 @@ VidGaze is a website and mobile-ready video-streaming app designed to empower co
 ## How to launch the VidGaze container:
 
 1. Clone the repo
-2. Run `sail build`
+2. Run `sail build` (uses PHP 8.3; rebuild after upgrading from older images)
 3. Run `sail up`
 4. Run `sail artisan db:wipe`
 5. Run `sail artisan migrate`
@@ -24,7 +24,7 @@ VidGaze is a website and mobile-ready video-streaming app designed to empower co
 
 VidGaze uses a number of open source projects to work properly:
 
-- [Laravel] - A web application framework with expressive, elegant syntax.
+- [Laravel] 13.x (requires PHP 8.3+) — A web application framework with expressive, elegant syntax.
 - [InertiaJS] - Inertia.js is a lightweight JavaScript library that allows developers to build single-page applications (SPAs).
 - [MYSQL] - a relational database management system (RDBMS) developed by Oracle that is based on structured query language (SQL).
 

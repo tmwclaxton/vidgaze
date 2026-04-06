@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +18,19 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+Schedule::command('delete:old_live_viewers')->everyFifteenMinutes()->withoutOverlapping();
+Schedule::command('refresh:subscriptions')->everyFifteenMinutes()->withoutOverlapping();
+Schedule::command('refresh:top-categories')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('refresh:twitch-category-info')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('refresh:streams')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('app:delete-old-streams')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('app:get-vimeo-featured-videos')->daily()->withoutOverlapping();
+Schedule::command('app:get-rumble-featured-videos')->daily()->withoutOverlapping();
+Schedule::command('app:delete-old-pins')->daily()->withoutOverlapping();
+Schedule::command('app:categorise-videos')->everyTwoMinutes()->withoutOverlapping();
+Schedule::command('app:get-rumble-banners')->everyTwoHours()->withoutOverlapping();
+Schedule::command('app:search-videos-for-categories')->hourly()->withoutOverlapping();
 
 // Schedule::command('app:random-views')
 //     ->description('Give random views to videos')

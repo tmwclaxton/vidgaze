@@ -23,8 +23,7 @@ class CreatorSource extends Model
 
     public function twitchLogin(bool $returnString = true): \Illuminate\Database\Eloquent\Relations\HasOne | null | string
     {
-        if($this->source_name == Platform
-            ::Twitch->name){
+        if ($this->source_name == Platform::Twitch->value) {
             $login = $this->hasOne(TwitchLogin::class, 'twitch_source_id', 'external_channel_id');
             return $returnString ? (($login->first())?$login->first()->twitch_channel_login: null ): $login;
         }

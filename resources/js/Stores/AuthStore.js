@@ -10,6 +10,8 @@ export const useAuthStore = defineStore('AuthStore', {
             'admin': false,
             'subscription_ids': [],
             'sources': [],
+            'connectable_platforms': [],
+            'embed_players': [],
             'showAwardDropdown': false,
             'selectedAward': null,
         }
@@ -66,6 +68,8 @@ export const useAuthStore = defineStore('AuthStore', {
                     this.admin = response.data.admin
                     this.subscription_ids = response.data.subscription_ids
                     this.sources = response.data.sources
+                    this.connectable_platforms = response.data.connectable_platforms || []
+                    this.embed_players = response.data.embed_players || []
                     if (toast) {
                         toastStore.add({
                             message: 'Login successful.',
@@ -178,6 +182,8 @@ export const useAuthStore = defineStore('AuthStore', {
             this.user = null;
             this.admin = false;
             this.subscription_ids = [];
+            this.connectable_platforms = [];
+            this.embed_players = [];
             delete axios.defaults.headers.common['Authorization'];
             localStorage.removeItem('token');
         },

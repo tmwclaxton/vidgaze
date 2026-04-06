@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ApiControllers;
 use App\Http\Controllers\Controller;
 
 use App\Http\Resources\UserResource;
+use App\Support\PlatformRegistry;
 use App\Models\PlaylistModels\Playlist;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Verified;
@@ -234,7 +235,9 @@ class AuthApiController extends Controller
             'user' => new UserResource($request->user()),
             'subscription_ids' => $request->user()->creator->subscriptions->pluck('id')->toArray(),
             'admin' => $request->user()->isAdmin(),
-            'sources' => $sources
+            'sources' => $sources,
+            'connectable_platforms' => PlatformRegistry::connectablePlatformsForUser($request->user()),
+            'embed_players' => PlatformRegistry::embedCapablePlayers(),
         ]);
     }
 

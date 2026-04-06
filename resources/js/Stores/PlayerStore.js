@@ -6,6 +6,7 @@ import DailymotionPlayer from "@/PlayerScripts/dailymotion";
 import {loadScript} from "vue-plugin-load-script";
 import {useQueueStore} from "@/Stores/QueueStore";
 import RumblePlayer from "@/PlayerScripts/rumble";
+import {PLATFORM_EMBED_LABELS} from "@/config/platformEmbedRegistry";
 export const usePlayerStore = defineStore('PlayerStore', {
     state: () => {
         return {
@@ -19,17 +20,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
             return route().current('videos.shorts');
         },
         scriptsLoaded() {
-            if (
-                this.isScriptLoaded('YouTube') &&
-                this.isScriptLoaded('Vimeo') &&
-                this.isScriptLoaded('Twitch') &&
-                this.isScriptLoaded('Dailymotion') &&
-                this.isScriptLoaded('Rumble')
-            ) {
-                return true;
-            } else {
-                return false;
-            }
+            return PLATFORM_EMBED_LABELS.every((label) => this.isScriptLoaded(label));
         }
     },
 
@@ -72,6 +63,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
                         return (typeof dailymotion != 'undefined')
                     case 'Rumble':
                         return true;
+                    default:
+                        return false;
                 }
             } else {
                 switch (platform) {
@@ -85,6 +78,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
                         return dailymotion !== undefined;
                     case 'Rumble':
                         return true;
+                    default:
+                        return false;
                 }
             }
         },

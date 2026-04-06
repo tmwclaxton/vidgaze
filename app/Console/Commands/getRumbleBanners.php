@@ -31,7 +31,7 @@ class getRumbleBanners extends Command
         $rumble = new \App\Helpers\PlatformAPIs\Rumble();
 
         // grab all rumble creators without banners
-        $creatorSources = CreatorSource::where('source_name', Platform::Rumble)
+        $creatorSources = CreatorSource::where('source_name', Platform::Rumble->value)
             ->get();
 
         // get all creators using the creator sources
@@ -69,7 +69,7 @@ class getRumbleBanners extends Command
         $count = 0;
         foreach ($rumbleCreators as $rumbleCreator) {
             // grab creator through external_channel_id
-            $creatorSource = CreatorSource::where('source_name', Platform::Rumble)
+            $creatorSource = CreatorSource::where('source_name', Platform::Rumble->value)
                 ->where('external_channel_id', $rumbleCreator->creator->id)
                 ->first();
 

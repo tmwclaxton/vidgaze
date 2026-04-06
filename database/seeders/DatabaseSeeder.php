@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\Platforms;
+use App\Enums\Platform;
 use App\Models\Award;
 use App\Models\Category;
 use App\Models\CommentModels\Comment;
@@ -362,7 +362,7 @@ class DatabaseSeeder extends Seeder
 
                 CreatorSource::create([
                     'creator_id' => $creator1->id,
-                    'source_name' => Platforms::YouTube->name,
+                    'source_name' => Platform::YouTube->value,
                     'external_channel_id' => 'UCpY8z5jdC8QQ_zyHxdKJoKw',
                 ]);
 
