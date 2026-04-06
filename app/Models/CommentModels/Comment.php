@@ -77,7 +77,7 @@ class Comment extends Model
             'stream' => route('stream.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
             'channel' => route('channel.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
             'podcast' => route('podcast.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
-            'chatroom' => route('chatroom.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
+            'chatroom' => route('home'),
             default => null,
         };
     }

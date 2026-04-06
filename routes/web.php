@@ -37,12 +37,6 @@ require __DIR__ . '/WebsiteRoutes/categories.php';
 require __DIR__ . '/WebsiteRoutes/search.php';
 require __DIR__ . '/WebsiteRoutes/music.php';
 require __DIR__ . '/WebsiteRoutes/user.php';
-require __DIR__ . '/WebsiteRoutes/chatrooms.php';
-
-Route::get('/equity', function () {
-    return Inertia::render('Equity');
-})->name('equity');
-
 //admin routes
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('/admin', function () { return Inertia::render('Admin/AdminDashboard'); })->name('admin.dashboard');

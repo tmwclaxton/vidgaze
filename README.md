@@ -20,6 +20,8 @@ VidGaze is a website and mobile-ready video-streaming app designed to empower co
 5. Run `sail artisan migrate`
 6. Run `sail artisan migrate --path=database/patches`
 
+**Sail notes:** The app bind mount uses Docker’s `:z` option so SELinux (e.g. Fedora) can read the project—without it, `sail artisan` may report `Could not open input file: artisan`. If MySQL exits with “Another process … is using unix socket file”, stop the stack (`sail down`), clear stale sockets in the `sail-mysql` volume (e.g. delete `mysql.sock` and `mysql.sock.lock` under the volume’s data dir), or `sail down -v` to reset the DB volume if you don’t need that data.
+
 ## Tech
 
 VidGaze uses a number of open source projects to work properly:

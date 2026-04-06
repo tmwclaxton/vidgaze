@@ -18,6 +18,11 @@ class SearchPlatform implements ShouldQueue
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * Seconds before the worker kills the job (Apify YouTube run-sync can run for minutes).
+     */
+    public int $timeout = 900;
+
+    /**
      * Create a new job instance.
      */
     public function __construct(
@@ -31,10 +36,10 @@ class SearchPlatform implements ShouldQueue
     public function handle(): void
     {
         $results = $this->platform->getPlatformClass()::search($this->searchQuery);
-        Redis::client()->set(
+        Redis::setex(
             Search::getRedisSearchKey($this->platform->getPlatformClass()::getPlatform(), $this->searchQuery),
-            json_encode($results),
-            Search::getRedisExpire()
+            Search::getRedisExpire(),
+            json_encode($results)
         );
     }
 }

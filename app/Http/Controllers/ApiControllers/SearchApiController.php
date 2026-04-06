@@ -49,12 +49,11 @@ class SearchApiController extends Controller
 
         $results = Search::searchResults($query);
 
-        // return the creators, videos, streams, playlists, podcasts in a collection
-        $creators = array_key_exists("creators", $results) ? new CreatorCollection($results['creators']) : [];
-        $videos = array_key_exists("videos", $results) ? new VideoCollection($results['videos']) : [];
-        $streams = array_key_exists("streams", $results) ? new StreamCollection($results['streams']) : [];
-        $playlists = array_key_exists("playlists", $results) ? new PlaylistCollection($results['playlists']) : [];
-        $podcasts = array_key_exists("podcasts", $results) ? new PodcastCollection($results['podcasts']) : [];
+        $creatorModels = $results['creators'] ?? [];
+        $videoModels = $results['videos'] ?? [];
+        $streamModels = $results['streams'] ?? [];
+        $playlistModels = $results['playlists'] ?? [];
+        $podcastModels = $results['podcasts'] ?? [];
         // shuffle videos in a repeatable way // we need to shuffle for YouTube API approval
 //        if (count($videos) > 0) {
 //            $videos = $videos->shuffle(crc32($searchQuery));
@@ -69,7 +68,7 @@ class SearchApiController extends Controller
         $dailymotion_vids = [];
         $other_vids = [];
 
-        foreach ($videos as $video) {
+        foreach ($videoModels as $video) {
             if ($video->preferred_source == 'youtube' && count($yt_vids) < 2) {
                 $yt_vids[] = $video;
             } elseif ($video->preferred_source == 'rumble' && count($rumble_vids) < 3) {
@@ -84,29 +83,25 @@ class SearchApiController extends Controller
         }
 
 
-        // shuffle the rest of the videos in a predictable way
-        $other_vids = collect($other_vids)->shuffle(crc32($searchQuery))->toArray();
+        // shuffle the rest of the videos in a predictable way (use all(), not toArray(), or models become arrays)
+        $other_vids = collect($other_vids)->shuffle(crc32($searchQuery))->values()->all();
 
         // merge all the videos
-        $videos = collect(array_merge($yt_vids, $rumble_vids, $vimeo_vids, $dailymotion_vids, $other_vids));
+        $videoModels = array_merge($yt_vids, $rumble_vids, $vimeo_vids, $dailymotion_vids, $other_vids);
 
+        $videoIds = collect($videoModels)->pluck('id')->filter()->values();
+        if ($videoIds->isNotEmpty()) {
+            Video::whereIn('id', $videoIds)->increment('impressions_count');
+        }
 
-
-        // hide important info from the user by using resource collections
-        $creators = new CreatorCollection($creators);
-        $videos = new VideoCollection($videos);
-        $streams = new StreamCollection($streams);
-        $playlists = new PlaylistCollection($playlists);
-        $podcasts = new PodcastCollection($podcasts);
-
-        // add 1 to impressions_count for each video in 1 query
-        $video_ids = $videos->pluck('id');
-        Video::whereIn('id', $video_ids)->increment('impressions_count');
+        $streams = new StreamCollection($streamModels);
+        $playlists = new PlaylistCollection($playlistModels);
+        $podcasts = new PodcastCollection($podcastModels);
 
         //return the creators, videos, streams, playlists, podcasts
         return response()->json([
-            'creators' => $creators,
-            'videos' => $videos,
+            'creators' => new CreatorCollection(collect($creatorModels)),
+            'videos' => new VideoCollection(collect($videoModels)),
             'streams' => $streams,
             'playlists' => $playlists,
             'podcasts' => $podcasts,

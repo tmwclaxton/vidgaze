@@ -64,19 +64,6 @@ const name = 'ExpandableNavigationLinks';
                 <span>Shorts</span>
             </ResponsiveNavLink>
         </div>
-        <div class="">
-            <ResponsiveNavLink :href="route('chatroom.show')" :active="route().current('chatroom.show')">
-                <font-awesome-icon :icon="['fas', 'message']" class="w-5 h-5 flex-shrink-0"/>
-                <span>Global Chat</span>
-            </ResponsiveNavLink>
-        </div>
-        <div  class="2xl:hid den ">
-            <ResponsiveNavLink :href="route('equity')" :active="route().current('equity')">
-                <font-awesome-icon :icon="['fas', 'chart-pie']" class="w-5 h-5 flex-shrink-0"/>
-                <span>Equity</span>
-            </ResponsiveNavLink>
-        </div>
-
         <!--subscriptions-->
         <div v-if="useAuthStore().user != null" class="lg:hid den">
             <ResponsiveNavLink :href="route('feed.subscriptions')" :active="route().current('feed.subscriptions')">

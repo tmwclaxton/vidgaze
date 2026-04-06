@@ -38,8 +38,20 @@ class Rumble implements iSearchable, iIsPlatform
                 'scrapeChannelPlaylists' => false,
             ]);
 
+            if ($runId === null) {
+                return [];
+            }
+
             $runData = $apify->waitForRunCompletion($runId);
-            $datasetId = $runData['defaultDatasetId'];
+            if ($runData === null || ($runData['status'] ?? '') !== 'SUCCEEDED') {
+                return [];
+            }
+
+            $datasetId = $runData['defaultDatasetId'] ?? null;
+            if (! is_string($datasetId) || $datasetId === '') {
+                return [];
+            }
+
             $data = $apify->getDatasetItems($datasetId);
 
             $resultDTOs = array_map(function ($value) {
@@ -69,8 +81,20 @@ class Rumble implements iSearchable, iIsPlatform
                 'startUrls' => ["https://rumble.com/search/all?q=" . urlencode($searchQueryDTO->query)],
             ]);
 
+            if ($runId === null) {
+                return [];
+            }
+
             $runData = $apify->waitForRunCompletion($runId);
-            $datasetId = $runData['defaultDatasetId'];
+            if ($runData === null || ($runData['status'] ?? '') !== 'SUCCEEDED') {
+                return [];
+            }
+
+            $datasetId = $runData['defaultDatasetId'] ?? null;
+            if (! is_string($datasetId) || $datasetId === '') {
+                return [];
+            }
+
             $items = $apify->getDatasetItems($datasetId);
 
             // Processing search results
@@ -166,7 +190,7 @@ class Rumble implements iSearchable, iIsPlatform
         }
     }
 
-    public static function getCreatorVideos(string $id, int $page = null, $maxResults = 100): array
+    public static function getCreatorVideos(string $id, ?int $page = null, $maxResults = 100): array
     {
         $apify = new Apify('azzouzana~rumble-all-inclusive-scraper');
 
@@ -183,8 +207,32 @@ class Rumble implements iSearchable, iIsPlatform
                 'scrapeChannelPlaylists' => false,
             ]);
 
+            if ($runId === null) {
+                return [
+                    'next' => $page + 1,
+                    'hasNext' => false,
+                    'results' => [],
+                ];
+            }
+
             $runData = $apify->waitForRunCompletion($runId);
-            $datasetId = $runData['defaultDatasetId'];
+            if ($runData === null || ($runData['status'] ?? '') !== 'SUCCEEDED') {
+                return [
+                    'next' => $page + 1,
+                    'hasNext' => false,
+                    'results' => [],
+                ];
+            }
+
+            $datasetId = $runData['defaultDatasetId'] ?? null;
+            if (! is_string($datasetId) || $datasetId === '') {
+                return [
+                    'next' => $page + 1,
+                    'hasNext' => false,
+                    'results' => [],
+                ];
+            }
+
             $data = $apify->getDatasetItems($datasetId);
 
             if (!isset($data[0]['videosList'])) {

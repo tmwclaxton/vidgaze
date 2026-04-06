@@ -8,14 +8,14 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 class CreatorCollection extends ResourceCollection
 {
     /**
-     * Transform the resource collection into an array.
-     *
-     * @return array<int|string, mixed>
+     * @return array<string, mixed>
      */
     public function toArray(Request $request): array
     {
         return [
-            'data' => $this->collection
+            'data' => $this->collection->map(
+                fn ($creator) => (new CreatorResource($creator))->toArray($request)
+            )->values()->all(),
         ];
     }
 }

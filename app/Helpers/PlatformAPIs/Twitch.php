@@ -20,9 +20,13 @@ class Twitch implements iSearchable, iIsPlatform
 {
     public TwitchApi $client;
 
-    public function __construct($access_token = null)
+    public ?string $access_token = null;
+
+    public function __construct(?string $access_token = null)
     {
-        if(isset($access_token)) $this->access_token = $access_token;
+        if ($access_token !== null) {
+            $this->access_token = $access_token;
+        }
         $helixGuzzleClient = new HelixGuzzleClient(config('platforms.twitch.client_id'));
         $this->client = new TwitchApi($helixGuzzleClient, config('platforms.twitch.client_id'), config('platforms.twitch.client_secret'));
     }
@@ -134,7 +138,7 @@ class Twitch implements iSearchable, iIsPlatform
             });
     }
 
-    public static function getCategories(array $ids = null, $topTwenty = false) : array //ContentDTO
+    public static function getCategories(?array $ids = null, $topTwenty = false) : array //ContentDTO
     {
         $t = new Twitch();
 

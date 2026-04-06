@@ -150,7 +150,7 @@ export const useCommentSectionStore = defineStore('CommentSectionStore', {
             shareStore.showMenu = true; // show share menu
             let link = null;
             if (this.item_type === 'chatroom') {
-                link = route('chatroom.show', { chatroom: this.item.id, comment: comment.id });
+                link = route('home');
             } else {
                 link = route('watch.show', { slug: this.item.slug, comment: comment.id });
             }

@@ -16,7 +16,7 @@ class SearchQueryDTO
     public string $category;
 
     public int $max_results;
-    public function __construct(string $query, int $max_results = 20, array $platforms = null)
+    public function __construct(string $query, int $max_results = 20, ?array $platforms = null)
     {
         if(!isset($platforms)){
             $platforms = Platform::getSupportedPlatforms(true)->toArray();

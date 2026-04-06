@@ -23,7 +23,7 @@ class Search
         $cache_results = [];
         $platforms_to_search = [];
         foreach ($searchQuery->getPlatforms() as $platform) {
-            $result = Redis::client()->get(self::getRedisSearchKey($platform, $searchQuery));
+            $result = Redis::get(self::getRedisSearchKey($platform, $searchQuery));
             if ($result) {
                 $cache_results[$platform->value] = json_decode($result);
             }
@@ -53,7 +53,7 @@ class Search
     {
         $cache_results = [];
         foreach ($searchQuery->getPlatforms() as $platform) {
-            $result = Redis::client()->get(self::getRedisSearchKey($platform, $searchQuery));
+            $result = Redis::get(self::getRedisSearchKey($platform, $searchQuery));
             if ($result) {
                 $cache_results[$platform->value] = json_decode($result);
             }
@@ -95,7 +95,7 @@ class Search
     {
         $results = [];
         foreach ($platforms as $platform) {
-            $result = Redis::client()->get(self::getRedisSearchKey($platform, $searchQuery));
+            $result = Redis::get(self::getRedisSearchKey($platform, $searchQuery));
             if ($result) {
                 $results[$platform->value] = json_decode($result);
             }

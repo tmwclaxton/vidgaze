@@ -128,8 +128,9 @@ export default class Player {
                 }
                 const viewPoint = await this.getCurrentPosition();
                 this.viewRecordDuration += interval;
-                // check if we have all the data we need to record the view
-                if (!(this.object.id && this.object.item_type && this.viewRecordDuration && viewPoint)) {
+                const viewPointNum = Number(viewPoint);
+                // check if we have all the data we need to record the view (0 is a valid position)
+                if (!this.object.id || !this.object.item_type || !this.viewRecordDuration || !Number.isFinite(viewPointNum)) {
                     this.isViewRecording = false;
                     clearInterval(this.viewRecordTimer);
                     console.log("missing data to record view: " + this.external_id + ' resetting view record');
@@ -140,7 +141,7 @@ export default class Player {
                     item_id: this.object.id,
                     type: this.object.item_type,
                     watch_duration: parseInt(this.viewRecordDuration),
-                    view_point: parseInt(viewPoint),
+                    view_point: parseInt(viewPointNum, 10),
                     client_identifier: uuid
                 });
             } catch (error) {

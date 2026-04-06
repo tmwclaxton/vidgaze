@@ -31,4 +31,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'apify' => [
+        'token' => env('APIFY_TOKEN'),
+        'youtube_actor' => env('APIFY_YOUTUBE_ACTOR', 'streamers~youtube-scraper'),
+    ],
+
+    'firecrawl' => [
+        'api_key' => env('FIRECRAWLER_API_KEY', env('FIRECRAWL_API_KEY')),
+    ],
+
 ];
