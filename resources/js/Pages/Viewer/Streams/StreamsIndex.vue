@@ -57,7 +57,11 @@ onUnmounted(() => {
     <div>
         <Head title="Popular Streams"/>
 
-        <PaddingLayout class="-mt-4">
+        <PaddingLayout class="-mt-1">
+
+            <header class="mb-8 md:mb-10">
+                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">Live streams</h1>
+            </header>
 
             <TopStreamsRow/>
 

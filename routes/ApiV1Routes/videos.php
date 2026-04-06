@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\ApiControllers\VideoApiController;
 use App\Http\Controllers\ApiControllers\VideoInteractionApiController;
 use Illuminate\Support\Facades\Route;
@@ -9,8 +8,11 @@ Route::prefix('/video')->name('video.')->group(function () {
 
     Route::get('/index', [VideoApiController::class, 'index'])->name('index');
     Route::get('/pinned', [VideoApiController::class, 'getPinnedVideos'])->name('pinned');
+    Route::get('/trend-feed/topics', [VideoApiController::class, 'trendFeedTopics'])->name('trend-feed.topics');
+    Route::get('/trend-feed/videos', [VideoApiController::class, 'trendFeedVideos'])->name('trend-feed.videos');
+    Route::get('/category-feed/slots', [VideoApiController::class, 'categoryFeedSlots'])->name('category-feed.slots');
+    Route::get('/category-feed/videos', [VideoApiController::class, 'categoryFeedVideos'])->name('category-feed.videos');
     Route::get('/category-videos', [VideoApiController::class, 'getVideosByCategory'])->name('category-videos');
-
 
     Route::get('{slug}', [VideoApiController::class, 'show'])->middleware('auth.sanctum.switch')->name('show');
 
@@ -31,11 +33,9 @@ Route::prefix('/video')->name('video.')->group(function () {
             ->name('report.toggle');
 
         // this get the details of a video for the content modal or viewing the video or short
-        Route::get('/{video_id}/details', [VideoInteractionApiController::class, "modalDetails"])->name('details');
+        Route::get('/{video_id}/details', [VideoInteractionApiController::class, 'modalDetails'])->name('details');
         // used for like and dislike button
-        Route::get('/{video_id}/interaction', [VideoInteractionApiController::class, "getVideoInteraction"])->name('interaction');
-
+        Route::get('/{video_id}/interaction', [VideoInteractionApiController::class, 'getVideoInteraction'])->name('interaction');
 
     });
 });
-

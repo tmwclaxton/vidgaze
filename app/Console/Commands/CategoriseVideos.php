@@ -22,7 +22,7 @@ class CategoriseVideos extends Command
      *
      * @var string
      */
-    protected $description = "Use AI to categorise videos based on their title and description";
+    protected $description = 'Use AI to categorise videos based on their title and description';
 
     /**
      * Execute the console command.
@@ -35,11 +35,11 @@ class CategoriseVideos extends Command
         $categories = Category::all();
         $categoryNames = $categories->pluck('name')->toArray();
 
-        //remove "VidGaze Picks" from the list of categories
+        // remove "VidGaze Picks" from the list of categories
         $categoryNames = array_diff($categoryNames, ['VidGaze Picks']);
 
         // Create an instance of the NanoGPT service
-        $nanoGPTService = new NanoController();
+        $nanoGPTService = new NanoController;
 
         $count = [
             'videos' => $videos->count(),
@@ -48,32 +48,38 @@ class CategoriseVideos extends Command
             'skipped' => 0,
             'errored' => 0,
         ];
+        $minConfidence = (float) config('vidgaze.categorisation_min_confidence', 0.55);
+
         foreach ($videos as $video) {
             try {
-                // AI prompt for categorization
-                $prompt = "Based on the following video details, suggest the best fitting category from this list: "
-                    . json_encode($categoryNames) . "\n\n"
-                    . "Title: {$video->title}\n"
-                    . "Description: {$video->description}\n"
-                    . "Creator: {$video->creator()->first()->name}\n\n"
-//                    . "If the video is about Unionisation, Freedom of Speech or XMR please categorize it as 'VidGaze Picks'.\n\n"
-                    . "Return only the category name or 'null' if no category matches.";
+                $creatorName = optional($video->creator()->first())->name ?? 'Unknown';
 
-                // Generate AI response using NanoGPT
+                $prompt = 'Based on the following video details, suggest the best fitting category from this list: '
+                    .json_encode(array_values($categoryNames))."\n\n"
+                    ."Title: {$video->title}\n"
+                    ."Description: {$video->description}\n"
+                    ."Creator: {$creatorName}\n\n"
+                    .'Return ONLY JSON: {"category":"<exact category name from the list or null>","confidence":0.0} '
+                    .'confidence is 0-1. Use null when no category fits well.';
+
                 $response = $nanoGPTService->getChatCompletion([
-                    ['role' => 'system', 'content' => 'You are a helpful AI assistant that accurately identifies the best category for videos.'],
+                    ['role' => 'system', 'content' => 'You classify videos into one editorial category. Reply with JSON only, no markdown.'],
                     ['role' => 'user', 'content' => $prompt],
-                ], 'qwen-plus');
+                ], 'qwen-plus', ['max_tokens' => 120], false);
 
-                // Get category name from AI response
-                $categoryName = trim($response['choices'][0]['message']['content']);
+                $raw = trim($response['choices'][0]['message']['content'] ?? '');
+                $parsed = $this->parseCategoryAiResponse($raw);
+                $categoryName = $parsed['category'];
+                $confidence = $parsed['confidence'];
 
-                // If the AI response is 'null' or invalid, mark it in Redis and skip
-                if ($categoryName === 'null' || !in_array($categoryName, $categoryNames)) {
+                if ($categoryName === null
+                    || ! in_array($categoryName, $categoryNames, true)
+                    || $confidence < $minConfidence) {
                     $count['skipped']++;
                     $video->categorised = true;
                     $video->categorised_at = Carbon::now();
                     $video->save();
+
                     continue;
                 }
 
@@ -98,15 +104,39 @@ class CategoriseVideos extends Command
                 }
             } catch (\Exception $e) {
                 // Log the error for debugging purposes
-                logger()->error('Error categorizing video ID ' . $video->id . ': ' . $e->getMessage());
+                logger()->error('Error categorizing video ID '.$video->id.': '.$e->getMessage());
                 $count['errored']++;
+
                 continue;
             }
         }
 
-        // return cmd line info
+        return self::SUCCESS;
+    }
 
+    /**
+     * @return array{category: ?string, confidence: float}
+     */
+    private function parseCategoryAiResponse(string $raw): array
+    {
+        $t = preg_replace('/^```json\s*|\s*```$/i', '', trim($raw));
+        $decoded = json_decode($t, true);
+        if (is_array($decoded) && (isset($decoded['category']) || array_key_exists('category', $decoded))) {
+            $cat = $decoded['category'];
+            if ($cat === null || (is_string($cat) && strtolower($cat) === 'null')) {
+                return ['category' => null, 'confidence' => 0.0];
+            }
 
+            return [
+                'category' => is_string($cat) ? $cat : null,
+                'confidence' => isset($decoded['confidence']) ? (float) $decoded['confidence'] : 0.0,
+            ];
+        }
 
+        if (strtolower($t) === 'null' || $t === '') {
+            return ['category' => null, 'confidence' => 0.0];
+        }
+
+        return ['category' => $t, 'confidence' => 0.75];
     }
 }

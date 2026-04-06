@@ -55,7 +55,7 @@ onMounted(async () => {
         </template>
 
         <template v-else >
-            <VideoStreamSkeleton v-for="i in 6"/>
+            <VideoStreamSkeleton v-for="i in 12" :key="`pl-sk-${i}`"/>
         </template>
     </div>
 </template>

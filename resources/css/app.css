@@ -2,8 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    :root {
+        --vidgaze-nav-rail-width: 6rem;
+    }
+}
+
 
 @layer components {
+    @keyframes vg-shimmer-slide {
+        0% {
+            background-position: 100% 0;
+        }
+        100% {
+            background-position: -100% 0;
+        }
+    }
+
+    .vg-skeleton-shimmer {
+        background: linear-gradient(
+            90deg,
+            rgb(228 228 231) 0%,
+            rgb(244 244 245) 40%,
+            rgb(228 228 231) 80%
+        );
+        background-size: 200% 100%;
+        animation: vg-shimmer-slide 1.35s ease-in-out infinite;
+    }
+
+    .dark .vg-skeleton-shimmer {
+        background: linear-gradient(
+            90deg,
+            rgb(39 39 42) 0%,
+            rgb(63 63 70) 40%,
+            rgb(39 39 42) 80%
+        );
+        background-size: 200% 100%;
+    }
+
+    @keyframes vg-search-loading-bar {
+        0% {
+            transform: translateX(-100%);
+        }
+        100% {
+            transform: translateX(350%);
+        }
+    }
+
+    .vg-search-loading-bar {
+        animation: vg-search-loading-bar 1.5s ease-in-out infinite;
+    }
+
     /*this removes default blue ring*/
     .without-ring {
         @apply border-transparent focus:ring-offset-0 focus:outline-none focus:border-transparent focus:ring-0 ring-transparent;

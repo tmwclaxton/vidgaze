@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Http\Controllers\ApiControllers;
+
 use App\Enums\Kind;
-use App\Helpers\Tokens\TokenHelper;
+use App\Helpers\CategoryFeedBrandScores;
 use App\Http\Controllers\Controller;
 use App\Models\LiveClient;
 use App\Models\PlaylistModels\Playlist;
@@ -19,8 +20,11 @@ use Illuminate\Support\Facades\Auth;
 class ViewListenerController extends Controller
 {
     const LOGGED_OUT_VIEWER_ID = null;
+
     private Video $video;
+
     private Stream $stream;
+
     private PodcastEpisode $podcast;
 
     public array $allowedKinds = [
@@ -28,8 +32,6 @@ class ViewListenerController extends Controller
         Kind::PodcastEpisode->value,
         Kind::Stream->value,
     ];
-
-
 
     /**
      * @throws \Exception
@@ -40,19 +42,18 @@ class ViewListenerController extends Controller
             'watch_duration' => 'required|int',
             'view_point' => 'required|int',
             'item_id' => 'required|int',
-            'type' => 'in:' . implode(',', $this->allowedKinds),
+            'type' => 'in:'.implode(',', $this->allowedKinds),
             'client_identifier' => 'required|string',
         ]);
-
 
         $data = $request->all();
         $item_id = $data['item_id'] ?? null;
         $type = $data['type'] ?? null;
-        $watch_duration = $data['watch_duration'] ?? null; //how long watch
-        $view_point = $data['view_point'] ?? null; //where they watched up to
+        $watch_duration = $data['watch_duration'] ?? null; // how long watch
+        $view_point = $data['view_point'] ?? null; // where they watched up to
 
         // if logged in
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             $viewer_id = self::LOGGED_OUT_VIEWER_ID;
         } else {
             $viewer_id = auth()->user()->creator->id;
@@ -71,9 +72,9 @@ class ViewListenerController extends Controller
             ])->first();
 
         // If no record with the same token exists, create a new record
-        if (!$liveClient) {
+        if (! $liveClient) {
 
-            $liveClient = new LiveClient();
+            $liveClient = new LiveClient;
             $liveClient->viewer_id = $viewer_id;
             $liveClient->session_id = $session_id;
             $liveClient->item_id = $item_id;
@@ -85,15 +86,15 @@ class ViewListenerController extends Controller
 
         $liveClient->touch();
 
-        if ($liveClient->type === "video") {
+        if ($liveClient->type === 'video') {
             return $this->videoLiveClient($liveClient, $item_id, $watch_duration, $view_point);
         }
 
-        if ($liveClient->type === "stream") {
+        if ($liveClient->type === 'stream') {
             return $this->streamLiveClient($liveClient, $item_id, $watch_duration, $view_point);
         }
 
-        if ($liveClient->type === "podcast") {
+        if ($liveClient->type === 'podcast') {
             return $this->podcastLiveClient($liveClient, $item_id, $watch_duration, $view_point);
         }
 
@@ -105,7 +106,7 @@ class ViewListenerController extends Controller
 
         $video = Video::find($liveClient->item_id);
         // Check if the video exists
-        if (!$video) {
+        if (! $video) {
             return response()->json(['error' => 'Video not found'], 404);
         } else {
             $this->video = $video;
@@ -114,7 +115,11 @@ class ViewListenerController extends Controller
         // Record the view model
         [$durationUpdated, $recordVideoViewResponse] = $this->recordVideoView($liveClient->viewer_id, $item_id, $liveClient->session_id, $watch_duration, $view_point);
 
-        //check if live viewer count has been updated
+        if ($durationUpdated && $watch_duration >= (int) config('vidgaze.category_discovery.watch_boost_min_seconds', 45)) {
+            CategoryFeedBrandScores::boostVideo((int) $item_id);
+        }
+
+        // check if live viewer count has been updated
         if (($liveClient->live_viewer_counted === false)) {
             if ($this->video->duration > 15) {
                 // Increment the live viewer count
@@ -169,7 +174,7 @@ class ViewListenerController extends Controller
 
     private function streamLiveClient(LiveClient $liveClient, string $item_id, int $watch_duration, int $view_point): JsonResponse
     {
-        //define stream //if you don't define it every time the shorts web socket doesn't work
+        // define stream //if you don't define it every time the shorts web socket doesn't work
         if ($liveClient->live_viewer_counted === false) {
             $liveClient->live_viewer_counted = true;
             $liveClient->save();
@@ -181,9 +186,8 @@ class ViewListenerController extends Controller
             $stream->save();
 
             return response()->json([
-                'success' => 'Stream live viewer count incremented'
+                'success' => 'Stream live viewer count incremented',
             ], 200);
-
 
         }
     }
@@ -201,15 +205,14 @@ class ViewListenerController extends Controller
             $podcast_episode->save();
 
             return response()->json([
-                'success' => 'Podcast live viewer count incremented'
+                'success' => 'Podcast live viewer count incremented',
             ], 200);
         }
     }
 
-
     private function recordVideoViewPoint(mixed $viewer_id, string $item_id, int $viewPoint): bool
     {
-        //this records where in the video was watched to
+        // this records where in the video was watched to
         if (VideoInteraction::updateOrCreate(
             ['video_id' => $item_id],
             ['viewer_id' => $viewer_id]
@@ -231,14 +234,13 @@ class ViewListenerController extends Controller
             'video_id' => $item_id,
         ])->where('created_at', '>=', Carbon::now()->subMinutes(5))->get()->first();
 
-
         // If the view does not exist, create a new view if the duration is under 2 minutes
         if ($view === null) {
             if ($watch_duration >= 20) { // check that user isn't trying to cheat the system
-                return [false, "Invalid start watch duration above 20 seconds"];
+                return [false, 'Invalid start watch duration above 20 seconds'];
             }
             if ($viewer_id !== self::LOGGED_OUT_VIEWER_ID) {
-                //create video view
+                // create video view
                 $videoView = VideoView::create([
                     'viewer_id' => $viewer_id,
                     'video_id' => $item_id,
@@ -257,7 +259,8 @@ class ViewListenerController extends Controller
                 ]);
             }
             $videoView->save();
-            return [true, "Video view created"];
+
+            return [true, 'Video view created'];
 
         } else {
             // If the view exists, update the duration if the difference between the new and old duration is under 20 seconds
@@ -266,17 +269,18 @@ class ViewListenerController extends Controller
             $durationDifference = $watch_duration - $view->duration;
             $currentTime = now();
 
-            if (!($durationDifference > 0 && $durationDifference <= 20)) {
+            if (! ($durationDifference > 0 && $durationDifference <= 20)) {
                 return [false, "Video view duration not updated - invalid duration difference of $durationDifference seconds.  Has to be between 0 and 20 seconds"];
             }
 
-            $leeWay = 4; //seconds
-            if (!($durationDifference <= $currentTime->diffInSeconds($lastUpdated) + $leeWay)) {
-                return [false, "Video view duration not updated - it isn't possible to have watched $durationDifference seconds in the last " . $currentTime->diffInSeconds($lastUpdated) . " seconds"];
+            $leeWay = 4; // seconds
+            if (! ($durationDifference <= $currentTime->diffInSeconds($lastUpdated) + $leeWay)) {
+                return [false, "Video view duration not updated - it isn't possible to have watched $durationDifference seconds in the last ".$currentTime->diffInSeconds($lastUpdated).' seconds'];
             }
 
             $view->update(['duration' => $watch_duration]);
-            return [true, "Video view duration updated"];
+
+            return [true, 'Video view duration updated'];
 
         }
     }
@@ -289,7 +293,7 @@ class ViewListenerController extends Controller
 
             $this->video->increment('view_count', 1);
             $this->video->save();
-            //this stops a view being count everytime a duration update is sent
+            // this stops a view being count everytime a duration update is sent
             $liveClient->save();
 
         }

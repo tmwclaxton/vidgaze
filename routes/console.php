@@ -31,6 +31,9 @@ Schedule::command('app:delete-old-pins')->daily()->withoutOverlapping();
 Schedule::command('app:categorise-videos')->everyTwoMinutes()->withoutOverlapping();
 Schedule::command('app:get-rumble-banners')->everyTwoHours()->withoutOverlapping();
 Schedule::command('app:search-videos-for-categories')->hourly()->withoutOverlapping();
+Schedule::command('app:fetch-twitter-trends-search')->everyTwoHours()->withoutOverlapping();
+Schedule::command('app:fetch-category-discovery-feed')->everyTwoHours()->withoutOverlapping();
+Schedule::command('app:categorise-creators')->everyTenMinutes()->withoutOverlapping();
 
 // Schedule::command('app:random-views')
 //     ->description('Give random views to videos')

@@ -3,23 +3,20 @@ import ClockIcon from '#icons/clock_nofill.svg';
 import ClockFillIcon from '#icons/clock.svg';
 import FireIcon from '#icons/shorts.svg';
 import DotsIcon from '#icons/3dots.svg';
+import ThumbnailPlaceholderIcon from '#icons/thumbnail.svg';
+import LivePlaceholderIcon from '#icons/live.svg';
 import WatchLater from "@/Components/Cards/VideoStreamCards/Partials/WatchLater.vue";
 // Import the contentModalStore module
 import {useContentModalStore} from "@/Stores/ContentModalStore.js";
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import Queue from "@/Components/Cards/VideoStreamCards/Partials/Queue.vue";
 import {usePlaylistModalStore} from "@/Stores/PlaylistModalStore";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
 import Viewers from "@/Components/Cards/VideoStreamCards/Partials/CornerInfo.vue";
 import CornerInfo from "@/Components/Cards/VideoStreamCards/Partials/CornerInfo.vue";
+import Badge from "@/Components/General/Badge.vue";
 import {useAuthStore} from "@/Stores/AuthStore";
-const contentModalStore = useContentModalStore();
-const shareModalStore = useShareModalStore();
-const playlistModalStore = usePlaylistModalStore();
 
-const name = "VideoStreamCard";
-const hideItem = ref(false);
-//props below
 const props = defineProps({
     item: Object,
     category_page: {
@@ -33,6 +30,25 @@ const props = defineProps({
         default: false
     },
 });
+
+const contentModalStore = useContentModalStore();
+const shareModalStore = useShareModalStore();
+const playlistModalStore = usePlaylistModalStore();
+
+const name = "VideoStreamCard";
+const hideItem = ref(false);
+const thumbnailErrored = ref(false);
+
+watch(
+    () => [props.item?.id, props.item?.thumbnail_url],
+    () => {
+        thumbnailErrored.value = false;
+    }
+);
+
+const showThumbnailPlaceholder = computed(
+    () => !props.item?.thumbnail_url || thumbnailErrored.value
+);
 
 // Define the setItemId method to call the setItemId method of contentModalStore with the provided id
 const itemType = computed(() => {
@@ -70,9 +86,27 @@ const dotsIconShow = computed(() => {
             </div>
         </div>
         <div  v-if="!hideItem">
-            <div class="relative aspect-[21/12] overflow-hidden rounded-md ">
-                <Link :href="itemType === 'video' ? route('watch.show', {slug: item.slug}) : route('stream.show', {slug: item.slug})" >
-                    <img class="object-cover w-full h-full bg-zinc-900" v-bind:src="item.thumbnail_url"   alt=""/>
+            <div class="relative aspect-[21/12] overflow-hidden rounded-md bg-gradient-to-br from-zinc-800 via-zinc-900 to-zinc-950 dark:from-zinc-900 dark:via-zinc-950 dark:to-black">
+                <Link
+                    :href="itemType === 'video' ? route('watch.show', {slug: item.slug}) : route('stream.show', {slug: item.slug})"
+                    class="relative block h-full w-full min-h-[5rem]"
+                >
+                    <div
+                        v-show="showThumbnailPlaceholder"
+                        class="absolute inset-0 z-0 flex flex-col items-center justify-center gap-1.5 text-zinc-500 dark:text-zinc-600"
+                        aria-hidden="true"
+                    >
+                        <ThumbnailPlaceholderIcon v-if="itemType === 'video'" class="h-10 w-10 shrink-0 opacity-70" />
+                        <LivePlaceholderIcon v-else class="h-9 w-9 shrink-0 opacity-70" />
+                        <span class="text-[11px] font-semibold uppercase tracking-wide text-zinc-500/90 dark:text-zinc-500">No preview</span>
+                    </div>
+                    <img
+                        v-if="item.thumbnail_url && !thumbnailErrored"
+                        class="absolute inset-0 z-10 h-full w-full object-cover"
+                        :src="item.thumbnail_url"
+                        alt=""
+                        @error="thumbnailErrored = true"
+                    />
                 </Link>
 
                 <!--<Duration />-->
@@ -84,6 +118,13 @@ const dotsIconShow = computed(() => {
                 <CornerInfo v-if="item.viewers != null" :item="item" class="absolute bottom-0 right-0 m-1.5">
                     <p class="my-auto" v-text="'LIVE'"/>
                 </CornerInfo>
+
+                <div
+                    v-if="item.preferred_source != null"
+                    class="pointer-events-none absolute bottom-0 left-0 z-20 m-1.5 max-w-[calc(100%-5rem)]"
+                >
+                    <Badge :source="item.preferred_source" :text="item.preferred_source" />
+                </div>
 
                 <div  class="flex flex-col absolute top-0 right-0 m-1.5 space-y-1 items-end opacity-0  duration-500 delay-500 group-hover:opacity-100 transition-none group-hover:transition-opacity">
                     <WatchLater v-if="item.duration != null && useAuthStore().user != null" :item="item" />
@@ -131,12 +172,7 @@ const dotsIconShow = computed(() => {
                                         <p class="line-clamp-1 " v-text="(item.time_published)"/>
                                     </div>
 
-                                    <div v-if="item.preferred_source != null" class=" info-tag dark:info-tag-dark flex flex-row gap-2 items-center align-middle pb-0.5 ">
-                                        <font-awesome-icon :icon="['fas', 'location-dot']" class=" ml-0.5 h-3 my-auto" />
-                                        <p class="line-clamp-1" v-text="(item.preferred_source)"/>
-                                    </div>
-
-                                    <div v-if="item.type = 'video' && item.view_count !== undefined && item.view_count !== '0 Views'" class=" info-tag dark:info-tag-dark flex flex-row gap-2 items-center align-middle pb-0.5 ">
+                                    <div v-if="itemType === 'video' && item.view_count !== undefined && item.view_count !== '0 Views'" class=" info-tag dark:info-tag-dark flex flex-row gap-2 items-center align-middle pb-0.5 ">
                                         <font-awesome-icon :icon="['fas', 'eye']" class="h-3 my-auto" />
                                         <p class="line-clamp-1" v-text="(item.view_count)"/>
                                     </div>

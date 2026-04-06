@@ -5,7 +5,7 @@
 
         <div class="pointer-events-auto flex flex-row-reverse gap-x-2 align-middle items-center cursor-pointer px-2">
             <slot></slot>
-            <p class="  text-lg font-bold  ">{{ text }}</p>
+            <p class="text-base sm:text-lg font-semibold text-zinc-700 dark:text-zinc-300">{{ text }}</p>
         </div>
 
         <hr class="pointer-events-none flex-grow border-2 border-zinc-100 dark:border-zinc-800 rounded-full" />

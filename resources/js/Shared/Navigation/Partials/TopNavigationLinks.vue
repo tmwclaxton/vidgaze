@@ -47,7 +47,7 @@ const props = defineProps({
         <!--    </div>-->
         <!--</NavLink>-->
         <span class="hidden 2xl:flex ">
-            <NavLink :href="route('podcasts')" :active="route().current('podcasts')">
+            <NavLink :href="route('podcasts.index')" :active="route().current('podcasts.index')">
                 <div class="flex flex-row gap-x-2 px-1 items-center">
                     <PodcastsIcon class=" w-5 h-5"/>
                     <span>Podcasts</span>

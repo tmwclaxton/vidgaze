@@ -1,9 +1,10 @@
 
 <script setup>
 import HeartPodcastButton from "@/Components/Cards/PodcastCards/PocastCard/Partials/HeartPodcastButton.vue";
-import {usePage} from "@inertiajs/vue3";
+import {Link} from '@inertiajs/vue3';
 import axios from "axios";
 import {ref} from "vue";
+import {useAuthStore} from "@/Stores/AuthStore";
 
 const name = 'PodcastCard';
 const props = defineProps({
@@ -17,9 +18,8 @@ let checked = ref(false);
 let liked = ref(false);
 const getPodcastInfo = async () => {
     if (useAuthStore().user !== null && !checked.value) {
-        // check if user has liked or disliked the podcast
         try {
-            const response = await axios.get(route('podcast.interaction', {podcastId: props.podcast.id}));
+            const response = await axios.get(route('api.podcast.interaction', {podcastId: props.podcast.id}));
             const data = response.data;
             checked.value = true;
             if (data.liked === "like") {
@@ -35,7 +35,7 @@ const getPodcastInfo = async () => {
 <template>
     <div @mouseenter="getPodcastInfo" class="cursor-pointer  rounded   w-full h-full ">
         <div class=" relative  group">
-            <Link href="">
+            <Link :href="route('podcast.show', { slug: podcast.slug })">
                 <img class="w-full aspect-square block rounded "
                      v-bind:src="podcast.thumbnail_url"/>
             </Link>
@@ -52,11 +52,11 @@ const getPodcastInfo = async () => {
 
             </div>
         </div>
-        <a href="">
+        <Link :href="route('podcast.show', { slug: podcast.slug })">
             <div class="p-2 px-2">
                 <h3 class="text dark:textDark font-bold text-md" v-html="podcast.title"></h3>
             </div>
-        </a>
+        </Link>
     </div>
 
 </template>

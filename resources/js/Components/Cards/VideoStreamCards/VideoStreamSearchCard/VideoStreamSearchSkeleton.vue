@@ -1,50 +1,40 @@
 <template>
-
-
-
-    <ConsistentContentHolder class="flex flex-row gap-x-6 h-48 w-full my-auto  dark:border-zinc-900 bg-zinc-50 p-5">
-
-        <div class="h-full aspect-[21/12] rounded-xl overflow-hidden">
-            <skeleton-div/>
+    <div class="relative flex flex-row w-full gap-0">
+        <div class="w-48 lg:w-96 aspect-[21/12] shrink-0 overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-800/80">
+            <SkeletonDiv shimmer />
         </div>
-        <div class="flex flex-col gap-y-3 w-full h-full">
-            <div class="w-full rounded-xl h-6 overflow-hidden">
-                <skeleton-div/>
+        <div class="pl-4 sm:pl-5 flex-1 min-w-0 flex flex-col gap-3 pt-0.5">
+            <div class="h-5 sm:h-6 lg:h-8 rounded-lg overflow-hidden w-full max-w-3xl">
+                <SkeletonDiv shimmer />
             </div>
-            <div class="w-3/4 rounded-xl h-6 overflow-hidden">
-                <skeleton-div/>
+            <div class="h-5 sm:h-6 rounded-lg overflow-hidden w-[92%] max-w-2xl lg:hidden">
+                <SkeletonDiv shimmer />
             </div>
-            <div class="flex flex-row gap-x-4">
-                <div class="w-12 rounded-full aspect-square overflow-hidden">
-                    <skeleton-div/>
+            <div class="flex flex-row gap-2 pt-0.5 items-start">
+                <div class="w-9 aspect-square rounded-full overflow-hidden shrink-0 bg-zinc-100 dark:bg-zinc-800/80">
+                    <SkeletonDiv shimmer />
                 </div>
-                <div class="w-64 rounded-xl h-8 overflow-hidden">
-                    <skeleton-div/>
+                <div class="flex flex-col gap-2 flex-1 min-w-0 justify-center">
+                    <div class="h-5 rounded-md overflow-hidden w-36 max-w-[70%]">
+                        <SkeletonDiv shimmer />
+                    </div>
+                    <div class="h-4 rounded-md overflow-hidden w-24 max-w-[50%] lg:hidden">
+                        <SkeletonDiv shimmer />
+                    </div>
+                    <div class="hidden lg:block h-20 rounded-lg overflow-hidden w-full mt-1">
+                        <SkeletonDiv shimmer />
+                    </div>
                 </div>
             </div>
-
         </div>
-
-
-    </ConsistentContentHolder>
-
-
+    </div>
 </template>
 
 <script>
-import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
-import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
-import Badge from "@/Components/General/Badge.vue";
 import SkeletonDiv from "@/Components/General/SkeletonDiv.vue";
 
 export default {
-name: "VideoStreamSearchSkeleton",
-components: {SkeletonDiv, Badge, ConsistentContentHolder, SubscribeButton},
-props: {
-creator: {
-    type: Object,
-    default: null
-}
-}
-}
+    name: "VideoStreamSearchSkeleton",
+    components: { SkeletonDiv },
+};
 </script>

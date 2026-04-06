@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ApiControllers;
 
 use App\Helpers\Search;
 use App\Helpers\SearchQueryDTO;
+use App\Helpers\SearchVideoAiRanker;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CreatorCollection;
 use App\Http\Resources\PlaylistCollection;
@@ -18,9 +19,7 @@ use Illuminate\Http\Request;
 
 class SearchApiController extends Controller
 {
-
     /** Get search results for a query
-     * @param Request $request
      */
     public static function startQuery(Request $request)
     {
@@ -30,10 +29,10 @@ class SearchApiController extends Controller
     }
 
     /** Get search results for a query
-     * @param Request $request
      * @return JsonResponse
      */
-    public static function getResults(Request $request) {
+    public static function getResults(Request $request)
+    {
         $searchQuery = $request->q;
         if (empty($searchQuery)) {
             return response()->json([
@@ -42,6 +41,7 @@ class SearchApiController extends Controller
                 'streams' => [],
                 'playlists' => [],
                 'podcasts' => [],
+                'video_ranking' => null,
             ]);
         }
 
@@ -55,17 +55,17 @@ class SearchApiController extends Controller
         $playlistModels = $results['playlists'] ?? [];
         $podcastModels = $results['podcasts'] ?? [];
         // shuffle videos in a repeatable way // we need to shuffle for YouTube API approval
-//        if (count($videos) > 0) {
-//            $videos = $videos->shuffle(crc32($searchQuery));
-//        }
+        //        if (count($videos) > 0) {
+        //            $videos = $videos->shuffle(crc32($searchQuery));
+        //        }
 
-        // pattern for videos: 2 yt vids, 3 rumble vids, 2 vimeos, 2 dailymotion, then shuffle the rest in a predictable way
-
-        // iterate through videos and check their preferred_source
+        // Seed ordering: platform quotas first, remainder in discovery order; final order from AI + Redis cache.
         $yt_vids = [];
         $rumble_vids = [];
         $vimeo_vids = [];
         $dailymotion_vids = [];
+        $bitchute_vids = [];
+        $odysee_vids = [];
         $other_vids = [];
 
         foreach ($videoModels as $video) {
@@ -77,17 +77,18 @@ class SearchApiController extends Controller
                 $vimeo_vids[] = $video;
             } elseif ($video->preferred_source == 'dailymotion' && count($dailymotion_vids) < 2) {
                 $dailymotion_vids[] = $video;
+            } elseif ($video->preferred_source == 'bitchute' && count($bitchute_vids) < 2) {
+                $bitchute_vids[] = $video;
+            } elseif ($video->preferred_source == 'odysee' && count($odysee_vids) < 2) {
+                $odysee_vids[] = $video;
             } else {
                 $other_vids[] = $video;
             }
         }
 
+        $videoModels = array_merge($yt_vids, $rumble_vids, $vimeo_vids, $dailymotion_vids, $bitchute_vids, $odysee_vids, $other_vids);
 
-        // shuffle the rest of the videos in a predictable way (use all(), not toArray(), or models become arrays)
-        $other_vids = collect($other_vids)->shuffle(crc32($searchQuery))->values()->all();
-
-        // merge all the videos
-        $videoModels = array_merge($yt_vids, $rumble_vids, $vimeo_vids, $dailymotion_vids, $other_vids);
+        [$videoModels, $videoRankingMeta] = SearchVideoAiRanker::rankVideos($videoModels, $searchQuery);
 
         $videoIds = collect($videoModels)->pluck('id')->filter()->values();
         if ($videoIds->isNotEmpty()) {
@@ -98,26 +99,25 @@ class SearchApiController extends Controller
         $playlists = new PlaylistCollection($playlistModels);
         $podcasts = new PodcastCollection($podcastModels);
 
-        //return the creators, videos, streams, playlists, podcasts
+        // return the creators, videos, streams, playlists, podcasts
         return response()->json([
             'creators' => new CreatorCollection(collect($creatorModels)),
             'videos' => new VideoCollection(collect($videoModels)),
             'streams' => $streams,
             'playlists' => $playlists,
             'podcasts' => $podcasts,
+            'video_ranking' => $videoRankingMeta,
         ]);
     }
 
-
     /** Get search suggestions for a query
-     * @param Request $request
      * @return JsonResponse
      */
     public function getSearchSuggestions(Request $request)
     {
         $searchQuery = $request->q;
 
-        if (empty($searchQuery) ) {
+        if (empty($searchQuery)) {
             return response()->json([
                 'query' => $searchQuery,
                 'videos' => [],
@@ -129,10 +129,11 @@ class SearchApiController extends Controller
             ]);
         }
 
-        //Ensure that search parameter is used to only display limited attributes
-        $videos = Video::select(['slug','title'])->where('title','like','%'.$searchQuery.'%')->orderBy('view_count', 'DESC')->take(8)->get();
-        $creators = Creator::select(['name','slug'])->where('name','like','%'.$searchQuery.'%')->orderByDesc('subscriber_count')->take(2)->get();
-        $categories = Category::select(['name','slug'])->where('name','like','%'.$searchQuery.'%')->take(2)->get();
+        // Ensure that search parameter is used to only display limited attributes
+        $videos = Video::select(['slug', 'title'])->where('title', 'like', '%'.$searchQuery.'%')->orderBy('view_count', 'DESC')->take(8)->get();
+        $creators = Creator::select(['name', 'slug'])->where('name', 'like', '%'.$searchQuery.'%')->orderByDesc('subscriber_count')->take(2)->get();
+        $categories = Category::select(['name', 'slug'])->where('name', 'like', '%'.$searchQuery.'%')->take(2)->get();
+
         return response()->json([
             'query' => $searchQuery,
             'videos' => $videos,

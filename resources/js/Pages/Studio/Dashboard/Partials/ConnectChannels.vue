@@ -102,7 +102,7 @@ function claimPlaceholder(id) {
         return 'Rumble channel slug (from rumble.com/c/...)';
     }
     if (id === 'odysee') {
-        return 'Odysee channel name or @handle';
+        return 'Odysee handle (from odysee.com/@YourHandle — enter YourHandle, no @)';
     }
     if (id === 'bitchute') {
         return 'BitChute channel name (from /channel/...)';

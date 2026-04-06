@@ -1,4 +1,5 @@
 <script setup>
+import axios from "axios";
 import { onMounted, onUnmounted, ref} from "vue";
 import { debounce } from "lodash";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
@@ -12,6 +13,12 @@ import YouTubeIcon from "#icons/youtube.svg";
 // import VidGazeIcon from "#icons/youtube.svg";
 
 const pinModalStore = usePinModalStore();
+const categoryFeedClientId =
+    typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : null;
+/** Rows from AI discovery feed (same pipeline as home music/gaming spotlight). */
+const discoveryRows = ref([]);
 const pinnedVideos = ref([]); // Holds all video data grouped by category
 const currentIndex = ref(0); // Tracks which group of categories are currently being fetched
 const categoriesPerBatch = 5; // Load 5 categories per request
@@ -85,7 +92,42 @@ const vimeoPinned = ref([]);
 const rumblePinned = ref([]);
 const youtubePinned = ref([]);
 
+async function loadCategoryDiscoveryRows() {
+    try {
+        const slotsRes = await axios.get(route('api.video.category-feed.slots'));
+        const slots = slotsRes.data?.slots ?? [];
+        const rows = [];
+        for (const s of slots) {
+            const vRes = await axios.get(route('api.video.category-feed.videos'), {
+                params: {
+                    category_id: s.category_id,
+                    limit: 12,
+                    ...(categoryFeedClientId ? { feed_client: categoryFeedClientId } : {}),
+                },
+            });
+            const raw = vRes.data?.videos?.data ?? vRes.data?.videos ?? [];
+            const list = Array.isArray(raw) ? raw : [];
+            if (list.length === 0) {
+                continue;
+            }
+            rows.push({
+                category: {
+                    id: s.category_id,
+                    name: s.name,
+                    slug: s.slug,
+                },
+                videos: list,
+                subtitle: vRes.data?.label ?? s.label ?? null,
+            });
+        }
+        discoveryRows.value = rows;
+    } catch {
+        discoveryRows.value = [];
+    }
+}
+
 onMounted(async () => {
+    await loadCategoryDiscoveryRows();
     // Fetch all categories on mount
     await pinModalStore.getVideoCategories();
 
@@ -118,8 +160,28 @@ onUnmounted(() => {
     <div>
         <Head title="Categories" />
 
-        <ConsistentPadding class="-mt-4">
-            <!-- Render each category and its videos -->
+        <ConsistentPadding class="md:-mt-1">
+            <header class="mb-8 md:mb-10">
+                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">Categories</h1>
+            </header>
+
+            <VideosRow
+                v-for="item in discoveryRows"
+                :key="'disc-' + item.category.id"
+                :videos="item.videos"
+                :subtitle="item.subtitle"
+                :showCategoryTag="true"
+                :wait-till-loaded="true"
+            >
+                <Link
+                    :href="route('category.show',{slug:item.category.slug})"
+                    class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-white hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+                >
+                    {{ item.category.name }}
+                    <span class="sr-only"> — spotlight</span>
+                </Link>
+            </VideosRow>
+
             <VideosRow
                 v-for="item in pinnedVideos"
                 :videos="item.videos"
@@ -129,13 +191,15 @@ onUnmounted(() => {
             >
 <!--                <VidGazeIcon v-if="item.category.name === 'VidGaze Picks'" class="w-full h-full"/>-->
 
-                <Link v-if="item.category.slug !== null"
+                <Link
+                    v-if="item.category.slug !== null"
                     :href="route('category.show',{slug:item.category.slug})"
-                      class="hover:underline text-3xl font-bold">
+                    class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-white hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+                >
                     {{ item.category.name }}
                 </Link>
-                <div v-else class="flex flex-row gap-x-2">
-                    <div class="flex w-8 items-center justify-center">
+                <div v-else class="flex flex-row items-center gap-x-3">
+                    <div class="flex h-8 w-8 shrink-0 items-center justify-center">
                         <YouTubeIcon v-if="item.category.name === 'YouTube'" class="w-full h-full"/>
                         <TwitchIcon v-if="item.category.name === 'Twitch'" class="w-full h-full"/>
                         <VimeoIcon v-if="item.category.name === 'Vimeo'" class="w-full h-full"/>
@@ -143,7 +207,7 @@ onUnmounted(() => {
                         <RumbleIcon src="/" v-if="item.category.name === 'Rumble'" class="w-full h-full"/>
                     </div>
 
-                    <span class="text-3xl font-bold" v-text="item.category.name" />
+                    <span class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-white" v-text="item.category.name" />
                 </div>
             </VideosRow>
 

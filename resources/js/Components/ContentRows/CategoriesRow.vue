@@ -22,8 +22,8 @@ const props = defineProps({
         <template v-for="category in categories" v-if="categories != null">
             <CategoryCard :category="category"/>
         </template>
-        <!--skeleton loading-->
-        <template v-if="categories.length === 0" v-for="i in 8">
+        <!--skeleton loading (~2 rows at lg:grid-cols-8) -->
+        <template v-if="categories.length === 0" v-for="i in 16" :key="`cat-sk-${i}`">
             <CategorySkeleton />
         </template>
     </div>

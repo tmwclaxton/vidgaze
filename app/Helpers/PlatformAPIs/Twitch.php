@@ -10,13 +10,13 @@ use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
+use App\Models\CreatorModels\TwitchLogin;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use TwitchApi\HelixGuzzleClient;
 use TwitchApi\TwitchApi;
-use App\Models\CreatorModels\TwitchLogin;
 
-class Twitch implements iSearchable, iIsPlatform
+class Twitch implements iIsPlatform, iSearchable
 {
     public TwitchApi $client;
 
@@ -30,12 +30,14 @@ class Twitch implements iSearchable, iIsPlatform
         $helixGuzzleClient = new HelixGuzzleClient(config('platforms.twitch.client_id'));
         $this->client = new TwitchApi($helixGuzzleClient, config('platforms.twitch.client_id'), config('platforms.twitch.client_secret'));
     }
+
     public static function getPlatform(): Platform
     {
         return Platform::Twitch;
     }
 
-    public function getAppBearerToken(){
+    public function getAppBearerToken()
+    {
         $token = $this->client->getOauthApi()->getAppAccessToken();
         $data = json_decode($token->getBody()->getContents());
 
@@ -61,13 +63,14 @@ class Twitch implements iSearchable, iIsPlatform
                 $creatorDTO->name = $value->display_name;
                 $creatorDTO->avatar_url = $value->profile_image_url;
                 $creatorDTO->description = $value->description;
+
                 return $creatorDTO;
             });
     }
 
     public static function search(SearchQueryDTO $searchQueryDTO): array
     {
-        $tw = new self();
+        $tw = new self;
 
         $api = $tw->client->getSearchApi();
         $data = json_decode($api->searchChannels(
@@ -83,42 +86,44 @@ class Twitch implements iSearchable, iIsPlatform
                 $creatorDTO->id = $value->id;
                 $creatorDTO->twitch_login = $value->broadcaster_login;
                 $creatorDTO->name = $value->display_name;
-//                $creatorDTO->description = $value->description;
+                //                $creatorDTO->description = $value->description;
                 $creatorDTO->language = $value->broadcaster_language;
                 $creatorDTO->is_live = $value->is_live;
                 $creatorDTO->avatar_url = $value->thumbnail_url;
-//                $creatorDTO->category = $value->game_id; ->game_name
+                //                $creatorDTO->category = $value->game_id; ->game_name
 
                 $resultDTO = new ResultDTO(Platform::Twitch, Kind::Creator);
                 $resultDTO->creator = $creatorDTO;
+
                 return $resultDTO;
             });
 
-//         remove null values (ie banned accounts)
-//        $results = array_filter($results, function($value) {
-//            return $value !== null;
-//        });
+        //         remove null values (ie banned accounts)
+        //        $results = array_filter($results, function($value) {
+        //            return $value !== null;
+        //        });
     }
 
-
     // also deletes ghost creator streams if they are not live
-    public static function updateStreamerStatus(array $broadcaster_ids = null): void
+    public static function updateStreamerStatus(?array $broadcaster_ids = null): void
     {
-        if(!$broadcaster_ids){
-            foreach (TwitchLogin::oldest()->take(100)->get() as $login){
+        if (! $broadcaster_ids) {
+            foreach (TwitchLogin::oldest()->take(100)->get() as $login) {
                 $broadcaster_ids[] = $login->twitch_source_id;
                 $login->touch();
             }
         }
-        if (!$broadcaster_ids) return;
-        $twitch = new Twitch();
+        if (! $broadcaster_ids) {
+            return;
+        }
+        $twitch = new Twitch;
 
-        $url_params = implode("&user_id=", $broadcaster_ids);
+        $url_params = implode('&user_id=', $broadcaster_ids);
 
         $response = $twitch->client->getStreamsApi()->getStreamForUserId($twitch->getAppBearerToken(), $url_params);
 
         $data = json_decode($response->getBody()->getContents(), true)['data'];
-        $live = Arr::map($data, function ($item){
+        $live = Arr::map($data, function ($item) {
             return $item['user_id'];
         });
 
@@ -126,40 +131,48 @@ class Twitch implements iSearchable, iIsPlatform
 
         // for each not live stream where has no ->creator()->user() relation, delete stream
 
-        if($not_live) TwitchLogin::whereIn('twitch_source_id', $not_live)->get()
-            ->map(function($item) {
-                if(!$item->source()->creator()->first()->user()->first()) $item->source()->creator()->first()->streams()->delete();
+        if ($not_live) {
+            TwitchLogin::whereIn('twitch_source_id', $not_live)->get()
+                ->map(function ($item) {
+                    if (! $item->source()->creator()->first()->user()->first()) {
+                        $item->source()->creator()->first()->streams()->delete();
+                    }
 
-                $item->source()->creator()->first()->update(['is_live' => 0]);
-            });
-        if($live) TwitchLogin::whereIn('twitch_source_id', $live)->get()
-            ->map(function($item) {
-                $item->source()->creator()->first()->update(['is_live' => 1]);
-            });
+                    $item->source()->creator()->first()->update(['is_live' => 0]);
+                });
+        }
+        if ($live) {
+            TwitchLogin::whereIn('twitch_source_id', $live)->get()
+                ->map(function ($item) {
+                    $item->source()->creator()->first()->update(['is_live' => 1]);
+                });
+        }
     }
 
-    public static function getCategories(?array $ids = null, $topTwenty = false) : array //ContentDTO
+    public static function getCategories(?array $ids = null, $topTwenty = false): array // ContentDTO
     {
-        $t = new Twitch();
+        $t = new Twitch;
 
         $response = $topTwenty ? json_decode($t->client->getGamesApi()->getTopGames($t->getAppBearerToken())->getBody()->getContents())->data
             : json_decode($t->client->getGamesApi()->getGames($t->getAppBearerToken(), $ids)->getBody()->getContents())->data;
 
-        return array_map(function ($value){
+        return array_map(function ($value) {
             $contentDTO = new ContentDTO(Platform::Twitch, Kind::Category, $value->id);
             $contentDTO->name = $value->name;
             $contentDTO->category_slug = convertNameToSlug($value->name);
-            $contentDTO->thumbnail_url = str_replace('{width}x{height}','564x750', $value->box_art_url);
+            $contentDTO->thumbnail_url = str_replace('{width}x{height}', '564x750', $value->box_art_url);
+
             return $contentDTO;
         }, $response);
     }
 
-    public static function getTopStreamsByCategory(string $category_id){
-        $t = new Twitch();
+    public static function getTopStreamsByCategory(string $category_id)
+    {
+        $t = new Twitch;
 
         $response = json_decode($t->client->getStreamsApi()->getStreamsByGameId($t->getAppBearerToken(), $category_id)->getBody()->getContents())->data;
 
-        return array_map(function ($value){
+        $results = array_map(function ($value) {
             $resultDTO = new ResultDTO(Platform::Twitch, Kind::Stream);
 
             $categoryDTO = new ContentDTO(Platform::Twitch, Kind::Category, $value->game_id);
@@ -178,7 +191,7 @@ class Twitch implements iSearchable, iIsPlatform
             $contentDTO->publish_time = Carbon::make($value->started_at);
             $contentDTO->language = $value->language;
             $contentDTO->is_live = true;
-            $contentDTO->thumbnail_url = str_replace('{width}x{height}','1920x1080', $value->thumbnail_url);
+            $contentDTO->thumbnail_url = str_replace('{width}x{height}', '1920x1080', $value->thumbnail_url);
             if ($value->tags === null) {
                 $contentDTO->tags = [];
             } else {
@@ -190,17 +203,56 @@ class Twitch implements iSearchable, iIsPlatform
 
             $resultDTO->creator = $creatorDTO;
             $resultDTO->content = $contentDTO;
+
             return $resultDTO;
         }, $response);
+
+        $token = $t->getAppBearerToken();
+        if ($token && $results !== []) {
+            $userIds = [];
+            foreach ($results as $r) {
+                if ($r->creator instanceof CreatorDTO && $r->creator->id !== '') {
+                    $userIds[$r->creator->id] = true;
+                }
+            }
+            $ids = array_keys($userIds);
+            $profileById = [];
+            foreach (array_chunk($ids, 100) as $chunk) {
+                $raw = $t->client->getUsersApi()->getUsers($token, $chunk)->getBody()->getContents();
+                $userPayload = json_decode($raw);
+                if (! is_object($userPayload)) {
+                    continue;
+                }
+                $list = $userPayload->data ?? [];
+                if (! is_array($list)) {
+                    continue;
+                }
+                foreach ($list as $u) {
+                    if (! empty($u->id) && ! empty($u->profile_image_url)) {
+                        $profileById[$u->id] = $u->profile_image_url;
+                    }
+                }
+            }
+            foreach ($results as $r) {
+                if (! $r->creator instanceof CreatorDTO) {
+                    continue;
+                }
+                $pic = $profileById[$r->creator->id] ?? null;
+                if (is_string($pic) && $pic !== '') {
+                    $r->creator->avatar_url = $pic;
+                }
+            }
+        }
+
+        return $results;
     }
 
-
-
     // do not exceed 20 categories or 20 streams
-    public static function updateTopCategories(int $maxCategories = 20, $maxStreamsPerCategory = 20){
+    public static function updateTopCategories(int $maxCategories = 20, $maxStreamsPerCategory = 20)
+    {
         $categories = array_slice(Twitch::getCategories(null, true), 0, $maxCategories);
         $streams = [];
-        foreach ($categories as $category){
+        foreach ($categories as $category) {
             $streams[] =
                 ResultDTO::saveAll(
                     array_slice(
@@ -209,7 +261,7 @@ class Twitch implements iSearchable, iIsPlatform
                     )
                 );
         }
+
         return $streams;
     }
-
 }

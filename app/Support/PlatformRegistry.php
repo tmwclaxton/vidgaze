@@ -55,6 +55,28 @@ class PlatformRegistry
     }
 
     /**
+     * Platforms participating in Redis unified search (SearchPlatform jobs).
+     *
+     * @return Collection<int, Platform>
+     */
+    public static function unifiedSearchPlatforms(bool $asEnum = true, bool $asPrefix = false): Collection
+    {
+        $platforms = collect(self::definitions())
+            ->filter(fn (array $d) => ! empty($d['unified_search']))
+            ->keys()
+            ->map(fn (string $value) => Platform::fromValue($value));
+
+        if ($asPrefix) {
+            return $platforms->map(fn (Platform $p) => $p->getPrefix());
+        }
+        if ($asEnum) {
+            return $platforms;
+        }
+
+        return $platforms->map(fn (Platform $p) => $p->value);
+    }
+
+    /**
      * @return Collection<int, Platform>
      */
     public static function uploadable(bool $asEnum = true, bool $asPrefix = false): Collection

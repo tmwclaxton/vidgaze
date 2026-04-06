@@ -36,7 +36,7 @@ const name = 'ExpandableNavigationLinks';
 
 
 
-    <div  v-if="!navStore.showingStudioLinks" class="  space-y-1 ">
+    <div v-if="!navStore.showingStudioLinks" class="space-y-0.5">
         <!--<p v-text="isStudioRoute" class="text-white"></p>-->
         <div class="ld:hid den">
             <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
@@ -56,6 +56,12 @@ const name = 'ExpandableNavigationLinks';
             <ResponsiveNavLink :href="route('category.index')" :active="route().current('category.index')">
                 <CategoriesIcon class="w-5 h-5 flex-shrink-0"/>
                 <span>Categories</span>
+            </ResponsiveNavLink>
+        </div>
+        <div class="hidden 2xl:block">
+            <ResponsiveNavLink :href="route('podcasts.index')" :active="route().current('podcasts.index')">
+                <PodcastIcon class="w-5 h-5 flex-shrink-0"/>
+                <span>Podcasts</span>
             </ResponsiveNavLink>
         </div>
         <div class="" v-if="useAuthStore().areShortsEnabled()">
@@ -83,7 +89,7 @@ const name = 'ExpandableNavigationLinks';
 
 
     <!--studio links-->
-    <div  v-if="navStore.showingStudioLinks" class="  space-y-1 ">
+    <div v-if="navStore.showingStudioLinks" class="space-y-0.5">
         <!--dashboard-->
         <div v-if="useAuthStore().user != null" class="md:hid den">
             <ResponsiveNavLink :href="route('studio.dashboard')" :active="route().current('studio.dashboard')">

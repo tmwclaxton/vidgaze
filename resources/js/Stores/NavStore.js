@@ -80,6 +80,11 @@ export const useNavStore = defineStore('NavStore', {
             this.checkBottomNavLinks()
         },
 
+        closeNavigationDropdown() {
+            this.showingNavigationDropdown = false;
+            this.checkBottomNavLinks();
+        },
+
         // this is for mobile so when you click the profile / upload / notification icon it will close the sidenav
         toggleShowingNavigationDropdownOff() {
             if (window.innerWidth <= 640) {

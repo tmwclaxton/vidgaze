@@ -24,20 +24,22 @@ const props = defineProps({
 
 const classes = computed(() => {
     let classString = '';
-    // if on the current page
     if (props.active) {
-        classString = 'border-transparent text-white bg-zinc-900 dark:bg-zinc-900 dark:hover:bg-zinc-800  focus:s hake   ';
+        classString =
+            'border-transparent bg-white/[0.1] text-white shadow-sm ring-1 ring-white/[0.08] dark:bg-white/[0.08] dark:ring-white/[0.06] ';
     } else {
-        classString = 'border-transparent text-zinc-200  hover:text-white  hover:bg-zinc-800   dark:hover:bg-zinc-800     hover:border-zi nc-600 ';
+        classString =
+            'border-transparent text-zinc-400 hover:border-transparent hover:bg-white/[0.06] hover:text-white dark:hover:bg-white/[0.06] ';
     }
-    // if side bar is expanded
     if (navStore.getNavigationDropdown()) {
-        classString += ' mr-4 w-full   flex-row text-base px-4 gap-x-3 ';
+        classString +=
+            'mr-2 w-full min-w-0 flex-nowrap flex-row gap-x-3 px-3 text-base sm:mr-2 sm:px-3.5 ';
     } else {
-        classString += 'w-10 sm:flex-col sm:text-xs align-middle justify-left sm:gap-2 gap-2 px-3 ';
+        classString +=
+            'w-full min-w-0 gap-2 px-2.5 text-sm sm:flex-col sm:items-center sm:justify-center sm:gap-1.5 sm:px-2 sm:text-center sm:text-[11px] ';
     }
-    classString += 'text-center py-2 items-center flex rounded text-md block w-full   text-left  font-medium transition duration-150 ease-in-out ';
-    // ... rest of the CSS classes
+    classString +=
+        'flex items-center rounded-lg py-2 text-left font-medium transition-colors duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/25 sm:py-2 ';
     return classString;
 });
 

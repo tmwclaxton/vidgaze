@@ -12,11 +12,12 @@ use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
 use App\Helpers\Tools;
+use App\Helpers\VideoDurationParser;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class YouTube implements iSearchable, iIsPlatform
+class YouTube implements iIsPlatform, iSearchable
 {
     private const SYNC_TIMEOUT_CHANNEL = 600;
 
@@ -57,7 +58,7 @@ class YouTube implements iSearchable, iIsPlatform
         $byChannel = [];
         foreach (array_chunk($ids, self::URL_CHUNK) as $chunk) {
             $startUrls = array_map(
-                fn (string $id) => ['url' => 'https://www.youtube.com/channel/'.rawurlencode($id)],
+                fn (string $id) => ['url' => self::publicChannelUrlForExternalId($id)],
                 $chunk
             );
             $items = self::syncActorInput([
@@ -157,6 +158,8 @@ class YouTube implements iSearchable, iIsPlatform
             }
         }
 
+        self::enrichShortYoutubeChannelMetadata($out);
+
         $cap = min(max(1, $searchQueryDTO->max_results), count($out));
 
         return Tools::validateDTOs(array_slice($out, 0, $cap));
@@ -231,7 +234,8 @@ class YouTube implements iSearchable, iIsPlatform
 
         $creatorDTO = new CreatorDTO(Platform::YouTube, $channelId);
         $creatorDTO->name = $data['name'] ?? $data['channelName'] ?? $data['title'] ?? 'Unknown';
-        $creatorDTO->avatar_url = $data['avatar'] ?? $data['channelThumbnail'] ?? $data['thumbnailUrl'] ?? '';
+        $rawAvatar = $data['avatar'] ?? $data['channelThumbnail'] ?? $data['thumbnailUrl'] ?? '';
+        $creatorDTO->avatar_url = $rawAvatar !== '' ? self::sanitizeExternalUrl((string) $rawAvatar) : '';
         $creatorDTO->banner_url = $data['banner'] ?? $data['channelBanner'] ?? null;
         $creatorDTO->description = $data['description'] ?? $data['channelDescription'] ?? '';
         $country = $data['country'] ?? null;
@@ -439,45 +443,107 @@ class YouTube implements iSearchable, iIsPlatform
 
     private static function parseChannelIdFromUrl(string $url): ?string
     {
+        $url = self::sanitizeExternalUrl($url);
         if (preg_match('#youtube\.com/channel/([^/?#]+)#', $url, $m)) {
-            return $m[1];
+            return rawurldecode($m[1]);
+        }
+        if (preg_match('#youtube\.com/@([^/?#]+)#', $url, $m)) {
+            return rawurldecode(ltrim($m[1], '@'));
+        }
+        if (preg_match('#youtube\.com/(?:c|user)/([^/?#]+)#i', $url, $m)) {
+            return rawurldecode($m[1]);
         }
 
         return null;
     }
 
+    /**
+     * Stable public URL for Apify channel scraping (UC… id, legacy /user, /@handle, or /c/ slug).
+     */
+    private static function publicChannelUrlForExternalId(string $id): string
+    {
+        $id = trim($id);
+        if (preg_match('/^UC[\w-]{22}$/', $id)) {
+            return 'https://www.youtube.com/channel/'.rawurlencode($id);
+        }
+
+        return 'https://www.youtube.com/@'.rawurlencode(ltrim($id, '@'));
+    }
+
+    /**
+     * Apify samples sometimes wrap URLs as "&lt;https://…&gt;"; strip wrappers and stray quotes.
+     */
+    private static function sanitizeExternalUrl(string $url): string
+    {
+        $url = trim($url);
+        if ($url !== '' && $url[0] === '<' && str_ends_with($url, '>')) {
+            $url = trim(substr($url, 1, -1));
+        }
+
+        return trim($url, " \t\n\r\0\x0B\"'");
+    }
+
+    /**
+     * Search-result rows often omit channel art; batch-fetch channel pages for rows missing avatars (capped).
+     *
+     * @param  list<ResultDTO>  $results
+     */
+    private static function enrichShortYoutubeChannelMetadata(array &$results): void
+    {
+        $ids = [];
+        foreach ($results as $dto) {
+            if (! $dto instanceof ResultDTO || ! ($dto->creator instanceof CreatorDTO)) {
+                continue;
+            }
+            $cid = $dto->creator->id ?? '';
+            if ($cid === '' || $cid === 'unknown') {
+                continue;
+            }
+            $av = trim((string) ($dto->creator->avatar_url ?? ''));
+            if ($av !== '') {
+                continue;
+            }
+            $ids[$cid] = true;
+        }
+        if ($ids === []) {
+            return;
+        }
+
+        $idList = array_slice(array_keys($ids), 0, 20);
+        $fetched = self::getCreators($idList);
+        $byId = [];
+        foreach ($fetched as $c) {
+            $byId[$c->id] = $c;
+        }
+
+        foreach ($results as $dto) {
+            if (! $dto instanceof ResultDTO || ! ($dto->creator instanceof CreatorDTO)) {
+                continue;
+            }
+            $cid = $dto->creator->id;
+            if (! isset($byId[$cid])) {
+                continue;
+            }
+            $enriched = $byId[$cid];
+            $incoming = trim((string) ($enriched->avatar_url ?? ''));
+            if ($incoming !== '' && trim((string) ($dto->creator->avatar_url ?? '')) === '') {
+                $dto->creator->avatar_url = $incoming;
+            }
+            $bn = $enriched->banner_url ?? null;
+            if (($dto->creator->banner_url === null || trim((string) $dto->creator->banner_url) === '')
+                && $bn !== null && trim((string) $bn) !== '') {
+                $dto->creator->banner_url = $bn;
+            }
+            $incomingDesc = trim((string) ($enriched->description ?? ''));
+            if ($incomingDesc !== '' && trim((string) ($dto->creator->description ?? '')) === '') {
+                $dto->creator->description = $incomingDesc;
+            }
+        }
+    }
+
     private static function parseDurationToMs(array $item): int
     {
-        $raw = $item['durationMs'] ?? $item['duration'] ?? null;
-        if ($raw === null) {
-            return 0;
-        }
-        if (is_int($raw) || (is_string($raw) && ctype_digit($raw))) {
-            $n = (int) $raw;
-            if ($n > 360_000) {
-                return $n;
-            }
-
-            return $n * 1000;
-        }
-        if (is_string($raw)) {
-            if (preg_match('/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?$/i', $raw, $m)) {
-                $h = (int) ($m[1] ?? 0);
-                $min = (int) ($m[2] ?? 0);
-                $s = (float) ($m[3] ?? 0);
-
-                return (int) (($h * 3600 + $min * 60 + $s) * 1000);
-            }
-            if (preg_match('/^(\d+):(\d+)(?::(\d+))?$/', $raw, $m)) {
-                if (isset($m[3])) {
-                    return ((int) $m[1] * 3600 + (int) $m[2] * 60 + (int) $m[3]) * 1000;
-                }
-
-                return ((int) $m[1] * 60 + (int) $m[2]) * 1000;
-            }
-        }
-
-        return 0;
+        return VideoDurationParser::millisecondsFromScraperRow($item);
     }
 
     private static function rowIndicatesLive(array $item): bool
@@ -536,15 +602,42 @@ class YouTube implements iSearchable, iIsPlatform
 
     private static function apifyChannelAvatar(array $item): string
     {
-        foreach (['channelThumbnail', 'channelAvatar', 'authorThumbnail'] as $k) {
-            if (! empty($item[$k])) {
-                if (is_string($item[$k])) {
-                    return $item[$k];
+        foreach ([
+            'channelThumbnail',
+            'channelAvatar',
+            'authorThumbnail',
+            'channelPicture',
+            'profilePicture',
+            'uploaderThumbnail',
+            'videoOwnerThumbnailUrl',
+            'ownerThumbnail',
+            'avatar',
+            'channelIcon',
+        ] as $k) {
+            if (! empty($item[$k]) && is_string($item[$k])) {
+                $u = self::sanitizeExternalUrl($item[$k]);
+                if ($u !== '') {
+                    return $u;
                 }
             }
         }
-        if (! empty($item['authorThumbnails'][0]['url'])) {
-            return (string) $item['authorThumbnails'][0]['url'];
+        foreach (['authorThumbnails', 'channelThumbnails', 'ownerThumbnails'] as $thumbListKey) {
+            if (! empty($item[$thumbListKey]) && is_array($item[$thumbListKey])) {
+                $list = $item[$thumbListKey];
+                $last = $list[array_key_last($list)] ?? null;
+                if (is_array($last) && ! empty($last['url'])) {
+                    return self::sanitizeExternalUrl((string) $last['url']);
+                }
+            }
+        }
+        foreach (['channel', 'owner', 'uploader'] as $nestedKey) {
+            if (empty($item[$nestedKey]) || ! is_array($item[$nestedKey])) {
+                continue;
+            }
+            $nested = self::apifyChannelAvatar($item[$nestedKey]);
+            if ($nested !== '') {
+                return $nested;
+            }
         }
 
         return '';

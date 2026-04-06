@@ -10,23 +10,22 @@ export default {
 <template>
     <Head title="VidGaze Music" />
 
-
-                <div class=" mx-auto   h-[calc(100vh-4rem)] py-auto justify-center flex flex-col">
-                    <div class="mx-10 my-auto flex-col  flex   dark:bg-transparent  ">
-
-                        <div class="flex flex-col space-y-2 items-center justify-center anim ate-pulse">
-                            <div class="w-52 h-52 rounded-full p-8 bg-zinc-300 dark:bg-zinc-200 animate-bou nce">
-                                <!--<font-awesome-icon :icon="['fas', 'wrench']" class="w-full h-full text-zinc-600 dark:text-zinc-400 animate-bounce"/>-->
-                                <font-awesome-icon :icon="['fas', 'wrench']"  class="w-full h-full text-zinc-600 dark:text-vidgaze-blue"/>
-                            </div>
-                            <p class="  text-zinc-600 dark:textDark font-bold text-4xl pt-8 text-center">VidGaze Music is Under Construction</p>
-                            <!--<p class="text dark:textDark text-sm justify-center text-justify ">-->
-                            <!--    VidGaze Music will be composed of ITunes, YouTube Music and SoundCloud and will be a feature of the next update!-->
-                            <!--</p>-->
-
-                        </div>
-                    </div>
-
-                </div>
+    <div class="mx-auto flex min-h-[calc(100vh-6rem)] max-w-lg flex-col justify-center px-6 py-16 sm:px-8">
+        <div
+            class="rounded-2xl border border-zinc-200 bg-zinc-50/80 p-10 text-center shadow-sm dark:border-zinc-700 dark:bg-zinc-900/60 dark:shadow-zinc-950/40"
+        >
+            <div
+                class="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-sky-100 text-sky-700 dark:bg-sky-950/80 dark:text-sky-300"
+            >
+                <font-awesome-icon :icon="['fas', 'music']" class="h-9 w-9" />
+            </div>
+            <h1 class="mt-8 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
+                Music is coming to VidGaze
+            </h1>
+            <p class="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                We're building a space for tracks and catalogs from across the web. Check back soon.
+            </p>
+        </div>
+    </div>
 
 </template>

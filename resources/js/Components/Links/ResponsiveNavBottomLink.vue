@@ -10,20 +10,21 @@ const props = defineProps(['href', 'active','span']);
 
 const classes = computed(() => {
     let classString = '';
-    // if on the current page
     if (props.active) {
-        classString = 'border-transparent text-white  bg-zinc-900 dark:hover:bg-zinc-800  focus:s hake   ';
+        classString =
+            'border-transparent bg-white/[0.1] text-white ring-1 ring-white/[0.06] dark:bg-white/[0.08] ';
     } else {
-        classString = 'border-transparent text-zinc-200   hover:text-white  hover:bg-zinc-700   dark:hover:bg-zinc-800     hover:border-zi nc-600 ';
+        classString =
+            'border-transparent text-zinc-400 hover:bg-white/[0.06] hover:text-white dark:hover:bg-white/[0.06] ';
     }
-    // if side bar is expanded
     if (navStore.getNavigationDropdown()) {
-        classString += '   flex-row text-base    px-1 py-2 ';
+        classString += 'flex-row justify-center px-2 py-2 text-center text-xs ';
     } else {
-        classString += 'sm:flex-col  align-middle justify-left sm:gap-2 gap-2 px-3 py-2 w-10 ';
+        classString +=
+            'w-full min-w-0 justify-center gap-2 px-2 py-2 text-center sm:flex-col sm:items-center sm:justify-center sm:gap-1.5 sm:text-[10px] ';
     }
-    classString += 'text-center items-center sm:text-xs flex rounded text-md block w-full   text-left  font-medium transition duration-150 ease-in-out ';
-    // ... rest of the CSS classes
+    classString +=
+        'flex w-full items-center rounded-md font-medium transition-colors duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 ';
     return classString;
 });
 // if screen is mobile sized when the navigation is expanded and the user clicks a link, close the navigation

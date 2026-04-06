@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CreatorModels\CreatorSource;
 use App\Support\PlatformRegistry;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -136,7 +137,7 @@ class LinkingApiController extends Controller
         }
     }
 
-    public function claim(Request $request, string $platform): \Illuminate\Http\JsonResponse
+    public function claim(Request $request, string $platform): JsonResponse
     {
         $platformEnum = Platform::fromValue($platform);
         if (! PlatformRegistry::isClaimPlatform($platformEnum)) {
@@ -147,6 +148,9 @@ class LinkingApiController extends Controller
             'channel_id' => ['required', 'string', 'max:256'],
         ]);
         $channelId = trim($validated['channel_id']);
+        if ($platformEnum === Platform::Odysee) {
+            $channelId = trim(ltrim($channelId, '@'));
+        }
 
         self::breakIfChannelClaimed($channelId, $platformEnum);
 

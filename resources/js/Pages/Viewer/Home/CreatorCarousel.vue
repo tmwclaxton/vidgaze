@@ -1,9 +1,11 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import {usePage} from "@inertiajs/vue3";
 import {useAuthStore} from "@/Stores/AuthStore";
+import {shuffle} from "lodash";
 
 const carouselItems = ref([]);
+let autoplayId = null;
 
 const activeIndex = ref(0);
 const carouselWrapper = ref(null);
@@ -63,12 +65,8 @@ onMounted(() => {
         //     link: "/" // TODO: update this link to the freedom tech category page later
         // },
         {
-            imgSrc: '/images/banners/LAS-Banner.png',
-            link: "https://www.lightningarbitragesolutions.com/"
-        },
-        {
-            imgSrc: '/images/banners/Canvassr-Banner.png',
-            link: "https://www.canvassr.org/"
+            imgSrc: '/images/banners/GrantGunnerBanner.png',
+            link: 'https://grantgunner.org/'
         },
     );
 
@@ -81,75 +79,96 @@ onMounted(() => {
                 });
             });
 
-            if (carouselItems.length > 1) {
+            if (carouselItems.value.length > 1) {
                 // shuffle everything except the first item
-                carouselItems.value = [carouselItems.value[0], ..._.shuffle(carouselItems.value.slice(1))];
+                carouselItems.value = [carouselItems.value[0], ...shuffle(carouselItems.value.slice(1))];
             }
         })
 
 
-    setInterval(() => {
+    autoplayId = window.setInterval(() => {
         if (!isMouseOverCarousel.value && carouselWrapper.value) {
             scrollToNextItem();
         }
-    }, 7000); // scroll every 10 seconds
+    }, 7000);
+});
 
-
+onUnmounted(() => {
+    if (autoplayId !== null) {
+        clearInterval(autoplayId);
+    }
 });
 </script>
 
 <template>
-    <div class="relative group overflow-hidden h-75 shadow-md  w-full"
-         @mouseenter="handleMouseEnter"
-         @mouseleave="handleMouseLeave">
-        <!-- Carousel wrapper -->
-        <div ref="carouselWrapper"
-             class="overflow-y-hidden overflow-x-hidden snap-mandatory snap-x  h-full w-full flex flex-row relative transition-all delay-75 duration-700 ease-in-out  opacity-100 point-events-auto" >
-            <!-- Item -->
-            <a class="flex-shrink-0 h-full w-full relative snap-center  "
-                 v-for="(item, index) in carouselItems"
-                 :key="index"
-                 :class="{'    ': activeIndex !== index,'  ': activeIndex === index}"
-                    :href="item.link"
+    <div
+        class="relative group overflow-hidden w-full aspect-[21/9] max-h-[min(20rem,42vh)] min-h-[10rem] ring-1 ring-black/5 dark:ring-white/10 rounded-2xl"
+        @mouseenter="handleMouseEnter"
+        @mouseleave="handleMouseLeave"
+    >
+        <div
+            ref="carouselWrapper"
+            class="overflow-x-auto overflow-y-hidden snap-x snap-mandatory h-full w-full flex flex-row opacity-100 [&::-webkit-scrollbar]:hidden"
+            style="scrollbar-width: none; -ms-overflow-style: none;"
+        >
+            <a
+                v-for="(item, index) in carouselItems"
+                :key="index"
+                class="flex shrink-0 h-full w-full snap-center relative outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-900"
+                :href="item.link"
             >
-                <img :src="item.imgSrc" class="block w-full h-full max-h-72 cursor-pointer" />
-
-                 <!--<div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/50 h-screen w-full"></div>-->
+                <img
+                    :src="item.imgSrc"
+                    alt=""
+                    class="block w-full h-full object-cover cursor-pointer"
+                    loading="lazy"
+                />
             </a>
         </div>
-        <!-- Slider controls -->
-        <div class="absolute z-30 flex space-x-3 -translate-x-1/2 bottom-5 left-1/2 pointer-events-none cursor-pointer ">
 
-            <button @click="scrollToItem(index)"
-                    class="w-3 h-3 rounded-full pointer-events-auto"
-                    v-for="(item, index) in carouselItems"
-                    :key="index"
-                    type="button"
-                    :class="{
-                      'bg-gray-400': activeIndex !== index,
-                      'bg-white': activeIndex === index
-                    }" >
+        <div
+            v-if="carouselItems.length > 1"
+            class="absolute z-30 flex gap-2 -translate-x-1/2 bottom-4 left-1/2 pointer-events-none"
+        >
+            <button
+                v-for="(item, index) in carouselItems"
+                :key="index"
+                type="button"
+                class="pointer-events-auto h-2.5 w-2.5 rounded-full transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/20"
+                :class="activeIndex === index
+                    ? 'bg-white scale-110 ring-2 ring-white/40'
+                    : 'bg-white/45 hover:bg-white/70'"
+                :aria-label="`Slide ${index + 1}`"
+                @click.prevent="scrollToItem(index)"
+            />
+        </div>
+
+        <div
+            v-if="carouselItems.length > 1"
+            class="absolute top-0 left-0 z-10 flex items-center justify-center h-full pl-3 sm:pl-6 pointer-events-none"
+        >
+            <button
+                type="button"
+                class="without-ring cursor-pointer inline-flex items-center justify-center w-9 h-9 sm:w-12 sm:h-12 rounded-full pointer-events-auto bg-black/40 hover:bg-black/55 text-white opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition duration-200 ease-in-out backdrop-blur-[2px]"
+                @click.prevent="scrollToPrevItem"
+            >
+                <font-awesome-icon :icon="['fas', 'chevron-left']" class="w-4 h-4 sm:w-5 sm:h-5" />
+                <span class="sr-only">Previous</span>
             </button>
         </div>
 
-        <!-- previous button -->
-        <div class="absolute top-0 left-0 z-10 flex items-center justify-center h-full px-8 pointer-events-none">
-            <span @click="scrollToPrevItem"
-              class="cursor-pointer inline-flex items-center justify-center w-8 h-8 rounded-full pointer-events-auto
-              sm:w-16 sm:h-16 bg-vidgaze-blue/50 hover:bg-vidgaze-blue opacity-0 group-hover:opacity-100 transition duration-200 ease-in-out">
-                <font-awesome-icon :icon="['fas', 'chevron-left']" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                <span class="sr-only">Previous</span>
-            </span>
-        </div>
-
-        <!--next button-->
-        <div class="absolute top-0 right-0 flex items-center justify-center h-full px-8 pointer-events-none">
-            <span @click="scrollToNextItem"
-                  class=" cursor-pointer inline-flex items-center justify-center w-8 h-8 rounded-full pointer-events-auto
-                  sm:w-16 sm:h-16 bg-vidgaze-blue/50 hover:bg-vidgaze-blue opacity-0 group-hover:opacity-100 transition duration-200 ease-in-out">
-                <font-awesome-icon :icon="['fas', 'chevron-right']" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+        <div
+            v-if="carouselItems.length > 1"
+            class="absolute top-0 right-0 z-10 flex items-center justify-center h-full pr-3 sm:pr-6 pointer-events-none"
+        >
+            <button
+                type="button"
+                class="without-ring cursor-pointer inline-flex items-center justify-center w-9 h-9 sm:w-12 sm:h-12 rounded-full pointer-events-auto bg-black/40 hover:bg-black/55 text-white opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition duration-200 ease-in-out backdrop-blur-[2px]"
+                @click.prevent="scrollToNextItem"
+            >
+                <font-awesome-icon :icon="['fas', 'chevron-right']" class="w-4 h-4 sm:w-5 sm:h-5" />
                 <span class="sr-only">Next</span>
-            </span>
+            </button>
         </div>
     </div>
 

@@ -10,6 +10,8 @@
         <DailymotionIcon v-if="source === 'Dailymotion'" class="w-3 h-3 mr-1.5" />
         <RumbleIcon src="/" v-if="source === 'Rumble'" class="w-3 h-3 mr-1.5" />
         <BitChuteIcon v-if="source === 'BitChute'" class="w-3 h-3 mr-1.5" />
+        <OdyseeIcon v-if="source === 'Odysee'" class="w-3 h-3 mr-1.5" />
+        <TikTokIcon v-if="source === 'Tiktok' || source === 'TikTok'" class="w-3 h-3 mr-1.5" />
 
         <p class="line-clamp-1 leading-tight font-bold text-xs" v-text="text"></p>
     </div>
@@ -24,6 +26,8 @@ import VimeoIcon from '~/images/icons/vimeo.svg';
 import DailymotionIcon from '~/images/icons/dailymotion.svg';
 import RumbleIcon from '~/images/icons/rumble.svg';
 import BitChuteIcon from '~/images/icons/bitchute.svg';
+import OdyseeIcon from '~/images/icons/odysee.svg';
+import TikTokIcon from '~/images/icons/tiktok.svg';
 
 import { defineProps, computed } from 'vue';
 
@@ -50,7 +54,9 @@ const sourceClasses = {
     Vimeo: 'bg-blue-500 dark:bg-blue-700',
     Rumble: 'bg-green-900 dark:bg-green-900',
     TikTok: 'bg-black dark:bg-blue-800',
+    Tiktok: 'bg-black dark:bg-blue-800',
     BitChute: 'bg-orange-700 dark:bg-orange-900',
+    Odysee: 'bg-sky-700 dark:bg-sky-900',
 };
 
 const getClasses = computed(() => {

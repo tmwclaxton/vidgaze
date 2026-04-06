@@ -2,8 +2,9 @@
 <script setup>
 import PodcastCard from "@/Components/Cards/PodcastCards/PocastCard/PodcastCard.vue";
 import PodcastSkeleton from "@/Components/Cards/PodcastCards/PocastCard/PodcastSkeleton.vue";
+import axios from "axios";
 
-import { onMounted, onUnmounted, ref, computed } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { debounce } from "lodash";
 const name = 'ExplorePodcasts';
 const podcasts = ref([]);
@@ -30,7 +31,7 @@ const handleScrollPodcasts = () => {
 const fetchPodcasts = async () => {
     const podcastsIds = podcasts.value.map(podcast => podcast.id).join(',');
     axios
-        .get(route('podcasts.infinite'), {
+        .get(route('api.podcast.infinite'), {
             params: {
                 perPage: 24,
                 podcastIds: podcastsIds
@@ -49,14 +50,6 @@ const fetchPodcasts = async () => {
 const debouncedFetchPodcasts = debounce(() => {
     fetchPodcasts();
 }, 500);
-
-// Compute the number of skeletons to show based on the number of items
-const skeletonCount = computed(() => {
-    const itemCount = podcasts.value.length;
-    const remainingItems = itemCount % 6;
-    const skeletonsForFullRows = 12;
-    return remainingItems === 0 ? skeletonsForFullRows : skeletonsForFullRows + (6 - remainingItems);
-});
 </script>
 <template>
     <div class="flex flex-row gap-2 my-4 mb-8">
@@ -69,8 +62,7 @@ const skeletonCount = computed(() => {
         ref="el"
         class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4"
     >
-        <PodcastCard v-for="podcast in podcasts" :podcast="podcast" />
-        <PodcastSkeleton v-for="i in skeletonCount" class="mb-4" />
+        <PodcastCard v-for="podcast in podcasts" :key="podcast.id" :podcast="podcast" />
     </div>
 
     <!--skeleton loading-->

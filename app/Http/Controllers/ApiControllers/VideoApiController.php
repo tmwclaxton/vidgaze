@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers\ApiControllers;
 
+use App\Helpers\CategoryFeedBrandScores;
+use App\Helpers\CategoryFeedViewerCooldown;
+use App\Helpers\VidgazeCategoryFeedCache;
+use App\Helpers\VidgazeTrendFeedCache;
+use App\Helpers\VidgazeTrendPickCache;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\VideoCollection;
 use App\Http\Resources\VideoResource;
@@ -16,11 +21,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class VideoApiController extends Controller
 {
-
     protected array $allowedCategories = [
         'popular',
         'new',
@@ -40,12 +44,10 @@ class VideoApiController extends Controller
         'BitChute',
     ];
 
-
     /**
      * Get videos with certain filters
-     * @param Request $request
-     * @return JsonResponse
      *
+     * @return JsonResponse
      */
     public function index(Request $request)
     {
@@ -53,8 +55,8 @@ class VideoApiController extends Controller
             'per_page' => 'integer|min:1|max:50',
             // comma separated list of video ids, only allow commas and numbers
             'video_ids' => 'string|regex:/^[0-9,]+$/|nullable',
-            'category' => 'string|in:' . implode(',', $this->allowedCategories),
-            'platforms' => 'array|in:' . implode(',', $this->allowedPlatforms),
+            'category' => 'string|in:'.implode(',', $this->allowedCategories),
+            'platforms' => 'array|in:'.implode(',', $this->allowedPlatforms),
             'shorts' => 'boolean',
             'first_video_slug' => 'string',
             'creator_id' => 'nullable|integer|exists:creators,id',
@@ -68,8 +70,7 @@ class VideoApiController extends Controller
         $selectedVideoPlatforms = $request->platforms ?? ['YouTube', 'Dailymotion', 'Vimeo'];
         $creator_id = $request->creator_id ?? null;
 
-
-        if (!is_array($video_ids) ) {
+        if (! is_array($video_ids)) {
             $video_ids = explode(',', $video_ids);
         }
 
@@ -102,8 +103,8 @@ class VideoApiController extends Controller
                 $mostPopularVideoIds = $videoViews->pluck('video_id');
                 // Preserve order
                 if ($mostPopularVideoIds->count() > 0) {
-                    //$query->whereIn('id', $mostPopularVideoIds)->orderByRaw(DB::raw("FIELD(id, ".implode(',', $mostPopularVideoIds->toArray()).")"));
-                    $query->whereIn('id', $mostPopularVideoIds)->orderByRaw("FIELD(id, ".implode(',', $mostPopularVideoIds->toArray()).")");
+                    // $query->whereIn('id', $mostPopularVideoIds)->orderByRaw(DB::raw("FIELD(id, ".implode(',', $mostPopularVideoIds->toArray()).")"));
+                    $query->whereIn('id', $mostPopularVideoIds)->orderByRaw('FIELD(id, '.implode(',', $mostPopularVideoIds->toArray()).')');
                 }
                 break;
             case 'new':
@@ -119,19 +120,19 @@ class VideoApiController extends Controller
                 $query->orderByDesc('comment_count');
                 break;
             case 'recommended':
-                //$query->where('views', '>', 0);
+                // $query->where('views', '>', 0);
                 return response()->json(['error' => 'Not implemented'], 400);
                 break;
             default:
                 return response()->json(['error' => 'Invalid category'], 400);
         }
         // query where name doesn't contain Nursery or Rhymes in caps or lowercase
-        $bannedWords = ['maravilloso','animal','nude','naked','nursery', 'rhymes','children','cartoon','kids','finger','singing','toys','babies','family','baby','songs','song','learn','learning','educational','shopkins','shoppies','numbers'];
+        $bannedWords = ['maravilloso', 'animal', 'nude', 'naked', 'nursery', 'rhymes', 'children', 'cartoon', 'kids', 'finger', 'singing', 'toys', 'babies', 'family', 'baby', 'songs', 'song', 'learn', 'learning', 'educational', 'shopkins', 'shoppies', 'numbers'];
         foreach ($bannedWords as $word) {
             $query->where('title', 'not like', '%'.$word.'%');
         }
         // Only get public videos
-        $query->where('visibility', '=','public');
+        $query->where('visibility', '=', 'public');
 
         if ($shorts) {
             $query->where('duration', '<', 90);
@@ -143,7 +144,7 @@ class VideoApiController extends Controller
         }
 
         // Filter by video platform
-        if (!empty($selectedVideoPlatforms)) {
+        if (! empty($selectedVideoPlatforms)) {
             $query->whereIn('preferred_source', $selectedVideoPlatforms);
         }
 
@@ -161,16 +162,15 @@ class VideoApiController extends Controller
         }
 
         // Don't retrieve the same videos
-        if ( $video_ids != [] ) {
+        if ($video_ids != []) {
             $query->whereNotIn('id', $video_ids);
-            //return ($video_ids);
+            // return ($video_ids);
         }
 
         $videos = $query->take($per_page)->get();
 
-
         // If there are not enough videos, get random public videos
-        if ((!isset($videos) || $videos->count() < $per_page) && $creator_id === null) {
+        if ((! isset($videos) || $videos->count() < $per_page) && $creator_id === null) {
             // get random public videos that are not in the videoIds array and get the amt to make up the difference if there are some videos already
             if (isset($videos)) {
                 $amt = $per_page - $videos->count();
@@ -198,15 +198,14 @@ class VideoApiController extends Controller
         // Retrieve the videos
         $videos = new VideoCollection($videos);
 
-
-
         return response()->json([
             'results' => $videos->count(),
-            'videos' => $videos
+            'videos' => $videos,
         ]);
     }
 
-    public function show(string $slug) {
+    public function show(string $slug)
+    {
         $video = Video::where('slug', $slug)->firstOrFail();
 
         // if the stream is private and the user is not the owner
@@ -224,20 +223,20 @@ class VideoApiController extends Controller
         $videoResource = json_decode($videoResource, true);
 
         // add object_awards to the videoResource
-        $videoResource["object_awards"] = VideoAward::where('video_id', $video->id)->get();
-
+        $videoResource['object_awards'] = VideoAward::where('video_id', $video->id)->get();
 
         return response()->json([
-            'video' => $videoResource
+            'video' => $videoResource,
         ]);
     }
 
-    public function getPinnedVideos(Request $request) {
+    public function getPinnedVideos(Request $request)
+    {
         $request->validate([
             'per_page' => 'integer|min:1|max:50',
-//            'page' => 'integer|min:1',
+            //            'page' => 'integer|min:1',
             'category_slug' => 'nullable|string|exists:categories,slug',
-            'platform' => 'nullable|string|in:' . implode(',', $this->allowedPlatforms),
+            'platform' => 'nullable|string|in:'.implode(',', $this->allowedPlatforms),
         ]);
 
         if ($request->category_slug) {
@@ -247,12 +246,12 @@ class VideoApiController extends Controller
         }
 
         $per_page = $request->per_page ?? 6;
-//        $page = $request->page ?? 1;
+        //        $page = $request->page ?? 1;
 
         $query = Video::query();
         $query->where('pinned', true);
 
-// Apply your filters
+        // Apply your filters
         if ($category) {
             $query->where('category_id', $category->id);
         }
@@ -277,15 +276,34 @@ class VideoApiController extends Controller
         // Merge all IDs
         $allIds = array_merge($pinnedIds, $additionalIds);
 
+        if ($category && $category->slug === 'vidgaze_picks') {
+            $trendPickIds = VidgazeTrendPickCache::getVideoIds();
+            if ($trendPickIds !== []) {
+                $validTrendIds = Video::whereIn('id', $trendPickIds)->pluck('id')->all();
+                $allIds = array_merge($allIds, $validTrendIds);
+            }
+        }
+
+        $allIds = array_values(array_unique($allIds));
+
         // Shuffle them
         shuffle($allIds);
 
         // Take only what we need
         $selectedIds = array_slice($allIds, 0, $per_page);
 
+        if ($selectedIds === []) {
+            $videos = new VideoCollection(collect());
+
+            return response()->json([
+                'results' => 0,
+                'videos' => $videos,
+            ]);
+        }
+
         // Get the videos in the specified order
         $videos = Video::whereIn('id', $selectedIds)
-            ->orderByRaw("FIELD(id, " . implode(',', $selectedIds) . ")")
+            ->orderByRaw('FIELD(id, '.implode(',', array_map('intval', $selectedIds)).')')
             ->get();
 
         // return the collection
@@ -293,11 +311,12 @@ class VideoApiController extends Controller
 
         return response()->json([
             'results' => $videos->count(),
-            'videos' => $videos
+            'videos' => $videos,
         ]);
     }
 
-    public function getVideosByCategory(Request $request) {
+    public function getVideosByCategory(Request $request)
+    {
         $request->validate([
             'per_page' => 'integer|min:1|max:50',
             'video_ids' => 'string|nullable',
@@ -308,7 +327,7 @@ class VideoApiController extends Controller
         $video_ids = $request->video_ids ?? [];
         $category_slug = $request->slug;
 
-        if (!is_array($video_ids) ) {
+        if (! is_array($video_ids)) {
             $video_ids = explode(',', $video_ids);
         }
 
@@ -319,7 +338,7 @@ class VideoApiController extends Controller
         $query->where('category_id', $category->id);
 
         // Don't retrieve the same videos
-        if ( $video_ids != [] ) {
+        if ($video_ids != []) {
             $query->whereNotIn('id', $video_ids);
         }
 
@@ -334,10 +353,182 @@ class VideoApiController extends Controller
 
         return response()->json([
             'results' => $videos->count(),
-            'videos' => new VideoCollection($videos)
+            'videos' => new VideoCollection($videos),
         ]);
-
 
     }
 
+    public function trendFeedTopics(): JsonResponse
+    {
+        $manifest = VidgazeTrendFeedCache::getManifest();
+        if ($manifest === null) {
+            return response()->json([
+                'updated_at' => null,
+                'topics' => [],
+            ]);
+        }
+
+        $topics = [];
+        foreach ($manifest['topics'] as $row) {
+            $key = $row['key'] ?? '';
+            $label = $row['label'] ?? '';
+            $ids = $row['video_ids'] ?? [];
+            if ($key === '' || $label === '') {
+                continue;
+            }
+            $topics[] = [
+                'key' => $key,
+                'label' => $label,
+                'count' => is_array($ids) ? count($ids) : 0,
+            ];
+        }
+
+        return response()->json([
+            'updated_at' => $manifest['updated_at'] ?? null,
+            'topics' => $topics,
+        ]);
+    }
+
+    public function trendFeedVideos(Request $request): JsonResponse
+    {
+        $request->validate([
+            'key' => ['required', 'string', 'regex:/^[a-f0-9]{16}$/'],
+        ]);
+
+        $ids = VidgazeTrendFeedCache::getVideoIdsForKey($request->string('key')->toString());
+        if ($ids === []) {
+            return response()->json([
+                'results' => 0,
+                'videos' => new VideoCollection(collect()),
+            ]);
+        }
+
+        $videos = Video::whereIn('id', $ids)
+            ->orderByRaw('FIELD(id, '.implode(',', array_map('intval', $ids)).')')
+            ->get();
+
+        return response()->json([
+            'results' => $videos->count(),
+            'videos' => new VideoCollection($videos),
+        ]);
+    }
+
+    public function categoryFeedSlots(): JsonResponse
+    {
+        $manifest = VidgazeCategoryFeedCache::getManifest();
+        if ($manifest === null) {
+            return response()->json([
+                'updated_at' => null,
+                'slots' => [],
+            ]);
+        }
+
+        $slots = [];
+        foreach ($manifest['categories'] as $row) {
+            $entry = VidgazeCategoryFeedCache::normalizeEntry($row);
+            if ($entry['category_id'] < 1 || $entry['slug'] === '') {
+                continue;
+            }
+            $slots[] = [
+                'category_id' => $entry['category_id'],
+                'slug' => $entry['slug'],
+                'name' => $entry['name'],
+                'label' => $entry['label'],
+                'count' => count($entry['video_ids']),
+            ];
+        }
+
+        return response()->json([
+            'updated_at' => $manifest['updated_at'] ?? null,
+            'slots' => $slots,
+        ]);
+    }
+
+    public function categoryFeedVideos(Request $request): JsonResponse
+    {
+        $request->validate([
+            'category_id' => ['nullable', 'integer', 'min:1', 'required_without:category_slug'],
+            'category_slug' => ['nullable', 'string', 'max:64', 'regex:/^[a-z0-9_-]+$/', 'required_without:category_id'],
+            'feed_client' => ['nullable', 'uuid'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:48'],
+        ]);
+
+        $limit = (int) ($request->input('limit') ?? config('vidgaze.category_discovery.api_max_videos', 24));
+        $limit = max(1, min(48, $limit));
+
+        $entry = null;
+        if ($request->filled('category_id')) {
+            $entry = VidgazeCategoryFeedCache::getEntryByCategoryId((int) $request->input('category_id'));
+        }
+        if ($entry === null && $request->filled('category_slug')) {
+            $entry = VidgazeCategoryFeedCache::getEntryBySlug((string) $request->input('category_slug'));
+        }
+
+        if ($entry === null || $entry['video_ids'] === []) {
+            return response()->json([
+                'results' => 0,
+                'label' => null,
+                'category_id' => null,
+                'slug' => null,
+                'videos' => new VideoCollection(collect()),
+            ]);
+        }
+
+        $viewerId = Auth::user()?->creator?->id;
+        $feedClient = $request->input('feed_client');
+        if (is_string($feedClient) && Str::isUuid($feedClient)) {
+            $feedClient = (string) $feedClient;
+        } else {
+            $feedClient = null;
+        }
+
+        $ids = $entry['video_ids'];
+        $scores = CategoryFeedBrandScores::getScores($entry['category_id'], $ids);
+        arsort($scores);
+        $sortedIds = array_keys($scores);
+
+        $recent = CategoryFeedViewerCooldown::getRecent(
+            is_int($viewerId) ? $viewerId : null,
+            $feedClient,
+            $entry['category_id']
+        );
+        $recentSet = array_fill_keys($recent, true);
+        $filtered = [];
+        foreach ($sortedIds as $id) {
+            if (! isset($recentSet[$id])) {
+                $filtered[] = $id;
+            }
+        }
+
+        $pick = array_slice($filtered, 0, $limit);
+        if (count($pick) < min(6, count($sortedIds)) && count($sortedIds) > 0) {
+            foreach ($sortedIds as $id) {
+                if (count($pick) >= $limit) {
+                    break;
+                }
+                if (! in_array($id, $pick, true)) {
+                    $pick[] = $id;
+                }
+            }
+        }
+
+        CategoryFeedViewerCooldown::pushRecent(
+            is_int($viewerId) ? $viewerId : null,
+            $feedClient,
+            $entry['category_id'],
+            $pick
+        );
+
+        $videos = Video::whereIn('id', $pick)
+            ->orderByRaw('FIELD(id, '.implode(',', array_map('intval', $pick)).')')
+            ->get();
+
+        return response()->json([
+            'results' => $videos->count(),
+            'label' => $entry['label'],
+            'category_id' => $entry['category_id'],
+            'slug' => $entry['slug'],
+            'videos' => new VideoCollection($videos),
+        ]);
+    }
 }

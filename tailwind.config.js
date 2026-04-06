@@ -89,6 +89,12 @@ module.exports = {
                 '56': '14rem', // 224px
                 '64': '16rem', // 256px
             },
+            width: {
+                'nav-rail': 'var(--vidgaze-nav-rail-width, 6rem)',
+            },
+            spacing: {
+                'nav-rail': 'var(--vidgaze-nav-rail-width, 6rem)',
+            },
             minHeight: {
                 '0': '0',
                 '1': '0.25rem', // 4px

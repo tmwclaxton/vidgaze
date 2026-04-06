@@ -12,6 +12,7 @@ import { defineProps } from "vue";
 import {usePage} from "@inertiajs/vue3";
 import axios from "axios";
 import {useToastStore} from "@/Stores/ToastStore";
+import {useAuthStore} from "@/Stores/AuthStore";
 const toastStore = useToastStore();
 
 const name = 'HeartPodcastButton';
@@ -42,7 +43,7 @@ const toggleLike = () => {
         return;
     }
 
-    const likeRoute = route('podcast.like.toggle', {  podcastId: props.podcast.id  });
+    const likeRoute = route('api.podcast.love.toggle', { podcastId: props.podcast.id });
 
     // Send a POST request to the like route
     axios.post(likeRoute)

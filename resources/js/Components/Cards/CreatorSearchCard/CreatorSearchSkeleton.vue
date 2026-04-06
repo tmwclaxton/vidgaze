@@ -1,48 +1,40 @@
 <template>
-
-
-
-    <ConsistentContentHolder class="flex flex-row gap-x-6 h-48 w-full my-auto  dark:border-zinc-900 bg-zinc-50 p-5">
-
-        <div class="h-full aspect-square rounded-full overflow-hidden  ">
-            <skeleton-div/>
-        </div>
-        <div class="flex flex-col gap-y-3 flex-grow">
-            <div class="flex flex-row gap-x-4">
-                <div class="w-64 rounded-xl h-8 overflow-hidden">
-                    <skeleton-div/>
+    <ConsistentContentHolder
+        class="relative h-full w-full my-auto overflow-hidden dark:border-zinc-900 bg-zinc-50 dark:bg-zinc-900/50"
+    >
+        <div class="pointer-events-none flex flex-row w-full px-2 sm:px-8 py-5 items-center gap-4 sm:gap-5">
+            <div class="min-w-16 w-24 shrink-0 aspect-square rounded-full overflow-hidden">
+                <SkeletonDiv shimmer />
+            </div>
+            <div class="flex flex-col flex-1 gap-3 min-w-0">
+                <div class="flex flex-row gap-3 sm:gap-4 items-center flex-wrap">
+                    <div class="h-8 rounded-lg overflow-hidden flex-1 min-w-[8rem] max-w-md">
+                        <SkeletonDiv shimmer />
+                    </div>
+                    <div class="h-9 w-[7.5rem] rounded-full overflow-hidden shrink-0 hidden sm:block">
+                        <SkeletonDiv shimmer />
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <div
+                        v-for="j in 3"
+                        :key="j"
+                        class="h-6 w-14 sm:w-16 rounded-md overflow-hidden"
+                    >
+                        <SkeletonDiv shimmer />
+                    </div>
                 </div>
             </div>
-            <div class="w-full rounded-xl h-6 overflow-hidden">
-                <skeleton-div/>
-            </div>
-            <div class="w-3/4 rounded-xl h-6 overflow-hidden">
-                <skeleton-div/>
-            </div>
-
         </div>
-
-
     </ConsistentContentHolder>
-
-
-
 </template>
 
 <script>
-import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
-import Badge from "@/Components/General/Badge.vue";
 import SkeletonDiv from "@/Components/General/SkeletonDiv.vue";
 
 export default {
-name: "CreatorSearchSkeleton",
-components: {SkeletonDiv, Badge, ConsistentContentHolder, SubscribeButton},
-props: {
-creator: {
-    type: Object,
-    default: null
-}
-}
-}
+    name: "CreatorSearchSkeleton",
+    components: { SkeletonDiv, ConsistentContentHolder },
+};
 </script>

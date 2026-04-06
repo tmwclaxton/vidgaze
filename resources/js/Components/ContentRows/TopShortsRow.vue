@@ -73,17 +73,21 @@ const handleResize = debounce(() => {
 </script>
 
 <template>
-    <div class="hid den md: flex flex-row gap-2  my-4 mb-8 ">
-        <font-awesome-icon :icon="['fas', 'fire']"  class="my-auto h-6"/>
-        <p class="font-bold text-2xl ">Rising Shorts</p>
+    <div class="hidden md:flex flex-row items-center gap-3 my-6 mb-6 sm:my-8 sm:mb-7">
+        <font-awesome-icon :icon="['fas', 'fire']" class="my-auto h-5 w-5 sm:h-6 sm:w-6 text-orange-500 dark:text-orange-400 shrink-0"/>
+        <h2 class="font-bold text-xl sm:text-2xl tracking-tight text-zinc-900 dark:text-white">Rising Shorts</h2>
     </div>
 
-    <div class="hid den md: grid  gap-7 mx-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8"  >
+    <div class="hidden md:grid gap-6 sm:gap-7 mx-0 sm:mx-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8" >
         <template  v-for="(short, index) in computedShorts" :key="short.id">
             <ShortsCard :item="short" />
         </template>
-        <!--skeleton loading-->
-        <template v-if="shorts.length === 0" v-for="i in 8">
+        <!-- md+ grid: 2/3/4/8 cols — 24 = LCM, full rows at every breakpoint -->
+        <template
+            v-if="shorts.length === 0"
+            v-for="i in 24"
+            :key="`shorts-sk-${i}`"
+        >
             <ShortsSkeleton />
         </template>
     </div>

@@ -58,7 +58,7 @@ onMounted(() => {
             <main class="h-full flex flex-row flex-grow    " >
 
                 <div v-if="usePage().props.layoutDisplay !== 'auth' && usePage().props.layoutDisplay !== 'wide'"
-                     class="pointer-events-none opacity-0 flex-shrink-0 transition  ease-in-out"  :class="{'sm:w-64  ': navStore.getNavigationDropdown(), 'sm:w-24': !navStore.getNavigationDropdown()}">
+                     class="pointer-events-none flex-shrink-0 opacity-0 transition ease-in-out"  :class="{'sm:w-64  ': navStore.getNavigationDropdown(), 'sm:w-nav-rail': !navStore.getNavigationDropdown()}">
 
                 </div>
                 <div class="relative flex-shrink transition duration-700 ease-in-out w-full"  :class="{'': navStore.getNavigationDropdown()}">

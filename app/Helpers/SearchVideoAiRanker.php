@@ -81,7 +81,18 @@ class SearchVideoAiRanker
             'model' => $model,
             'ranked_at' => now()->toIso8601String(),
             'order' => $orderedIds,
-        ], JSON_THROW_ON_ERROR);
+        ]);
+
+        if ($payload === false) {
+            Log::warning('SearchVideoAiRanker: failed to encode rank payload');
+
+            return [$ordered, [
+                'cached' => false,
+                'model' => $model,
+                'ranked_at' => now()->toIso8601String(),
+                'redis_persist_failed' => true,
+            ]];
+        }
 
         Redis::setex($cacheKey, Search::getRedisExpire(), $payload);
 

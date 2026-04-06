@@ -1,11 +1,20 @@
 <template>
-    <div class="h-full w-full bg-zinc-200 dark:bg-zinc-800 animate-pulse   "></div>
+    <div
+        class="h-full w-full"
+        :class="shimmer ? 'vg-skeleton-shimmer' : 'bg-zinc-200 dark:bg-zinc-800 animate-pulse'"
+    />
 </template>
 
 <script>
 export default {
-    name: "SkeletonDiv"
-}
+    name: "SkeletonDiv",
+    props: {
+        shimmer: {
+            type: Boolean,
+            default: false,
+        },
+    },
+};
 </script>
 
 <style scoped>

@@ -12,14 +12,21 @@ use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
 use App\Helpers\Tools;
+use App\Helpers\VideoDurationParser;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 use Vimeo\Vimeo as VimeoSDK;
 
-class Vimeo implements iSearchable, iIsPlatform
+class Vimeo implements iIsPlatform, iSearchable
 {
+    /**
+     * Nested user.* is required — requesting only "user" often omits pictures under fields filtering.
+     */
+    private const VIDEO_LIST_FIELDS = 'uri,name,description,duration,release_time,pictures,tags,user.uri,user.name,user.bio,user.pictures';
+
     public VimeoSDK $client;
 
     public function __construct()
@@ -64,8 +71,7 @@ class Vimeo implements iSearchable, iIsPlatform
             $creatorDTO->id = str_replace('/users/', '', $data['uri'] ?? '/users/'.$id);
             $creatorDTO->name = $data['name'] ?? $id;
             $creatorDTO->description = $data['bio'] ?? '';
-            $sizes = $data['pictures']['sizes'] ?? [];
-            $creatorDTO->avatar_url = $sizes !== [] ? (string) (end($sizes)['link'] ?? '') : '';
+            $creatorDTO->avatar_url = self::pictureSizesBestUrl($data['pictures'] ?? null);
             $creatorDTO->region = $data['location_details']['country_iso_code'] ?? null;
 
             return $creatorDTO;
@@ -95,7 +101,7 @@ class Vimeo implements iSearchable, iIsPlatform
             $response = (new Vimeo)->client->request('/videos', [
                 'query' => $searchQueryDTO->query,
                 'per_page' => ($searchQueryDTO->max_results <= 100) ? $searchQueryDTO->max_results : 100,
-                'fields' => 'uri,name,description,duration,release_time,pictures,tags,user',
+                'fields' => self::VIDEO_LIST_FIELDS,
             ]);
             $body = $response['body'] ?? [];
             $rows = $body['data'] ?? null;
@@ -134,7 +140,7 @@ class Vimeo implements iSearchable, iIsPlatform
                 'sort' => 'date',
                 'per_page' => $maxResults,
                 'page' => $page,
-                'fields' => 'uri,name,description,duration,release_time,pictures,tags,user',
+                'fields' => self::VIDEO_LIST_FIELDS,
             ])['body'];
 
             if (! isset($response['data'])) {
@@ -199,7 +205,7 @@ class Vimeo implements iSearchable, iIsPlatform
                 'sort' => 'date',
                 'direction' => 'desc',
                 'per_page' => $maxResults,
-                'fields' => 'uri,name,description,duration,release_time,pictures,tags,user',
+                'fields' => self::VIDEO_LIST_FIELDS,
             ]);
             $body = $response['body'] ?? [];
             $data = $body['data'] ?? [];
@@ -270,8 +276,7 @@ class Vimeo implements iSearchable, iIsPlatform
 
             $creatorDTO->name = $value['user']['name'];
             $creatorDTO->description = $value['user']['bio'] ?? '';
-            $sizes = $value['user']['pictures']['sizes'] ?? [];
-            $creatorDTO->avatar_url = $sizes !== [] ? (string) (end($sizes)['link'] ?? '') : '';
+            $creatorDTO->avatar_url = self::pictureSizesBestUrl($value['user']['pictures'] ?? null);
 
             $resultDTO->content = $contentDTO;
             $resultDTO->creator = $creatorDTO;
@@ -286,6 +291,26 @@ class Vimeo implements iSearchable, iIsPlatform
         $c->name = $id;
 
         return $c;
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $pictures
+     */
+    private static function pictureSizesBestUrl(?array $pictures): string
+    {
+        if ($pictures === null || $pictures === []) {
+            return '';
+        }
+        $sizes = $pictures['sizes'] ?? [];
+        if (is_array($sizes) && $sizes !== []) {
+            $last = $sizes[array_key_last($sizes)] ?? null;
+            if (is_array($last) && ! empty($last['link'])) {
+                return (string) $last['link'];
+            }
+        }
+        $base = $pictures['base_link'] ?? '';
+
+        return is_string($base) ? $base : '';
     }
 
     private static function getCreatorViaFirecrawl(FirecrawlClient $fc, string $id): ?CreatorDTO
@@ -376,8 +401,9 @@ class Vimeo implements iSearchable, iIsPlatform
         }
 
         if ($out !== []) {
-            self::enrichTopFirecrawlResults($fc, $out, 5);
+            self::enrichTopFirecrawlResults($fc, $out, 12);
         }
+        self::fillVimeoDurationsFromOembed($out);
 
         return Tools::validateDTOs($out);
     }
@@ -405,11 +431,23 @@ class Vimeo implements iSearchable, iIsPlatform
             if (is_string($meta['ogImage'] ?? null)) {
                 $content->thumbnail_url = $meta['ogImage'];
             }
+            if (is_string($meta['description'] ?? null)) {
+                $d = trim($meta['description']);
+                if ($d !== '' && trim((string) ($content->description ?? '')) === '') {
+                    $content->description = $d;
+                }
+            }
             $md = (string) ($page['markdown'] ?? '');
             if (preg_match('/(?:Duration|duration):\s*([^\n]+)/', $md, $m)) {
-                $sec = self::parseLooseDuration($m[1]);
-                if ($sec !== null) {
+                $sec = VideoDurationParser::secondsFromDisplayString(trim($m[1]));
+                if ($sec !== null && $sec > 0) {
                     $content->duration = (string) $sec;
+                }
+            }
+            if ((int) $content->duration <= 0) {
+                $o = self::vimeoDurationSecondsFromOembed($vid);
+                if ($o !== null && $o > 0) {
+                    $content->duration = (string) $o;
                 }
             }
             if (preg_match('/By\s+\[([^\]]+)\]\((https:\/\/vimeo\.com\/[^)]+)\)/i', $md, $mm)) {
@@ -417,6 +455,24 @@ class Vimeo implements iSearchable, iIsPlatform
                 $resultDTO->creator = new CreatorDTO(Platform::Vimeo, $slug !== '' ? $slug : 'vimeo');
                 $resultDTO->creator->name = trim($mm[1]);
                 $content->creator_id = $resultDTO->creator->id;
+            }
+        }
+
+        foreach (array_slice($results, 0, min(3, $max)) as $resultDTO) {
+            $cr = $resultDTO->creator ?? null;
+            if (! $cr instanceof CreatorDTO || trim((string) ($cr->avatar_url ?? '')) !== '') {
+                continue;
+            }
+            $cid = $cr->id;
+            if ($cid === '' || $cid === 'vimeo') {
+                continue;
+            }
+            $full = self::getCreator($cid);
+            if (trim((string) ($full->avatar_url ?? '')) !== '') {
+                $cr->avatar_url = $full->avatar_url;
+            }
+            if (trim((string) ($cr->description ?? '')) === '' && trim((string) ($full->description ?? '')) !== '') {
+                $cr->description = $full->description;
             }
         }
     }
@@ -554,20 +610,58 @@ class Vimeo implements iSearchable, iIsPlatform
         return '';
     }
 
-    private static function parseLooseDuration(string $raw): ?int
+    /**
+     * @param  list<ResultDTO>  $results
+     */
+    private static function fillVimeoDurationsFromOembed(array &$results): void
     {
-        $raw = trim($raw);
-        if (preg_match('/^(\d+)\s*s(?:ec(?:onds?)?)?$/i', $raw, $m)) {
-            return (int) $m[1];
-        }
-        if (preg_match('/^(\d+):(\d+)(?::(\d+))?$/', $raw, $m)) {
-            if (isset($m[3])) {
-                return (int) $m[1] * 3600 + (int) $m[2] * 60 + (int) $m[3];
+        foreach ($results as $resultDTO) {
+            $content = $resultDTO->content ?? null;
+            if (! $content instanceof ContentDTO) {
+                continue;
             }
+            if ((int) $content->duration > 0) {
+                continue;
+            }
+            $vid = trim((string) $content->id);
+            if ($vid === '' || ! ctype_digit($vid)) {
+                continue;
+            }
+            $o = self::vimeoDurationSecondsFromOembed($vid);
+            if ($o !== null && $o > 0) {
+                $content->duration = (string) $o;
+            }
+        }
+    }
 
-            return (int) $m[1] * 60 + (int) $m[2];
+    private static function vimeoDurationSecondsFromOembed(string $videoId): ?int
+    {
+        $videoId = trim($videoId);
+        if ($videoId === '' || ! ctype_digit($videoId)) {
+            return null;
+        }
+        try {
+            $response = Http::timeout(12)
+                ->acceptJson()
+                ->get('https://vimeo.com/api/oembed.json', [
+                    'url' => 'https://vimeo.com/'.$videoId,
+                ]);
+            if (! $response->successful()) {
+                return null;
+            }
+            $d = $response->json('duration');
+            if (is_numeric($d) && (float) $d > 0) {
+                return (int) round((float) $d);
+            }
+        } catch (Throwable) {
+            return null;
         }
 
         return null;
+    }
+
+    private static function parseLooseDuration(string $raw): ?int
+    {
+        return VideoDurationParser::secondsFromDisplayString(trim($raw));
     }
 }

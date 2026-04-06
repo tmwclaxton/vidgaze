@@ -1,21 +1,37 @@
 <template>
     <!-- Content will remain hidden until videos are loaded -->
     <template v-if="isLoaded">
-        <div class="flex flex-row gap-2 my-4 mb-8">
+        <div class="flex flex-row flex-wrap items-center gap-3 my-6 mb-6 sm:my-8 sm:mb-7">
             <slot></slot>
-            <p class="font-bold text-2xl" v-text="title"></p>
+            <div
+                v-if="title || subtitle"
+                class="flex min-w-0 flex-col gap-0.5"
+            >
+                <h2
+                    v-if="title"
+                    class="font-bold text-xl sm:text-2xl tracking-tight text-zinc-900 dark:text-white"
+                    v-text="title"
+                />
+                <p
+                    v-if="subtitle"
+                    class="text-sm font-medium text-zinc-500 dark:text-zinc-400 truncate max-w-[90vw] sm:max-w-2xl"
+                    v-text="subtitle"
+                />
+            </div>
         </div>
 
         <!-- Show a row of popular videos -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-3.5">
             <template v-if="videos !== null && videos.length > 0" v-for="(video, index) in videos" :key="video.id">
                 <VideoStreamCard v-if="video != undefined" :item="video" :channel_page="channel_page" :category_page="showCategoryTag" />
             </template>
 
-            <!-- Skeleton loading -->
-            <template v-else v-for="i in 6">
-                <VideoStreamSkeleton />
-            </template>
+            <!-- Skeletons: full rows at 2/3/4/6 cols + extra pair at 2xl for 7 cols -->
+            <VideoGridSkeletonPlaceholders
+                v-else
+                :blocks="1"
+                prefix="vrow-sk"
+            />
         </div>
 
         <RowDivider v-if="rowDivider" />
@@ -25,7 +41,7 @@
 <script setup>
 import { ref, watchEffect } from 'vue';
 import VideoStreamCard from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamCard.vue";
-import VideoStreamSkeleton from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamSkeleton.vue";
+import VideoGridSkeletonPlaceholders from "@/Components/ContentRows/VideoGridSkeletonPlaceholders.vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 
 const name = 'VideosRow';
@@ -42,6 +58,11 @@ const props = defineProps({
         default: false,
     },
     title: {
+        type: String,
+        required: false,
+        default: null,
+    },
+    subtitle: {
         type: String,
         required: false,
         default: null,

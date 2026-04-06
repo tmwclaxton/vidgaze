@@ -19,29 +19,34 @@ class Comment extends Model
 {
     use HasFactory;
 
-    //no mass assignment!
+    // no mass assignment!
     protected $guarded = [];
 
-    //eager load creator
-    protected $with = ['owner','interactions'];
+    // eager load creator
+    protected $with = ['owner', 'interactions'];
 
+    // Alphabetical order
 
-    //Alphabetical order
-
-    public function awards() {
+    public function awards()
+    {
         return $this->hasMany(CommentAward::class);
     }
-    public function owner() {
+
+    public function owner()
+    {
         return $this->belongsTo(Creator::class, 'creator_id');
     }
-    public function interactions() {
+
+    public function interactions()
+    {
         return $this->hasMany(Creator::class, 'id')
-        ->join('comment_interactions', 'comment_interactions.creator_id', '=', 'creators.id');
+            ->join('comment_interactions', 'comment_interactions.creator_id', '=', 'creators.id');
     }
 
     // a comment has a stream / video / podcast episode / channel that it belongs to through a video comment / podcast comment / channel comment / stream comment
-    public function hasOneThroughObject(String $objectType) {
-        switch($objectType) {
+    public function hasOneThroughObject(string $objectType)
+    {
+        switch ($objectType) {
             case 'video':
                 return $this->hasOneThrough(Video::class, VideoComment::class, 'comment_id', 'id', 'id', 'video_id')->first();
             case 'podcast':
@@ -57,37 +62,47 @@ class Comment extends Model
         }
     }
 
-    public function parentItem() {
-        foreach(['video', 'podcast', 'stream', 'channel', 'chatroom'] as $objectType) {
-            if($this->hasOneThroughObject($objectType)) {
+    public function parentItem()
+    {
+        foreach (['video', 'podcast', 'stream', 'channel', 'chatroom'] as $objectType) {
+            if ($this->hasOneThroughObject($objectType)) {
                 return [
                     'parentType' => $objectType,
-                    'parent' => $this->hasOneThroughObject($objectType)
+                    'parent' => $this->hasOneThroughObject($objectType),
                 ];
             }
         }
     }
 
-
     // returns the comment's share url depending on the object type
-    public function getShareUrl() {
+    public function getShareUrl()
+    {
         $parent = $this->parentItem();
+
         return match ($parent['parentType']) {
-            'video' => route('watch.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
-            'stream' => route('stream.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
-            'channel' => route('channel.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
-            'podcast' => route('podcast.show', ['slug' => $parent['parent']->slug]) . '?comment=' . $this->id,
+            'video' => route('watch.show', ['slug' => $parent['parent']->slug]).'?comment='.$this->id,
+            'stream' => route('stream.show', ['slug' => $parent['parent']->slug]).'?comment='.$this->id,
+            'channel' => route('channel.show', ['slug' => $parent['parent']->slug]).'?comment='.$this->id,
+            'podcast' => (function () use ($parent) {
+                $ep = $parent['parent'];
+                $podcast = $ep->relationLoaded('podcast') ? $ep->podcast : $ep->podcast()->first();
+
+                return $podcast
+                    ? route('podcast.episode', ['podcastSlug' => $podcast->slug, 'episodeSlug' => $ep->slug]).'?comment='.$this->id
+                    : route('podcasts.index');
+            })(),
             'chatroom' => route('home'),
             default => null,
         };
     }
 
-
-    public function replies() {
+    public function replies()
+    {
         return $this->hasMany(Comment::class, 'parent_comment_id');
     }
-    public function parent() {
+
+    public function parent()
+    {
         return $this->belongsTo(Comment::class, 'parent_comment_id');
     }
-
 }

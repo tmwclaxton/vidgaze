@@ -10,7 +10,7 @@ import SettingsIcon from '~/images/icons/settings.svg';
 import ProfileIcon from '~/images/icons/profile.svg';
 import {useDark, useToggle} from "@vueuse/core";
 import ResponsiveNavBottomLink from "@/Components/Links/ResponsiveNavBottomLink.vue";
-import {computed, ref} from "vue";
+import {ref, watch, nextTick} from "vue";
 import {usePage} from "@inertiajs/vue3";
 import {useNavStore} from "@/Stores/NavStore";
 import {useAuthStore} from "@/Stores/AuthStore";
@@ -25,6 +25,71 @@ const toggleDark = useToggle(isDark);
 const name = 'SideBar';
 
 const keyRefresh = ref(0);
+const drawerPanelRef = ref(null);
+
+const FOCUSABLE_SELECTOR =
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+function focusableInDrawer() {
+    const root = drawerPanelRef.value;
+    if (!root) {
+        return [];
+    }
+    return Array.from(root.querySelectorAll(FOCUSABLE_SELECTOR)).filter((el) => {
+        if (el.hasAttribute('disabled') || el.getAttribute('aria-hidden') === 'true') {
+            return false;
+        }
+        const s = window.getComputedStyle(el);
+        return s.visibility !== 'hidden' && s.display !== 'none';
+    });
+}
+
+function focusFirstInDrawer() {
+    const list = focusableInDrawer();
+    if (list.length) {
+        list[0].focus();
+    } else {
+        drawerPanelRef.value?.focus();
+    }
+}
+
+function focusMenuButton() {
+    document.querySelector('button[aria-controls="navigation-drawer"]')?.focus();
+}
+
+function onDrawerKeydown(e) {
+    if (e.key !== 'Tab' || !navStore.showingNavigationDropdown) {
+        return;
+    }
+    const list = focusableInDrawer();
+    if (!list.length) {
+        return;
+    }
+    const first = list[0];
+    const last = list[list.length - 1];
+    if (e.shiftKey) {
+        if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        }
+    } else if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+    }
+}
+
+watch(
+    () => navStore.showingNavigationDropdown,
+    async (open, wasOpen) => {
+        await nextTick();
+        if (open) {
+            requestAnimationFrame(() => focusFirstInDrawer());
+        } else if (wasOpen) {
+            focusMenuButton();
+        }
+    }
+);
+
 const toggleShorts = () => {
     useAuthStore().toggleShorts();
     keyRefresh.value = Math.random();
@@ -39,27 +104,34 @@ const toggleShorts = () => {
 
 <template>
 
-    <div class="fixed top-0  flex flex-col  overflow-y-auto h-full pointer-events-none"
-         >
-        <div class="h-16 flex-shrink-0">
-            <!--Nav is fixed so lets space things below-->
-
-        </div>
-    <!-- Responsive Navigation Menu -->
-        <div class="  flex flex-row flex-grow top-0 overflow-x-hidden w-full ml-0  bg-vidgaze-blue-nav "
-             :class="{ 'opacity-0 pointer-events-none  ': !navStore.getNavigationDropdown(),
-              'w-screen sm:w-64 opacity-100 pointer-events-auto': navStore.getNavigationDropdown(),
-               'sm:opacity-100 sm:pointer-events-auto sm:flex sm:w-24' :  usePage().props.layoutDisplay !== 'wide' && !navStore.getNavigationDropdown()
-        }">
+    <div class="pointer-events-none fixed top-0 z-40 flex h-full flex-col overflow-y-auto overscroll-y-contain">
+        <!-- Match topbar height exactly (no negative margins on topbar) so there is no hairline gap -->
+        <div class="h-16 shrink-0" aria-hidden="true"></div>
+        <!-- Responsive Navigation Menu -->
+        <div
+            id="navigation-drawer"
+            ref="drawerPanelRef"
+            tabindex="-1"
+            class="flex min-h-0 flex-grow flex-row overflow-x-hidden overflow-y-auto bg-vidgaze-blue-nav backdrop-blur-md transition-[opacity,width] duration-200 ease-out motion-reduce:transition-none sm:border-r sm:border-white/[0.06] sm:shadow-[4px_0_24px_-8px_rgba(0,0,0,0.5)]"
+            role="navigation"
+            aria-label="Main menu"
+            @keydown="onDrawerKeydown"
+            :class="{
+                'pointer-events-none w-0 min-w-0 opacity-0 sm:w-0': !navStore.getNavigationDropdown() && usePage().props.layoutDisplay === 'wide',
+                'pointer-events-none opacity-0': !navStore.getNavigationDropdown() && usePage().props.layoutDisplay !== 'wide',
+                'pointer-events-auto w-screen opacity-100 sm:w-64': navStore.getNavigationDropdown(),
+                'sm:pointer-events-auto sm:flex sm:w-nav-rail sm:opacity-100': usePage().props.layoutDisplay !== 'wide' && !navStore.getNavigationDropdown(),
+            }"
+        >
 
             <div
-                class="w-full mx-auto px-4 sm:px-2 lg:px-2 pb-2 pt-2 flex flex-col justify-between flex-grow    "
+                class="mx-auto flex w-full flex-grow flex-col justify-between px-3 pb-3 pt-2 sm:px-2 sm:pb-2 sm:pt-2 lg:px-2.5"
             >
 
-                <div class="">
+                <div class="min-h-0 flex-1">
                     <ExpandableNavigationLinks :key="keyRefresh" />
 
-                    <div class="border-t border-zinc-600 my-1 "></div>
+                    <div class="my-3 border-t border-white/[0.06] sm:my-2"></div>
                     <div class="">
 
                         <div v-if="authStore.user != null" class="space-y-1 sm:hidden hidden">
@@ -106,8 +178,14 @@ const toggleShorts = () => {
                     <!--Everything below here should always be on the screen-->
 
 
+                    <p
+                        v-if="navStore.getNavigationDropdown()"
+                        class="mb-1.5 px-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500 sm:px-0.5"
+                    >
+                        Appearance
+                    </p>
                     <!--                dark/light mode-->
-                    <div class="text-white cursor-pointer space-y-1 " @click="toggleDark()">
+                    <div class="cursor-pointer space-y-1 text-white" @click="toggleDark()">
                         <span v-if="!isDark">
                             <ResponsiveNavLink :span="true">
                                     <SunIcon class="w-5 h-5 flex-shrink-0"/>
@@ -123,19 +201,28 @@ const toggleShorts = () => {
                     </div>
 
                     <ResponsiveNavLink :span="true" @click="toggleShorts()">
-                        <font-awesome-icon v-if="useAuthStore().areShortsEnabled()"
-                                           :icon="['fas', 'toggle-on']" class="w-5 h-5 flex-shrink-0"/>
-                        <font-awesome-icon v-if="!useAuthStore().areShortsEnabled()"
-                                           :icon="['fas', 'toggle-off']" class="w-5 h-5 flex-shrink-0"/>
-                        <span>Toggle Shorts</span>
+                        <font-awesome-icon
+                            v-if="useAuthStore().areShortsEnabled()"
+                            :icon="['fas', 'toggle-on']"
+                            class="h-5 w-5 shrink-0 leading-none"
+                        />
+                        <font-awesome-icon
+                            v-if="!useAuthStore().areShortsEnabled()"
+                            :icon="['fas', 'toggle-off']"
+                            class="h-5 w-5 shrink-0 leading-none"
+                        />
+                        <span
+                            class="min-w-0"
+                            :class="navStore.getNavigationDropdown() ? 'whitespace-nowrap' : 'max-w-full text-center leading-snug'"
+                        >Toggle Shorts</span>
                     </ResponsiveNavLink>
                 </div>
 
 
-                <div id="bottom" class=" pb-1" v-if="navStore.getBottomNavLinks()">
+                <div id="bottom" v-if="navStore.getBottomNavLinks()" class="mt-2 border-t border-white/[0.06] pt-2 pb-0.5">
 
                     <!--add about page-->
-                    <div class="gap-1 grid grid-cols-1 text-center " :class="{ ' grid-cols-4': navStore.getNavigationDropdown()} ">
+                    <div class="grid grid-cols-1 gap-1 text-center" :class="{ 'grid-cols-4': navStore.getNavigationDropdown() }">
                         <ResponsiveNavBottomLink :href="route('about')" :active="route().current('about')">
                                 <!--<font-awesome-icon :icon="['fas', 'heart']" class="w-4 h-4 flex-shrink-0  "-->
                                 <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
