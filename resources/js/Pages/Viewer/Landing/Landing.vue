@@ -78,15 +78,21 @@ onUnmounted(() => {
 
             <div ref="welcomeMessageDiv" class=" transition duration-900 opacity-0 translate-y-52 ">
                 <div class="target max-w-7xl mx-auto text-center pb-12 md:pb-6 flex flex-col gap-y-3  ">
-                    <h1 class="text-4xl lg:text-5xl text-white font-bold">Welcome to VidGaze</h1>
+                    <h1
+                        class="bg-gradient-to-r from-cyan-200 via-white to-fuchsia-200 bg-clip-text text-4xl font-bold text-transparent lg:text-5xl drop-shadow-[0_0_24px_rgba(34,211,238,0.35)]"
+                    >
+                        Welcome to VidGaze
+                    </h1>
                     <p class="text-2xl text-gray-300"> The ultimate video-streaming platform for both creators and
                         viewers alike </p>
                 </div>
                 <!--get started button-->
 
                 <div class="target cursor-pointer w-max mx-auto px-10 transition duration-300 ease-in-out">
-                    <Link :href="route('home')" >
-                        <div class="bg-transparent shine text-white font-semibold   py-2 px-20 border border-white  rounded ">
+                    <Link :href="route('home')">
+                        <div
+                            class="shine rounded border border-cyan-300/70 bg-transparent py-2 px-20 font-semibold text-white shadow-[0_0_28px_-8px_rgba(34,211,238,0.45)] transition-all duration-300 hover:border-fuchsia-300/80 hover:shadow-[0_0_36px_-4px_rgba(232,121,249,0.4)] hover:-translate-y-0.5"
+                        >
                             Get Started
                         </div>
                     </Link>
@@ -106,7 +112,11 @@ onUnmounted(() => {
 
             <div class="  m-auto  py-8">
                 <div class="  mx-auto px-4">
-                    <h2 class="text-4xl font-bold mb-4 mx-auto text-center ">Kindly Supported By</h2>
+                    <h2
+                        class="mx-auto mb-4 bg-gradient-to-r from-cyan-600 via-violet-600 to-fuchsia-600 bg-clip-text text-center text-4xl font-bold text-transparent dark:from-cyan-400 dark:via-violet-400 dark:to-fuchsia-400"
+                    >
+                        Kindly Supported By
+                    </h2>
                     <div class="flex flex-wrap flex-row items-center justify-center ">
                         <div class="   flex flex-row ">
                             <img class="h-52   object-contain" src="https://images.squarespace-cdn.com/content/v1/631a0fdf324dc751c8d24b33/b2ea62b4-5c04-409e-b01a-0727d468d6f6/CoFo_WithNavyBG_RGB.png?format=1500w"/>

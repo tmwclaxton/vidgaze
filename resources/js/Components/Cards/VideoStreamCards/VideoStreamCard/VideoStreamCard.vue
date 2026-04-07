@@ -76,7 +76,7 @@ const dotsIconShow = computed(() => {
 
 <template>
     <div :id="'box_' + itemType + '_' + item.id"
-         class="relative group min-h-64 w-full xl:hover:transform xl:hover:scale-105 duration-300 ease-in-out cursor-pointer  dark:bg-zinc-900 rounded-md shadow-lg overflow-hidden shadow-zinc-300 dark:shadow-zinc-900">
+         class="relative group min-h-64 w-full cursor-pointer overflow-hidden rounded-md shadow-lg shadow-zinc-300 ring-1 ring-transparent transition-[transform,box-shadow,ring-color] duration-300 ease-in-out dark:bg-zinc-900 dark:shadow-zinc-900 xl:hover:scale-105 xl:hover:transform xl:hover:ring-cyan-400/20 xl:hover:shadow-[0_0_32px_-12px_rgba(34,211,238,0.22)]">
         <!--hide content hidden button and cover-->
         <div :id="'hide_' + itemType + '_' + item.id" @click="hideItemToggle" class="w-0 h-0 opacity-0 pointer-events-none " ></div>
         <div  v-if="hideItem" class="w-full h-full rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex flex-col align-middle justify-center items-center ">
@@ -126,7 +126,7 @@ const dotsIconShow = computed(() => {
                     <Badge :source="item.preferred_source" :text="item.preferred_source" />
                 </div>
 
-                <div  class="flex flex-col absolute top-0 right-0 m-1.5 space-y-1 items-end opacity-0  duration-500 delay-500 group-hover:opacity-100 transition-none group-hover:transition-opacity">
+                <div class="z-20 flex flex-col absolute top-0 right-0 m-1.5 space-y-1 items-end opacity-0 duration-500 delay-500 group-hover:opacity-100 transition-none group-hover:transition-opacity">
                     <WatchLater v-if="item.duration != null && useAuthStore().user != null" :item="item" />
                     <Queue  :item="item" :itemType="itemType" />
                 </div>

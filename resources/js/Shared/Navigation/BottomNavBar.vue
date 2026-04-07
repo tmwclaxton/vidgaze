@@ -32,10 +32,20 @@ const name = 'BottomNavBar';
         <div class="max-w- screen-2xl mx-auto pl-5 sm:pl-8 pr-4 sm:pr-6 lg:pr-8  flex flex-col">
             <div class="h-0.5"></div>
             <div class="flex justify-between h-16 ">
-                <div class="flex w-full text-white flex-row justify-between items-center">
-                    <Link :href="route('home')" class="flex flex-col flex-grow justify-between justify-items-center align-middle ">
-                        <font-awesome-icon :icon="['fas', 'video']" class="w-5 h-5 mx-auto"/>
-                        <p class="text-sm text-center font-bold">Videos</p>
+                <div class="flex w-full flex-row items-center justify-between text-white">
+                    <Link
+                        :href="route('home')"
+                        class="group flex flex-grow flex-col items-center justify-between align-middle"
+                    >
+                        <font-awesome-icon
+                            :icon="['fas', 'video']"
+                            class="mx-auto h-5 w-5 text-sky-400 drop-shadow-[0_0_8px_rgba(56,189,248,0.45)] transition-transform duration-200 group-hover:scale-110"
+                        />
+                        <p
+                            class="bg-gradient-to-r from-sky-300 to-cyan-400 bg-clip-text text-center text-sm font-bold text-transparent"
+                        >
+                            Videos
+                        </p>
                     </Link>
 <!--                    <Link :href="route('streams.index')" class="flex flex-col flex-grow justify-between justify-items-center align-middle ">-->
 <!--                        <StreamIcon class="w-5 h-5 mx-auto"/>-->
@@ -45,25 +55,63 @@ const name = 'BottomNavBar';
                     <!--    <font-awesome-icon :icon="['fas', 'fire']" class="w-5 h-5 mx-auto"/>-->
                     <!--    <p class="  text-sm text-center font-bold">Shorts</p>-->
                     <!--</Link>-->
-                    <Link v-if="authStore.user"
-                        :href="route('feed.subscriptions')" class="flex flex-col flex-grow justify-between justify-items-center align-middle ">
-                        <SubscriptionsIcon class="w-5 h-5 mx-auto"/>
-                        <p class="  text-sm text-center font-bold">Subscriptions</p>
+                    <Link
+                        v-if="authStore.user"
+                        :href="route('feed.subscriptions')"
+                        class="group flex flex-grow flex-col items-center justify-between align-middle"
+                    >
+                        <SubscriptionsIcon
+                            class="mx-auto h-5 w-5 fill-current text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.45)] transition-transform duration-200 group-hover:scale-110"
+                        />
+                        <p
+                            class="bg-gradient-to-r from-indigo-300 to-blue-400 bg-clip-text text-center text-sm font-bold text-transparent"
+                        >
+                            Subscriptions
+                        </p>
                     </Link>
-                    <Link  v-if="authStore.user"
-                           :href="route('feed.library')" class="flex flex-col flex-grow justify-between justify-items-center align-middle ">
-                        <LibraryIcon class="w-5 h-5 mx-auto"/>
-                        <p class="  text-sm text-center font-bold">Library</p>
+                    <Link
+                        v-if="authStore.user"
+                        :href="route('feed.library')"
+                        class="group flex flex-grow flex-col items-center justify-between align-middle"
+                    >
+                        <LibraryIcon
+                            class="mx-auto h-5 w-5 fill-current text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.45)] transition-transform duration-200 group-hover:scale-110"
+                        />
+                        <p
+                            class="bg-gradient-to-r from-emerald-300 to-teal-400 bg-clip-text text-center text-sm font-bold text-transparent"
+                        >
+                            Library
+                        </p>
                     </Link>
-                    <Link v-if="!authStore.user"
-                        :href="route('login')" class="flex flex-col flex-grow justify-between justify-items-center align-middle ">
-                        <font-awesome-icon :icon="['fas', 'sign-in-alt']" class="w-5 h-5 mx-auto"/>
-                        <p class="  text-sm text-center font-bold">Login</p>
+                    <Link
+                        v-if="!authStore.user"
+                        :href="route('login')"
+                        class="group flex flex-grow flex-col items-center justify-between align-middle"
+                    >
+                        <font-awesome-icon
+                            :icon="['fas', 'sign-in-alt']"
+                            class="mx-auto h-5 w-5 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.45)] transition-transform duration-200 group-hover:scale-110"
+                        />
+                        <p
+                            class="bg-gradient-to-r from-cyan-300 to-teal-400 bg-clip-text text-center text-sm font-bold text-transparent"
+                        >
+                            Login
+                        </p>
                     </Link>
-                    <Link v-if="!authStore.user"
-                        :href="route('register')" class="flex flex-col flex-grow justify-between justify-items-center align-middle ">
-                        <font-awesome-icon :icon="['fas', 'user-plus']" class="w-5 h-5 mx-auto"/>
-                        <p class="  text-sm text-center font-bold">Register</p>
+                    <Link
+                        v-if="!authStore.user"
+                        :href="route('register')"
+                        class="group flex flex-grow flex-col items-center justify-between align-middle"
+                    >
+                        <font-awesome-icon
+                            :icon="['fas', 'user-plus']"
+                            class="mx-auto h-5 w-5 text-fuchsia-400 drop-shadow-[0_0_8px_rgba(232,121,249,0.45)] transition-transform duration-200 group-hover:scale-110"
+                        />
+                        <p
+                            class="bg-gradient-to-r from-violet-300 to-fuchsia-400 bg-clip-text text-center text-sm font-bold text-transparent"
+                        >
+                            Register
+                        </p>
                     </Link>
                 </div>
             </div>

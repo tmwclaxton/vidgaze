@@ -189,7 +189,10 @@ searchInput.value = query.get('q') || '';
                     @keydown.arrow-up="selectPreviousResult"
                     @keydown.enter="goToSelectedResult"
                 />
-                <SearchIcon class="h-5 w-5 flex-shrink-0 cursor-pointer" @click="searchEntered" />
+                <SearchIcon
+                    class="h-5 w-5 shrink-0 cursor-pointer fill-current text-cyan-400/90 transition-all duration-200 hover:scale-110 hover:text-cyan-300 hover:drop-shadow-[0_0_12px_rgba(34,211,238,0.55)]"
+                    @click="searchEntered"
+                />
 
                 <div
                     class="pointer-events-none absolute left-0 top-9 w-full sm:pl-0"

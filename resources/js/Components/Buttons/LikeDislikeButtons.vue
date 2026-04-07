@@ -6,7 +6,7 @@
         </div>
 
         <!--vertical hr-->
-        <hr v-if="!props.orientationVertical" class="border border-zinc-300 group-hover:border-zinc-400 dark:border-gray-700 dark:group-hover:border-zinc-700 w-0.5 h-8 rounded transition ease-in-out" />
+        <hr v-if="!props.orientationVertical" class="w-0.5 h-8 rounded border-0 bg-gradient-to-b from-transparent via-cyan-400/35 to-transparent dark:via-fuchsia-400/30 opacity-80 transition ease-in-out" />
 
         <div @click="toggleDislike" class=" flex gap-1 cursor-pointer justify-center "
              :class="[props.orientationVertical ? 'flex-col' : 'flex-row gap-x-3']">
@@ -142,13 +142,13 @@ const toggleDislike = () => {
 
 
 const likeButtonClasses = computed(() => ({
-    'text-blue-600': liked.value,
-    '': !liked.value
+    'text-cyan-500 dark:text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.55)] scale-105': liked.value,
+    'text-zinc-500 dark:text-zinc-400 hover:text-cyan-400/90 hover:drop-shadow-[0_0_8px_rgba(34,211,238,0.35)]': !liked.value,
 }));
 
 const dislikeButtonClasses = computed(() => ({
-    'text-red-600': disliked.value,
-    '': !disliked.value
+    'text-rose-600 dark:text-rose-400 drop-shadow-[0_0_10px_rgba(251,113,133,0.45)] scale-105': disliked.value,
+    'text-zinc-500 dark:text-zinc-400 hover:text-rose-400/90 hover:drop-shadow-[0_0_8px_rgba(251,113,133,0.35)]': !disliked.value,
 }));
 
 onMounted(async () => {

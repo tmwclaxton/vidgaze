@@ -84,10 +84,10 @@ function selectTopic(topic) {
         <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
             <button
                 type="button"
-                class="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-colors duration-150 sm:text-sm"
+                class="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-all duration-150 sm:text-sm"
                 :class="activeKey === null
-                    ? 'border-sky-500 bg-sky-50 text-sky-900 dark:border-sky-400 dark:bg-sky-950/60 dark:text-sky-100'
-                    : 'border-zinc-200 bg-white text-zinc-800 hover:border-sky-400 hover:bg-sky-50 hover:text-sky-900 dark:border-zinc-600 dark:bg-zinc-900/80 dark:text-zinc-100 dark:hover:border-sky-500/50 dark:hover:bg-sky-950/40 dark:hover:text-sky-100'"
+                    ? 'border-sky-500 bg-sky-50 text-sky-900 shadow-[0_0_18px_-6px_rgba(56,189,248,0.45)] dark:border-sky-400 dark:bg-sky-950/60 dark:text-sky-100 dark:shadow-[0_0_20px_-6px_rgba(56,189,248,0.35)]'
+                    : 'border-zinc-200 bg-white text-zinc-800 hover:border-sky-400 hover:bg-sky-50 hover:text-sky-900 hover:shadow-[0_0_14px_-8px_rgba(56,189,248,0.28)] dark:border-zinc-600 dark:bg-zinc-900/80 dark:text-zinc-100 dark:hover:border-sky-500/50 dark:hover:bg-sky-950/40 dark:hover:text-sky-100 dark:hover:shadow-[0_0_16px_-8px_rgba(56,189,248,0.22)]'"
                 @click="selectHome"
             >
                 <font-awesome-icon :icon="homeIcon" class="h-3.5 w-3.5 shrink-0 opacity-90" aria-hidden="true" />
@@ -97,7 +97,7 @@ function selectTopic(topic) {
             <template v-for="q in quickLinks" :key="q.label">
                 <Link
                     :href="route(q.routeName)"
-                    class="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-800 shadow-sm transition-colors duration-150 dark:border-zinc-600 dark:bg-zinc-900/80 dark:text-zinc-100 sm:text-sm"
+                    class="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-800 shadow-sm transition-all duration-150 dark:border-zinc-600 dark:bg-zinc-900/80 dark:text-zinc-100 sm:text-sm hover:shadow-[0_0_12px_-8px_rgba(167,139,250,0.2)]"
                     :class="q.hover"
                 >
                     <font-awesome-icon :icon="q.icon" class="h-3.5 w-3.5 shrink-0 opacity-85" aria-hidden="true" />
@@ -113,10 +113,10 @@ function selectTopic(topic) {
                 <template v-for="(topic, idx) in topics" :key="topic.key">
                     <button
                         type="button"
-                        class="inline-flex max-w-[14rem] items-center gap-2 truncate rounded-full border px-3.5 py-1.5 text-left text-xs font-medium transition-colors duration-150 sm:text-sm"
+                        class="inline-flex max-w-[14rem] items-center gap-2 truncate rounded-full border px-3.5 py-1.5 text-left text-xs font-medium transition-all duration-150 sm:text-sm"
                         :class="[
                             activeKey === topic.key
-                                ? 'border-orange-500/80 bg-orange-50 text-orange-950 dark:border-orange-400 dark:bg-orange-950/50 dark:text-orange-100'
+                                ? 'border-orange-500/80 bg-orange-50 text-orange-950 shadow-[0_0_16px_-6px_rgba(251,146,60,0.35)] dark:border-orange-400 dark:bg-orange-950/50 dark:text-orange-100 dark:shadow-[0_0_18px_-6px_rgba(251,146,60,0.25)]'
                                 : 'border-zinc-200 bg-zinc-50/90 text-zinc-700 dark:border-zinc-600 dark:bg-zinc-800/50 dark:text-zinc-200',
                             activeKey !== topic.key ? topicPalette(idx).hover : '',
                         ]"

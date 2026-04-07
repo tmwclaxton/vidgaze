@@ -9,7 +9,7 @@ import CornerInfo from "@/Components/Cards/VideoStreamCards/Partials/CornerInfo.
 import QueueItem from "@/Components/Modals/MiniPlayers/Partials/QueueItem.vue";
 import {useConfirmModalStore} from "@/Stores/ConfirmModelStore";
 import {useToastStore} from "@/Stores/ToastStore";
-import {debounce, round} from "lodash";
+import {debounce} from "lodash";
 const confirmStore = useConfirmModalStore();
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -25,67 +25,42 @@ let initialX = 0;
 let initialY = 0;
 
 
-onMounted(() => {
+const onMouseDown = (event) => {
+    event.preventDefault();
+    initialX = event.clientX;
+    initialY = event.clientY;
+    isDragging = true;
+};
 
- // using top and left position the initial position of the draggable div 15px fro mthe bottom right corner
-    draggableDiv.value.style.left = (window.innerWidth - 384 - 15) + 'px';
-    draggableDiv.value.style.top = (window.innerHeight - 348 - 15) + 'px';
+const onMouseMove = (event) => {
+    if (!isDragging || !draggableDiv.value) return;
+    event.preventDefault();
 
-    draggableDiv.value.addEventListener('mousedown', (event) => {
-        event.preventDefault();
-        initialX = event.clientX;
-        initialY = event.clientY;
-        isDragging = true;
-    });
+    const deltaX = event.clientX - initialX;
+    const deltaY = event.clientY - initialY;
 
-    document.addEventListener('mousemove', (event) => {
-        if (isDragging) {
-            event.preventDefault();
+    const newLeft = parseInt(draggableDiv.value.style.left, 10) + deltaX;
+    const newTop = parseInt(draggableDiv.value.style.top, 10) + deltaY;
 
-            const deltaX = event.clientX - initialX;
-            const deltaY = event.clientY - initialY;
+    const maxX = window.innerWidth - draggableDiv.value.offsetWidth - 15;
+    const maxY = window.innerHeight - draggableDiv.value.offsetHeight - 15;
+    const clampedLeft = Math.max(15, Math.min(newLeft, maxX));
+    const clampedTop = Math.max(15, Math.min(newTop, maxY));
 
-            const newLeft = parseInt(draggableDiv.value.style.left) + deltaX;
-            const newTop = parseInt(draggableDiv.value.style.top) + deltaY;
+    draggableDiv.value.style.left = clampedLeft + 'px';
+    draggableDiv.value.style.top = clampedTop + 'px';
 
-            const maxX = window.innerWidth - draggableDiv.value.offsetWidth - 15;
-            const maxY = window.innerHeight - draggableDiv.value.offsetHeight - 15;
-            const clampedLeft = Math.max(15, Math.min(newLeft, maxX));
-            const clampedTop = Math.max(15, Math.min(newTop, maxY));
+    initialX = event.clientX;
+    initialY = event.clientY;
+};
 
+const onMouseUp = () => {
+    isDragging = false;
+};
 
-            draggableDiv.value.style.left = clampedLeft + 'px';
-            draggableDiv.value.style.top = clampedTop + 'px';
-
-            initialX = event.clientX;
-            initialY = event.clientY;
-        }
-    });
-
-    document.addEventListener('mouseup', () => {
-        isDragging = false;
-    });
-
-    window.addEventListener('resize', () => {
-        checkIfInViewport();
-
-    });
-
-});
-
-onUnmounted( () => {
-    window.removeEventListener('resize', () => {
-        checkIfInViewport();
-    });
-    window.removeEventListener('mouseup', () => {
-        isDragging = false;
-    });
-});
-
-const checkIfInViewport = debounce(() => {
+const debouncedViewportCheck = debounce(() => {
     setTimeout(() => {
         if (!draggableDiv.value) return;
-        console.log('checkIfInViewport');
         const rect = draggableDiv.value.getBoundingClientRect();
         if (!draggableDiv.value) return;
         const isInViewport =
@@ -107,20 +82,41 @@ const checkIfInViewport = debounce(() => {
     }, 100);
 }, 100);
 
+const onWindowResize = () => {
+    debouncedViewportCheck();
+};
 
+onMounted(() => {
+    // using top and left position the initial position of the draggable div 15px from the bottom right corner
+    draggableDiv.value.style.left = (window.innerWidth - 384 - 15) + 'px';
+    draggableDiv.value.style.top = (window.innerHeight - 348 - 15) + 'px';
+
+    draggableDiv.value.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('resize', onWindowResize);
+});
+
+onUnmounted(() => {
+    debouncedViewportCheck.cancel();
+    if (draggableDiv.value) {
+        draggableDiv.value.removeEventListener('mousedown', onMouseDown);
+    }
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+    window.removeEventListener('resize', onWindowResize);
+});
 
 const toggleExpandQueue = () => {
     expandQueue.value = !expandQueue.value;
-    // wait for the animation to finish
-    checkIfInViewport();
+    debouncedViewportCheck();
 };
 
 
 // watch for changes in the length of the queue
 watch(() => queueStore.items.length, () => {
     if (queueStore.items.length > 1) {
-        // wait for the animation to finish
-        checkIfInViewport();
+        debouncedViewportCheck();
     }
 });
 
@@ -162,7 +158,10 @@ const closeMiniPlayer = () => {
                 <div class="flex flex-col   h-full">
                     <div class="flex flex-col ">
                         <p class="font-bold text-lg text-left " v-text="queueStore.items[queueStore.index].creator.name"></p>
-                        <SubscribeButton :channel="queueStore.items[queueStore.index].creator" :key="[queueStore.index]"/>
+                        <SubscribeButton
+                            :channel="queueStore.items[queueStore.index].creator"
+                            :key="queueStore.items[queueStore.index].external_id"
+                        />
                     </div>
                 </div>
             </div>
@@ -209,17 +208,20 @@ const closeMiniPlayer = () => {
                 </div>
                 <!--expand queue button-->
                 <div @click="toggleExpandQueue" class="my-auto mr-2">
-                    <font-awesome-icon v-if="expandQueue" :icon="['fass', 'chevron-up']"/>
-                    <font-awesome-icon v-if="!expandQueue" :icon="['fass', 'chevron-down']"/>
+                    <font-awesome-icon v-if="expandQueue" :icon="['fas', 'chevron-up']"/>
+                    <font-awesome-icon v-if="!expandQueue" :icon="['fas', 'chevron-down']"/>
                 </div>
             </div>
         </div>
 
         <div class="my-0.5 border border-zinc-200 dark:border-zinc-800" v-if="expandQueue"/>
-        <div  id="miniPlayerItemsHolder" class="relative flex flex-col pb-1 max-h-48 overflow-y-auto" v-if="expandQueue">
-            <div  v-for="(item, index) in queueStore.items"  >
-                <QueueItem :item="item" :index="index" :key="index"/>
-            </div>
+        <div id="miniPlayerItemsHolder" class="relative flex flex-col pb-1 max-h-48 overflow-y-auto" v-if="expandQueue">
+            <QueueItem
+                v-for="(item, index) in queueStore.items"
+                :key="item.external_id"
+                :item="item"
+                :index="index"
+            />
         </div>
 
     </div>

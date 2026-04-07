@@ -33,11 +33,12 @@ const getPodcastInfo = async () => {
 </script>
 
 <template>
-    <div @mouseenter="getPodcastInfo" class="cursor-pointer  rounded   w-full h-full ">
-        <div class=" relative  group">
+    <div @mouseenter="getPodcastInfo" class="h-full w-full cursor-pointer rounded">
+        <div
+            class="group relative rounded-lg ring-1 ring-transparent transition-all duration-300 hover:ring-emerald-400/35 hover:shadow-[0_0_24px_-12px_rgba(52,211,153,0.2)]"
+        >
             <Link :href="route('podcast.show', { slug: podcast.slug })">
-                <img class="w-full aspect-square block rounded "
-                     v-bind:src="podcast.thumbnail_url"/>
+                <img class="block aspect-square w-full rounded" v-bind:src="podcast.thumbnail_url" />
             </Link>
             <div class="absolute bg-black rounded pointer-events-none
         bg-opacity-0 group-hover:bg-opacity-40 group-hover:opacity-100
@@ -45,7 +46,10 @@ const getPodcastInfo = async () => {
 
                 <div class="pointer-events-auto flex flex-row gap-x-2 absolute bottom-3 left-3 ">
                     <div class="rounded-full bg-white w-10 h-10 flex opacity-75">
-                        <font-awesome-icon :icon="['fas', 'play']"  class="pl-1 w-5 h-4 my-auto mx-auto text-black"/>
+                        <font-awesome-icon
+                            :icon="['fas', 'play']"
+                            class="mx-auto my-auto h-4 w-5 pl-1 text-zinc-900 drop-shadow-[0_0_6px_rgba(34,211,238,0.65)]"
+                        />
                     </div>
                 </div>
                 <HeartPodcastButton :podcast="podcast" :liked="liked" />
@@ -54,7 +58,10 @@ const getPodcastInfo = async () => {
         </div>
         <Link :href="route('podcast.show', { slug: podcast.slug })">
             <div class="p-2 px-2">
-                <h3 class="text dark:textDark font-bold text-md" v-html="podcast.title"></h3>
+                <h3
+                    class="text-md font-bold text-emerald-700 drop-shadow-[0_0_12px_rgba(52,211,153,0.15)] dark:text-emerald-300"
+                    v-html="podcast.title"
+                ></h3>
             </div>
         </Link>
     </div>

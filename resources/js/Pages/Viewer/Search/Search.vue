@@ -291,9 +291,12 @@ onUnmounted(() => {
         <section class="mt-2 sm:mt-4 space-y-8">
             <div v-if="loading || creators.length > 0">
                 <h2
-                    class="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+                    class="mb-4 flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-xs font-semibold uppercase tracking-wider text-transparent dark:from-cyan-400 dark:to-violet-400"
                 >
-                    <font-awesome-icon :icon="['fas', 'users']" class="h-3.5 w-3.5 opacity-80" />
+                    <font-awesome-icon
+                        :icon="['fas', 'users']"
+                        class="h-3.5 w-3.5 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]"
+                    />
                     Channels
                 </h2>
                 <div class="flex flex-col gap-4">
@@ -329,9 +332,12 @@ onUnmounted(() => {
 
             <div v-if="loading || videos.length > 0">
                 <h2
-                    class="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+                    class="mb-4 flex items-center gap-2 bg-gradient-to-r from-rose-500 to-amber-500 bg-clip-text text-xs font-semibold uppercase tracking-wider text-transparent dark:from-rose-400 dark:to-amber-400"
                 >
-                    <font-awesome-icon :icon="['fas', 'play']" class="h-3.5 w-3.5 opacity-80" />
+                    <font-awesome-icon
+                        :icon="['fas', 'play']"
+                        class="h-3.5 w-3.5 text-rose-400 drop-shadow-[0_0_8px_rgba(251,113,133,0.4)]"
+                    />
                     Videos &amp; streams
                 </h2>
                 <div class="relative grid w-full grid-cols-1 gap-5 sm:gap-6">
@@ -352,9 +358,11 @@ onUnmounted(() => {
                 <div class="mb-6 flex flex-row items-center gap-3">
                     <font-awesome-icon
                         :icon="['fas', 'headphones']"
-                        class="my-auto h-5 w-5 shrink-0 text-sky-600 dark:text-sky-400 sm:h-6 sm:w-6"
+                        class="my-auto h-5 w-5 shrink-0 text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.45)] sm:h-6 sm:w-6"
                     />
-                    <h2 class="text-xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-2xl">
+                    <h2
+                        class="bg-gradient-to-r from-emerald-500 to-cyan-500 bg-clip-text text-xl font-bold tracking-tight text-transparent sm:text-2xl dark:from-emerald-400 dark:to-cyan-400"
+                    >
                         Podcasts
                     </h2>
                 </div>
@@ -369,9 +377,11 @@ onUnmounted(() => {
                 <div class="mb-6 flex flex-row items-center gap-3">
                     <font-awesome-icon
                         :icon="['fas', 'headphones']"
-                        class="my-auto h-5 w-5 shrink-0 text-sky-600/70 dark:text-sky-400/80 sm:h-6 sm:w-6"
+                        class="my-auto h-5 w-5 shrink-0 text-emerald-400/85 drop-shadow-[0_0_8px_rgba(52,211,153,0.35)] sm:h-6 sm:w-6"
                     />
-                    <h2 class="text-xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-2xl">
+                    <h2
+                        class="bg-gradient-to-r from-emerald-500 to-cyan-500 bg-clip-text text-xl font-bold tracking-tight text-transparent sm:text-2xl dark:from-emerald-400 dark:to-cyan-400"
+                    >
                         Podcasts
                     </h2>
                 </div>

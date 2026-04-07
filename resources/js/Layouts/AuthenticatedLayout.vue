@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted, ref, watch} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 
 import Nav from '@/Shared/Navigation/Nav.vue';
 import ToastList from "@/Components/Toast/ToastList.vue";
@@ -15,9 +15,11 @@ import {useAuthStore} from "@/Stores/AuthStore";
 import PlaylistPageModal from "@/Components/Modals/PlaylistPageModal.vue";
 import BottomNavBar from "@/Shared/Navigation/BottomNavBar.vue";
 import PinModal from "@/Components/Modals/PinModal.vue";
-const playerStore = usePlayerStore();
 const authStore = useAuthStore();
 const navStore = useNavStore();
+const inertiaPage = usePage();
+/** Forces a full page subtree remount on each visit so DOM from Watch (e.g. players) cannot patch against Home. */
+const layoutPageKey = computed(() => `${inertiaPage.url}::${inertiaPage.component}`);
 const name = 'AuthenticatedLayout';
 let showingNavigationDropdown = ref(false);
 
@@ -27,10 +29,10 @@ onMounted(() => {
 
     usePlayerStore().loadScripts();
     // use authStore to get user if token is set in local storage
-    if (authStore.user === null && localStorage.getItem('token') !== null) {
+            if (authStore.user === null && localStorage.getItem('token') !== null) {
         authStore.getUser().then(() => {
             // if user is null & page prop auth_routes is true, redirect to home
-            if (authStore.user === null && usePage().props.auth_route) {
+            if (authStore.user === null && inertiaPage.props.auth_route) {
                 window.location.href = route('home');
             }
         });
@@ -52,18 +54,20 @@ onMounted(() => {
 
         <div class="flex flex-col  relative min-h-screen">
 
-            <Nav v-if="usePage().props.layoutDisplay !== 'auth'"/>
+            <Nav v-if="inertiaPage.props.layoutDisplay !== 'auth'"/>
 
             <!-- Page Content -->
             <main class="h-full flex flex-row flex-grow    " >
 
-                <div v-if="usePage().props.layoutDisplay !== 'auth' && usePage().props.layoutDisplay !== 'wide'"
+                <div v-if="inertiaPage.props.layoutDisplay !== 'auth' && inertiaPage.props.layoutDisplay !== 'wide'"
                      class="pointer-events-none flex-shrink-0 opacity-0 transition ease-in-out"  :class="{'sm:w-64  ': navStore.getNavigationDropdown(), 'sm:w-nav-rail': !navStore.getNavigationDropdown()}">
 
                 </div>
-                <div class="relative flex-shrink transition duration-700 ease-in-out w-full"  :class="{'': navStore.getNavigationDropdown()}">
+                <div class="relative flex-shrink transition duration-700 ease-in-out w-full min-w-0">
 
-                    <slot/>
+                    <div :key="layoutPageKey" class="w-full">
+                        <slot/>
+                    </div>
                     <!--Modals we want centered with side bar-->
                     <PlaylistModal/>
                     <PinModal/>

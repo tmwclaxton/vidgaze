@@ -3,10 +3,8 @@
 <script setup>
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {usePlayerStore} from "@/Stores/PlayerStore";
 import {useQueueStore} from "@/Stores/QueueStore";
-import {round} from "lodash";
 import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 
 import ShareIcon from '~/images/icons/share.svg'
@@ -25,15 +23,10 @@ import {useNavStore} from "@/Stores/NavStore";
 import EndScreen from "@/Pages/Viewer/Watch/Partials/EndScreen.vue";
 import {useAuthStore} from "@/Stores/AuthStore";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
-import Title from "@/Components/General/TitleComponent.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import ConsistentContentHolder from "@/Components/General/ConsistentContentHolder.vue";
 import WatchQueue from "@/Pages/Viewer/Watch/Partials/WatchQueue.vue";
-import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import SuggestedVideos from "@/Pages/Viewer/Watch/Partials/SuggestedVideos.vue";
-import TitleComponent from "@/Components/General/TitleComponent.vue";
 import ExternalCommentSection from "@/Components/CommentSection/ExternalCommentSection.vue";
-import AwardsBar from "@/Pages/Viewer/Watch/Partials/AwardsBar.vue";
 import AwardsDropdown from "@/Components/Dropdown/AwardsDropdown.vue";
 import {usePinModalStore} from "@/Stores/PinModalStore";
 
@@ -68,6 +61,45 @@ const props = defineProps({
         type: String,
         required: true
     },
+});
+
+const showWatchingCount = computed(() => {
+    if (!item.value || !ready.value) {
+        return false;
+    }
+    if (item.value.type === 'stream') {
+        return item.value.live_viewer_count && item.value.live_viewer_count !== '0';
+    }
+    const raw = item.value.unadulterated?.live_viewer_count;
+    return typeof raw === 'number' && raw > 0;
+});
+
+const actionBtnClass =
+    'group flex shrink-0 flex-row items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800 cursor-pointer';
+
+/** Normal mode keeps page inset; theatre strips horizontal padding on the grid (with ! so responsive padding cannot linger). */
+const watchGridLayoutClass = computed(() =>
+    theatre.value
+        ? 'w-full min-w-0 max-w-none gap-0 !px-0 sm:!px-0 lg:!px-0 mx-0'
+        : 'mx-auto w-full max-w-[1920px] gap-6 px-4 pb-10 pt-2 sm:px-6 lg:gap-8 lg:px-10'
+);
+
+/** Defer theatre toggle so embed/iframes can finish layout before Vue repatches class trees (avoids patchClass el=null on Vue 3.2). */
+function toggleTheatre() {
+    requestAnimationFrame(() => {
+        theatre.value = !theatre.value;
+    });
+}
+
+function exitTheatreOnResize() {
+    if (theatre.value) {
+        theatre.value = false;
+    }
+}
+
+const playerShellId = computed(() => {
+    const id = playerStore.refreshFrontEndComponent;
+    return id && String(id).length ? id : undefined;
 });
 
 function togglePlaylistModal()  {
@@ -123,6 +155,8 @@ function shouldShowMoreDescriptionButton() {
 }
 
 onMounted(  () => {
+    window.addEventListener('resize', exitTheatreOnResize, { passive: true });
+
     usePlayerStore().destroyPlayers().then(async () => {
         useQueueStore().playlistLoading = false; // this is used to stop miniplayer from showing up on the playlist page too soon
 
@@ -163,6 +197,8 @@ watch(item, async (newItem) => {
 // watch current
 
 onUnmounted(() => {
+    window.removeEventListener('resize', exitTheatreOnResize);
+
     ready.value = false;
     // if the queue has items destroy the players and rebuild the player with the current item in the mini player
     if (queueStore.items.length > 0) {
@@ -178,6 +214,8 @@ onUnmounted(() => {
 </script>
 
 <template>
+    <!-- Single root avoids Vue 3.2 fragment unmount crash when the layout forces remount via :key. -->
+    <div class="min-w-0">
         <SeoHead
             :title="item?.title || 'Watch'"
             :description="item?.description || ''"
@@ -185,153 +223,266 @@ onUnmounted(() => {
             :og-type="item ? 'video.other' : 'website'"
         />
 
-        <AwardsDropdown v-if="authStore.showAwardDropdown" :type="item.type" :object_id="item.id" />
-        <div class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4 md:mx-24']">
+        <AwardsDropdown v-if="authStore.showAwardDropdown && item" :type="item.type" :object_id="item.id" />
+        <div class="grid h-full grid-cols-12 grid-flow-row-dense" :class="watchGridLayoutClass">
             <!--player with theatre mode-->
-            <div :class="[theatre ? 'col-span-12   w-full ' : ' col-span-12 lg:col-span-8  ']" class=" w-full  relative flex flex-col gap-y-4">
-
-                <div v-bind:id="usePlayerStore().refreshFrontEndComponent"
-                     :class="[theatre ? '   ' : ' rounded-lg ']" class="bg-black max-h-[calc(100vh-10rem)] overflow-hidden">
-                    <div :class="[ theatre ? 'aspect-video  h-full w-full' : 'w-full aspect-video max-h-screen']">
+            <div
+                :class="[
+                    theatre ? 'col-span-12 w-full min-w-0' : 'col-span-12 lg:col-span-8',
+                    theatre ? 'gap-y-0' : 'gap-y-5',
+                ]"
+                class="relative flex min-w-0 w-full flex-col"
+            >
+                <!--
+                  Black pillarbox/letterbox: outer caps height; inner stays 16:9. In theatre, the black
+                  shell is full viewport width (w-screen + center breakout) so no page background shows
+                  beside the matte.
+                -->
+                <div
+                    :id="playerShellId"
+                    class="flex max-h-[calc(100vh-10rem)] justify-center overflow-hidden bg-black"
+                    :class="
+                        theatre
+                            ? 'relative left-1/2 w-screen max-w-[100vw] shrink-0 -translate-x-1/2 rounded-none shadow-none ring-0'
+                            : 'w-full rounded-2xl shadow-xl shadow-black/25 ring-1 ring-zinc-900/15 dark:ring-white/10'
+                    "
+                >
+                    <div
+                        class="aspect-video w-full max-w-[min(100%,calc((100vh-10rem)*16/9))] bg-black"
+                    >
                         <!--video player-->
-                        <div id="watch_player"
-                             :class="(playerStore.players.length > 0 && !playerStore.findPlayer(item.external_id).endScreen)
-                        ? 'w-full h-full bg-black without-ring flex relative ' : 'opacity-0'"/>
+                        <div
+                            id="watch_player"
+                            :class="
+                                item &&
+                                playerStore.players.length > 0 &&
+                                !(playerStore.findPlayer(item.external_id)?.endScreen)
+                                    ? 'without-ring relative flex h-full w-full bg-black'
+                                    : 'opacity-0'
+                            "
+                        />
 
                         <!--end screen-->
-                        <EndScreen v-if="ready && playerStore.findPlayer(item.external_id).endScreen" :item="item" class="h-full w-full"/>
-
+                        <EndScreen
+                            v-if="ready && item && playerStore.findPlayer(item.external_id)?.endScreen"
+                            :item="item"
+                            class="h-full w-full"
+                        />
                     </div>
                 </div>
 
-                <div v-if="item !== null" :class="[theatre ? 'px-2 sm:px-5 ' : 'px-0 sm:px-0 ']" class="">
-
+                <div
+                    v-if="item !== null"
+                    :class="
+                        theatre ? 'w-full max-w-none !px-0 pb-10 pt-4 sm:pt-5 sm:!px-0 lg:!px-0' : ''
+                    "
+                >
                     <!--video details-->
-                    <div  class="w-full">
-                        <p class="text-lg font-bold leading-6 line-clamp-2 text dark:textDark" v-text="ready ? item.title : 'Loading...'"/>
-                        <div class="px-3 sm:px-0 flex pt-2 -mb-2 justify-between text dark:textDark flex flex-row flex-wrap gap-8 ">
-                            <div  v-if="ready" class="flex flex-row lg:flex-col justify-between w-full lg:w-max">
-                                <div class="flex flex-col">
-                                    <div v-if="item.type === 'video'" class="flex flex-row pr-3 gap-x-1">
-                                        <p v-text="item.view_count + ' · ' + item.time_published"/>
-                                        <Link v-if="item.category !== null && item.category.slug !== undefined"
-                                            class="flex flex-row gap-x-2"  :href="route('category.show',{slug:item.category.slug})">
-                                            <span>·</span>
-                                            <span class="font-bold">{{ item.category.name}}</span>
-                                        </Link>
-                                    </div>
+                    <div class="w-full">
+                        <h1
+                            class="line-clamp-2 text-xl font-bold leading-snug tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-2xl"
+                            v-text="ready ? item.title : 'Loading...'"
+                        />
 
+                        <div
+                            v-if="ready"
+                            class="mt-3 flex flex-col gap-4 border-b border-zinc-200/90 pb-4 dark:border-zinc-800 lg:flex-row lg:items-start lg:justify-between"
+                        >
+                            <div class="flex min-w-0 flex-col gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+                                <div v-if="item.type === 'video'" class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                    <span v-text="item.view_count"/>
+                                    <span class="text-zinc-400 dark:text-zinc-600" aria-hidden="true">·</span>
+                                    <span v-text="item.time_published"/>
+                                    <template v-if="item.category !== null && item.category.slug !== undefined">
+                                        <span class="text-zinc-400 dark:text-zinc-600" aria-hidden="true">·</span>
+                                        <Link
+                                            class="font-semibold text-violet-600 hover:text-violet-500 dark:text-violet-400 dark:hover:text-violet-300"
+                                            :href="route('category.show', { slug: item.category.slug })"
+                                            v-text="item.category.name"
+                                        />
+                                    </template>
+                                </div>
+
+                                <div v-else-if="item.type === 'stream'" class="flex flex-wrap items-center gap-2">
                                     <span
-                                        class="pr-3  pt-0.5 font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
-                                        v-text="item.live_viewer_count + ' Watching'"/>
-
-
-                                </div>
-<!--                                <AwardsBar class=" lg:mt-4" v-if="item.object_awards && item.object_awards.length > 0" :objectAwards="item.object_awards" :type="item.type" />-->
-
-                            </div>
-                            <div v-if="ready && item" class="text dark:textDark ml-auto flex flex-row flex-wrap gap-x-2 md:gap-x-5 mr-2 align-top justify-end font-semibold ">
-                                <FeatureCreatorButton v-if="authStore.user && (authStore.user.creator.role === 'moderator' || authStore.user.creator.role === 'admin')" :creator_id="item.creator.id"/>
-
-                                <TertiaryButton v-if="item.type === 'video'">
-                                    <LikeDislikeButtons :item="item" :orientationVertical="false"/>
-                                </TertiaryButton>
-
-<!--                                <div v-if="item.type === 'video'" @click="useAuthStore().toggleAwardDropdown()" class="h-10 flex flex-row cursor-pointer align-middle items-center px-4 bg-zinc-200 dark:bg-zinc-900 rounded-lg">-->
-<!--                                    <font-awesome-icon class="h-5" :icon="['fas', 'award']"/>-->
-<!--                                    <p class="pl-2">Award</p>-->
-<!--                                </div>-->
-
-                                <div @click="share" class="flex flex-row cursor-pointer h-10  align-middle items-center">
-                                    <ShareIcon class="h-5"/>
-                                    <p class="pl-2">Share</p>
-                                </div>
-
-
-                                <div v-if="item.type === 'video' && authStore.user" @click="togglePlaylistModal()" class="h-10 flex flex-row cursor-pointer align-middle items-center" >
-                                    <LibraryIcon class="h-5"/>
-                                    <p class="pl-2">Save</p>
-                                </div>
-
-                                <div v-if="authStore.user && (authStore.user.creator.role === 'moderator' || authStore.user.creator.role === 'admin')
-                                && item.type === 'video' && authStore.user" @click="togglePinModal()" class="h-10 flex flex-row cursor-pointer align-middle items-center" >
-                                    <font-awesome-icon class="h-5" :icon="['fas', 'map-pin']"/>
-                                    <p class="pl-2">Pin</p>
+                                        v-if="item.is_live"
+                                        class="inline-flex items-center rounded-full bg-red-600 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-white"
+                                    >
+                                        Live
+                                    </span>
+                                    <span v-if="item.viewers" v-text="item.viewers"/>
+                                    <template v-if="item.category !== null && item.category.slug !== undefined">
+                                        <span class="text-zinc-400 dark:text-zinc-600" aria-hidden="true">·</span>
+                                        <Link
+                                            class="font-semibold text-violet-600 hover:text-violet-500 dark:text-violet-400 dark:hover:text-violet-300"
+                                            :href="route('category.show', { slug: item.category.slug })"
+                                            v-text="item.category.name"
+                                        />
+                                    </template>
                                 </div>
 
                                 <div
-                                    class="h-10 hidden lg:flex   flex-row cursor-pointer align-middle items-center"
-                                    @click="theatre = ! theatre">
-                                    <TheatreIcon class="h-5"/>
-                                    <p class="pl-2">Theatre</p>
+                                    v-if="showWatchingCount"
+                                    class="inline-flex w-max items-center gap-2 rounded-full bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-700 dark:bg-red-500/15 dark:text-red-300"
+                                >
+                                    <span class="relative flex h-2 w-2 shrink-0">
+                                        <span
+                                            class="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"
+                                        />
+                                        <span class="relative inline-flex h-2 w-2 rounded-full bg-red-500"/>
+                                    </span>
+                                    <span>{{ item.live_viewer_count }} watching</span>
                                 </div>
+                            </div>
 
+                            <div
+                                v-if="ready && item"
+                                class="flex w-full flex-wrap items-center gap-1 lg:ml-auto lg:w-auto lg:justify-end"
+                            >
+                                <FeatureCreatorButton
+                                    v-if="authStore.user && (authStore.user.creator.role === 'moderator' || authStore.user.creator.role === 'admin')"
+                                    :creator_id="item.creator.id"
+                                />
+
+                                <TertiaryButton v-if="item.type === 'video'" class="shrink-0">
+                                    <LikeDislikeButtons :item="item" :orientationVertical="false"/>
+                                </TertiaryButton>
+
+                                <button type="button" :class="actionBtnClass" @click="share">
+                                    <ShareIcon class="h-5 w-5 shrink-0 opacity-80 group-hover:opacity-100"/>
+                                    <span>Share</span>
+                                </button>
+
+                                <button
+                                    v-if="item.type === 'video' && authStore.user"
+                                    type="button"
+                                    :class="actionBtnClass"
+                                    @click="togglePlaylistModal()"
+                                >
+                                    <LibraryIcon class="h-5 w-5 shrink-0 opacity-80 group-hover:opacity-100"/>
+                                    <span>Save</span>
+                                </button>
+
+                                <button
+                                    v-if="
+                                        authStore.user &&
+                                        (authStore.user.creator.role === 'moderator' || authStore.user.creator.role === 'admin') &&
+                                        item.type === 'video'
+                                    "
+                                    type="button"
+                                    :class="actionBtnClass"
+                                    @click="togglePinModal()"
+                                >
+                                    <FontAwesomeIcon class="h-4 w-4 shrink-0 opacity-80 group-hover:opacity-100" :icon="['fas', 'map-pin']"/>
+                                    <span>Pin</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                                    :aria-label="theatre ? 'Exit theatre mode' : 'Theatre mode'"
+                                    @click="toggleTheatre"
+                                >
+                                    <TheatreIcon class="h-5 w-5" aria-hidden="true"/>
+                                    <span class="max-sm:sr-only" v-text="theatre ? 'Exit theatre' : 'Theatre'"/>
+                                </button>
                             </div>
                         </div>
 
-
-                        <RowDivider class="my-2"/>
-
-                        <div class=" py-6 ">
-                            <div v-if="ready" class="flex justify-between">
-                                <span class="flex flex-row   w-full overflow-hidden">
-                                    <Link :href="route('channel.show', item.creator.slug)"
-                                        class="flex-shrink-0">
-                                        <img class="hover:cursor-pointer my-auto object-cover w-11 h-11 mr-2 rounded-full flex-shrink-0"
-                                             v-bind:src="item.creator.avatar_url" alt="Profile image"/>
+                        <div
+                            v-if="ready"
+                            class="mt-5 rounded-2xl border border-zinc-200/90 bg-zinc-50/90 p-4 dark:border-zinc-800 dark:bg-zinc-900/40 sm:p-5"
+                        >
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                <div class="flex min-w-0 flex-1 items-center gap-3">
+                                    <Link :href="route('channel.show', item.creator.slug)" class="shrink-0">
+                                        <img
+                                            class="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow-md dark:ring-zinc-800"
+                                            :src="item.creator.avatar_url"
+                                            alt=""
+                                        />
                                     </Link>
-                                    <div class="pl-1 flex flex-col my-auto">
-                                        <Link :href="route('channel.show', item.creator.slug)"
-                                           class="text-sm font-bold hover:cursor-pointer text dark:textDark w-44 xs:w-full break-words">
-                                            <span v-text="item.creator.name"></span>
+                                    <div class="min-w-0 flex-1">
+                                        <Link
+                                            :href="route('channel.show', item.creator.slug)"
+                                            class="block truncate text-base font-bold text-zinc-900 hover:text-violet-600 dark:text-zinc-100 dark:hover:text-violet-400"
+                                        >
+                                            <span v-text="item.creator.name"/>
                                         </Link>
-                                        <p class="text-xs text dark:textDark leading-4" v-text="item.creator.subscriber_count"/>
+                                        <p class="text-xs text-zinc-600 dark:text-zinc-400" v-text="item.creator.subscriber_count"/>
                                     </div>
-
-                                    <div class="ml-auto sm:ml-5 my-auto">
-                                       <SubscribeButton :channel="item.creator"  />
-                                    </div>
-                                </span>
+                                </div>
+                                <div class="shrink-0 sm:pl-2">
+                                    <SubscribeButton :channel="item.creator"/>
+                                </div>
                             </div>
-                            <div class=" ml-14   pt-3   text dark:textDark text-sm">
-                                <p id="description" style="line-height: 20px;"
-                                   v-bind:class="{' line-clamp-3': isDescriptionCollapsed}" v-html="item.description"/>
-                                <button v-if="showMoreDescriptionButton" class="font-bold mt-5 text-xs uppercase"
-                                        @click="isDescriptionCollapsed = !isDescriptionCollapsed"
-                                        v-text="!isDescriptionCollapsed ? 'Show less' : 'Show more'"
-                                ></button>
+                            <div class="mt-4 border-t border-zinc-200/80 pt-4 text-sm leading-relaxed text-zinc-700 dark:border-zinc-800 dark:text-zinc-300">
+                                <div
+                                    id="description"
+                                    style="line-height: 1.5"
+                                    :class="{ 'line-clamp-3': isDescriptionCollapsed }"
+                                    v-html="item.description"
+                                />
+                                <button
+                                    v-if="showMoreDescriptionButton"
+                                    type="button"
+                                    class="mt-3 text-xs font-bold uppercase tracking-wide text-violet-600 hover:text-violet-500 dark:text-violet-400"
+                                    @click="isDescriptionCollapsed = !isDescriptionCollapsed"
+                                    v-text="!isDescriptionCollapsed ? 'Show less' : 'Show more'"
+                                />
                             </div>
                         </div>
-                        <RowDivider v-if="item.type === 'video'" />
+
+                        <RowDivider v-if="item.type === 'video'" class="mt-6"/>
                     </div>
 
-                    <TertiaryButton v-if="!showCommentSection" class="w-full text-center"
-                                    v-bind:class="[showCommentSection ? 'hidden ' : 'lg:hidden']"
-
-                                    @click="showCommentSection = !showCommentSection">
-                        <p class="w-full text-center">Open Comments</p>
+                    <TertiaryButton
+                        v-if="!showCommentSection"
+                        class="mt-6 w-full text-center lg:hidden"
+                        @click="showCommentSection = !showCommentSection"
+                    >
+                        <p class="w-full text-center">Open comments</p>
                     </TertiaryButton>
 
-                    <CommentSection v-if="item.type !== 'stream' && item.creator !== undefined" :item="item"
-                                    v-bind:class="[showCommentSection ? 'flex' : 'hidden lg:flex']" />
+                    <CommentSection
+                        v-if="item.type !== 'stream' && item.creator !== undefined"
+                        :item="item"
+                        class="mt-6"
+                        :class="[showCommentSection ? 'flex' : 'hidden lg:flex']"
+                    />
 
-                    <RowDivider  :class="[theatre ? 'flex ' : 'flex lg:hidden ']"/>
-
+                    <RowDivider :class="[theatre ? 'mt-6 flex' : 'mt-6 flex lg:hidden']"/>
                 </div>
             </div>
 
             <!--video suggestions-->
-            <div class=" relative w-full gap-4 flex flex-col min-h-screen" :class="[theatre ? 'col-span-12 p-4 md:px-10 -mt-8 ' : 'col-span-12 lg:col-span-4 ']" >
-                <!--playlist-->
-                <WatchQueue v-if="props.type !== 'stream'"  :item="item" :ready="ready"/>
+            <div
+                class="relative flex min-h-screen w-full min-w-0 flex-col gap-6"
+                :class="
+                    theatre
+                        ? 'col-span-12 w-full max-w-none !px-0 pb-10 sm:!px-0 lg:!px-0'
+                        : 'col-span-12 lg:col-span-4 lg:sticky lg:top-20 lg:self-start'
+                "
+            >
+                <WatchQueue v-if="props.type !== 'stream' && item" :item="item" :ready="ready"/>
 
-                <!--suggested videos-->
-                <SuggestedVideos  v-if="item !== null && props.type !== 'stream'"  :video="item" :creator="item.creator" :ready="ready"/>
+                <SuggestedVideos
+                    v-if="item !== null && props.type !== 'stream'"
+                    :video="item"
+                    :creator="item.creator"
+                    :ready="ready"
+                />
 
-                <!--stream chat-->
-                <div v-if="item !== null && props.type === 'stream'" class="flex flex-col gap-4 h-[calc(100vh-10rem)]">
-                    <ExternalCommentSection :source="item.preferred_source" external_id="item.external_id"/>
+                <div
+                    v-if="item !== null && props.type === 'stream'"
+                    class="flex h-[calc(100vh-10rem)] flex-col gap-4 overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 dark:bg-zinc-900/30"
+                >
+                    <ExternalCommentSection
+                        :source="item.preferred_source"
+                        :external_id="item.external_id"
+                    />
                 </div>
             </div>
         </div>
+    </div>
 </template>

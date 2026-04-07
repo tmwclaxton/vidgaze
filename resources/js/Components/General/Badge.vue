@@ -59,13 +59,20 @@ const sourceClasses = {
     Odysee: 'bg-sky-700 dark:bg-sky-900',
 };
 
+const glowTail =
+    ' shadow-sm transition-[filter,box-shadow] duration-200 hover:brightness-110 hover:saturate-125 hover:shadow-[0_0_14px_-3px_rgba(255,255,255,0.35)]';
+
 const getClasses = computed(() => {
     const classes = sourceClasses[props.source];
 
     if (!classes) {
-        return props.extraClasses ?? ' bg-vidgaze-blue text-zinc-100 dark:text-white  text-xs';
+        return (
+            (props.extraClasses ?? ' bg-vidgaze-blue text-zinc-100 dark:text-white text-xs') +
+            ' shadow-[0_0_12px_-6px_rgba(56,189,248,0.25)] ' +
+            glowTail
+        );
     }
 
-    return classes + ' text-white';
+    return classes + ' text-white ' + glowTail;
 });
 </script>

@@ -1,6 +1,6 @@
 <template>
     <div v-if="!useAuthStore().user || useAuthStore().user.creator.slug !== props.channel.slug"
-        @click="subscribe" :class="buttonClasses" class="w-max h-max cursor-pointer rounded-lg px-4 py-1 text-xs font-bold border ring-0 ">
+        @click="subscribe" :class="buttonClasses" class="w-max h-max cursor-pointer rounded-lg px-4 py-1 text-xs font-bold border">
         <p v-text="text" class=""></p>
     </div>
 </template>
@@ -74,7 +74,9 @@ const isSubscribed = () => {
 }
 
 const buttonClasses = computed(() => ({
-    'bg-zinc-200 text-zinc-700 hover:bg-zinc-300 dark:bg-zinc-700 dark:text-white  border-transparent ': subscribed.value,
-    ' border-red-200 dark:border-transparent dark:bg-red-700 hover:bg-red-100 dark:hover:bg-red-600 text-red-700 dark:text-white ': !subscribed.value
+    'bg-zinc-200 text-zinc-700 hover:bg-zinc-300 dark:bg-zinc-700 dark:text-white border-transparent ring-1 ring-emerald-400/35 shadow-[0_0_12px_-6px_rgba(52,211,153,0.25)] transition-all duration-200 ':
+        subscribed.value,
+    'border-red-200 dark:border-transparent dark:bg-red-700 hover:bg-red-100 dark:hover:bg-red-600 text-red-700 dark:text-white ring-1 ring-rose-400/40 shadow-[0_0_14px_-6px_rgba(244,114,182,0.3)] hover:shadow-[0_0_20px_-4px_rgba(248,113,113,0.4)] transition-all duration-200 ':
+        !subscribed.value,
 }));
 </script>

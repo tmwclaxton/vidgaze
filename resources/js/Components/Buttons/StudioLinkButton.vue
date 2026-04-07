@@ -61,9 +61,7 @@ const removePlatform = () => {
 
 </script>
 <template>
-    <div @click="loginRedirect()" :class="buttonClasses" class="h-full w-max flex flex-row inline-flex items-center gap-2  cursor-pointer
-         border border-zinc-200 hover:border-zinc-300 dark:border-zinc-800 dark:hover:border-zinc-700
-         dark:bg-vidgaze-blue dark:hover:bg-vidgaze-blue-nav dark:text-zinc-200 text-zinc-900 text-sm font-medium rounded-lg px-5 py-2.5 text-center ">
+    <div @click="loginRedirect()" :class="buttonClasses" class="inline-flex h-full w-max cursor-pointer flex-row items-center gap-2 rounded-lg border border-zinc-200 px-5 py-2.5 text-center text-sm font-medium text-zinc-900 transition-all duration-200 hover:border-cyan-400/45 hover:shadow-[0_0_18px_-8px_rgba(34,211,238,0.22)] dark:border-zinc-800 dark:bg-vidgaze-blue dark:text-zinc-200 dark:hover:border-cyan-500/35 dark:hover:bg-vidgaze-blue-nav dark:hover:shadow-[0_0_20px_-8px_rgba(34,211,238,0.15)]">
         <slot></slot>
         <p class="break-words w-full text-left capitalize" v-text="text"/>
         <font-awesome-icon v-if="external_id" @click="removePlatform" :icon="['fas', 'close']" class="w-4 h-4 my-auto text-zinc-600 dark:text-zinc-200"/>

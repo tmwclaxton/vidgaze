@@ -1,7 +1,10 @@
 <template>
     <div @click="featureCreator">
         <QuaternaryButton >
-            <font-awesome-icon :icon="['fas', 'medal']" class="h-5"/>
+            <font-awesome-icon
+                :icon="['fas', 'medal']"
+                class="h-5 text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.55)]"
+            />
             <span class="font-semibold">Feature Creator</span>
         </QuaternaryButton>
     </div>
