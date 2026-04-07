@@ -3,7 +3,11 @@
 </script>
 
 <template>
-    <Head title="VidGaze Livestreaming" />
+    <SeoHead
+        title="Livestreaming"
+        description="VidGaze multistream tools for creators (Studio)."
+        noindex
+    />
 
 
     <div class=" mx-auto   h-[calc(100vh-4rem)] py-auto justify-center flex flex-col">

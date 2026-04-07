@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 
 defineProps({
     podcast: { type: Object, required: true },
@@ -15,7 +15,11 @@ export default {
 
 <template>
     <div class="mx-auto max-w-3xl px-4 py-8">
-        <Head :title="episode.title || 'Episode'" />
+        <SeoHead
+            :title="episode.title || 'Episode'"
+            :description="episode.description || podcast.description || ''"
+            og-type="article"
+        />
 
         <Link
             :href="route('podcast.show', { slug: podcast.slug })"

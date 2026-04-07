@@ -95,7 +95,11 @@ const addPlaylistToQueue = async (shuffleItems = false, index = 0) => {
 const playlistPageModal = ref(false);
 </script>
 <template>
-    <Head v-if="playlist != null" :title="playlist.name" />
+    <SeoHead
+        :title="playlist?.name || 'Playlist'"
+        :description="playlist ? `Playlist on VidGaze: ${playlist.name}.` : ''"
+        :image="playlist?.recent_video_image || null"
+    />
 
 
             <div v-if="playlist != null" class="flex flex-col xs:flex-row max-h-[calc(100vh-4rem)] overflow-hidden">

@@ -5,21 +5,30 @@ namespace App\Models\PodcastEpisodeModels;
 use App\Models\Award;
 use App\Models\CommentModels\Comment;
 use App\Models\PodcastModels\Podcast;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class PodcastEpisode extends Model
 {
-
     protected $guarded = [];
 
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'time_published' => 'datetime',
+        ];
+    }
 
-    public function podcast(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function podcast(): BelongsTo
     {
         return $this->belongsTo(Podcast::class);
     }
 
-    public function comments(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    public function comments(): HasManyThrough
     {
         // podcast episode -> podcast episode comments -> comments
         return $this->hasManyThrough(
@@ -33,7 +42,7 @@ class PodcastEpisode extends Model
 
     }
 
-    public function awards(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    public function awards(): HasManyThrough
     {
         // podcast episode -> podcast episode awards -> awards
         return $this->hasManyThrough(
@@ -45,5 +54,4 @@ class PodcastEpisode extends Model
             'award_id'
         );
     }
-
 }

@@ -16,6 +16,7 @@ use App\Models\CreatorModels\Creator;
 use App\Models\VideoModels\Video;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class SearchApiController extends Controller
 {
@@ -91,8 +92,12 @@ class SearchApiController extends Controller
         [$videoModels, $videoRankingMeta] = SearchVideoAiRanker::rankVideos($videoModels, $searchQuery);
 
         $videoIds = collect($videoModels)->pluck('id')->filter()->values();
-        if ($videoIds->isNotEmpty()) {
-            Video::whereIn('id', $videoIds)->increment('impressions_count');
+        $rankingPending = is_array($videoRankingMeta) && ($videoRankingMeta['pending'] ?? false) === true;
+        if ($videoIds->isNotEmpty() && ! $rankingPending) {
+            $dedupeKey = 'search:imp:'.sha1($searchQuery.'|'.$videoIds->sort()->values()->implode(','));
+            if (Cache::add($dedupeKey, 1, 3600)) {
+                Video::whereIn('id', $videoIds)->increment('impressions_count');
+            }
         }
 
         $streams = new StreamCollection($streamModels);
@@ -115,9 +120,9 @@ class SearchApiController extends Controller
      */
     public function getSearchSuggestions(Request $request)
     {
-        $searchQuery = $request->q;
+        $searchQuery = trim((string) ($request->q ?? ''));
 
-        if (empty($searchQuery)) {
+        if ($searchQuery === '' || mb_strlen($searchQuery) < 2) {
             return response()->json([
                 'query' => $searchQuery,
                 'videos' => [],

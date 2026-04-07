@@ -9,6 +9,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/index.js';
 import { Link } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
 import Layout from './Layouts/AuthenticatedLayout.vue';
+import SeoHead from './Components/Seo/SeoHead.vue';
 import VueClickAway from "vue3-click-away";
 import VueHoneypot from 'vue-honeypot'
 /* import the fontawesome core - utility functions*/
@@ -60,6 +61,7 @@ const app = createInertiaApp({
             .component('font-awesome-icon', FontAwesomeIcon)
             .component('Link', Link)
             .component('Head', Head)
+            .component('SeoHead', SeoHead)
             .mount(el);
     },
     progress: {

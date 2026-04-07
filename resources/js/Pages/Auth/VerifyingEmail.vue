@@ -30,5 +30,7 @@ onMounted(() => {
 
 </script>
 
-
+<template>
+    <SeoHead title="Verifying email" description="Confirming your email address for VidGaze." noindex />
+</template>
 

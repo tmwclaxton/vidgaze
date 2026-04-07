@@ -31,4 +31,18 @@ return [
         'api_max_videos' => (int) env('VIDGAZE_CATEGORY_DISCOVERY_API_MAX', 24),
     ],
 
+    /**
+     * Personalised video index (category=recommended) and related tuning.
+     */
+    'recommendations' => [
+        'candidate_cap' => (int) env('VIDGAZE_RECOMMEND_CANDIDATE_CAP', 64),
+        'subscribed_pool_limit' => (int) env('VIDGAZE_RECOMMEND_SUB_POOL', 32),
+        'category_pool_limit' => (int) env('VIDGAZE_RECOMMEND_CAT_POOL', 32),
+        'popular_pool_limit' => (int) env('VIDGAZE_RECOMMEND_POP_POOL', 32),
+        'history_days' => (int) env('VIDGAZE_RECOMMEND_HISTORY_DAYS', 90),
+        'max_interest_categories' => (int) env('VIDGAZE_RECOMMEND_MAX_INTEREST_CATS', 5),
+        'watch_next_brand_pool_multiplier' => (int) env('VIDGAZE_WATCH_NEXT_POOL_MULT', 2),
+        'watch_next_ai_candidate_cap' => (int) env('VIDGAZE_WATCH_NEXT_AI_CAP', 48),
+    ],
+
 ];

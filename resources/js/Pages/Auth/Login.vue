@@ -10,7 +10,7 @@ import GoogleButton from '@/Components/Buttons/GoogleButton.vue';
 import AppleButton from '@/Components/Buttons/AppleButton.vue';
 
 import TextInput from '@/Components/Inputs/TextInput.vue';
-import {Head, Link, router, useForm} from '@inertiajs/vue3';
+import {Link, router, useForm} from '@inertiajs/vue3';
 import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
 import { useAuthStore } from "@/Stores/AuthStore";
 const authStore = useAuthStore();
@@ -46,7 +46,7 @@ const submit = async () => {
 </script>
 <template>
     <GuestLayout>
-        <Head title="Log in" />
+        <SeoHead title="Log in" description="Sign in to your VidGaze account." noindex />
 
 
 

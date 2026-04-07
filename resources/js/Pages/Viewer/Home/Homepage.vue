@@ -22,6 +22,10 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const pinModalStore = usePinModalStore();
 const contentRoutesStore = useContentRoutesStore();
+const authStore = useAuthStore();
+
+/** Set to true to show the homepage creator carousel again. */
+const showCreatorCarousel = false;
 
 const trending_videos = ref([]);
 const videos = ref([]);
@@ -176,9 +180,19 @@ const fetchVideos = async (videoArray) => {
 </script>
 <template>
     <div class="min-h-screen">
-        <Head :title="selectedTrendKey ? `Trend: ${selectedTrendLabel}` : 'Home'" />
+        <SeoHead
+            :title="selectedTrendKey ? `Trend: ${selectedTrendLabel}` : 'Home'"
+            :description="
+                selectedTrendKey
+                    ? `Trending videos and streams for “${selectedTrendLabel}” on VidGaze.`
+                    : ''
+            "
+        />
 
-        <div class="hidden md:block w-full border-b border-zinc-200/80 dark:border-zinc-800/80 bg-gradient-to-b from-zinc-50/90 to-transparent dark:from-zinc-900/50 dark:to-transparent">
+        <div
+            v-if="showCreatorCarousel"
+            class="hidden md:block w-full border-b border-zinc-200/80 dark:border-zinc-800/80 bg-gradient-to-b from-zinc-50/90 to-transparent dark:from-zinc-900/50 dark:to-transparent"
+        >
             <div class="w-full max-w-[1680px] mx-auto px-4 py-4 sm:px-6 sm:py-5 lg:px-10">
                 <CreatorCarousel />
             </div>
@@ -264,7 +278,7 @@ const fetchVideos = async (videoArray) => {
                     <font-awesome-icon :icon="['fas', 'newspaper']" class="my-auto h-5 w-5 sm:h-6 sm:w-6 text-sky-600 dark:text-sky-400 shrink-0"/>
                 </VideosRow>
 
-                <TopShortsRow v-if="useAuthStore().areShortsEnabled()"/>
+                <TopShortsRow v-if="authStore.areShortsEnabled()"/>
 
                 <InfiniteVideos :videos="videos" />
             </template>

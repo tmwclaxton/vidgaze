@@ -35,7 +35,11 @@ async function getUnions() {
 </script>
 
 <template>
-    <Head :title="`Unions`" />
+    <SeoHead
+        title="Unions"
+        description="Join creator unions on VidGaze Studio to manage your primary content source."
+        noindex
+    />
     <ConsistentPadding>
             <div class=" mx-auto">
                 <TitleComponent :text="'Join a union today!'" class="  mb-8">

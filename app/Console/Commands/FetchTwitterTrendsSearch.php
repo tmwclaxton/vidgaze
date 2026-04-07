@@ -157,7 +157,7 @@ class FetchTwitterTrendsSearch extends Command
             $response = $nano->getChatCompletion([
                 ['role' => 'system', 'content' => 'Return only valid JSON: a JSON array of strings, no markdown.'],
                 ['role' => 'user', 'content' => $prompt],
-            ], (string) config('services.nanogpt.search_ranking_model', 'gemini-2.0-flash-lite'), ['max_tokens' => 500], false);
+            ], (string) config('services.nanogpt.search_ranking_model', 'gemini-2.5-flash-lite'), ['max_tokens' => 500], false);
             $content = trim($response['choices'][0]['message']['content'] ?? '');
             $content = preg_replace('/^```json\s*|\s*```$/i', '', $content);
             $decoded = json_decode($content, true);

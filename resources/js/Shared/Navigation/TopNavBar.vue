@@ -59,14 +59,21 @@ function redirect(which) {
                 aria-controls="navigation-drawer"
                 :aria-expanded="navStore.getNavigationDropdown()"
                 @click="navStore.toggleShowingNavigationDropdown()"
-                class="inline-flex items-center justify-center rounded-xl p-2 text-zinc-400 transition-all duration-200 ease-out hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 active:scale-95"
-                :class="{ 'bg-white/10 text-white': navStore.getNavigationDropdown() }"
+                class="group inline-flex items-center justify-center rounded-xl border border-transparent p-2 transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40 active:scale-95"
+                :class="
+                    navStore.getNavigationDropdown()
+                        ? 'bg-fuchsia-500/15 text-fuchsia-300 shadow-[0_0_22px_-4px_rgba(232,121,249,0.55)] hover:bg-fuchsia-500/25 hover:text-fuchsia-200 hover:shadow-[0_0_28px_-2px_rgba(244,114,182,0.45)] hover:border-fuchsia-400/35'
+                        : 'text-cyan-400 shadow-[0_0_18px_-6px_rgba(34,211,238,0.45)] hover:border-cyan-400/35 hover:bg-cyan-500/15 hover:text-cyan-200 hover:shadow-[0_0_28px_-2px_rgba(34,211,238,0.55)]'
+                "
             >
                 <CloseNavSVG
                     v-if="navStore.getNavigationDropdown()"
-                    class="h-6 w-6 shrink-0 fill-current"
+                    class="h-6 w-6 shrink-0 fill-current transition-transform duration-200 group-hover:scale-110"
                 />
-                <OpenNavSVG v-else class="h-6 w-6 shrink-0 fill-current" />
+                <OpenNavSVG
+                    v-else
+                    class="h-6 w-6 shrink-0 fill-current transition-transform duration-200 group-hover:scale-110"
+                />
             </button>
         </div>
 
@@ -120,11 +127,11 @@ function redirect(which) {
                             <div @click="redirect('login')" >
 
                                 <TopNavButton
-                                    class="group relative overflow-hidden border border-white/10 shadow-sm transition-[background,background-image,box-shadow,border-color,transform] duration-700 ease-in-out hover:!border-cyan-300/25 hover:!bg-gradient-to-r hover:!from-sky-800/95 hover:!via-cyan-800/90 hover:!to-teal-800/95 hover:!shadow-[0_0_40px_-12px_rgba(34,211,238,0.18)] active:scale-[0.98]"
+                                    class="group relative overflow-hidden border border-cyan-400/40 !bg-gradient-to-r !from-sky-600 !via-cyan-600 !to-teal-600 !shadow-[0_0_22px_-6px_rgba(34,211,238,0.45)] transition-all duration-300 ease-out hover:!bg-gradient-to-r hover:!from-sky-500 hover:!via-cyan-500 hover:!to-teal-500 hover:!border-cyan-300/70 hover:!brightness-110 hover:!shadow-[0_0_36px_-2px_rgba(34,211,238,0.6)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
                                 >
                                     <font-awesome-icon
                                         :icon="['fas', 'right-to-bracket']"
-                                        class="h-4 w-auto transition-transform duration-700 ease-in-out group-hover:scale-105"
+                                        class="h-4 w-auto transition-transform duration-300 group-hover:scale-110"
                                     />
                                     <p>Log In</p>
                                 </TopNavButton>
@@ -133,11 +140,11 @@ function redirect(which) {
                             <div @click="redirect('register')" >
 
                                 <TopNavButton
-                                    class="group relative overflow-hidden border border-white/10 shadow-sm transition-[background,background-image,box-shadow,border-color,transform] duration-700 ease-in-out hover:!border-fuchsia-300/25 hover:!bg-gradient-to-r hover:!from-violet-800/95 hover:!via-fuchsia-800/90 hover:!to-pink-900/90 hover:!shadow-[0_0_40px_-12px_rgba(232,121,249,0.16)] active:scale-[0.98]"
+                                    class="group relative overflow-hidden border border-fuchsia-400/40 !bg-gradient-to-r !from-violet-600 !via-fuchsia-600 !to-pink-600 !shadow-[0_0_22px_-6px_rgba(232,121,249,0.45)] transition-all duration-300 ease-out hover:!bg-gradient-to-r hover:!from-violet-500 hover:!via-fuchsia-500 hover:!to-pink-500 hover:!ring-2 hover:!ring-pink-400/55 hover:!shadow-[0_0_32px_4px_rgba(244,114,182,0.4)] hover:!saturate-150 hover:scale-[1.04] active:scale-[0.98]"
                                 >
                                     <font-awesome-icon
                                         :icon="['fas', 'user-plus']"
-                                        class="h-4 w-auto transition-transform duration-700 ease-in-out group-hover:scale-105"
+                                        class="h-4 w-auto transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
                                     />
                                     <p>Sign Up</p>
                                 </TopNavButton>

@@ -3,12 +3,28 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+        <meta name="description" content="{{ config('seo.default_description') }}">
+        <meta name="theme-color" content="#101828">
+        <meta name="color-scheme" content="dark light">
 
         <title inertia>{{ config('app.name', 'VidGaze') }}</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <script type="application/ld+json">
+            {!! json_encode([
+                '@context' => 'https://schema.org',
+                '@type' => 'WebSite',
+                'name' => config('app.name', 'VidGaze'),
+                'url' => rtrim((string) config('app.url'), '/').'/',
+                'potentialAction' => [
+                    '@type' => 'SearchAction',
+                    'target' => rtrim((string) config('app.url'), '/').'/search?q={search_term_string}',
+                    'query-input' => 'required name=search_term_string',
+                ],
+            ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+        </script>
+
+        <!-- Fonts (self-hosted, /public/fonts/satoshi) -->
+        <link rel="stylesheet" href="{{ asset('fonts/satoshi/satoshi.css') }}" />
 
         {{--favicon--}}
         <link rel="icon" href="/favicon.ico" type="image/x-icon">

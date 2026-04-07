@@ -37,6 +37,11 @@ const updateChannelDetails = () => {
 </script>
 
 <template>
+    <SeoHead
+        title="Customise channel"
+        description="Update your VidGaze channel profile, banner, and branding in Studio."
+        noindex
+    />
     <div  v-if="useAuthStore().user != null">
             <div class=" flex flex-col md:flex-row-reverse ">
                 <div class="display:initial   mx-8 md:mr-8 md:ml-0">

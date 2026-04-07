@@ -1,7 +1,6 @@
 <script setup>
 
 import {onBeforeMount, ref} from "vue";
-import {Head} from "@inertiajs/vue3";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import TitleComponent from "@/Components/General/TitleComponent.vue";
 import LikeDislikeBar from "@/Pages/Studio/Content/Partials/LikeDislikeBar.vue";
@@ -59,7 +58,11 @@ const thumbnail = (item) => {
 </script>
 
 <template>
-    <Head title="Studio Content" />
+    <SeoHead
+        title="Studio content"
+        description="Manage published videos and drafts across connected platforms in VidGaze Studio."
+        noindex
+    />
 
     <ConsistentPadding >
         <TitleComponent :text="'VidGaze Cross-Platform Content Manager'">

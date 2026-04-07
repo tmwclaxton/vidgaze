@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use Illuminate\Support\Facades\Redis;
+use Throwable;
 
 class CategoryFeedBrandScores
 {
@@ -66,18 +67,33 @@ class CategoryFeedBrandScores
      */
     public static function getScores(int $categoryId, array $videoIds): array
     {
-        $key = self::redisKey($categoryId);
-        $out = [];
-        foreach ($videoIds as $vid) {
-            $vid = (int) $vid;
-            if ($vid < 1) {
-                continue;
-            }
-            $raw = Redis::hget($key, (string) $vid);
-            $out[$vid] = $raw !== null && $raw !== false ? (float) $raw : (float) config('vidgaze.category_discovery.initial_brand_score', 100);
-        }
+        $initial = (float) config('vidgaze.category_discovery.initial_brand_score', 100);
 
-        return $out;
+        try {
+            $key = self::redisKey($categoryId);
+            $out = [];
+            foreach ($videoIds as $vid) {
+                $vid = (int) $vid;
+                if ($vid < 1) {
+                    continue;
+                }
+                $raw = Redis::hget($key, (string) $vid);
+                $out[$vid] = $raw !== null && $raw !== false ? (float) $raw : $initial;
+            }
+
+            return $out;
+        } catch (Throwable) {
+            $out = [];
+            foreach ($videoIds as $vid) {
+                $vid = (int) $vid;
+                if ($vid < 1) {
+                    continue;
+                }
+                $out[$vid] = $initial;
+            }
+
+            return $out;
+        }
     }
 
     public static function boostVideo(int $videoId, ?float $delta = null): void

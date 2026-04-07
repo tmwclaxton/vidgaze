@@ -1,5 +1,5 @@
 <template>
-
+    <SeoHead title="Connecting account" description="Completing studio account linking." noindex />
 </template>
 
 

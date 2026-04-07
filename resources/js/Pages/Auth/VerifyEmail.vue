@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import { useAuthStore } from '@/Stores/AuthStore';
 const authStore = useAuthStore();
 const props = defineProps({
@@ -26,7 +26,7 @@ export default {
 </script>
 <template>
     <GuestLayout>
-        <Head title="Email Verification" />
+        <SeoHead title="Email verification" description="Verify your email address to secure your VidGaze account." noindex />
 
         <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
             Thanks for signing up! Before getting started, could you verify your email address by clicking on the link

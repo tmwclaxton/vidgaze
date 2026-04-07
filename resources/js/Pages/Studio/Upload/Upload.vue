@@ -2,7 +2,7 @@
 <script setup>
 
 import {ref} from "vue";
-import {Head, router, useForm} from "@inertiajs/vue3";
+import {router, useForm} from "@inertiajs/vue3";
 import TitleComponent from "@/Components/General/TitleComponent.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import DropZone from "@/Pages/Studio/Upload/Partials/DropZone.vue";
@@ -57,7 +57,11 @@ const selectedFile = () =>{
 </script>
 <template>
 
-    <Head title="Upload Video" />
+    <SeoHead
+        title="Upload video"
+        description="Upload a video to multiple platforms from VidGaze Studio."
+        noindex
+    />
 
     <ConsistentPadding>
         <TitleComponent text="VidGaze MultiUploader" >

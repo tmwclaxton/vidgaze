@@ -1,5 +1,4 @@
 <script setup>
-import { Head } from '@inertiajs/vue3';
 import Title from "@/Components/General/TitleComponent.vue";
 
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
@@ -36,7 +35,11 @@ onMounted(() => {
 
 </script>
 <template>
-    <Head title="Studio Dashboard" />
+    <SeoHead
+        title="Studio dashboard"
+        description="Creator dashboard for comments, analytics, and channel overview on VidGaze Studio."
+        noindex
+    />
 
     <ConsistentPadding class="-mt-4">
         <Title :text="'Channel Dashboard'" class="my-4 mb-8">

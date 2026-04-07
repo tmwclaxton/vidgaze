@@ -178,7 +178,12 @@ onUnmounted(() => {
 </script>
 
 <template>
-        <Head v-if="item !== null"  :title="item.title"  />
+        <SeoHead
+            :title="item?.title || 'Watch'"
+            :description="item?.description || ''"
+            :image="item?.thumbnail_url || null"
+            :og-type="item ? 'video.other' : 'website'"
+        />
 
         <AwardsDropdown v-if="authStore.showAwardDropdown" :type="item.type" :object_id="item.id" />
         <div class="grid grid-cols-12  gap-4 grid-flow-row-dense h-full" :class="[theatre ? '' : 'm-4 md:mx-24']">

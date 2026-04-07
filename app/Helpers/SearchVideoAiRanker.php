@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Http\Controllers\Tools\NanoController;
+use App\Jobs\RankSearchVideosJob;
 use App\Models\VideoModels\Video;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
@@ -40,7 +41,8 @@ class SearchVideoAiRanker
 
         $apiKey = (string) config('services.nanogpt.key', '');
         $enabled = (bool) config('services.nanogpt.search_ranking_enabled', true);
-        $model = (string) config('services.nanogpt.search_ranking_model', 'gemini-2.0-flash-lite');
+        $rankAsync = (bool) config('services.nanogpt.search_ranking_async', true);
+        $model = (string) config('services.nanogpt.search_ranking_model', 'gemini-2.5-flash-lite');
 
         if (! $enabled || $apiKey === '') {
             return [$videos, [
@@ -67,6 +69,20 @@ class SearchVideoAiRanker
             }
         }
 
+        $videoStubs = self::videoStubsFromModels($videos);
+
+        if ($rankAsync) {
+            RankSearchVideosJob::dispatch($searchQuery, $ids, $videoStubs, $model)
+                ->onQueue('search');
+
+            return [$videos, [
+                'pending' => true,
+                'reason' => 'ranking_queued',
+                'model' => $model,
+                'redis_key_suffix' => substr($cacheKey, strlen(self::REDIS_KEY_PREFIX)),
+            ]];
+        }
+
         $orderedIds = self::fetchRankOrderFromNano($searchQuery, $videos, $model);
         if ($orderedIds === null) {
             return [$videos, [
@@ -76,7 +92,58 @@ class SearchVideoAiRanker
         }
 
         $ordered = self::applyOrder($videos, $orderedIds);
+        $meta = self::persistRankOrder($cacheKey, $model, $orderedIds);
 
+        return [$ordered, $meta];
+    }
+
+    /**
+     * @param  list<array{id:int, title:string, preferred_source:string}>  $videoStubs
+     */
+    public static function computeAndCacheRankFromStubs(
+        string $searchQuery,
+        array $sortedVideoIds,
+        array $videoStubs,
+        string $model
+    ): void {
+        $cacheKey = self::redisKey($searchQuery, $sortedVideoIds);
+        $existing = Redis::get($cacheKey);
+        if (is_string($existing) && $existing !== '') {
+            return;
+        }
+
+        $orderedIds = self::fetchRankOrderFromStubs($searchQuery, $videoStubs, $model);
+        if ($orderedIds === null) {
+            return;
+        }
+
+        self::persistRankOrder($cacheKey, $model, $orderedIds);
+    }
+
+    /**
+     * @param  list<Video>  $videos
+     * @return list<array{id:int, title:string, preferred_source:string}>
+     */
+    public static function videoStubsFromModels(array $videos): array
+    {
+        $stubs = [];
+        foreach ($videos as $video) {
+            $stubs[] = [
+                'id' => (int) $video->id,
+                'title' => AiRankingResponseParser::squish((string) $video->title),
+                'preferred_source' => (string) $video->preferred_source,
+            ];
+        }
+
+        return $stubs;
+    }
+
+    /**
+     * @param  list<int>  $orderedIds
+     * @return array<string, mixed>
+     */
+    protected static function persistRankOrder(string $cacheKey, string $model, array $orderedIds): array
+    {
         $payload = json_encode([
             'model' => $model,
             'ranked_at' => now()->toIso8601String(),
@@ -86,22 +153,22 @@ class SearchVideoAiRanker
         if ($payload === false) {
             Log::warning('SearchVideoAiRanker: failed to encode rank payload');
 
-            return [$ordered, [
+            return [
                 'cached' => false,
                 'model' => $model,
                 'ranked_at' => now()->toIso8601String(),
                 'redis_persist_failed' => true,
-            ]];
+            ];
         }
 
         Redis::setex($cacheKey, Search::getRedisExpire(), $payload);
 
-        return [$ordered, [
+        return [
             'cached' => false,
             'model' => $model,
             'ranked_at' => now()->toIso8601String(),
             'redis_key_suffix' => substr($cacheKey, strlen(self::REDIS_KEY_PREFIX)),
-        ]];
+        ];
     }
 
     /**
@@ -139,15 +206,24 @@ class SearchVideoAiRanker
 
     /**
      * @param  list<Video>  $videos
-     * @return list<int>|null
      */
     protected static function fetchRankOrderFromNano(string $searchQuery, array $videos, string $model): ?array
     {
+        return self::fetchRankOrderFromStubs($searchQuery, self::videoStubsFromModels($videos), $model);
+    }
+
+    /**
+     * @param  list<array{id:int, title:string, preferred_source:string}>  $stubs
+     */
+    protected static function fetchRankOrderFromStubs(string $searchQuery, array $stubs, string $model): ?array
+    {
+        if ($stubs === []) {
+            return [];
+        }
+
         $lines = [];
-        foreach ($videos as $i => $video) {
-            $title = self::squish((string) $video->title);
-            $src = (string) $video->preferred_source;
-            $lines[] = sprintf('%d|%s|%s', (int) $video->id, $src, $title);
+        foreach ($stubs as $stub) {
+            $lines[] = sprintf('%d|%s|%s', (int) $stub['id'], $stub['preferred_source'], $stub['title']);
         }
 
         $catalog = implode("\n", $lines);
@@ -184,66 +260,12 @@ class SearchVideoAiRanker
             return null;
         }
 
-        $ids = self::parseIdArrayFromModelContent($content, collect($videos)->pluck('id')->map(fn ($id) => (int) $id)->all());
+        $allowedIds = array_map(fn ($s) => (int) $s['id'], $stubs);
+        $ids = AiRankingResponseParser::parseIdArrayFromModelContent($content, $allowedIds);
         if ($ids === null) {
             return null;
         }
 
         return $ids;
-    }
-
-    /**
-     * @param  list<int>  $allowedIds
-     * @return list<int>|null
-     */
-    protected static function parseIdArrayFromModelContent(string $content, array $allowedIds): ?array
-    {
-        $content = trim($content);
-        $content = preg_replace('/^```(?:json)?\s*/i', '', $content) ?? $content;
-        $content = preg_replace('/\s*```$/', '', $content) ?? $content;
-
-        $allowedSet = array_fill_keys($allowedIds, true);
-
-        $decoded = json_decode($content, true);
-        if (! is_array($decoded)) {
-            if (preg_match('/\[\s*[\d\s,]+\s*\]/', $content, $m)) {
-                $decoded = json_decode($m[0], true);
-            }
-        }
-
-        if (! is_array($decoded)) {
-            Log::warning('SearchVideoAiRanker: could not parse JSON array from model', ['snippet' => substr($content, 0, 200)]);
-
-            return null;
-        }
-
-        $out = [];
-        foreach ($decoded as $item) {
-            if (is_int($item) || is_string($item) && ctype_digit($item)) {
-                $id = (int) $item;
-                if (isset($allowedSet[$id]) && ! in_array($id, $out, true)) {
-                    $out[] = $id;
-                }
-            }
-        }
-
-        foreach ($allowedIds as $id) {
-            if (! in_array($id, $out, true)) {
-                $out[] = $id;
-            }
-        }
-
-        if (count($out) !== count($allowedIds)) {
-            return null;
-        }
-
-        return $out;
-    }
-
-    protected static function squish(string $s): string
-    {
-        $s = preg_replace('/\s+/', ' ', $s) ?? $s;
-
-        return trim(mb_substr($s, 0, 200));
     }
 }

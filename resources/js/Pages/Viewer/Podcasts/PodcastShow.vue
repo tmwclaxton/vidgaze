@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 
 const props = defineProps({
     podcast: { type: Object, required: true },
@@ -15,7 +15,11 @@ export default {
 
 <template>
     <div class="mx-auto max-w-4xl px-4 py-8">
-        <Head :title="podcast.title || 'Podcast'" />
+        <SeoHead
+            :title="podcast.title || 'Podcast'"
+            :description="podcast.description || ''"
+            :image="podcast.thumbnail_url || null"
+        />
 
         <Link :href="route('podcasts.index')" class="text-sm text-zinc-500 hover:text-vidgaze-blue dark:text-zinc-400">
             ← Podcasts

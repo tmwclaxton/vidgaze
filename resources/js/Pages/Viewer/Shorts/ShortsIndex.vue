@@ -1,5 +1,4 @@
 <script setup>
-import { Head } from '@inertiajs/vue3';
 import ShortsPlayer from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayer.vue";
 import ShortsPlayerSkeleton from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayerSkeleton.vue";
 import {nextTick, onBeforeMount, onBeforeUnmount, onMounted, onUnmounted, ref, watch} from "vue";
@@ -179,7 +178,10 @@ onUnmounted(() => {
 <!--rerender everytime page reloads-->
 <template >
     <div>
-        <Head title="VidGaze Shorts" />
+        <SeoHead
+            title="Shorts"
+            description="Watch short-form videos on VidGaze from creators across multiple platforms."
+        />
 
             <div id="customScrollDiv" class="max-h-[calc(100vh-4rem)] overflow-hidden duration-75  overflow-y-scroll  snap snap-y snap-mandatory ease-in-out">
                     <template v-if="shorts.length > 0">

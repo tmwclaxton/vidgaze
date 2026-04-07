@@ -111,7 +111,7 @@ onMounted(() => {
 <template>
 
     <PaddingLayout>
-        <!--    <Head title="Landing" />-->
+        <SeoHead title="Admin" description="VidGaze administration tools." noindex />
         <div class="h1 text dark:textDark select-all">
 
 

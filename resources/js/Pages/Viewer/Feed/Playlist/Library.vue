@@ -11,7 +11,10 @@ import PlaylistsBar from "@/Pages/Viewer/Feed/Playlist/Partials/PlaylistsBar.vue
 </script>
 
 <template>
-    <Head title="Library" />
+    <SeoHead
+        title="Library"
+        description="Your saved playlists and library on VidGaze."
+    />
     <ConsistentPadding class="px-12">
         <PlaylistBar :href="route('feed.history')" text="History" slug="history" key="history" />
         <PlaylistBar :href="route('feed.watch-later')" text="Watch Later" slug="watch_later" key="watch_later" />

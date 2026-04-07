@@ -11,7 +11,10 @@ const props = defineProps({
 });
 </script>
 <template>
-    <Head :title="'Marketplace'"/>
+    <SeoHead
+        title="Marketplace"
+        description="VidCoins and awards on VidGaze—support creators with virtual goods and explore marketplace features."
+    />
 
 
     <div class="fixed top-0 left-0 h-screen w-screen z-0">

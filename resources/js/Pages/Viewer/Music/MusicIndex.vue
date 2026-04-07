@@ -1,5 +1,4 @@
 <script setup>
-import { Head } from '@inertiajs/vue3';
 </script>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -8,7 +7,10 @@ export default {
 };
 </script>
 <template>
-    <Head title="VidGaze Music" />
+    <SeoHead
+        title="Music"
+        description="Explore music content and performances on VidGaze from artists and channels you follow."
+    />
 
     <div class="mx-auto flex min-h-[calc(100vh-6rem)] max-w-lg flex-col justify-center px-6 py-16 sm:px-8">
         <div

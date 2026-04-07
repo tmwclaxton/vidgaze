@@ -41,9 +41,10 @@ watch(category, (value) => {
 
 
 <template>
-    <Head>
-        <title>Channels</title>
-    </Head>
+    <SeoHead
+        title="Subscription channels"
+        description="Manage and browse the channels you follow on VidGaze."
+    />
     <ConsistentPadding class="px-6">
         <div class="mx-0 md:mx-6 lg:mx-16 xl:mx-32 flex flex-col gap-y-5 ">
             <SelectInput class=" ml-auto w-40"

@@ -1,6 +1,5 @@
 
 <script setup>
-import { Head } from '@inertiajs/vue3';
 import PaddingLayout from "@/Layouts/Partials/ConsistentPadding.vue";
 import {onMounted, onUnmounted, ref} from "vue";
 import TopStreamsRow from "@/Components/ContentRows/TopStreamsRow.vue";
@@ -55,7 +54,10 @@ onUnmounted(() => {
 <template>
 
     <div>
-        <Head title="Popular Streams"/>
+        <SeoHead
+            title="Popular streams"
+            description="Watch popular live streams on VidGaze from creators across multiple platforms."
+        />
 
         <PaddingLayout class="-mt-1">
 

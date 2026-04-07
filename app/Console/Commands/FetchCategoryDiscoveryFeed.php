@@ -33,7 +33,7 @@ class FetchCategoryDiscoveryFeed extends Command
         }
 
         $maxVideos = (int) config('vidgaze.category_discovery.max_videos_per_category', 24);
-        $model = (string) config('services.nanogpt.search_ranking_model', 'gemini-2.0-flash-lite');
+        $model = (string) config('services.nanogpt.search_ranking_model', 'gemini-2.5-flash-lite');
 
         $manifest = VidgazeCategoryFeedCache::getManifest();
         $bySlug = [];

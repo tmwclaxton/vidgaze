@@ -158,7 +158,10 @@ onUnmounted(() => {
 
 <template>
     <div>
-        <Head title="Categories" />
+        <SeoHead
+            title="Categories"
+            description="Browse content categories on VidGaze to find videos and live streams that match your interests."
+        />
 
         <ConsistentPadding class="md:-mt-1">
             <header class="mb-8 md:mb-10">

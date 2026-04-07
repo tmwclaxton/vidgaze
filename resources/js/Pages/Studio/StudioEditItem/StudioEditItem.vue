@@ -1,7 +1,7 @@
 <script setup>
 
 import {computed, onBeforeMount, onMounted, ref, watch} from "vue";
-import {Head, router, useForm} from "@inertiajs/vue3";
+import {router, useForm} from "@inertiajs/vue3";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import StudioTextInput from "@/Pages/Studio/Partials/StudioTextInput.vue";
@@ -27,14 +27,16 @@ let props = defineProps({
 });
 
 const headTitle = computed(() => {
-    // depends on props.type
     if (props.type === 'video_draft') {
         return 'Upload Video';
-    } else if (props.type === 'video') {
+    }
+    if (props.type === 'video') {
         return 'Edit Video';
-    } else if (props.type === 'stream') {
+    }
+    if (props.type === 'stream') {
         return 'Edit Stream';
     }
+    return 'Studio';
 });
 const type = computed(() => {
     if (props.type === 'video_draft') {
@@ -166,7 +168,11 @@ const handleDelete = () => {
 
 <template>
 
-    <Head :title="headTitle" />
+    <SeoHead
+        :title="headTitle"
+        description="Manage your video or stream details in VidGaze Studio."
+        noindex
+    />
 
 
     <div  v-if="useAuthStore().user != null && item != null" >

@@ -8,7 +8,7 @@ import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
 import TextInput from '@/Components/Inputs/TextInput.vue';
 import Checkbox from "@/Components/Inputs/Checkbox.vue";
 import HorizontalLineText from "@/Components/General/HorizontalLineText.vue";
-import {Head, Link, router, useForm} from '@inertiajs/vue3';
+import {Link, router, useForm} from '@inertiajs/vue3';
 import GoogleButton from "@/Components/Buttons/GoogleButton.vue";
 import AppleButton from "@/Components/Buttons/AppleButton.vue";
 
@@ -61,7 +61,7 @@ const submit = async () => {
 
 <template>
     <GuestLayout>
-        <Head title="Register" />
+        <SeoHead title="Register" description="Create a VidGaze account to follow creators and personalize your feed." noindex />
 
         <!--<p class="font-bold text-xl text dark:textDark mb-6">Create your VidGaze Account</p>-->
 

@@ -63,7 +63,12 @@ return [
     'nanogpt' => [
         'key' => env('NANOGPT_API_KEY'),
         'search_ranking_enabled' => env('SEARCH_AI_RANKING_ENABLED', true),
-        'search_ranking_model' => env('SEARCH_AI_RANKING_MODEL', 'gemini-2.0-flash-lite'),
+        'search_ranking_async' => env('SEARCH_AI_RANKING_ASYNC', true),
+        'search_ranking_model' => env('SEARCH_AI_RANKING_MODEL', 'gemini-2.5-flash-lite'),
+        'recommended_ranking_enabled' => env('RECOMMENDED_AI_RANKING_ENABLED', true),
+        'recommended_ranking_model' => env('RECOMMENDED_AI_RANKING_MODEL', env('SEARCH_AI_RANKING_MODEL', 'gemini-2.5-flash-lite')),
+        'watch_next_ranking_enabled' => env('WATCH_NEXT_AI_RANKING_ENABLED', true),
+        'watch_next_ranking_model' => env('WATCH_NEXT_AI_RANKING_MODEL', env('SEARCH_AI_RANKING_MODEL', 'gemini-2.5-flash-lite')),
     ],
 
 ];

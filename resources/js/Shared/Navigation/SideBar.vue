@@ -95,6 +95,9 @@ const toggleShorts = () => {
     keyRefresh.value = Math.random();
 };
 
+const labelGradient = (from, to) =>
+    `font-medium bg-gradient-to-r ${from} ${to} bg-clip-text text-transparent transition-all duration-200 group-hover:brightness-110`;
+
 
 // const isScreenLess = computed(() => {
 //     return (window.innerWidth < 1200 && useAuthStore().user != null && !props.showingNavigationDropdown);
@@ -180,22 +183,26 @@ const toggleShorts = () => {
 
                     <p
                         v-if="navStore.getNavigationDropdown()"
-                        class="mb-1.5 px-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500 sm:px-0.5"
+                        class="mb-1.5 bg-gradient-to-r from-cyan-400/90 to-fuchsia-400/90 bg-clip-text px-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-transparent sm:px-0.5"
                     >
                         Appearance
                     </p>
                     <!--                dark/light mode-->
-                    <div class="cursor-pointer space-y-1 text-white" @click="toggleDark()">
+                    <div class="group/appearance cursor-pointer space-y-1" @click="toggleDark()">
                         <span v-if="!isDark">
                             <ResponsiveNavLink :span="true">
-                                    <SunIcon class="w-5 h-5 flex-shrink-0"/>
-                                    <span>Light</span>
+                                <SunIcon
+                                    class="h-5 w-5 shrink-0 fill-current text-amber-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(251,191,36,0.55)] group-hover/appearance:scale-110 group-hover/appearance:drop-shadow-[0_0_14px_rgba(251,191,36,0.85)]"
+                                />
+                                <span :class="labelGradient('from-amber-300', 'to-yellow-400')">Light</span>
                             </ResponsiveNavLink>
                         </span>
                         <span v-else>
                             <ResponsiveNavLink :span="true">
-                                    <MoonIcon class="w-5 h-5 flex-shrink-0"/>
-                                    <span class="">Dark</span>
+                                <MoonIcon
+                                    class="h-5 w-5 shrink-0 fill-current text-indigo-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(129,140,248,0.55)] group-hover/appearance:scale-110 group-hover/appearance:drop-shadow-[0_0_14px_rgba(167,139,250,0.85)]"
+                                />
+                                <span :class="labelGradient('from-indigo-300', 'to-violet-400')">Dark</span>
                             </ResponsiveNavLink>
                         </span>
                     </div>
@@ -204,16 +211,19 @@ const toggleShorts = () => {
                         <font-awesome-icon
                             v-if="useAuthStore().areShortsEnabled()"
                             :icon="['fas', 'toggle-on']"
-                            class="h-5 w-5 shrink-0 leading-none"
+                            class="h-5 w-5 shrink-0 leading-none text-emerald-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(52,211,153,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(52,211,153,0.85)]"
                         />
                         <font-awesome-icon
                             v-if="!useAuthStore().areShortsEnabled()"
                             :icon="['fas', 'toggle-off']"
-                            class="h-5 w-5 shrink-0 leading-none"
+                            class="h-5 w-5 shrink-0 leading-none text-orange-400/90 transition-all duration-200 drop-shadow-[0_0_8px_rgba(251,146,60,0.45)] group-hover:scale-110 group-hover:text-orange-300 group-hover:drop-shadow-[0_0_12px_rgba(251,146,60,0.65)]"
                         />
                         <span
                             class="min-w-0"
-                            :class="navStore.getNavigationDropdown() ? 'whitespace-nowrap' : 'max-w-full text-center leading-snug'"
+                            :class="[
+                                navStore.getNavigationDropdown() ? 'whitespace-nowrap' : 'max-w-full text-center leading-snug',
+                                labelGradient('from-amber-300', 'to-orange-500'),
+                            ]"
                         >Toggle Shorts</span>
                     </ResponsiveNavLink>
                 </div>

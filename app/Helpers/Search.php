@@ -17,27 +17,20 @@ class Search
 
     public static function searchJobs(SearchQueryDTO $searchQuery)
     {
-        // check the Redis cache for each platform in query
-        $cache_results = [];
+        $cache_results = self::fetchDecodedCacheByPlatform($searchQuery);
         $platforms_to_search = [];
         foreach ($searchQuery->getPlatforms() as $platform) {
-            $result = Redis::get(self::getRedisSearchKey($platform, $searchQuery));
-            if ($result) {
-                $cache_results[$platform->value] = json_decode($result);
-            } else {
+            if (! isset($cache_results[$platform->value])) {
                 $platforms_to_search[] = $platform;
             }
         }
 
-        // if all platforms are in the cache, return the results
         if (count($platforms_to_search) != 0) {
-            // add a job for each platform that is not in the cache
             $search_jobs = [];
             foreach ($platforms_to_search as $platform) {
                 $search_jobs[] = new SearchPlatform($searchQuery, $platform);
             }
 
-            // dispatch batch
             try {
                 Bus::batch($search_jobs)->onQueue('search')->onConnection('redis')->dispatch();
             } catch (\Throwable $th) {
@@ -56,12 +49,17 @@ class Search
             return true;
         }
 
+        $keys = [];
+        foreach ($platforms as $platform) {
+            $keys[] = self::getRedisSearchKey($platform, $searchQuery);
+        }
+
         $deadline = microtime(true) + $timeoutSeconds;
         while (microtime(true) < $deadline) {
+            $values = Redis::connection()->mget($keys);
             $allPresent = true;
-            foreach ($platforms as $platform) {
-                $val = Redis::get(self::getRedisSearchKey($platform, $searchQuery));
-                if ($val === null || $val === '') {
+            foreach ($values as $val) {
+                if (! is_string($val) || $val === '') {
                     $allPresent = false;
                     break;
                 }
@@ -77,13 +75,7 @@ class Search
 
     public static function searchResults(SearchQueryDTO $searchQuery, bool $saveAndReturnModels = true): array
     {
-        $cache_results = [];
-        foreach ($searchQuery->getPlatforms() as $platform) {
-            $result = Redis::get(self::getRedisSearchKey($platform, $searchQuery));
-            if ($result) {
-                $cache_results[$platform->value] = json_decode($result);
-            }
-        }
+        $cache_results = self::fetchDecodedCacheByPlatform($searchQuery);
 
         $results = [];
         foreach ($cache_results as $result) {
@@ -130,16 +122,37 @@ class Search
         return 86400;
     }
 
-    private static function getRedisCacheResults(SearchQueryDTO $searchQuery, array $platforms): array
+    /**
+     * @return array<string, mixed> Platform enum value => decoded JSON (per platform), only cache hits
+     */
+    private static function fetchDecodedCacheByPlatform(SearchQueryDTO $searchQuery): array
     {
-        $results = [];
+        $platforms = $searchQuery->getPlatforms();
+        if ($platforms === []) {
+            return [];
+        }
+
+        $keys = [];
+        $platformValues = [];
         foreach ($platforms as $platform) {
-            $result = Redis::get(self::getRedisSearchKey($platform, $searchQuery));
-            if ($result) {
-                $results[$platform->value] = json_decode($result);
+            $keys[] = self::getRedisSearchKey($platform, $searchQuery);
+            $platformValues[] = $platform->value;
+        }
+
+        $values = Redis::connection()->mget($keys);
+
+        $out = [];
+        foreach ($platformValues as $i => $platformValue) {
+            $val = $values[$i] ?? null;
+            if (! is_string($val) || $val === '') {
+                continue;
+            }
+            $decoded = json_decode($val);
+            if ($decoded !== null) {
+                $out[$platformValue] = $decoded;
             }
         }
 
-        return $results;
+        return $out;
     }
 }

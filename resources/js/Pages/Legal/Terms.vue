@@ -1,6 +1,9 @@
 <template>
 
-    <Head title="Terms" />
+    <SeoHead
+        title="Terms of service"
+        description="Read the VidGaze terms of service for using our video and streaming platform."
+    />
 
     <ConsistentPadding>
         <Terms class="prose prose-sky dark:prose-invert mx-auto "/>

@@ -34,7 +34,12 @@ onMounted(async () => {
 const loadMore = async () => {
     if (mode.value === "category" || props.creator === null) {
         const videoIds = suggestions.value.map(video => video.id).join(',');
-        const extraItems = await useContentRoutesStore().getCategoryVideos(props.video.category.slug, 10, videoIds);
+        const extraItems = await useContentRoutesStore().getCategoryVideos(
+            props.video.category.slug,
+            10,
+            videoIds,
+            props.video.id
+        );
         suggestions.value = suggestions.value.concat(extraItems);
     } else if (mode.value === "channel") {
         console.log(props.creator);

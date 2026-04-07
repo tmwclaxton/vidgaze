@@ -19,7 +19,10 @@ export default {
 
 <template>
 
-    <Head title="Policy" />
+    <SeoHead
+        title="Privacy policy"
+        description="How VidGaze collects, uses, and protects your data—our privacy policy."
+    />
 
     <ConsistentPadding>
         <Policy class="prose prose-sky dark:prose-invert mx-auto "/>

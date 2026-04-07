@@ -1,6 +1,9 @@
 <template>
     <div>
-        <Head title="Support" />
+        <SeoHead
+            title="Support"
+            description="Get help with VidGaze—contact options, FAQs, and product support."
+        />
 
         <!--<section class=" h-[calc(100vh-4rem)] flex  ">-->
         <!--    <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-md my-auto">-->

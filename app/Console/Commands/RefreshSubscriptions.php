@@ -2,6 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\RefreshCreatorChannelContent;
+use App\Models\CreatorModels\CreatorInteraction;
+use App\Models\VideoModels\VideoView;
 use Illuminate\Console\Command;
 
 class RefreshSubscriptions extends Command
@@ -18,16 +21,36 @@ class RefreshSubscriptions extends Command
      *
      * @var string
      */
-    protected $description = 'Iterate a queue of creators who need their videos and streams refreshed
-     because they are on someone\'s subscription list who has been online recently ';
+    protected $description = 'Queue platform content refreshes for channels subscribed by viewers who were active recently';
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
+        $viewerIds = VideoView::query()
+            ->where('created_at', '>=', now()->subDay())
+            ->whereNotNull('viewer_id')
+            ->distinct()
+            ->pluck('viewer_id');
+
+        if ($viewerIds->isEmpty()) {
+            return Command::SUCCESS;
+        }
+
+        $creatorIds = CreatorInteraction::query()
+            ->whereIn('viewer_id', $viewerIds)
+            ->where('subscribed', true)
+            ->distinct()
+            ->pluck('creator_id')
+            ->unique()
+            ->take(40)
+            ->values();
+
+        foreach ($creatorIds as $creatorId) {
+            RefreshCreatorChannelContent::dispatch((int) $creatorId)->onQueue('commands');
+        }
+
         return Command::SUCCESS;
     }
 }

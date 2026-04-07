@@ -25,9 +25,10 @@ onMounted(() => {
 
 </script>
 <template>
-    <Head>
-        <title>Subscriptions</title>
-    </Head>
+    <SeoHead
+        title="Subscriptions"
+        description="Latest videos and live streams from channels you subscribe to on VidGaze."
+    />
 
     <ConsistentPadding>
         <div class="flex flex-row w-full  justify-center">

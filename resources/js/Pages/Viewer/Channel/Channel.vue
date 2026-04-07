@@ -89,9 +89,11 @@ const fetchVideos = async () => {
 
 
 <template>
-    <Head>
-        <title></title>
-    </Head>
+    <SeoHead
+        :title="channel?.name || 'Channel'"
+        :description="channel?.bio || ''"
+        :image="channel?.avatar_url || null"
+    />
 
         <div v-if="channel" class="flex flex-col flex-grow ">
             <div class="relative flex flex-row  bg-zinc-50  max-h-64 overflow-hidden">

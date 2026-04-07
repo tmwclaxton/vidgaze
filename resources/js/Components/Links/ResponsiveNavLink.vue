@@ -26,10 +26,10 @@ const classes = computed(() => {
     let classString = '';
     if (props.active) {
         classString =
-            'border-transparent bg-white/[0.1] text-white shadow-sm ring-1 ring-white/[0.08] dark:bg-white/[0.08] dark:ring-white/[0.06] ';
+            'group border-transparent bg-white/[0.1] text-white shadow-sm ring-1 ring-white/[0.08] dark:bg-white/[0.08] dark:ring-white/[0.06] ';
     } else {
         classString =
-            'border-transparent text-zinc-400 hover:border-transparent hover:bg-white/[0.06] hover:text-white dark:hover:bg-white/[0.06] ';
+            'group border-transparent text-zinc-400 hover:border-transparent hover:bg-white/[0.06] dark:hover:bg-white/[0.06] ';
     }
     if (navStore.getNavigationDropdown()) {
         classString +=

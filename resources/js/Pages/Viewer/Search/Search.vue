@@ -1,7 +1,6 @@
 <script setup>
 import axios from "axios";
-import { onMounted, ref } from "vue";
-import { Head } from "@inertiajs/vue3";
+import { onMounted, onUnmounted, ref } from "vue";
 import CreatorSearchCard from "@/Components/Cards/CreatorSearchCard/CreatorSearchCard.vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 import CreatorSearchSkeleton from "@/Components/Cards/CreatorSearchCard/CreatorSearchSkeleton.vue";
@@ -33,69 +32,182 @@ const playlists = ref([]);
 const podcasts = ref([]);
 const streams = ref([]);
 
-function startSearch(searchQuery) {
-    const url = route("api.search.start_query", { q: searchQuery.value });
+const finished = ref(false);
+
+/** @param {Record<string, unknown>} data */
+function resultFingerprint(data) {
+    const d = (x) => (Array.isArray(x) ? x.length : 0);
+    const vr = data.video_ranking && typeof data.video_ranking === "object" ? data.video_ranking : {};
+    const rankState = vr.pending ? "p" : vr.cached ? "c" : vr.skipped ? "s" : "n";
+    const videoIds = (data.videos?.data ?? [])
+        .map((v) => v.id)
+        .join(",");
+    return [
+        d(data.creators?.data),
+        d(data.videos?.data),
+        d(data.playlists?.data),
+        d(data.podcasts?.data),
+        d(data.streams?.data),
+        rankState,
+        videoIds,
+    ].join("|");
+}
+
+function applyResultsPayload(data) {
+    if (data.creators !== undefined) {
+        creators.value = data.creators.data;
+    } else {
+        visibleCreatorsCount.value = 0;
+    }
+    if (data.videos !== undefined) {
+        videos.value = data.videos.data;
+    }
+    if (data.playlists !== undefined) {
+        playlists.value = data.playlists.data;
+    }
+    if (data.podcasts !== undefined) {
+        podcasts.value = data.podcasts.data;
+    }
+    if (data.streams !== undefined) {
+        streams.value = data.streams.data;
+    }
+
+    if (
+        creators.value.length > 0 ||
+        videos.value.length > 0 ||
+        playlists.value.length > 0 ||
+        podcasts.value.length > 0 ||
+        streams.value.length > 0
+    ) {
+        loading.value = false;
+    }
+}
+
+function startSearch(q) {
+    const url = route("api.search.start_query", { q: q.value });
     axios.post(url).catch(function (error) {
         console.log(error);
     });
 }
 
-function retrieveResults() {
-    const url = route("api.search.get_results", { q: searchQuery.value });
-    axios
-        .get(url)
+let resultsAbort = null;
+
+function retrieveResults(q) {
+    resultsAbort?.abort();
+    resultsAbort = new AbortController();
+    const url = route("api.search.get_results", { q: q.value });
+    return axios
+        .get(url, { signal: resultsAbort.signal })
         .then(function (response) {
-            if (response.data.creators !== undefined) {
-                creators.value = response.data.creators.data;
-            } else {
-                visibleCreatorsCount.value = 0;
+            return response.data;
+        })
+        .catch(function (error) {
+            if (axios.isCancel?.(error) || error?.code === "ERR_CANCELED") {
+                return null;
             }
-            if (response.data.videos !== undefined) {
-                videos.value = response.data.videos.data;
-            }
-            if (response.data.playlists !== undefined) {
-                playlists.value = response.data.playlists.data;
-            }
-            if (response.data.podcasts !== undefined) {
-                podcasts.value = response.data.podcasts.data;
-            }
-            if (response.data.streams !== undefined) {
-                streams.value = response.data.streams.data;
+            console.log(error);
+            return null;
+        });
+}
+
+let pollTimer = null;
+let cancelled = false;
+const POLL_FAST_MS = 850;
+const POLL_SLOW_MS = 2200;
+const POLL_PHASE_MS = 14000;
+const MAX_WAIT_MS = 30000;
+
+onMounted(() => {
+    startSearch(searchQuery);
+    const startedAt = Date.now();
+    let stableRounds = 0;
+    let lastFingerprint = "";
+
+    function scheduleNext() {
+        if (cancelled) {
+            return;
+        }
+        const elapsed = Date.now() - startedAt;
+        if (elapsed >= MAX_WAIT_MS) {
+            finished.value = true;
+            loading.value = false;
+            return;
+        }
+        const delay = elapsed < POLL_PHASE_MS ? POLL_FAST_MS : POLL_SLOW_MS;
+        pollTimer = setTimeout(runPoll, delay);
+    }
+
+    function runPoll() {
+        if (cancelled) {
+            return;
+        }
+        retrieveResults(searchQuery).then((data) => {
+            if (cancelled || data === null) {
+                if (!cancelled) {
+                    scheduleNext();
+                }
+                return;
             }
 
-            if (
+            applyResultsPayload(data);
+
+            const fp = resultFingerprint(data);
+            if (fp === lastFingerprint) {
+                stableRounds += 1;
+            } else {
+                stableRounds = 1;
+                lastFingerprint = fp;
+            }
+
+            const rankingPending =
+                data.video_ranking &&
+                typeof data.video_ranking === "object" &&
+                data.video_ranking.pending === true;
+
+            const hasAny =
                 creators.value.length > 0 ||
                 videos.value.length > 0 ||
                 playlists.value.length > 0 ||
                 podcasts.value.length > 0 ||
-                streams.value.length > 0
-            ) {
+                streams.value.length > 0;
+
+            if (hasAny && !rankingPending && stableRounds >= 2) {
+                finished.value = true;
                 loading.value = false;
+                return;
             }
-        })
-        .catch(function (error) {
-            console.log(error);
+
+            if (Date.now() - startedAt >= MAX_WAIT_MS) {
+                finished.value = true;
+                loading.value = false;
+                return;
+            }
+
+            scheduleNext();
         });
-}
+    }
 
-const finished = ref(false);
-onMounted(() => {
-    startSearch(searchQuery);
-    retrieveResults();
+    runPoll();
+});
 
-    const interval = setInterval(() => {
-        retrieveResults();
-    }, 4000);
-    setTimeout(() => {
-        clearInterval(interval);
-        finished.value = true;
-        loading.value = false;
-    }, 30000);
+onUnmounted(() => {
+    cancelled = true;
+    if (pollTimer) {
+        clearTimeout(pollTimer);
+    }
+    resultsAbort?.abort();
 });
 </script>
 
 <template>
-    <Head :title="searchQuery ? `Search: ${searchQuery}` : 'Search'" />
+    <SeoHead
+        :title="searchQuery ? `Search: ${searchQuery}` : 'Search'"
+        :description="
+            searchQuery
+                ? `Search results for “${searchQuery}” on VidGaze—videos, creators, streams, and more.`
+                : 'Search VidGaze for videos, creators, categories, and live streams.'
+        "
+    />
 
     <div class="mx-auto max-w-[1680px] px-4 py-6 sm:px-6 lg:px-10 pb-12">
         <div

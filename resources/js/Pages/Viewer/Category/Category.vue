@@ -3,11 +3,9 @@ import { onMounted, onUnmounted, ref } from "vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 import VideoStreamCard from "@/Components/Cards/VideoStreamCards/VideoStreamCard/VideoStreamCard.vue";
 import { useContentRoutesStore } from "@/Stores/ContentRoutesStore";
-import { usePinModalStore } from "@/Stores/PinModalStore";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import { debounce } from "lodash";
 import ErrorMessage from "@/Components/Errors/ErrorMessage.vue";
-import VideosRow from "@/Components/ContentRows/VideosRow.vue";
 
 const loaded = ref(false);
 const currentTab = ref("streams"); // Tracks whether "streams" or "videos" is active
@@ -38,15 +36,19 @@ const getStreams = async () => {
 
 const debouncedGetStreams = debounce(getStreams, 500);
 
-// Fetch videos during mount
+// Fetch videos during mount / infinite scroll
 const getVideos = async () => {
-    let videoIDs = videos.value.map((video) => video.id);
-    // convert videoIDs to string
-    videoIDs = videoIDs.join(",");
-    const videosResponse = await useContentRoutesStore().getCategoryVideos(category.value.slug, 36, videoIDs);
+    const existingIds = new Set(videos.value.map((video) => video.id));
+    const videoIdsParam = existingIds.size ? [...existingIds].join(",") : null;
+    const videosResponse = await useContentRoutesStore().getCategoryVideos(
+        category.value.slug,
+        36,
+        videoIdsParam
+    );
 
-    // concat videos to existing videos but make sure there are no duplicates
-    videos.value = videos.value.concat(videosResponse.filter((video) => !videoIDs.includes(video.id)));
+    videos.value = videos.value.concat(
+        videosResponse.filter((video) => !existingIds.has(video.id))
+    );
 
     if (videosResponse.length > 0) hasVideos.value = true;
 };
@@ -87,6 +89,11 @@ onUnmounted(() => {
 </script>
 
 <template>
+    <SeoHead
+        :title="category?.name || 'Category'"
+        :description="category?.description || ''"
+        :image="category?.thumbnail_url || null"
+    />
     <ConsistentPadding>
         <div v-if="category !== null" class="flex flex-col">
             <!-- Category Header -->
@@ -133,9 +140,9 @@ onUnmounted(() => {
             <!-- Videos Section -->
             <div v-if="loaded && currentTab === 'videos' && hasVideos">
                 <div class="px-5 pb-10">
-<!--                    <VideosRow :videos="videos" :title="`Videos from ${category.name}`" :showCategoryTag="false" />-->
-                    <VideoStreamCard v-for="video in videos" :key="video.id" :item="video" :category_page="true" />
-
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                        <VideoStreamCard v-for="video in videos" :key="video.id" :item="video" :category_page="true" />
+                    </div>
                 </div>
 
                 <div v-if="loaded && videos.length === 0">
@@ -146,10 +153,8 @@ onUnmounted(() => {
             <!-- Streams Section -->
             <div v-if="loaded && currentTab === 'streams' && hasStreams">
                 <div class="px-5 pb-10">
-                    <div class="px-5 pb-10">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-                            <VideoStreamCard v-for="video in videos" :key="video.id" :item="video" :category_page="true" />
-                        </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ld:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                        <VideoStreamCard v-for="stream in streams" :key="stream.id" :item="stream" :category_page="true" />
                     </div>
                 </div>
 

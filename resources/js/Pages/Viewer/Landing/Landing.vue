@@ -60,7 +60,10 @@ onUnmounted(() => {
 </style>
 
 <template >
-    <Head title="Landing" />
+    <SeoHead
+        title="Welcome"
+        description="VidGaze is a video streaming platform for creators and viewers—watch videos, streams, podcasts, and music from multiple sources in one place."
+    />
     <div class="-mt-16 "></div>
 
 
@@ -104,9 +107,6 @@ onUnmounted(() => {
             <div class="  m-auto  py-8">
                 <div class="  mx-auto px-4">
                     <h2 class="text-4xl font-bold mb-4 mx-auto text-center ">Kindly Supported By</h2>
-                    <div class="w-full mx-auto h-52 p-4 align-middle flex flex-row">
-                        <img class=" mx-auto" src="https://media.licdn.com/dms/image/C5616AQF_LI7LB3LmFg/profile-displaybackgroundimage-shrink_200_800/0/1649275790532?e=2147483647&v=beta&t=J4ZNWNzLfsEGFmFyiAdtA0tQ2Xyq1RqKZYHBBdr0kGc"/>
-                    </div>
                     <div class="flex flex-wrap flex-row items-center justify-center ">
                         <div class="   flex flex-row ">
                             <img class="h-52   object-contain" src="https://images.squarespace-cdn.com/content/v1/631a0fdf324dc751c8d24b33/b2ea62b4-5c04-409e-b01a-0727d468d6f6/CoFo_WithNavyBG_RGB.png?format=1500w"/>

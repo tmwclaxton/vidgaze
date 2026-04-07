@@ -4,7 +4,7 @@ import InputError from '@/Components/Inputs/InputError.vue';
 import InputLabel from '@/Components/Inputs/InputLabel.vue';
 import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
 import TextInput from '@/Components/Inputs/TextInput.vue';
-import {Head, router, useForm} from '@inertiajs/vue3';
+import {router, useForm} from '@inertiajs/vue3';
 import {reactive, ref} from "vue";
 import {useAuthStore} from "@/Stores/AuthStore";
 
@@ -47,7 +47,7 @@ const submit = () => {
 </script>
 <template>
     <GuestLayout>
-        <Head title="Reset Password" />
+        <SeoHead title="Reset password" description="Choose a new password for your VidGaze account." noindex />
 
         <form @submit.prevent="submit">
             <div>

@@ -56,7 +56,7 @@ class CategoriseCreators extends Command
                 $response = $nano->getChatCompletion([
                     ['role' => 'system', 'content' => 'You assign one editorial category per channel from the allowed list. JSON only, no markdown.'],
                     ['role' => 'user', 'content' => $prompt],
-                ], 'gemini-2.0-flash-lite', ['max_tokens' => 120], false);
+                ], (string) config('services.nanogpt.search_ranking_model', 'gemini-2.5-flash-lite'), ['max_tokens' => 120], false);
 
                 $content = trim($response['choices'][0]['message']['content'] ?? '');
                 $parsed = $this->parseJsonCategory($content);

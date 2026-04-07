@@ -55,11 +55,12 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
             return response.data.videos.data;
         },
 
-        async getCategoryVideos(category_slug, per_page = 20, video_ids = null) {
+        async getCategoryVideos(category_slug, per_page = 20, video_ids = null, anchor_video_id = null) {
             const response = await axios.get(route('api.video.category-videos', {
                 slug: category_slug,
                 per_page: per_page,
-                video_ids: video_ids
+                video_ids: video_ids,
+                ...(anchor_video_id != null ? { anchor_video_id } : {}),
             }))
             .catch((error) => {
                 console.log(error);

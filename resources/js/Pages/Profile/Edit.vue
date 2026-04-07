@@ -2,14 +2,17 @@
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import { Head } from '@inertiajs/vue3';
 import {useAuthStore} from "@/Stores/AuthStore";
 import {ref} from "vue";
 const authStore = useAuthStore();
 const status = ref("Success");
 </script>
 <template>
-    <Head title="Profile" />
+    <SeoHead
+        title="Profile settings"
+        description="Manage your VidGaze account, password, and profile information."
+        noindex
+    />
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
