@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\ApiControllers;
 
+use App\Helpers\PlatformAPIs\Podcasts;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PodcastCollection;
 use App\Http\Resources\PodcastEpisodeResource;
 use App\Http\Resources\PodcastResource;
 use App\Models\PodcastEpisodeModels\PodcastEpisode;
 use App\Models\PodcastModels\Podcast;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PodcastApiController extends Controller
@@ -55,6 +57,19 @@ class PodcastApiController extends Controller
             ->where('slug', $episodeSlug)
             ->with('podcast')
             ->firstOrFail();
+
+        return PodcastEpisodeResource::make($episode);
+    }
+
+    public function latestEpisode(string $slug): PodcastEpisodeResource|JsonResponse
+    {
+        $podcast = Podcast::query()->where('slug', $slug)->where('visibility', 'public')->with('creator')->firstOrFail();
+        Podcasts::syncEpisodesFromRss($podcast);
+        $episode = $podcast->episodes()->orderByDesc('time_published')->first();
+        if ($episode === null) {
+            return response()->json(['message' => 'No episodes for this podcast.'], 404);
+        }
+        $episode->load('podcast');
 
         return PodcastEpisodeResource::make($episode);
     }

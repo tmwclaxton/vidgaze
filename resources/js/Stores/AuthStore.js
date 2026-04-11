@@ -56,72 +56,69 @@ export const useAuthStore = defineStore('AuthStore', {
 
         async getUser(toast = false) {
             const toastStore = useToastStore();
-            if (localStorage.getItem('token')) {
-                // we need to set the token in the axios header as this might be a page refresh
-                axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
-
-                axios.get(route('api.user')).then(response => {
-
-                    axios.get(route('auth.flag', {flag: true})).then(response => {} ).catch(error => {} );
-
-                    this.user = response.data.user
-                    this.admin = response.data.admin
-                    this.subscription_ids = response.data.subscription_ids
-                    this.sources = response.data.sources
-                    this.connectable_platforms = response.data.connectable_platforms || []
-                    this.embed_players = response.data.embed_players || []
-                    if (toast) {
-                        toastStore.add({
-                            message: 'Login successful.',
-                            type: 'success',
-                        });
-                    }
-                }).catch(error => {
-                    this.clearBrowserStorage();
+            if (!localStorage.getItem('token')) {
+                return;
+            }
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+            try {
+                const response = await axios.get(route('api.user'));
+                axios.get(route('auth.flag', {flag: true})).then(() => {}).catch(() => {});
+                this.user = response.data.user;
+                this.admin = response.data.admin;
+                this.subscription_ids = response.data.subscription_ids;
+                this.sources = response.data.sources;
+                this.connectable_platforms = response.data.connectable_platforms || [];
+                this.embed_players = response.data.embed_players || [];
+                if (toast) {
                     toastStore.add({
-                        message: 'Sorry we couldn\'t log you in!  Please login again.',
-                        type: 'warning',
+                        message: 'Login successful.',
+                        type: 'success',
                     });
+                }
+            } catch (error) {
+                this.clearBrowserStorage();
+                toastStore.add({
+                    message: 'Sorry we couldn\'t log you in!  Please login again.',
+                    type: 'warning',
                 });
-            } else {
+                throw error;
             }
         },
 
         async login(form) {
-            const toastStore = useToastStore();
             const thisRef = this;
-            return axios.post(route('api.login'), {
-                email: form.email,
-                password: form.password,
-                remember: form.remember,
-            })
-                .then(function (response) {
-                    localStorage.setItem('token', response.data.access_token);
-                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
-                    thisRef.getUser(true);
-                }).catch(error => {
-                    thisRef.handleErrors(error);
-                })
+            try {
+                const response = await axios.post(route('api.login'), {
+                    email: form.email,
+                    password: form.password,
+                    remember: form.remember,
+                });
+                localStorage.setItem('token', response.data.access_token);
+                axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+                await thisRef.getUser(true);
+            } catch (error) {
+                thisRef.handleErrors(error);
+                throw error;
+            }
         },
 
         async register(form) {
-            const toastStore = useToastStore();
             const thisRef = this;
-            return axios.post(route('api.register'), {
-                username: form.username,
-                email: form.email,
-                password: form.password,
-                password_confirmation: form.password_confirmation,
-                terms: form.terms,
-            })
-                .then(function (response) {
-                    localStorage.setItem('token', response.data.access_token);
-                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
-                    thisRef.getUser(true);
-                }).catch(error => {
-                    // console.log(error);
-                    thisRef.handleErrors(error);
-                })
+            try {
+                const response = await axios.post(route('api.register'), {
+                    username: form.username,
+                    email: form.email,
+                    password: form.password,
+                    password_confirmation: form.password_confirmation,
+                    terms: form.terms,
+                });
+                localStorage.setItem('token', response.data.access_token);
+                axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+                await thisRef.getUser(true);
+            } catch (error) {
+                thisRef.handleErrors(error);
+                throw error;
+            }
         },
 
         logout() {
@@ -140,19 +137,27 @@ export const useAuthStore = defineStore('AuthStore', {
             } );
         },
 
-        async forgotPassword(form) {
-            const thisRef = this;
-            return axios.post(route('api.password.email'), {
-                email: form.email,
-            }).then(response => {
-                useToastStore().add({
-                    message: response.data.message,
-                    type: 'success',
+        /**
+         * @param {{ email: string }} form
+         * @param {{ silent?: boolean }} [options] silent: skip success toast (e.g. auth modal shows inline message)
+         */
+        async forgotPassword(form, { silent = false } = {}) {
+            try {
+                const response = await axios.post(route('api.password.email'), {
+                    email: form.email,
                 });
-
-            }).catch(error => {
-                thisRef.handleErrors(error);
-            });
+                const message = response.data.message;
+                if (!silent) {
+                    useToastStore().add({
+                        message,
+                        type: 'success',
+                    });
+                }
+                return message;
+            } catch (error) {
+                this.handleErrors(error);
+                throw error;
+            }
         },
 
         async resetPassword(form) {
@@ -189,14 +194,16 @@ export const useAuthStore = defineStore('AuthStore', {
         },
 
         handleErrors(error) {
-            // console.log(error);
-            if (error.response !== undefined) {
-                const toastStore = useToastStore();
-                useToastStore().add({
-                    message: error.response.data.message,
-                    type: 'warning',
-                });
+            if (error.response === undefined) {
+                return;
             }
+            if (error.response.status === 422 && error.response.data?.errors) {
+                return;
+            }
+            useToastStore().add({
+                message: error.response.data.message,
+                type: 'warning',
+            });
         }
 
     },

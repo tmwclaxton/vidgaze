@@ -29,6 +29,34 @@ export default class Player {
         this.start_time = start_time;
         this.currentTime = this.start_time;
         this.short = short;
+        /** @type {ReturnType<typeof setTimeout> | null} */
+        this._shortApproxEndTimer = null;
+    }
+
+    /**
+     * Iframe embeds without a documented "ended" API (Odysee, BitChute): advance when duration elapses.
+     */
+    scheduleShortApproximateEnd() {
+        this.clearShortApproximateEndTimer();
+        if (!this.short) {
+            return;
+        }
+        const sec = Number(this.object?.duration);
+        if (!Number.isFinite(sec) || sec <= 0) {
+            return;
+        }
+        const ms = Math.min(Math.max((sec + 2) * 1000, 5000), 60 * 60 * 1000);
+        this._shortApproxEndTimer = setTimeout(() => {
+            this._shortApproxEndTimer = null;
+            this.endVideo();
+        }, ms);
+    }
+
+    clearShortApproximateEndTimer() {
+        if (this._shortApproxEndTimer != null) {
+            clearTimeout(this._shortApproxEndTimer);
+            this._shortApproxEndTimer = null;
+        }
     }
 
     createPlayer() {
@@ -38,6 +66,7 @@ export default class Player {
     }
 
     resetPlayerValues() {
+        this.clearShortApproximateEndTimer();
         // usePlayerStore().endVideo(this.external_id);
         this.built = false;
         this.playing = false;
@@ -72,9 +101,9 @@ export default class Player {
         useQueueStore().refreshMiniPlayer = Math.random().toString(36).substring(7);
         this.stopViewRecord();
 
-        // if a short
+        // Shorts feed: advance to next item (handled on Shorts page via PlayerStore callback).
         if (this.short) {
-            this.togglePlay();
+            usePlayerStore().notifyShortVideoEnded(this.external_id);
             return;
         }
 
@@ -171,51 +200,59 @@ export default class Player {
     }
 
     playLock = null;
-    safeTogglePlay() {
+    static SAFE_OP_MAX_RETRIES = 30;
+
+    safeTogglePlay(retries = 0) {
         this.playLock = "play";
         if (usePlayerStore().scriptsLoaded && this.built && this.ready) {
             this.togglePlay();
             this.playLock = null;
-        } else {
-            setTimeout(() => {
-                if (this.playLock !== "pause") {
-                    this.safeTogglePlay();
-                } else {
-                    console.log('playlock prevented bad state');
-                }
-            }, 1000);
+            return;
         }
+        if (retries >= Player.SAFE_OP_MAX_RETRIES) {
+            this.playLock = null;
+            return;
+        }
+        setTimeout(() => {
+            if (this.playLock !== "pause") {
+                this.safeTogglePlay(retries + 1);
+            }
+        }, 1000);
     }
 
-    safeTogglePause() {
+    safeTogglePause(retries = 0) {
         this.playLock = "pause";
         if (usePlayerStore().scriptsLoaded && this.built && this.ready) {
             this.togglePause();
             this.playLock = null;
-        } else {
-            setTimeout(() => {
-                if (this.playLock !== "play") {
-                    this.safeTogglePause();
-                } else {
-                    console.log('playlock prevented bad state');
-                }
-            }, 1000);
+            return;
         }
+        if (retries >= Player.SAFE_OP_MAX_RETRIES) {
+            this.playLock = null;
+            return;
+        }
+        setTimeout(() => {
+            if (this.playLock !== "play") {
+                this.safeTogglePause(retries + 1);
+            }
+        }, 1000);
     }
 
-    safeRemovePlayer() {
+    safeRemovePlayer(retries = 0) {
         if (this.player === null ) {
             return;
         }
-        // console.log('safe remove player' + this.external_id);
         if (usePlayerStore().scriptsLoaded && this.ready) {
             this.removePlayer();
-        } else {
-            setTimeout(() => {
-                // console.log('safe remove player recall ' + this.external_id);
-                this.safeRemovePlayer();
-            }, 1000);
+            return;
         }
+        if (retries >= Player.SAFE_OP_MAX_RETRIES) {
+            console.log('safeRemovePlayer: max retries', this.external_id);
+            return;
+        }
+        setTimeout(() => {
+            this.safeRemovePlayer(retries + 1);
+        }, 1000);
     }
 
 }

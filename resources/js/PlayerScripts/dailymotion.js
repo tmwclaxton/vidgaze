@@ -12,7 +12,8 @@ export default class DailymotionPlayer extends Player {
                     // startTime: this.start_time, // this doesn't work for some reason
                     autoplay: this.autoplay ? 1 : 0,
                     mute: false,
-                    loop: this.short,
+                    // Must not loop on shorts or VIDEO_END never fires (no auto-advance).
+                    loop: false,
                 }
             }).then((resolvedPlayer) => {
                 this.player = resolvedPlayer;

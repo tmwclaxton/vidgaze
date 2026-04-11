@@ -12,7 +12,7 @@ import { defineProps } from "vue";
 import {usePage} from "@inertiajs/vue3";
 import axios from "axios";
 import {useToastStore} from "@/Stores/ToastStore";
-import {useAuthStore} from "@/Stores/AuthStore";
+import { requireAuth } from '@/utils/authGate';
 const toastStore = useToastStore();
 
 const name = 'HeartPodcastButton';
@@ -37,38 +37,31 @@ const classes = computed(() => ({
 }));
 
 const toggleLike = () => {
-    // if not logged in, redirect to login page using ziggy
-    if (useAuthStore().user === null) {
-        window.location.href = route('login');
-        return;
-    }
+    requireAuth(() => {
+        const likeRoute = route('api.podcast.love.toggle', { podcastId: props.podcast.id });
 
-    const likeRoute = route('api.podcast.love.toggle', { podcastId: props.podcast.id });
+        axios.post(likeRoute)
+            .then(response => {
+                toastStore.add({
+                    message: response.data.message,
+                    type: response.data.type
+                });
 
-    // Send a POST request to the like route
-    axios.post(likeRoute)
-        .then(response => {
-            // Handle the successful response
-            toastStore.add({
-                message: response.data.message,
-                type: response.data.type
+                if (response.data.result === "like") {
+                    props.podcast.like_count++;
+                    liked.value = true;
+                } else {
+                    props.podcast.like_count--;
+                    liked.value = false;
+                }
+            })
+            .catch(error => {
+                toastStore.add({
+                    message: 'Error liking video',
+                    type: 'warning'
+                });
             });
-
-            if (response.data.result === "like") {
-                props.podcast.like_count++;
-                liked.value = true;
-            } else {
-                props.podcast.like_count--;
-                liked.value = false;
-            }
-        })
-        .catch(error => {
-            // Handle the error response
-            toastStore.add({
-                message: 'Error liking video',
-                type: 'warning'
-            });
-        });
+    });
 };
 
 

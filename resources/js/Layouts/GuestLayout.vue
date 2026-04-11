@@ -1,6 +1,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import TopNavBar from "@/Shared/Navigation/TopNavBar.vue";
+import AuthModal from '@/Components/Modals/AuthModal.vue';
 </script>
 
 <template>
@@ -28,5 +29,6 @@ import TopNavBar from "@/Shared/Navigation/TopNavBar.vue";
             </div>
         </div>
 
+        <AuthModal />
     </div>
 </template>

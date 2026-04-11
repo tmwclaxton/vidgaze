@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthFlagCookie
@@ -12,15 +11,21 @@ class AuthFlagCookie
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // check if header has auth_flag cookie set to true
-        if (request()->cookie('auth_flag') === null || request()->cookie('auth_flag') !== 'true') {
-            return redirect()->route('login');
+        if ($request->cookie('auth_flag') === 'true') {
+            return $next($request);
         }
 
-        return $next($request);
+        $request->session()->flash('show_auth_modal', true);
+        $request->session()->flash('auth_intended_url', $request->fullUrl());
+
+        if ($request->header('X-Inertia')) {
+            return redirect()->back(fallback: route('home'));
+        }
+
+        return redirect()->route('home');
     }
 }

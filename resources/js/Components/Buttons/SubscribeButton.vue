@@ -8,8 +8,8 @@
 <script setup>
 import {computed, onMounted, ref, watch} from "vue";
 import { useToastStore } from "@/Stores/ToastStore";
-import {router, usePage} from "@inertiajs/vue3";
 import {useAuthStore} from "@/Stores/AuthStore";
+import { requireAuth } from '@/utils/authGate';
 const toastStore = useToastStore();
 const name = 'SubscribeButton'
 const subscribed = ref(false);
@@ -22,13 +22,7 @@ const props = defineProps({
 });
 
 const subscribe = () => {
-    // if not logged in, redirect to login page using ziggy
-    if ( useAuthStore().user === null) {
-        router.visit(route('login'));
-        return;
-    }
-
-
+    requireAuth(() => {
     axios.post(route('api.creator.subscription.toggle', {channelId: props.channel.id}))
         .then(response => {
             // Handle successful subscription
@@ -53,7 +47,7 @@ const subscribe = () => {
                 type: 'warning'
             });
         });
-
+    });
     };
 
 onMounted(() => {

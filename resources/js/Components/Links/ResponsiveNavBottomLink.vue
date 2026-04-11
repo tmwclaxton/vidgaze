@@ -24,7 +24,7 @@ const classes = computed(() => {
             'w-full min-w-0 justify-center gap-2 px-2 py-2 text-center sm:flex-col sm:items-center sm:justify-center sm:gap-1.5 sm:text-[10px] ';
     }
     classString +=
-        'flex w-full items-center rounded-md font-medium transition-colors duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 ';
+        'group flex w-full items-center rounded-md font-medium transition-colors duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 ';
     return classString;
 });
 // if screen is mobile sized when the navigation is expanded and the user clicks a link, close the navigation

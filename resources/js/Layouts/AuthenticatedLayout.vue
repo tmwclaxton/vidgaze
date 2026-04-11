@@ -7,6 +7,7 @@ import {useNavStore} from "@/Stores/NavStore";
 import VideoStreamModal from "@/Components/Modals/ContentModal.vue";
 import PlaylistModal from "@/Components/Modals/PlaylistModal.vue";
 import VideoStreamMiniPlayer from "@/Components/Modals/MiniPlayers/VideoStreamMiniPlayer.vue";
+import PodcastMiniPlayer from "@/Components/Podcasts/PodcastMiniPlayer.vue";
 import ShareModel from "@/Components/Modals/ShareModel.vue";
 import ConfirmModal from "@/Components/Modals/ConfirmModal.vue";
 import {usePage} from "@inertiajs/vue3";
@@ -15,7 +16,11 @@ import {useAuthStore} from "@/Stores/AuthStore";
 import PlaylistPageModal from "@/Components/Modals/PlaylistPageModal.vue";
 import BottomNavBar from "@/Shared/Navigation/BottomNavBar.vue";
 import PinModal from "@/Components/Modals/PinModal.vue";
+import AuthModal from "@/Components/Modals/AuthModal.vue";
+import { useAuthModalStore } from "@/Stores/AuthModalStore";
+import { router } from "@inertiajs/vue3";
 const authStore = useAuthStore();
+const authModalStore = useAuthModalStore();
 const navStore = useNavStore();
 const inertiaPage = usePage();
 /** Forces a full page subtree remount on each visit so DOM from Watch (e.g. players) cannot patch against Home. */
@@ -38,6 +43,11 @@ onMounted(() => {
         });
     }
 
+    const am = inertiaPage.props.auth_modal;
+    if (am?.should_open) {
+        const url = am.intended_url;
+        authModalStore.open('login', url ? () => router.visit(url) : null);
+    }
 
 });
 
@@ -73,10 +83,12 @@ onMounted(() => {
                     <PinModal/>
                     <ShareModel/>
                     <ConfirmModal />
+                    <AuthModal />
                 </div>
 
                 <!--Modals that don't matter how they are -->
                 <VideoStreamMiniPlayer/>
+                <PodcastMiniPlayer/>
                 <VideoStreamModal/>
 
                 <!--<CookieConsent/>-->

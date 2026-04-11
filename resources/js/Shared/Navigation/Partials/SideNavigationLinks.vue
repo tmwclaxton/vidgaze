@@ -5,7 +5,7 @@ import ContentIcon from '~/images/icons/categories.svg';
 import UploadIcon from '~/images/icons/upload.svg';
 import UnionIcon from '~/images/icons/union.svg';
 import CustomiseIcon from '~/images/icons/wand.svg';
-import ResponsiveNavLink from '@/Components/Links/ResponsiveNavLink.vue';
+import SidebarNavLink from '@/Shared/Navigation/SidebarNavLink.vue';
 
 import HomeIcon from '~/images/icons/home.svg';
 import StreamIcon from '~/images/icons/livestreams.svg';
@@ -18,126 +18,111 @@ import { useAuthStore } from '@/Stores/AuthStore';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 const navStore = useNavStore();
-
-const name = 'ExpandableNavigationLinks';
-
-/** Gradient label (neon family, similar to auth CTAs). */
-const label = (from, to) =>
-    `font-medium bg-gradient-to-r ${from} ${to} bg-clip-text text-transparent transition-all duration-200 group-hover:brightness-110`;
 </script>
 
 <template>
     <div v-if="!navStore.showingStudioLinks" class="space-y-0.5">
         <div>
-            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
-                <HomeIcon
-                    class="h-5 w-5 shrink-0 fill-current text-sky-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(56,189,248,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(56,189,248,0.9)]"
-                />
-                <span :class="label('from-sky-300', 'to-cyan-400')">Home</span>
-            </ResponsiveNavLink>
+            <SidebarNavLink :href="route('home')" :active="route().current('home')" label="Home">
+                <template #icon="{ svgClass }">
+                    <HomeIcon :class="svgClass" />
+                </template>
+            </SidebarNavLink>
         </div>
         <div>
-            <ResponsiveNavLink :href="route('streams.index')" :active="route().current('streams.index')">
-                <StreamIcon
-                    class="h-5 w-5 shrink-0 fill-current text-rose-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(251,113,133,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(251,113,133,0.85)]"
-                />
-                <span :class="label('from-rose-300', 'to-orange-400')">Streams</span>
-            </ResponsiveNavLink>
+            <SidebarNavLink :href="route('streams.index')" :active="route().current('streams.index')" label="Streams">
+                <template #icon="{ svgClass }">
+                    <StreamIcon :class="svgClass" />
+                </template>
+            </SidebarNavLink>
         </div>
         <div>
-            <ResponsiveNavLink :href="route('category.index')" :active="route().current('category.index')">
-                <CategoriesIcon
-                    class="h-5 w-5 shrink-0 fill-current text-violet-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(167,139,250,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(192,132,252,0.85)]"
-                />
-                <span :class="label('from-violet-300', 'to-fuchsia-400')">Categories</span>
-            </ResponsiveNavLink>
+            <SidebarNavLink :href="route('category.index')" :active="route().current('category.index')" label="Categories">
+                <template #icon="{ svgClass }">
+                    <CategoriesIcon :class="svgClass" />
+                </template>
+            </SidebarNavLink>
         </div>
         <div>
-            <ResponsiveNavLink :href="route('podcasts.index')" :active="route().current('podcasts.index')">
-                <PodcastIcon
-                    class="h-5 w-5 shrink-0 fill-current text-pink-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(244,114,182,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(244,114,182,0.85)]"
-                />
-                <span :class="label('from-pink-300', 'to-purple-400')">Podcasts</span>
-            </ResponsiveNavLink>
+            <SidebarNavLink :href="route('podcasts.index')" :active="route().current('podcasts.index')" label="Podcasts">
+                <template #icon="{ svgClass }">
+                    <PodcastIcon :class="svgClass" />
+                </template>
+            </SidebarNavLink>
         </div>
         <div v-if="useAuthStore().areShortsEnabled()" class="">
-            <ResponsiveNavLink :href="route('videos.shorts')" :active="route().current('videos.shorts')">
-                <font-awesome-icon
-                    :icon="['fas', 'fire']"
-                    class="h-5 w-5 shrink-0 text-amber-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(251,191,36,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(251,191,36,0.9)]"
-                />
-                <span :class="label('from-amber-300', 'to-orange-500')">Shorts</span>
-            </ResponsiveNavLink>
+            <SidebarNavLink :href="route('videos.shorts')" :active="route().current('videos.shorts')" label="Shorts">
+                <template #icon="{ faClass }">
+                    <font-awesome-icon :icon="['fas', 'fire']" :class="faClass" />
+                </template>
+            </SidebarNavLink>
         </div>
         <div v-if="useAuthStore().user != null">
-            <ResponsiveNavLink
+            <SidebarNavLink
                 :href="route('feed.subscriptions')"
                 :active="route().current('feed.subscriptions')"
+                label="Subscriptions"
             >
-                <SubscriptionsIcon
-                    class="h-5 w-5 shrink-0 fill-current text-indigo-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(129,140,248,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(129,140,248,0.85)]"
-                />
-                <span :class="label('from-indigo-300', 'to-blue-400')">Subscriptions</span>
-            </ResponsiveNavLink>
+                <template #icon="{ svgClass }">
+                    <SubscriptionsIcon :class="svgClass" />
+                </template>
+            </SidebarNavLink>
         </div>
         <div v-if="useAuthStore().user != null">
-            <ResponsiveNavLink :href="route('feed.library')" :active="route().current('feed.library')">
-                <LibraryIcon
-                    class="h-5 w-5 shrink-0 fill-current text-emerald-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(52,211,153,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(52,211,153,0.85)]"
-                />
-                <span :class="label('from-emerald-300', 'to-teal-400')">Library</span>
-            </ResponsiveNavLink>
+            <SidebarNavLink :href="route('feed.library')" :active="route().current('feed.library')" label="Library">
+                <template #icon="{ svgClass }">
+                    <LibraryIcon :class="svgClass" />
+                </template>
+            </SidebarNavLink>
         </div>
     </div>
 
     <div v-if="navStore.showingStudioLinks" class="space-y-0.5">
         <div v-if="useAuthStore().user != null">
-            <ResponsiveNavLink :href="route('studio.dashboard')" :active="route().current('studio.dashboard')">
-                <ProfileIcon
-                    class="h-5 w-5 shrink-0 fill-current text-cyan-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(34,211,238,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(34,211,238,0.85)]"
-                />
-                <span :class="label('from-cyan-300', 'to-teal-400')">Dashboard</span>
-            </ResponsiveNavLink>
+            <SidebarNavLink
+                :href="route('studio.dashboard')"
+                :active="route().current('studio.dashboard')"
+                label="Dashboard"
+            >
+                <template #icon="{ svgClass }">
+                    <ProfileIcon :class="svgClass" />
+                </template>
+            </SidebarNavLink>
         </div>
         <div v-if="useAuthStore().user != null">
-            <ResponsiveNavLink :href="route('studio.content')" :active="route().current('studio.content')">
-                <ContentIcon
-                    class="h-5 w-5 shrink-0 fill-current text-violet-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(167,139,250,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(167,139,250,0.85)]"
-                />
-                <span :class="label('from-violet-300', 'to-fuchsia-400')">Content</span>
-            </ResponsiveNavLink>
+            <SidebarNavLink :href="route('studio.content')" :active="route().current('studio.content')" label="Content">
+                <template #icon="{ svgClass }">
+                    <ContentIcon :class="svgClass" />
+                </template>
+            </SidebarNavLink>
         </div>
         <div v-if="useAuthStore().user != null">
-            <ResponsiveNavLink :href="route('studio.upload')" :active="route().current('studio.upload')">
-                <UploadIcon
-                    class="h-5 w-5 shrink-0 fill-current text-lime-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(163,230,53,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(163,230,53,0.85)]"
-                />
-                <span :class="label('from-lime-300', 'to-emerald-400')">Upload</span>
-            </ResponsiveNavLink>
+            <SidebarNavLink :href="route('studio.upload')" :active="route().current('studio.upload')" label="Upload">
+                <template #icon="{ svgClass }">
+                    <UploadIcon :class="svgClass" />
+                </template>
+            </SidebarNavLink>
         </div>
         <div v-if="useAuthStore().user != null">
-            <ResponsiveNavLink :href="route('studio.streaming')" :active="route().current('studio.streaming')">
-                <LivestreamIcon
-                    class="h-5 w-5 shrink-0 fill-current text-red-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(248,113,113,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(248,113,113,0.85)]"
-                />
-                <span :class="label('from-red-300', 'to-rose-500')">Stream</span>
-            </ResponsiveNavLink>
+            <SidebarNavLink :href="route('studio.streaming')" :active="route().current('studio.streaming')" label="Stream">
+                <template #icon="{ svgClass }">
+                    <LivestreamIcon :class="svgClass" />
+                </template>
+            </SidebarNavLink>
         </div>
         <div v-if="useAuthStore().user != null">
-            <ResponsiveNavLink :href="route('studio.unionise')" :active="route().current('studio.unionise')">
-                <UnionIcon
-                    class="h-5 w-5 shrink-0 fill-current text-amber-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(251,191,36,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(251,191,36,0.85)]"
-                />
-                <span :class="label('from-amber-300', 'to-yellow-400')">Unions</span>
-            </ResponsiveNavLink>
+            <SidebarNavLink :href="route('studio.unionise')" :active="route().current('studio.unionise')" label="Unions">
+                <template #icon="{ svgClass }">
+                    <UnionIcon :class="svgClass" />
+                </template>
+            </SidebarNavLink>
         </div>
         <div v-if="useAuthStore().user != null">
-            <ResponsiveNavLink :href="route('studio.customise')" :active="route().current('studio.customise')">
-                <CustomiseIcon
-                    class="h-5 w-5 shrink-0 fill-current text-fuchsia-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(232,121,249,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(232,121,249,0.85)]"
-                />
-                <span :class="label('from-fuchsia-300', 'to-pink-400')">Customise</span>
-            </ResponsiveNavLink>
+            <SidebarNavLink :href="route('studio.customise')" :active="route().current('studio.customise')" label="Customise">
+                <template #icon="{ svgClass }">
+                    <CustomiseIcon :class="svgClass" />
+                </template>
+            </SidebarNavLink>
         </div>
     </div>
 </template>

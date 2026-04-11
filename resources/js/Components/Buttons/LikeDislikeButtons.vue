@@ -24,6 +24,7 @@ import { useToastStore } from "@/Stores/ToastStore";
 import { usePage } from "@inertiajs/vue3";
 import axios from "axios";
 import {useAuthStore} from "@/Stores/AuthStore";
+import { requireAuth, openLoginModal } from '@/utils/authGate';
 
 const toastStore = useToastStore();
 const name = 'LikeDislikeButtons';
@@ -63,12 +64,7 @@ const itemHandler = computed(() => {
     }
 });
 
-const toggleLike = () => {
-    // if not logged in, redirect to login page using ziggy
-    if (useAuthStore().user === null) {
-        window.location.href = route('login');
-        return;
-    }
+const runToggleLike = () => {
     let likeRoute = '';
     if (props.comment === null) {
         likeRoute = route('api.video.like.toggle', { video_id: props.item.id });
@@ -76,7 +72,6 @@ const toggleLike = () => {
         likeRoute = route('api.comment.like.toggle', { item_id: props.item.id, item_type: props.item.type, comment_id: props.comment.id });
     }
 
-    // Send a POST request to the like route
     axios.post(likeRoute)
         .then(response => {
             if (response.data.result === "like") {
@@ -92,20 +87,17 @@ const toggleLike = () => {
             }
         })
         .catch(error => {
-            // Handle the error response
-            if (error.response.status === 401) {
-                window.location.href = route('login');
+            if (error.response?.status === 401) {
+                openLoginModal(runToggleLike);
             }
         });
 };
 
-const toggleDislike = () => {
-    // if not logged in, redirect to login page using ziggy
-    if (useAuthStore().user === null) {
-        window.location.href = route('login');
-        return;
-    }
+const toggleLike = () => {
+    requireAuth(runToggleLike);
+};
 
+const runToggleDislike = () => {
     let dislikeRoute = '';
     if (props.comment === null) {
         if (props.item.type === 'video') {
@@ -115,7 +107,6 @@ const toggleDislike = () => {
         dislikeRoute = route('api.comment.dislike.toggle', {  item_id: props.item.id, item_type: 'video', comment_id: props.comment.id   });
     }
 
-    // Send a POST request to the dislike route
     axios.post(dislikeRoute)
         .then(response => {
 
@@ -132,11 +123,14 @@ const toggleDislike = () => {
             }
         })
         .catch(error => {
-            // Handle the error response
-            if (error.response.status === 401) {
-                window.location.href = route('login');
+            if (error.response?.status === 401) {
+                openLoginModal(runToggleDislike);
             }
         });
+};
+
+const toggleDislike = () => {
+    requireAuth(runToggleDislike);
 };
 
 

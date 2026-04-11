@@ -25,8 +25,11 @@ const submit = () => {
     authStore.forgotPassword(form).then(() => {
         form.processing = false;
     }).catch(function (error) {
-        const suppliedErrors = (error.response.data.errors);
-        errors.email = suppliedErrors.email ? suppliedErrors.email[0] : null;
+        form.processing = false;
+        const suppliedErrors = error.response?.data?.errors;
+        if (suppliedErrors) {
+            errors.email = suppliedErrors.email ? suppliedErrors.email[0] : null;
+        }
     });
 
 };

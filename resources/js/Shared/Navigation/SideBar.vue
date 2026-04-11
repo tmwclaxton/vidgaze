@@ -1,7 +1,8 @@
 <script setup>
 
-import ResponsiveNavLink from '@/Components/Links/ResponsiveNavLink.vue';
 import ExpandableNavigationLinks from "@/Shared/Navigation/Partials/SideNavigationLinks.vue";
+import SidebarNavLink from '@/Shared/Navigation/SidebarNavLink.vue';
+import SidebarFooterLink from '@/Shared/Navigation/SidebarFooterLink.vue';
 import SunIcon from '~/images/icons/sun.svg';
 import MoonIcon from '~/images/icons/moon.svg';
 import LogoutIcon from '~/images/icons/logout.svg';
@@ -9,11 +10,12 @@ import StudioIcon from '~/images/icons/light.svg';
 import SettingsIcon from '~/images/icons/settings.svg';
 import ProfileIcon from '~/images/icons/profile.svg';
 import {useDark, useToggle} from "@vueuse/core";
-import ResponsiveNavBottomLink from "@/Components/Links/ResponsiveNavBottomLink.vue";
 import {ref, watch, nextTick} from "vue";
 import {usePage} from "@inertiajs/vue3";
 import {useNavStore} from "@/Stores/NavStore";
 import {useAuthStore} from "@/Stores/AuthStore";
+import { openRegisterModal } from '@/utils/authGate';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 const navStore = useNavStore();
 const authStore = useAuthStore();
 
@@ -95,10 +97,6 @@ const toggleShorts = () => {
     keyRefresh.value = Math.random();
 };
 
-const labelGradient = (from, to) =>
-    `font-medium bg-gradient-to-r ${from} ${to} bg-clip-text text-transparent transition-all duration-200 group-hover:brightness-110`;
-
-
 // const isScreenLess = computed(() => {
 //     return (window.innerWidth < 1200 && useAuthStore().user != null && !props.showingNavigationDropdown);
 // });
@@ -138,19 +136,21 @@ const labelGradient = (from, to) =>
                     <div class="">
 
                         <div v-if="authStore.user != null" class="space-y-1 sm:hidden hidden">
-                            <ResponsiveNavLink :href="route('profile.edit')"
-                            >
-                                <SettingsIcon class="w-5 h-5 flex-shrink-0"/>
-                                <span>Manage Your Account</span>
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('profile.edit')"                            >
-                                <ProfileIcon class="w-5 h-5 flex-shrink-0"/>
-                                <span>Your Channel</span>
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('studio.dashboard')">
-                                <StudioIcon class="w-5 h-5 flex-shrink-0"/>
-                                <span>VidGaze Studio</span>
-                            </ResponsiveNavLink>
+                            <SidebarNavLink :href="route('profile.edit')" label="Manage Your Account">
+                                <template #icon="{ svgClass }">
+                                    <SettingsIcon :class="svgClass" />
+                                </template>
+                            </SidebarNavLink>
+                            <SidebarNavLink :href="route('profile.edit')" label="Your Channel">
+                                <template #icon="{ svgClass }">
+                                    <ProfileIcon :class="svgClass" />
+                                </template>
+                            </SidebarNavLink>
+                            <SidebarNavLink :href="route('studio.dashboard')" label="VidGaze Studio">
+                                <template #icon="{ svgClass }">
+                                    <StudioIcon :class="svgClass" />
+                                </template>
+                            </SidebarNavLink>
                         </div>
 
 
@@ -160,19 +160,21 @@ const labelGradient = (from, to) =>
 
                             <div class="mt-1 space-y-1 hidden">
 
-                                <ResponsiveNavLink  @click="authStore.logout()" method="post" as="button">
-                                        <LogoutIcon class="w-5 h-5 flex-shrink-0"/>
-                                        <span>Log Out</span>
-                                </ResponsiveNavLink>
+                                <SidebarNavLink label="Log Out" @click="authStore.logout()" method="post" as="button">
+                                    <template #icon="{ svgClass }">
+                                        <LogoutIcon :class="svgClass" />
+                                    </template>
+                                </SidebarNavLink>
                             </div>
                         </div>
                         <div v-else class="sm:hidden">
                             <div class="mt-1 space-y-1">
                                 <!-- <ResponsiveNavLink :href="route('login')"> Log In </ResponsiveNavLink>-->
-                                <ResponsiveNavLink :href="route('register')">
-                                        <ProfileIcon class="w-5 h-5 flex-shrink-0"/>
-                                        <span>Sign Up</span>
-                                </ResponsiveNavLink>
+                                <SidebarNavLink href="#" label="Sign Up" @click.prevent="openRegisterModal()">
+                                    <template #icon="{ svgClass }">
+                                        <ProfileIcon :class="svgClass" />
+                                    </template>
+                                </SidebarNavLink>
                             </div>
                         </div>
                     </div>
@@ -183,49 +185,49 @@ const labelGradient = (from, to) =>
 
                     <p
                         v-if="navStore.getNavigationDropdown()"
-                        class="mb-1.5 bg-gradient-to-r from-cyan-400/90 to-fuchsia-400/90 bg-clip-text px-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-transparent sm:px-0.5"
+                        class="mb-1.5 px-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-cyan-400/90 sm:px-0.5"
                     >
                         Appearance
                     </p>
                     <!--                dark/light mode-->
                     <div class="group/appearance cursor-pointer space-y-1" @click="toggleDark()">
                         <span v-if="!isDark">
-                            <ResponsiveNavLink :span="true">
-                                <SunIcon
-                                    class="h-5 w-5 shrink-0 fill-current text-amber-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(251,191,36,0.55)] group-hover/appearance:scale-110 group-hover/appearance:drop-shadow-[0_0_14px_rgba(251,191,36,0.85)]"
-                                />
-                                <span :class="labelGradient('from-amber-300', 'to-yellow-400')">Light</span>
-                            </ResponsiveNavLink>
+                            <SidebarNavLink :span="true" label="Light">
+                                <template #icon="{ svgClass }">
+                                    <SunIcon :class="svgClass" />
+                                </template>
+                            </SidebarNavLink>
                         </span>
                         <span v-else>
-                            <ResponsiveNavLink :span="true">
-                                <MoonIcon
-                                    class="h-5 w-5 shrink-0 fill-current text-indigo-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(129,140,248,0.55)] group-hover/appearance:scale-110 group-hover/appearance:drop-shadow-[0_0_14px_rgba(167,139,250,0.85)]"
-                                />
-                                <span :class="labelGradient('from-indigo-300', 'to-violet-400')">Dark</span>
-                            </ResponsiveNavLink>
+                            <SidebarNavLink :span="true" label="Dark">
+                                <template #icon="{ svgClass }">
+                                    <MoonIcon :class="svgClass" />
+                                </template>
+                            </SidebarNavLink>
                         </span>
                     </div>
 
-                    <ResponsiveNavLink :span="true" @click="toggleShorts()">
-                        <font-awesome-icon
-                            v-if="useAuthStore().areShortsEnabled()"
-                            :icon="['fas', 'toggle-on']"
-                            class="h-5 w-5 shrink-0 leading-none text-emerald-400 transition-all duration-200 drop-shadow-[0_0_10px_rgba(52,211,153,0.55)] group-hover:scale-110 group-hover:drop-shadow-[0_0_14px_rgba(52,211,153,0.85)]"
-                        />
-                        <font-awesome-icon
-                            v-if="!useAuthStore().areShortsEnabled()"
-                            :icon="['fas', 'toggle-off']"
-                            class="h-5 w-5 shrink-0 leading-none text-orange-400/90 transition-all duration-200 drop-shadow-[0_0_8px_rgba(251,146,60,0.45)] group-hover:scale-110 group-hover:text-orange-300 group-hover:drop-shadow-[0_0_12px_rgba(251,146,60,0.65)]"
-                        />
-                        <span
-                            class="min-w-0"
-                            :class="[
-                                navStore.getNavigationDropdown() ? 'whitespace-nowrap' : 'max-w-full text-center leading-snug',
-                                labelGradient('from-amber-300', 'to-orange-500'),
-                            ]"
-                        >Toggle Shorts</span>
-                    </ResponsiveNavLink>
+                    <SidebarNavLink
+                        :span="true"
+                        label="Toggle Shorts"
+                        :label-class="[
+                            navStore.getNavigationDropdown() ? 'whitespace-nowrap' : 'max-w-full text-center leading-snug',
+                        ]"
+                        @click="toggleShorts()"
+                    >
+                        <template #icon="{ faClass }">
+                            <font-awesome-icon
+                                v-if="useAuthStore().areShortsEnabled()"
+                                :icon="['fas', 'toggle-on']"
+                                :class="faClass"
+                            />
+                            <font-awesome-icon
+                                v-else
+                                :icon="['fas', 'toggle-off']"
+                                :class="faClass"
+                            />
+                        </template>
+                    </SidebarNavLink>
                 </div>
 
 
@@ -233,11 +235,7 @@ const labelGradient = (from, to) =>
 
                     <!--add about page-->
                     <div class="grid grid-cols-1 gap-1 text-center" :class="{ 'grid-cols-4': navStore.getNavigationDropdown() }">
-                        <ResponsiveNavBottomLink :href="route('about')" :active="route().current('about')">
-                                <!--<font-awesome-icon :icon="['fas', 'heart']" class="w-4 h-4 flex-shrink-0  "-->
-                                <!--                   :class="{ 'hidden ': !showingNavigationDropdown}" />-->
-                            <span class="w-full">About</span>
-                        </ResponsiveNavBottomLink>
+                        <SidebarFooterLink :href="route('about')" :active="route().current('about')" label="About" />
                     <!--add support page-->
 <!--                        <ResponsiveNavBottomLink :href="route('about') + '#support'"  >-->
 <!--                                &lt;!&ndash;<font-awesome-icon :icon="['fass', 'phone']" class="w-4 h-4 flex-shrink-0"&ndash;&gt;-->

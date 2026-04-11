@@ -29,6 +29,7 @@ export default class OdyseePlayer extends Player {
                 } else {
                     this.togglePause();
                 }
+                this.scheduleShortApproximateEnd();
             };
 
             this.createPlayer();

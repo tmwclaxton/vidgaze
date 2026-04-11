@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import {useNavStore} from "@/Stores/NavStore";
 const navStore = useNavStore();
+const emit = defineEmits(['click']);
 const props = defineProps({
     'href': {
         type: String,
@@ -52,10 +53,15 @@ const closeNavigation = () => {
     }
 };
 
+function handleClick(e) {
+    emit('click', e);
+    closeNavigation();
+}
+
 </script>
 
 <template>
-    <Link v-if="!span" :href="href" :class="classes" @click="closeNavigation" class=" cursor-pointer">
+    <Link v-if="!span" :href="href" :class="classes" @click="handleClick" class=" cursor-pointer">
         <slot />
     </Link>
     <span v-else :class="classes" class="  cursor-pointer ">

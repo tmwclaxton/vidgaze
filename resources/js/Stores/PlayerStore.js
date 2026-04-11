@@ -14,6 +14,8 @@ export const usePlayerStore = defineStore('PlayerStore', {
         return {
             refreshFrontEndComponent: "",
             players: [],
+            /** Set on Shorts page: called with external_id when a short finishes (all platforms). */
+            shortVideoEndedCallback: null,
         }
     },
     getters: {
@@ -27,6 +29,12 @@ export const usePlayerStore = defineStore('PlayerStore', {
     },
 
     actions: {
+        notifyShortVideoEnded(externalId) {
+            if (typeof this.shortVideoEndedCallback === 'function') {
+                this.shortVideoEndedCallback(externalId);
+            }
+        },
+
         async loadScript(src, id)  {
             if (!document.getElementById(id)) {
                 const tag = document.createElement('script');
@@ -95,7 +103,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
             // check if player already exists
             const existingPlayer = this.findPlayer(object.external_id);
-            if (existingPlayer !== null && existingPlayer.short === true) {
+            if (existingPlayer && existingPlayer.short === true) {
                 return;
             }
 
@@ -108,7 +116,7 @@ export const usePlayerStore = defineStore('PlayerStore', {
                 await this.loadScripts(); // don't worry about this running multiple times, it checks if the script by id exists before trying to add it again
                 setTimeout(() => {
                     console.log('scripts not loaded yet, trying again in 2 second')
-                    this.buildPlayer(playerDivHolderID, object, startTime, autoplay, checkViewHistoryStartTime);
+                    this.buildPlayer(playerDivHolderID, object, startTime, autoplay, checkViewHistoryStartTime, short);
                 }, 2000);
                 return;
             }
@@ -214,13 +222,11 @@ export const usePlayerStore = defineStore('PlayerStore', {
 
         async destroyPlayer(external_id, fullDestroy = false, shorts = false) {
             const player = this.findPlayer(external_id);
-            if (player.short !== shorts) { // this means we can specify delete shorts and maintain the queue players or just delete everything
+            if (!player || player.short !== shorts) { // this means we can specify delete shorts and maintain the queue players or just delete everything
                 return;
             }
 
-            if (player) {
-                player.safeRemovePlayer();
-            }
+            player.safeRemovePlayer();
             if (fullDestroy) {
                 this.players = this.players.filter(player => player.external_id !== external_id);
             }

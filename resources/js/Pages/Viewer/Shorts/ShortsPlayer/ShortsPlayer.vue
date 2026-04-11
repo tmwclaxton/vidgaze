@@ -7,7 +7,7 @@ import SubscribeButton from "@/Components/Buttons/SubscribeButton.vue";
 import {useContentModalStore} from "@/Stores/ContentModalStore";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
 import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
-import {computed, onMounted, onUnmounted, ref, watchEffect} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import CommentSection from "@/Components/CommentSection/CommentSection.vue";
 import {useNavStore} from "@/Stores/NavStore";
 import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
@@ -17,7 +17,7 @@ const shareModalStore = useShareModalStore();
 const navStore = useNavStore();
 let showShare = false;
 const showCommentSection = ref(false);
-let observer = ref(null);
+let observer = null;
 const emits = defineEmits(['UpdateFullyVisibleIndex' ]);
 const sizeToHide = 958;
 
@@ -81,8 +81,9 @@ const hideCommentsButton = computed(() => {
 });
 
 onMounted(() => {
+    const scrollRoot = document.getElementById('customScrollDiv');
     const options = {
-        root: null,
+        root: scrollRoot,
         rootMargin: '0px',
         threshold: 1.0,
     };
@@ -102,11 +103,14 @@ onMounted(() => {
         });
     };
     observer = new IntersectionObserver(handleIntersection, options);
-    observer.observe(document.getElementById('player_div_holder_' + props.video.external_id));
+    const target = document.getElementById('player_div_holder_' + props.video.external_id);
+    if (target) {
+        observer.observe(target);
+    }
 });
 
 onUnmounted(() => {
-    observer.disconnect();
+    observer?.disconnect();
 });
 
 
@@ -115,6 +119,7 @@ onUnmounted(() => {
 
 <template>
     <section
+        :data-short-index="index"
         class="w-full h-[calc(100vh-4rem)] overflow-hidden  snap-start flex flex-col text dark:textDark" >
         <div class="relative flex pt-4 py-6  h-full flex flex-col">
 

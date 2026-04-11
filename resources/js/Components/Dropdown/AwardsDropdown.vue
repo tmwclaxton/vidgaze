@@ -41,12 +41,14 @@
                             <primary-button  v-if="useAuthStore().user !== null && checkBal()" @click="submitAward" class=" p-2 rounded w-max font-bold k">
                                 Give Award
                             </primary-button>
-                            <Link v-else
-                                   :href="route('login')" >
-                                <primary-button  class=" p-2 rounded w-max font-bold k">
-                                    Login
-                                </primary-button>
-                            </Link>
+                            <primary-button
+                                v-else
+                                type="button"
+                                class="p-2 rounded w-max font-bold k"
+                                @click="openLoginModal()"
+                            >
+                                Login
+                            </primary-button>
                         </div>
                         <!--<input type="hidden" v-model="type">-->
                         <!--<input type="hidden" v-model="award_id">-->
@@ -61,6 +63,7 @@
 import {ref, onMounted} from 'vue';
 import axios from 'axios';
 import {useAuthStore} from "@/Stores/AuthStore";
+import { openLoginModal } from '@/utils/authGate';
 import {useToastStore} from "@/Stores/ToastStore";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";

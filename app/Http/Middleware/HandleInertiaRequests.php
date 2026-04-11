@@ -64,6 +64,10 @@ class HandleInertiaRequests extends Middleware
             : $siteUrl.'/'.ltrim($og !== '' ? $og : 'favicon.ico', '/');
 
         return array_merge(parent::share($request), [
+            'auth_modal' => fn () => [
+                'should_open' => (bool) $request->session()->pull('show_auth_modal', false),
+                'intended_url' => $request->session()->pull('auth_intended_url'),
+            ],
             'layoutDisplay' => $layoutDisplay,
             'seo' => [
                 'siteName' => (string) config('app.name', 'VidGaze'),

@@ -13,6 +13,10 @@ Route::prefix('podcast')->name('podcast.')->group(function () {
         ->name('episode.show')
         ->where(['podcastSlug' => '[a-zA-Z0-9\-]+', 'episodeSlug' => '[a-zA-Z0-9\-]+']);
 
+    Route::get('/{slug}/latest-episode', [PodcastApiController::class, 'latestEpisode'])
+        ->name('latest-episode')
+        ->where('slug', '[a-zA-Z0-9\-]+');
+
     Route::middleware(['throttle:30,1', 'auth:sanctum'])->group(function () {
 
         Route::post('{podcastId}/love', [PodcastInteractionApiController::class, 'toggleLove'])

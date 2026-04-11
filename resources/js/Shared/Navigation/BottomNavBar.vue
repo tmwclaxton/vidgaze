@@ -6,7 +6,8 @@ import TopNavigationLinks from '@/Shared/Navigation/Partials/TopNavigationLinks.
 import OpenNavSVG from '~/images/icons/3lines.svg';
 import CloseNavSVG from '~/images/icons/exit.svg';
 
-import {Link, router} from "@inertiajs/vue3";
+import {Link} from "@inertiajs/vue3";
+import { openLoginModal, openRegisterModal } from '@/utils/authGate';
 import Searchbar from "@/Shared/Navigation/Partials/Searchbar.vue";
 import TopNavButton from "@/Components/Buttons/QuaternaryButton.vue";
 import {useNavStore} from "@/Stores/NavStore";
@@ -83,10 +84,11 @@ const name = 'BottomNavBar';
                             Library
                         </p>
                     </Link>
-                    <Link
+                    <button
                         v-if="!authStore.user"
-                        :href="route('login')"
-                        class="group flex flex-grow flex-col items-center justify-between align-middle"
+                        type="button"
+                        class="group flex flex-grow flex-col items-center justify-between align-middle bg-transparent text-left"
+                        @click="openLoginModal()"
                     >
                         <font-awesome-icon
                             :icon="['fas', 'sign-in-alt']"
@@ -97,11 +99,12 @@ const name = 'BottomNavBar';
                         >
                             Login
                         </p>
-                    </Link>
-                    <Link
+                    </button>
+                    <button
                         v-if="!authStore.user"
-                        :href="route('register')"
-                        class="group flex flex-grow flex-col items-center justify-between align-middle"
+                        type="button"
+                        class="group flex flex-grow flex-col items-center justify-between align-middle bg-transparent text-left"
+                        @click="openRegisterModal()"
                     >
                         <font-awesome-icon
                             :icon="['fas', 'user-plus']"
@@ -112,7 +115,7 @@ const name = 'BottomNavBar';
                         >
                             Register
                         </p>
-                    </Link>
+                    </button>
                 </div>
             </div>
         </div>

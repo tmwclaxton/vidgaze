@@ -21,9 +21,12 @@ class Dailymotion implements iIsPlatform, iSearchable
     public DailymotionSDK $client;
 
     /**
-     * /videos list search only accepts claimer.* for uploader fields (owner.* was removed server-side).
+     * Video list fields for /videos and /user/{id}/videos.
      *
-     * @see https://developers.dailymotion.com/reference/video-fields
+     * Search responses often populate `owner.*` (public user sub-fields) while `claimer.*` is null;
+     * include both so avatars/banners resolve. Prefer claimer when present, else owner, else channel.
+     *
+     * @see https://developers.dailymotion.com/reference/video-fields (`owner` dot-notation)
      */
     private static array $searchFields = [
         'id',
@@ -38,11 +41,23 @@ class Dailymotion implements iIsPlatform, iSearchable
         'description',
         'channel.description',
         'channel.name',
-        // Keep claimer fields minimal — some need extra OAuth scopes (e.g. fullname → userinfo).
         'claimer.id',
         'claimer.username',
         'claimer.screenname',
         'claimer.nickname',
+        'claimer.avatar_720_url',
+        'claimer.avatar_480_url',
+        'claimer.avatar_360_url',
+        'claimer.avatar_240_url',
+        'claimer.cover_url',
+        'owner.id',
+        'owner.username',
+        'owner.screenname',
+        'owner.avatar_720_url',
+        'owner.avatar_480_url',
+        'owner.avatar_360_url',
+        'owner.avatar_240_url',
+        'owner.cover_url',
     ];
 
     public function __construct()
@@ -118,52 +133,7 @@ class Dailymotion implements iIsPlatform, iSearchable
         );
 
         //            dd($response);
-        return Tools::validateDTOs(Arr::map($response['list'], function ($item) {
-            $resultDTO = new ResultDTO(Platform::Dailymotion, Kind::Video);
-
-            $claimerId = trim((string) ($item['claimer.id'] ?? ''));
-            if ($claimerId === '') {
-                $ch = $item['channel'] ?? null;
-                $claimerId = is_string($ch) ? trim($ch) : '';
-            }
-            $claimerName = trim((string) ($item['claimer.screenname'] ?? $item['claimer.username'] ?? $item['claimer.nickname'] ?? ''));
-            if ($claimerName === '') {
-                $claimerName = trim((string) ($item['channel.name'] ?? ''));
-            }
-            if ($claimerName === '') {
-                $claimerName = $claimerId !== '' ? $claimerId : 'Unknown';
-            }
-
-            $contentDTO = new ContentDTO(Platform::Dailymotion, Kind::Video, $item['id']);
-            $contentDTO->name = $item['title'];
-            $contentDTO->description = $item['description'];
-            $contentDTO->thumbnail_url = $item['thumbnail_720_url'];
-            $dmDur = VideoDurationParser::secondsFromMixed($item['duration'] ?? null)
-                ?? VideoDurationParser::secondsFromScraperRow($item);
-            $contentDTO->duration = (string) max(0, $dmDur);
-            $contentDTO->views = $item['views_total'];
-            $contentDTO->likes = $item['likes_total'];
-            $contentDTO->publish_time = Carbon::parse($item['created_time']);
-
-            $creatorDTO = new CreatorDTO(Platform::Dailymotion, $claimerId);
-            $creatorDTO->name = $claimerName;
-            $creatorDTO->description = null;
-            $creatorDTO->region = null;
-            $creatorDTO->language = null;
-            $creatorDTO->avatar_url = self::pickClaimerAvatarUrl($item);
-            $creatorDTO->banner_url = null;
-
-            $contentDTO->creator_id = $claimerId !== '' ? $claimerId : 'unknown';
-
-            //                $creatorDTO->avatar_url = $item['owner.avatar_720_url'];
-            //                $creatorDTO->banner_url = $item['owner.cover_url'];
-
-            //                DTO->description = $item['channel.description'];
-            $resultDTO->content = $contentDTO;
-            $resultDTO->creator = $creatorDTO;
-
-            return $resultDTO;
-        }));
+        return Tools::validateDTOs(Arr::map($response['list'], fn (array $item) => self::resultDtoFromFlattenedVideoSearchRow($item)));
         //            return [
         //                "pageTokenInfo" => self::getPageTokenInfo($response, $pageToken),
         //                "results" => self::convertResponseToDTOs($response['list'])
@@ -178,18 +148,97 @@ class Dailymotion implements iIsPlatform, iSearchable
     }
 
     /**
+     * Map one flattened /videos (or compatible) list row to a video ResultDTO with creator profile fields.
+     *
+     * @param  array<string, mixed>  $item
+     */
+    public static function resultDtoFromFlattenedVideoSearchRow(array $item): ResultDTO
+    {
+        $resultDTO = new ResultDTO(Platform::Dailymotion, Kind::Video);
+
+        $claimerId = trim((string) ($item['claimer.id'] ?? ''));
+        if ($claimerId === '') {
+            $claimerId = trim((string) ($item['owner.id'] ?? ''));
+        }
+        if ($claimerId === '') {
+            $ch = $item['channel'] ?? null;
+            $claimerId = is_string($ch) ? trim($ch) : '';
+        }
+        $claimerName = trim((string) (
+            $item['claimer.screenname']
+                ?? $item['claimer.username']
+                ?? $item['claimer.nickname']
+                ?? $item['owner.screenname']
+                ?? $item['owner.username']
+                ?? ''
+        ));
+        if ($claimerName === '') {
+            $claimerName = trim((string) ($item['channel.name'] ?? ''));
+        }
+        if ($claimerName === '') {
+            $claimerName = $claimerId !== '' ? $claimerId : 'Unknown';
+        }
+
+        $contentDTO = new ContentDTO(Platform::Dailymotion, Kind::Video, $item['id']);
+        $contentDTO->name = $item['title'];
+        $contentDTO->description = $item['description'];
+        $contentDTO->thumbnail_url = $item['thumbnail_720_url'];
+        $dmDur = VideoDurationParser::secondsFromMixed($item['duration'] ?? null)
+            ?? VideoDurationParser::secondsFromScraperRow($item);
+        $contentDTO->duration = (string) max(0, $dmDur);
+        $contentDTO->views = $item['views_total'];
+        $contentDTO->likes = $item['likes_total'];
+        $contentDTO->publish_time = Carbon::parse($item['created_time']);
+
+        $creatorDTO = new CreatorDTO(Platform::Dailymotion, $claimerId);
+        $creatorDTO->name = $claimerName;
+        $creatorDTO->description = null;
+        $creatorDTO->region = null;
+        $creatorDTO->language = null;
+        $creatorDTO->avatar_url = self::pickVideoListUploaderAvatarUrl($item);
+        $banner = self::firstNonEmptyString([
+            $item['claimer.cover_url'] ?? null,
+            $item['owner.cover_url'] ?? null,
+        ]);
+        $creatorDTO->banner_url = $banner;
+
+        $contentDTO->creator_id = $claimerId !== '' ? $claimerId : 'unknown';
+        $resultDTO->content = $contentDTO;
+        $resultDTO->creator = $creatorDTO;
+
+        return $resultDTO;
+    }
+
+    /**
      * @param  array<string, mixed>  $item  Flattened /videos list row.
      */
-    private static function pickClaimerAvatarUrl(array $item): ?string
+    private static function pickVideoListUploaderAvatarUrl(array $item): ?string
     {
         foreach ([
             'claimer.avatar_720_url',
             'claimer.avatar_480_url',
             'claimer.avatar_360_url',
             'claimer.avatar_240_url',
-            'claimer.avatar_url',
+            'owner.avatar_720_url',
+            'owner.avatar_480_url',
+            'owner.avatar_360_url',
+            'owner.avatar_240_url',
         ] as $key) {
             $v = $item[$key] ?? null;
+            if (is_string($v) && trim($v) !== '') {
+                return trim($v);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param  list<string|null>  $candidates
+     */
+    private static function firstNonEmptyString(array $candidates): ?string
+    {
+        foreach ($candidates as $v) {
             if (is_string($v) && trim($v) !== '') {
                 return trim($v);
             }

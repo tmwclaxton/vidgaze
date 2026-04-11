@@ -28,6 +28,7 @@ export default class BitChutePlayer extends Player {
                 } else {
                     this.togglePause();
                 }
+                this.scheduleShortApproximateEnd();
             };
 
             this.createPlayer();

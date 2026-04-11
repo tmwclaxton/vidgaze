@@ -1,8 +1,7 @@
 <script setup>
 import ShortsPlayer from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayer.vue";
 import ShortsPlayerSkeleton from "@/Pages/Viewer/Shorts/ShortsPlayer/ShortsPlayerSkeleton.vue";
-import {nextTick, onBeforeMount, onBeforeUnmount, onMounted, onUnmounted, ref, watch} from "vue";
-import { useInfiniteScroll, useVirtualList } from '@vueuse/core';
+import {nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 
 import {usePlayerStore} from "@/Stores/PlayerStore";
 import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
@@ -12,18 +11,48 @@ const name = 'Shorts'
 const shorts = ref([]);
 // this is the index of the short that is fully visible
 const fullyVisibleIndex = ref(0);
+const scrollContainerEl = ref(null);
+const playerStore = usePlayerStore();
+
 const UpdateFullyVisibleIndex = (index) => {
     fullyVisibleIndex.value = index;
 };
+
+function scrollToShortIndex(index) {
+    nextTick(() => {
+        const root = scrollContainerEl.value;
+        if (!root || index < 0) {
+            return;
+        }
+        const section = root.querySelector(`[data-short-index="${index}"]`);
+        section?.scrollIntoView({behavior: 'smooth', block: 'start'});
+    });
+}
+
+async function onShortVideoEnded(externalId) {
+    const current = shorts.value[fullyVisibleIndex.value];
+    if (!current || current.external_id !== externalId) {
+        return;
+    }
+    const nextIdx = fullyVisibleIndex.value + 1;
+    if (nextIdx >= shorts.value.length) {
+        await fetchShorts();
+        await nextTick();
+    }
+    if (nextIdx < shorts.value.length) {
+        scrollToShortIndex(nextIdx);
+    }
+}
 
 
 
 onMounted(async () => {
     // forget page position i.e. scroll to top
     window.history.scrollRestoration = 'manual';
+    playerStore.shortVideoEndedCallback = onShortVideoEnded;
 
     // destroy all players this doesn't remove the metadata meaning we can rebuild queue without losing data
-    await usePlayerStore().destroyPlayers(false).then(async () => {
+    await playerStore.destroyPlayers(false).then(async () => {
         // if short slug is in url, play that short
         const urlParams = new URLSearchParams(window.location.search);
         const firstShort = urlParams.get('short') || null;
@@ -122,11 +151,11 @@ async function buildPlayers() {
 
         let id = 'player_div_holder_' + shorts.value[visibleIndex].external_id; // external_id is the ref to the div
         let object = shorts.value[visibleIndex];
-        let player = usePlayerStore().findPlayer(shorts.value[visibleIndex].external_id)
+        let player = playerStore.findPlayer(shorts.value[visibleIndex].external_id)
 
         // if a visible player doesn't exist built it
-        if (!player.external_id || !player.built) {
-            await usePlayerStore().buildPlayer(id, object, 0, false, false, true);
+        if (!player || !player.external_id || !player.built) {
+            await playerStore.buildPlayer(id, object, 0, false, false, true);
         } else {
             // if player exists but it's not the fully visible id, pause it
             if (player.external_id !== shorts.value[fullyVisibleIndex.value].external_id) {
@@ -139,10 +168,10 @@ async function buildPlayers() {
     for (let i = 0; i < shorts.value.length; i++) {
         if (!visibleIndices.includes(i)) {
             // if not the visible players, destroy it
-            let player = usePlayerStore().findPlayer(shorts.value[i].external_id)
+            let player = playerStore.findPlayer(shorts.value[i].external_id)
 
             if (player) {
-                await usePlayerStore().destroyPlayer(shorts.value[i].external_id, true, true);
+                await playerStore.destroyPlayer(shorts.value[i].external_id, true, true);
             }
         }
     }
@@ -153,13 +182,14 @@ function playFullyVisiblePlayer(i = 0) {
         console.log('tried to play fully visible player 3 times');
         return;
     }
-    let player;
-    player = usePlayerStore().findPlayer(shorts.value[fullyVisibleIndex.value].external_id);
-    if (player) {
-        console.log('PLAYING VISIBLE PLAYER ' + player.external_id);
+    const short = shorts.value[fullyVisibleIndex.value];
+    if (!short) {
+        return;
+    }
+    const player = playerStore.findPlayer(short.external_id);
+    if (player && player.external_id) {
         player.safeTogglePlay();
     } else {
-        console.log('redundancy handler for player not found ' + shorts.value[fullyVisibleIndex.value].external_id);
         setTimeout(() => {
             playFullyVisiblePlayer(i + 1);
         }, 2000);
@@ -167,8 +197,9 @@ function playFullyVisiblePlayer(i = 0) {
 }
 
 onUnmounted(() => {
+    playerStore.shortVideoEndedCallback = null;
     // destroy all players
-    usePlayerStore().destroyPlayers(true, true).then(() => {
+    playerStore.destroyPlayers(true, true).then(() => {
         useQueueStore().rebuildPlayer();
     });
 });
@@ -183,10 +214,10 @@ onUnmounted(() => {
             description="Watch short-form videos on VidGaze from creators across multiple platforms."
         />
 
-            <div id="customScrollDiv" class="max-h-[calc(100vh-4rem)] overflow-hidden duration-75  overflow-y-scroll  snap snap-y snap-mandatory ease-in-out">
+            <div id="customScrollDiv" ref="scrollContainerEl" class="max-h-[calc(100vh-4rem)] overflow-hidden duration-75  overflow-y-scroll  snap snap-y snap-mandatory ease-in-out">
                     <template v-if="shorts.length > 0">
                         <ShortsPlayer  v-for="(data, index) in shorts" :video="data" :index="index"
-                                      @UpdateFullyVisibleIndex="UpdateFullyVisibleIndex(index)" :key="index"/>
+                                      @UpdateFullyVisibleIndex="UpdateFullyVisibleIndex(index)" :key="data.external_id"/>
                     </template>
                     <template v-else>
                         <ShortsPlayerSkeleton/>

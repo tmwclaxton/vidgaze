@@ -19,6 +19,7 @@ import {useContentRoutesStore} from "@/Stores/ContentRoutesStore";
 import {useAuthStore} from "@/Stores/AuthStore";
 import {usePinModalStore} from "@/Stores/PinModalStore";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {videosCountForCompleteRows} from '@/utils/videoGridColumns';
 
 const pinModalStore = usePinModalStore();
 const contentRoutesStore = useContentRoutesStore();
@@ -87,11 +88,12 @@ async function onTrendChange({key, label}) {
 }
 
 async function loadCategoryDiscoveryRow(slug) {
+    const limit = videosCountForCompleteRows(12);
     try {
         const res = await axios.get(route('api.video.category-feed.videos'), {
             params: {
                 category_slug: slug,
-                limit: 12,
+                limit,
                 ...(categoryFeedClientId ? { feed_client: categoryFeedClientId } : {}),
             },
         });
@@ -107,29 +109,31 @@ async function loadCategoryDiscoveryRow(slug) {
 }
 
 onMounted(async () => {
-    vidgazePicks.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.vidgaze);
+    const pinnedLimit = videosCountForCompleteRows(6);
+
+    vidgazePicks.value = await pinModalStore.getPinnedVideos(pinnedLimit, 1, categorySlugs.vidgaze);
 
     const musicDisc = await loadCategoryDiscoveryRow(categorySlugs.music);
     if (musicDisc.videos?.length) {
         musicPinned.value = musicDisc.videos;
         musicDiscoverySubtitle.value = musicDisc.label;
     } else {
-        musicPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.music);
+        musicPinned.value = await pinModalStore.getPinnedVideos(pinnedLimit, 1, categorySlugs.music);
         musicDiscoverySubtitle.value = null;
     }
 
-    cryptoPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.crypto);
+    cryptoPinned.value = await pinModalStore.getPinnedVideos(pinnedLimit, 1, categorySlugs.crypto);
 
     const gamingDisc = await loadCategoryDiscoveryRow(categorySlugs.gaming);
     if (gamingDisc.videos?.length) {
         gamingPinned.value = gamingDisc.videos;
         gamingDiscoverySubtitle.value = gamingDisc.label;
     } else {
-        gamingPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.gaming);
+        gamingPinned.value = await pinModalStore.getPinnedVideos(pinnedLimit, 1, categorySlugs.gaming);
         gamingDiscoverySubtitle.value = null;
     }
 
-    alternatePinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.alternate);
+    alternatePinned.value = await pinModalStore.getPinnedVideos(pinnedLimit, 1, categorySlugs.alternate);
 
     await debouncedFetchVideos();
 
@@ -168,7 +172,8 @@ const fetchVideos = async (videoArray) => {
         return;
     }
     const videoIds = videoArray.map(video => video.id).join(',');
-    const response = await contentRoutesStore.getVideos('trending', 40, videoIds)
+    const perPage = videosCountForCompleteRows(40);
+    const response = await contentRoutesStore.getVideos('trending', perPage, videoIds)
 
     if (response === undefined) {
         window.removeEventListener('scroll', handleScroll);

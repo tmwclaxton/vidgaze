@@ -5,12 +5,13 @@ import NotificationsDropdown from "@/Components/Dropdown/NotificationsDropdown.v
 import OpenNavSVG from '~/images/icons/3lines.svg';
 import CloseNavSVG from '~/images/icons/exit.svg';
 
-import {Link, router} from "@inertiajs/vue3";
+import {Link} from "@inertiajs/vue3";
 import Searchbar from "@/Shared/Navigation/Partials/Searchbar.vue";
 import TopNavButton from "@/Components/Buttons/QuaternaryButton.vue";
 import {useNavStore} from "@/Stores/NavStore";
 const navStore = useNavStore();
 import {useAuthStore} from "@/Stores/AuthStore";
+import { openLoginModal, openRegisterModal } from '@/utils/authGate';
 const authStore = useAuthStore();
 
 //name of the component
@@ -18,15 +19,10 @@ const name = 'TopNavBar';
 
 
 function redirect(which) {
-    localStorage.removeItem('intended');
-    // if not on about page set intended to current page if route current not about
-    if (!route().current("landing")) {  //
-        localStorage.setItem('intended', window.location.href);
-    }
     if (which === "login") {
-        router.visit(route('login'));
+        openLoginModal();
     } else if (which === "register") {
-        router.visit(route('register'));
+        openRegisterModal();
     }
 }
 

@@ -7,6 +7,7 @@ import Option from "@/Components/Modals/Partials/Option.vue";
 import QuaternaryButton from "@/Components/Buttons/QuaternaryButton.vue";
 import {useCommentSectionStore} from "@/Stores/CommentSectionStore";
 import {useAuthStore} from "@/Stores/AuthStore";
+import { openLoginModal } from '@/utils/authGate';
 const CommentSectionStore = useCommentSectionStore();
 
 const name = 'CommentSection';
@@ -109,10 +110,14 @@ onMounted(() => {
                 </div>
             </div>
 
-            <a v-else v-bind:href="route('login')"
-               class="text dark:textDark  text-sm leading-tight my-3 w-full border-b-1 border-zinc-300"><span
-                class="font-semibold "> Log in </span> to comment
-            </a>
+            <button
+                v-else
+                type="button"
+                class="text dark:textDark my-3 w-full border-b border-zinc-300 bg-transparent text-left text-sm leading-tight hover:border-zinc-400"
+                @click="openLoginModal()"
+            >
+                <span class="font-semibold">Log in</span> to comment
+            </button>
 
             <div class="flex flex-col w-full mt-5 mb-2" v-if="CommentSectionStore.comments.length > 0">
 
