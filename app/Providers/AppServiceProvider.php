@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Aws\Rekognition\RekognitionClient;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -15,15 +14,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-//        $this->app->singleton('tus-server', function ($app) {
-//            $server = new TusServer('redis');
-//
-//            $server
-//                ->setApiPath('/tus') // tus server endpoint.
-//                ->setUploadDir(storage_path('app/public/uploads')); // uploads dir.
-//
-//            return $server;
-//        });
+        //        $this->app->singleton('tus-server', function ($app) {
+        //            $server = new TusServer('redis');
+        //
+        //            $server
+        //                ->setApiPath('/tus') // tus server endpoint.
+        //                ->setUploadDir(storage_path('app/public/uploads')); // uploads dir.
+        //
+        //            return $server;
+        //        });
     }
 
     /**
@@ -31,10 +30,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Load migrations from all subdirectories of the migrations directory
+        // Load migrations from the main tree, subdirectories, and database/patches (categories, etc.)
         $migrationsPath = database_path('migrations');
-        $directories    = glob($migrationsPath.'/*', GLOB_ONLYDIR);
-        $paths          = array_merge([$migrationsPath], $directories);
+        $patchesPath = database_path('patches');
+        $directories = glob($migrationsPath.'/*', GLOB_ONLYDIR) ?: [];
+        $paths = array_merge([$migrationsPath], $directories);
+        if (is_dir($patchesPath)) {
+            $paths[] = $patchesPath;
+        }
 
         JsonResource::withoutWrapping(); // this is so that the json response does not have a data wrapper
 

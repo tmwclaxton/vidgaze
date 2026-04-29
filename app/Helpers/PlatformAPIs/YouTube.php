@@ -5,6 +5,7 @@ namespace App\Helpers\PlatformAPIs;
 use App\Enums\Kind;
 use App\Enums\Platform;
 use App\Helpers\ApifyYoutube;
+use App\Helpers\ApifyYoutubeActorAdapter;
 use App\Helpers\ContentDTO;
 use App\Helpers\CreatorDTO;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
@@ -38,7 +39,11 @@ class YouTube implements iIsPlatform, iSearchable
     protected static function syncActorInput(array $input, int $timeout = self::SYNC_TIMEOUT_SEARCH): array
     {
         try {
-            return ApifyYoutube::syncDatasetItems(self::sanitizeApifyInput($input), $timeout);
+            $sanitized = self::sanitizeApifyInput($input);
+            $forActor = ApifyYoutubeActorAdapter::normalizeInputBeforeSync($sanitized);
+            $rows = ApifyYoutube::syncDatasetItems($forActor, $timeout);
+
+            return ApifyYoutubeActorAdapter::normalizeRowsAfterSync($rows);
         } catch (Throwable $e) {
             Log::warning('YouTube Apify sync failed: '.$e->getMessage());
 

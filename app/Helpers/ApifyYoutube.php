@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Apify "streamers/youtube-scraper" (actor id streamers~youtube-scraper) — sync dataset fetch.
+ * Apify YouTube actor (default streamers~youtube-scraper) — sync dataset fetch.
  */
 class ApifyYoutube
 {
@@ -20,7 +20,8 @@ class ApifyYoutube
             return [];
         }
 
-        $url = "https://api.apify.com/v2/acts/{$actor}/run-sync-get-dataset-items";
+        $actorPath = str_replace('/', '~', (string) $actor);
+        $url = "https://api.apify.com/v2/acts/{$actorPath}/run-sync-get-dataset-items";
 
         try {
             $response = Http::withHeaders([

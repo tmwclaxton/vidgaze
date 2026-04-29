@@ -17,8 +17,7 @@ VidGaze is a website and mobile-ready video-streaming app designed to empower co
 2. Run `sail build` (uses PHP 8.4; rebuild after upgrading from older images)
 3. Run `sail up`
 4. Run `sail artisan db:wipe`
-5. Run `sail artisan migrate`
-6. Run `sail artisan migrate --path=database/patches`
+5. Run `sail artisan migrate` (includes `database/patches` — e.g. default categories — via `AppServiceProvider`)
 
 **Sail notes:** The app bind mount uses Docker’s `:z` option so SELinux (e.g. Fedora) can read the project—without it, `sail artisan` may report `Could not open input file: artisan`. If MySQL exits with “Another process … is using unix socket file”, stop the stack (`sail down`), clear stale sockets in the `sail-mysql` volume (e.g. delete `mysql.sock` and `mysql.sock.lock` under the volume’s data dir), or `sail down -v` to reset the DB volume if you don’t need that data.
 
@@ -36,6 +35,8 @@ VidGaze uses a number of open source projects to work properly:
 * Download VidGaze on the Apple App Store or the Google Play Store (Coming soon :P)
 
 ## Development
+
+After a fresh database, home-page rows (VidGaze Picks, category strips, trend chips) stay empty until videos are assigned to those editorial categories and/or Redis feeds are populated by scheduled jobs. For **local** development you can run `php artisan dev:seed-homepage` to spread existing videos across the homepage categories and add demo trend topics in Redis.
 
 Want to contribute as a developer / moderator / promotor? Great!
 

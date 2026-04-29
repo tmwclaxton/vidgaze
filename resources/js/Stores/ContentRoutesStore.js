@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import axios from 'axios'
 import {useToastStore} from "@/Stores/ToastStore";
 import {useShareModalStore} from "@/Stores/ShareModelStore";
 import {usePage} from "@inertiajs/vue3";
@@ -19,7 +20,7 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
             .catch((error) => {
                 console.log(error);
             });
-            return response.data.video;
+            return response?.data?.video ?? null;
         },
 
         async getStream(slug) {
@@ -27,7 +28,7 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
             .catch((error) => {
                 console.log(error);
             });
-            return response.data.stream;
+            return response?.data?.stream ?? null;
         },
 
 
@@ -35,11 +36,17 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
         async getVideos(category = "popular", per_page = 20, video_ids = [], shorts = false, first_video_slug = null, creator_id = null) {
             // convert shorts to 1 or 0
             shorts = shorts ? 1 : 0;
+            const videoIdsParam =
+                video_ids === null || video_ids === undefined || video_ids === ''
+                    ? undefined
+                    : Array.isArray(video_ids)
+                        ? video_ids.join(',')
+                        : video_ids;
             const response = await axios.get(route('api.video.index'), {
                 params: {
                     category: category,
                     per_page: per_page,
-                    video_ids,
+                    ...(videoIdsParam !== undefined ? { video_ids: videoIdsParam } : {}),
                     shorts,
                     first_video_slug,
                     creator_id: creator_id
@@ -65,6 +72,9 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
             .catch((error) => {
                 console.log(error);
             });
+            if (response === undefined) {
+                return [];
+            }
             return response.data.videos.data;
         },
 
@@ -101,7 +111,10 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
             }).catch(error => {
                 console.log(error);
             })
-            return response.data.streams.data;
+            if (response === undefined) {
+                return [];
+            }
+            return response.data.streams.data ?? [];
 
         },
 
@@ -118,6 +131,9 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
                 .catch(error => {
                     console.log(error);
                 })
+            if (response === undefined) {
+                return [];
+            }
             return response.data.categories.data;
         },
 
@@ -127,6 +143,9 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
                 .catch(error => {
                     console.log(error);
                 })
+            if (response === undefined) {
+                return null;
+            }
             return response.data.category;
         }
 
