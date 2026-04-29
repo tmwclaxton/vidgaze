@@ -143,7 +143,7 @@ const dotsIconShow = computed(() => {
                         class="pt-1 line-clamp-2 overflow-hidden leading-5 font-bold  text-base  inline-flex">
 
                         <Link :href="itemType === 'video' ? route('watch.show', {slug: item.slug}) : route('stream.show', {slug: item.slug})"
-                              v-text="item.title" :title="item.title" class="pr-2 line-clamp-2 mb-0.5"></Link>
+                              v-text="item.title" :title="item.title" class="pr-2 line-clamp-2 mb-0.5 text-zinc-900 dark:text-white"></Link>
 
                     </span>
 
