@@ -1,21 +1,40 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, reactive, ref } from 'vue';
+import axios from 'axios';
+import { useToastStore } from '@/Stores/ToastStore';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { useAuthStore } from '@/Stores/AuthStore';
 const authStore = useAuthStore();
 const props = defineProps({
     status: String,
 });
 
-const form = useForm({});
+const form = reactive({ processing: false });
+const linkSent = ref(false);
 
+// The API answers with JSON and authenticates with the bearer token, so call it with
+// axios rather than an Inertia form post.
 const submit = () => {
-    form.post(route('api.verification.send'));
+    form.processing = true;
+    axios.post(route('api.verification.send')).then(response => {
+        linkSent.value = true;
+        useToastStore().add({
+            message: response.data.message,
+            type: response.data.toastType === 'success' ? 'success' : 'normal',
+        });
+    }).catch(error => {
+        useToastStore().add({
+            message: error.response?.data?.message ?? 'Could not send the verification email, please try again.',
+            type: 'warning',
+        });
+    }).finally(() => {
+        form.processing = false;
+    });
 };
 
-const verificationLinkSent = computed(() => props.status === 'verification-link-sent');
+const verificationLinkSent = computed(() => linkSent.value || props.status === 'verification-link-sent');
 </script>
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
