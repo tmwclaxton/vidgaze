@@ -22,7 +22,7 @@ class YouTube implements iSearchable, iIsPlatform
 
     public function __construct()
     {
-        $this->scraperKey = env('SCRAPER_KEY'); // Retrieve the Scraper-Key from the environment
+        $this->scraperKey = (string) config('services.scraper.key'); // Retrieve the Scraper-Key from the environment
     }
 
     public static function getPlatform(): Platform

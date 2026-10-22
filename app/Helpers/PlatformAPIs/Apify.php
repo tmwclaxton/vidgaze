@@ -10,7 +10,7 @@ class Apify
     private mixed $actor_id;
 
     public function __construct($actorId) {
-        $this->token = env('APIFY_TOKEN');
+        $this->token = config('services.apify.token');
         $this->actor_id = $actorId;
     }
 

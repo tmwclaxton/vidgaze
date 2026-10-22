@@ -22,7 +22,7 @@ class FaceBook implements iSearchable, iIsPlatform
 
     public function __construct()
     {
-        $this->apifyToken = env('APIFY_TOKEN');
+        $this->apifyToken = config('services.apify.token');
     }
 
     public static function getPlatform(): Platform

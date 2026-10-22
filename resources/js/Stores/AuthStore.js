@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 import {useToastStore} from "@/Stores/ToastStore";
-import {usePage} from "@inertiajs/inertia-vue3";
+import {usePage} from "@inertiajs/vue3";
 import {router} from "@inertiajs/vue3";
 
 export const useAuthStore = defineStore('AuthStore', {

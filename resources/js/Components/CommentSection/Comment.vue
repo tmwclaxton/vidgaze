@@ -1,4 +1,5 @@
 <script setup>
+import { escapeHtml } from "@/Helpers/sanitize.js";
 import {computed, ref} from "vue";
 import TertiaryButton from "@/Components/Buttons/TertiaryButton.vue";
 import LikeDislikeButtons from "@/Components/Buttons/LikeDislikeButtons.vue";
@@ -64,6 +65,8 @@ const noRepliesText = computed(() => {
 });
 
 function formatLinksInText(text) {
+    // escape first so user text cannot break out of the generated markup
+    text = escapeHtml(text);
     // Match and replace normal URLs (ignore URLs prefixed with "img:" or "vid:" inside ())
     const urlRegex = /(?<!(img:|vid:)\()[^\s()]*https?:\/\/[^\s()]+/gi;
     let formattedText = text.replace(urlRegex, (url) => {

@@ -1,7 +1,7 @@
 <script setup>
 import PaddingLayout from '@/Layouts/Partials/ConsistentPadding.vue';
 import {useAuthStore} from "@/Stores/AuthStore";
-import {Link} from "@inertiajs/inertia-vue3";
+import {Link} from "@inertiajs/vue3";
 import {useToastStore} from "@/Stores/ToastStore";
 import {onMounted, ref} from "vue";
 const toastStore = useToastStore();

@@ -55,14 +55,14 @@ use Illuminate\Support\Facades\Route;
         //this is a test route to make sure the api is working
         Route::get('/health', function () {
             try {
-                $database = DB::connection()->getPdo() ? 'CONNECTED: ' . env('DB_HOST') . ':' . env('DB_PORT')
+                $database = DB::connection()->getPdo() ? 'CONNECTED'
                     : 'NOT CONNECTED';
             } catch (\Exception $e) {
                 $database = 'NOT CONNECTED';
             }
             // check if redis is connected
             try {
-                $redis = Redis::client()->ping() ? 'CONNECTED: ' . env('REDIS_HOST') . ':' . env('REDIS_PORT')
+                $redis = Redis::client()->ping() ? 'CONNECTED'
                     : 'NOT CONNECTED';
             } catch (\Exception $e) {
                 $redis = 'NOT CONNECTED';
@@ -80,7 +80,7 @@ use Illuminate\Support\Facades\Route;
 
 
             //if redis is working then try to write to it and read from it
-            if ($redis == 'CONNECTED: ' . env('REDIS_HOST') . ':' . env('REDIS_PORT')) {
+            if ($redis == 'CONNECTED') {
                 try {
                     Redis::client()->set('test', 'test');
                     $redisMessage = Redis::client()->get('test');
@@ -92,18 +92,18 @@ use Illuminate\Support\Facades\Route;
 
             // Get worker logs //
             $logPath = storage_path('logs/worker.log');
-            $log = file_get_contents($logPath);
+            $log = is_file($logPath) ? (string) file_get_contents($logPath) : '';
             $logSegments = explode("\n", $log);
             $workerLogs = array_filter($logSegments, 'strlen');
 
             // Get laravel logs //
             $logPath = storage_path('logs/laravel.log');
-            $log = file_get_contents($logPath);
+            $log = is_file($logPath) ? (string) file_get_contents($logPath) : '';
             $logSegments = explode("\n", $log);
             $laravelLogs = array_filter($logSegments, 'strlen');
 
             $swooleLogPath = storage_path('logs/swoole_http.log');
-            $log = file_get_contents($swooleLogPath);
+            $log = is_file($swooleLogPath) ? (string) file_get_contents($swooleLogPath) : '';
             $logSegments = explode("\n", $log);
             $swooleLogs = array_filter($logSegments, 'strlen');
 
@@ -127,7 +127,7 @@ use Illuminate\Support\Facades\Route;
                 'workerLogs' => $workerLogs,
                 'swooleLogs' => $swooleLogs
             ], 200);
-        })->name('health')->middleware('auth:sanctum');
+        })->name('health')->middleware(['auth:sanctum', 'admin']);
 
 
         // if in local environment add the ping route it should not be in production and if it is then JoshPing needs updated as its in gitignore

@@ -1,4 +1,5 @@
 <script setup>
+import { sanitizeHtml } from "@/Helpers/sanitize.js";
 
 const props = defineProps({
     comment: {
@@ -43,7 +44,7 @@ const props = defineProps({
 
 
                 <!--comment body here -->
-                <p class=" pr-2 pt-1 break-words   " v-html="props.comment.body"/>
+                <p class=" pr-2 pt-1 break-words   " v-html="sanitizeHtml(props.comment.body)"/>
 
 
                 <div class="  flex flex-row flex-wrap gap-2  font-semibold pt-3 hover:cursor-pointer ">
