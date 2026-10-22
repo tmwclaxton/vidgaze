@@ -2,6 +2,7 @@
     <div class="relative">
         <select
             v-bind="$attrs"
+            :aria-label="ariaLabel || title || undefined"
             :value="modelValue"
             @input="$emit('update:modelValue', $event.target.value)"
             class="block w-full px-4 py-1 text-base font-semibold text-zinc-700 dark:text-zinc-200
@@ -32,6 +33,11 @@ defineProps({
     options: {
         type: Array,
         required: true
+    },
+    // accessible name when there is no visible label (falls back to title)
+    ariaLabel: {
+        type: String,
+        default: null,
     },
     title: {
         type: String,

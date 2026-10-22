@@ -10,7 +10,7 @@
         <DailymotionIcon v-if="source === 'Dailymotion'" class="w-3 h-3 mr-1.5" />
         <RumbleIcon src="/" v-if="source === 'Rumble'" class="w-3 h-3 mr-1.5" />
 
-        <p class="line-clamp-1 leading-tight font-bold text-xs" v-text="text"></p>
+        <p class="line-clamp-1 leading-tight font-bold text-sm" v-text="text"></p>
     </div>
 </template>
 
@@ -54,7 +54,7 @@ const getClasses = computed(() => {
     const classes = sourceClasses[props.source];
 
     if (!classes) {
-        return props.extraClasses ?? ' bg-vidgaze-blue text-zinc-100 dark:text-white  text-xs';
+        return props.extraClasses ?? ' bg-vidgaze-blue text-zinc-100 dark:text-white  text-sm';
     }
 
     return classes + ' text-white';

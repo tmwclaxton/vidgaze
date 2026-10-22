@@ -1,4 +1,5 @@
 <script setup>
+import Avatar from "@/Components/General/Avatar.vue";
 import DropdownLink from '@/Components/Links/DropdownLink.vue';
 import Dropdown from '@/Components/Dropdown/Dropdown.vue';
 import {Link} from '@inertiajs/vue3';
@@ -21,14 +22,13 @@ const authStore = useAuthStore();
         <Dropdown align="right" width="64" distance="1.5"  >
             <template #trigger>
                 <span class="inline-flex rounded-md   ">
-                    <button
+                    <button aria-label="Account menu"
                         type="button"
                         class="inline-flex items-center h-full border border-transparent  rounded-md bg-transparent hover:text-zinc-300 focus:outline-none transition ease-in-out duration-150"
                     >
                         <!--<img class="w-full   "-->
                         <!--     v-bind:src="authStore.user.creator.banner_url">-->
-                        <img class="h-8 aspect-square rounded-full bg-zinc-800 aspect-square  "
-                             v-bind:src="authStore.user.creator.avatar_url">
+                        <Avatar class="h-8 w-8 text-sm" :src="authStore.user.creator?.avatar_url" :name="authStore.user.creator?.name || authStore.user.name"/>
 
                     </button>
                 </span>
@@ -38,8 +38,7 @@ const authStore = useAuthStore();
                 <div class="p-2">
                     <div class="flex flex-row space-x-2 block w-full px-4 py-2 pb-4 text-left text-sm  ">
                         <!--Profile picture-->
-                        <img class="h-10 aspect-square rounded-full bg-zinc-800 aspect-square  "
-                             v-bind:src="authStore.user.creator.avatar_url">
+                        <Avatar class="h-10 w-10 text-base flex-shrink-0" :src="authStore.user.creator?.avatar_url" :name="authStore.user.creator?.name || authStore.user.name"/>
                         <div class="flex flex-col">
                             <span class="text dark:text-white font-bold">{{ authStore.user.email }}</span>
                             <Link :href="route('profile.edit')" class="text-blue-500 font-bold">
@@ -67,7 +66,7 @@ const authStore = useAuthStore();
                         <CoinsIcon class="w-5 h-5 flex-shrink-0"/>
                         <div class="flex flex-col gap-y-1">
                             <span class="font-bold">Buy VidCoins</span>
-                            <span class="text-xs">You have {{ authStore.user.creator.vidcoins }}</span>
+                            <span class="text-sm">You have {{ authStore.user.creator.vidcoins }}</span>
                         </div>
 
                     </DropdownLink>

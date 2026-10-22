@@ -13,6 +13,7 @@ import {useShareModalStore} from "@/Stores/ShareModelStore";
 import Viewers from "@/Components/Cards/VideoStreamCards/Partials/CornerInfo.vue";
 import CornerInfo from "@/Components/Cards/VideoStreamCards/Partials/CornerInfo.vue";
 import {useAuthStore} from "@/Stores/AuthStore";
+import {knownCount} from "@/Helpers/counts";
 const contentModalStore = useContentModalStore();
 const shareModalStore = useShareModalStore();
 const playlistModalStore = usePlaylistModalStore();
@@ -72,7 +73,7 @@ const dotsIconShow = computed(() => {
         <div  v-if="!hideItem">
             <div class="relative aspect-[21/12] overflow-hidden rounded-md ">
                 <Link :href="itemType === 'video' ? route('watch.show', {slug: item.slug}) : route('stream.show', {slug: item.slug})" >
-                    <img class="object-cover w-full h-full bg-zinc-900" v-bind:src="item.thumbnail_url"   alt=""/>
+                    <img class="object-cover w-full h-full bg-zinc-900" v-bind:src="item.thumbnail_url" :alt="item.title || 'Video thumbnail'"/>
                 </Link>
 
                 <!--<Duration />-->
@@ -109,16 +110,16 @@ const dotsIconShow = computed(() => {
                         <div class=" flex flex-row pt-1">
                             <div class=" mt-1 flex-shrink-0">
                                 <div v-if="!channel_page" class="flex-shrink-0 pr-2">
-                                    <Link class="without-ring " :href="route('channel.show', {slug: item.creator.slug})">
+                                    <Link class="without-ring " :href="route('channel.show', {slug: item.creator.slug})" :aria-label="`${item.creator.name} channel`">
 
                                         <img v-if="item.creator.avatar_url != null"
                                              class=" pointer-events-auto w-9 aspect-square rounded-full bg-zinc-800 "
-                                             v-bind:src="item.creator.avatar_url">
+                                             v-bind:src="item.creator.avatar_url" :alt="`${item.creator.name} avatar`">
                                     </Link>
                                 </div>
                             </div>
                             <div class="my-auto">
-                                <div class="  space-y-0    text-xs font-normal">
+                                <div class="  space-y-0    text-sm font-normal">
                                     <Link v-if="!channel_page" :href="route('channel.show', {slug: item.creator.slug})"
                                        class="w-max without-ring pointer-events-auto line-clamp-1 text-hover dark:text-hover-dark  ">
 
@@ -136,7 +137,7 @@ const dotsIconShow = computed(() => {
                                         <p class="line-clamp-1" v-text="(item.preferred_source)"/>
                                     </div>
 
-                                    <div v-if="item.type = 'video' && item.view_count !== undefined && item.view_count !== '0 Views'" class=" info-tag dark:info-tag-dark flex flex-row gap-2 items-center align-middle pb-0.5 ">
+                                    <div v-if="item.type = 'video' && knownCount(item.view_count)" class=" info-tag dark:info-tag-dark flex flex-row gap-2 items-center align-middle pb-0.5 ">
                                         <font-awesome-icon :icon="['fas', 'eye']" class="h-3 my-auto" />
                                         <p class="line-clamp-1" v-text="(item.view_count)"/>
                                     </div>
@@ -150,7 +151,7 @@ const dotsIconShow = computed(() => {
                                     </Link>
 
                                     <div v-if="item.live_viewer_count > 0" class="
-                                        capitalize flex flex-row items-center  text-xs font-semibold
+                                        capitalize flex flex-row items-center  text-sm font-semibold
                                         text text-red-600 dark:text-red-400   ">
                                         <FireIcon class="w-3 h-3 my-auto mr-2 "/>
                                         <p class="line-clamp-1 " v-text="item.live_viewer_count + ' Watching'"></p>
@@ -163,7 +164,7 @@ const dotsIconShow = computed(() => {
                     </div>
                     <!--3 dots button-->
                     <div :id="'dotsButton_' + itemType + '_' + item.id" class="col-span-1 ml-auto pt-2 w-8 without-ring h-max" >
-                        <button @click="setContentModalValues()" class="flex without-ring m-0 mt-0 opacity-90 w-6 rounded-full text-zinc-500 ml-auto   pointer-events-auto">
+                        <button type="button" aria-label="More options" @click="setContentModalValues()" class="flex without-ring m-0 mt-0 opacity-90 w-6 rounded-full text-zinc-500 ml-auto   pointer-events-auto">
                             <DotsIcon class="w-6 h-6 opacity-0  duration-500 delay-500 group-hover:opacity-100 transition-none group-hover:transition-opacity" :class="{ 'opacity-100': dotsIconShow}" />
                         </button>
                     </div>

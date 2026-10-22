@@ -22,7 +22,7 @@ const classes = computed(() => {
     } else {
         classString += 'sm:flex-col  align-middle justify-left sm:gap-2 gap-2 px-3 py-2 w-10 ';
     }
-    classString += 'text-center items-center sm:text-xs flex rounded text-md block w-full   text-left  font-medium transition duration-150 ease-in-out ';
+    classString += 'text-center items-center sm:text-sm flex rounded text-md block w-full   text-left  font-medium transition duration-150 ease-in-out ';
     // ... rest of the CSS classes
     return classString;
 });

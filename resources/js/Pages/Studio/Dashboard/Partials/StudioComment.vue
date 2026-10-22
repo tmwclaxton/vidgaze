@@ -21,7 +21,7 @@ const props = defineProps({
                     <img
                         class=" z-1 relative hover:cursor-pointer inline object-cover w-9 h-9  rounded-full"
                         v-bind:src="props.comment.owner.avatar_url"
-                        alt="Profile image"/>
+                        alt="Commenter avatar"/>
                 </Link>
             </div>
 

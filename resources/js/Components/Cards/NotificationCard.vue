@@ -19,8 +19,8 @@ const props = defineProps({
                      alt="">
             </span>
             <span class=" col-span-3 items-start grid grid-cols-1">
-                <span class="line-clamp-2 w-full text-xs font-bold text-left pt-2 px-1" v-text="item.creator.name + ' · ' + item.title"/>
-                <span class="text-zinc-500 line-clamp-1 w-full text-xs font-bold text-left pt-1 px-1"
+                <span class="line-clamp-2 w-full text-sm font-bold text-left pt-2 px-1" v-text="item.creator.name + ' · ' + item.title"/>
+                <span class="text-zinc-500 line-clamp-1 w-full text-sm font-bold text-left pt-1 px-1"
                       v-text="item.type ? item.time_published : item.viewers"/>
             </span>
             <span class=" col-span-2 pt-2 px-4">

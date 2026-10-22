@@ -22,7 +22,7 @@ const props = defineProps({
         </Link>
         <!-- Category Tags -->
         <div class="flex flex-row flex-wrap gap-2">
-            <div v-for="tag in category.tags" class="cursor-pointer px-3 p-1 rounded-full text-xs font-bold bg-zinc-200 dark:bg-zinc-700">
+            <div v-for="tag in category.tags" class="cursor-pointer px-3 p-1 rounded-full text-sm font-bold bg-zinc-200 dark:bg-zinc-700">
                 <p v-text="tag"/>
             </div>
         </div>

@@ -29,11 +29,11 @@ const category = ref('');
 
 const vimeoPinned = ref([]);
 const rumblePinned = ref([]);
-const vidgazePicks = ref([]);
-const musicPinned = ref([]);
-const cryptoPinned = ref([]);
-const gamingPinned = ref([]);
-const alternatePinned = ref([]);
+const vidgazePicks = ref(null); // null while loading, [] when empty or failed
+const musicPinned = ref(null); // null while loading, [] when empty or failed
+const cryptoPinned = ref(null); // null while loading, [] when empty or failed
+const gamingPinned = ref(null); // null while loading, [] when empty or failed
+const alternatePinned = ref(null); // null while loading, [] when empty or failed
 
 const categorySlugs = {
     'music': 'music',
@@ -48,11 +48,17 @@ const categorySlugs = {
 onMounted(async () => {
     // vimeoPinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Vimeo');
     // rumblePinned.value = await pinModalStore.getPinnedVideos(6, 1, null, 'Rumble');
-    vidgazePicks.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.vidgaze);
-    musicPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.music);
-    cryptoPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.crypto);
-    gamingPinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.gaming);
-    alternatePinned.value = await pinModalStore.getPinnedVideos(6, 1, categorySlugs.alternate);
+    // load the rows in parallel; a failed or empty row is hidden
+    const rows = [
+        [vidgazePicks, categorySlugs.vidgaze],
+        [musicPinned, categorySlugs.music],
+        [cryptoPinned, categorySlugs.crypto],
+        [gamingPinned, categorySlugs.gaming],
+        [alternatePinned, categorySlugs.alternate],
+    ];
+    await Promise.all(rows.map(async ([row, slug]) => {
+        row.value = (await pinModalStore.getPinnedVideos(6, 1, slug)) ?? [];
+    }));
 
     await debouncedFetchVideos(); // call it immediately on mount
 
@@ -133,7 +139,7 @@ const fetchVideos = async (videoArray) => {
 
         <ConsistentPadding class="-mt-4">
 
-            <VideosRow :videos="vidgazePicks" title="VidGaze Picks">
+            <VideosRow :videos="vidgazePicks" :hideWhenEmpty="true" title="VidGaze Picks">
                 <font-awesome-icon :icon="['fas', 'burst']" class="my-auto h-6"/>
             </VideosRow>
 
@@ -149,19 +155,19 @@ const fetchVideos = async (videoArray) => {
 <!--                <RumbleIcon class="my-auto h-6"/>-->
 <!--            </VideosRow>-->
 
-            <VideosRow :videos="musicPinned" title="Top in Music">
+            <VideosRow :videos="musicPinned" :hideWhenEmpty="true" title="Top in Music">
                 <font-awesome-icon :icon="['fas', 'music']" class="my-auto h-6"/>
             </VideosRow>
 
-            <VideosRow :videos="gamingPinned" title="Gaming" :showCategoryTag="false">
+            <VideosRow :videos="gamingPinned" :hideWhenEmpty="true" title="Gaming" :showCategoryTag="false">
                 <font-awesome-icon :icon="['fas', 'gamepad']" class="my-auto h-6"/>
             </VideosRow>
 
-            <VideosRow :videos="cryptoPinned" title="Crypto Currency" :showCategoryTag="false">
+            <VideosRow :videos="cryptoPinned" :hideWhenEmpty="true" title="Crypto Currency" :showCategoryTag="false">
                 <font-awesome-icon :icon="['fas', 'coins']" class="my-auto h-6"/>
             </VideosRow>
 
-            <VideosRow :videos="alternatePinned" title="Alternate News" :showCategoryTag="false">
+            <VideosRow :videos="alternatePinned" :hideWhenEmpty="true" title="Alternate News" :showCategoryTag="false">
                 <font-awesome-icon :icon="['fas', 'newspaper']" class="my-auto h-6"/>
             </VideosRow>
 

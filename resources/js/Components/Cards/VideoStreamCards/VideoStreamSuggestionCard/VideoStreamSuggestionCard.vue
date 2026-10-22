@@ -41,7 +41,7 @@ const props = defineProps({
                         <p style="" class=" text-md font-bold leading-4 line-clamp-2 pr-2 break-words" v-text="props.item.title"/>
                     </Link>
 
-                    <Link :href="route('channel.show', {slug: props.item.creator.slug})" class="text-xs  w-max">
+                    <Link :href="route('channel.show', {slug: props.item.creator.slug})" class="text-sm  w-max">
                         <span v-text="props.item.creator.name"/>
                     </Link>
 

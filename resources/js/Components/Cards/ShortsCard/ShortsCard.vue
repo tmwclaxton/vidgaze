@@ -48,7 +48,7 @@ const dotsIconShow = computed(() => {
             <div class="relative aspect-[10/16] overflow-hidden rounded-xl">
                 <Link :href="'shorts?short=' + item.slug">
                     <div class="bg-black w-full h-full flex">
-                        <img class="object-fit w-full  my-auto bg-zinc-900" v-bind:src="item.thumbnail_url"   alt=""/>
+                        <img class="object-fit w-full  my-auto bg-zinc-900" v-bind:src="item.thumbnail_url" :alt="item.title || 'Video thumbnail'"/>
                     </div>
                 </Link>
 
@@ -84,16 +84,16 @@ const dotsIconShow = computed(() => {
                         <div class=" flex flex-row pt-1">
                             <div class=" mt-1 flex-shrink-0">
                                 <div v-if="!channel_page" class="flex-shrink-0 pr-2">
-                                    <Link class="without-ring " :href="route('channel.show', {slug: item.creator.slug})">
+                                    <Link class="without-ring " :href="route('channel.show', {slug: item.creator.slug})" :aria-label="`${item.creator.name} channel`">
 
                                         <img v-if="item.creator.avatar_url != null"
                                              class=" pointer-events-auto w-9 aspect-square rounded-full bg-zinc-800 "
-                                             v-bind:src="item.creator.avatar_url">
+                                             v-bind:src="item.creator.avatar_url" :alt="`${item.creator.name} avatar`">
                                     </Link>
                                 </div>
                             </div>
                             <div class="my-auto">
-                                <div class="  space-y-0    text-xs font-normal">
+                                <div class="  space-y-0    text-sm font-normal">
                                     <Link v-if="!channel_page" :href="route('channel.show', {slug: item.creator.slug})"
                                        class="w-max without-ring pointer-events-auto line-clamp-1 text-hover dark:text-hover-dark  ">
 
@@ -107,7 +107,7 @@ const dotsIconShow = computed(() => {
                     </div>
                     <!--3 dots button-->
                     <div :id="'dotsButton_' + itemType + '_' + item.id" class="col-span-1 ml-auto pt-2 w-8 without-ring h-max" >
-                        <button @click="setContentModalValues()" class="flex without-ring m-0 mt-0 opacity-90 w-6 rounded-full text-zinc-500 ml-auto   pointer-events-auto">
+                        <button type="button" aria-label="More options" @click="setContentModalValues()" class="flex without-ring m-0 mt-0 opacity-90 w-6 rounded-full text-zinc-500 ml-auto   pointer-events-auto">
                             <DotsIcon class="w-6 h-6 opacity-0 duration-500 delay-500 group-hover:opacity-100 transition-none group-hover:transition-opacity ease-in-out" :class="{ 'opacity-100': dotsIconShow}" />
                         </button>
                     </div>

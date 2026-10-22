@@ -203,9 +203,9 @@ const closeMiniPlayer = () => {
                         <p v-text="queueStore.items[queueStore.index].title"></p>
                     </Link>
                     <Link v-if="useQueueStore().playlist" :href="route('playlist.show', {slug: useQueueStore().playlist.slug})">
-                        <p class="text-xs font-normal text-left" v-text="useQueueStore().playlist.name + ' · ' + useQueueStore().positionText"></p>
+                        <p class="text-sm font-normal text-left" v-text="useQueueStore().playlist.name + ' · ' + useQueueStore().positionText"></p>
                     </Link>
-                    <p v-else class="text-xs font-normal text-left" v-text="'Queue' + ' · ' + useQueueStore().positionText"></p>
+                    <p v-else class="text-sm font-normal text-left" v-text="'Queue' + ' · ' + useQueueStore().positionText"></p>
                 </div>
                 <!--expand queue button-->
                 <div @click="toggleExpandQueue" class="my-auto mr-2">

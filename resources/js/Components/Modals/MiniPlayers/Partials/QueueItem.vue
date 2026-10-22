@@ -11,16 +11,16 @@
             <div class="relative h-12 aspect-21/12" >
                 <img class="absolute w-full h-full rounded-lg" :src="props.item.thumbnail_url">
                 <CornerInfo v-if="props.item.duration != null" :item="props.item.object" class="absolute bottom-0 right-0 m-1">
-                    <p class="my-auto text-xs" v-text="props.item.duration"/>
+                    <p class="my-auto text-sm" v-text="props.item.duration"/>
                 </CornerInfo>
 
                 <CornerInfo v-if="props.item.viewers != null" :item="props.item.object" class="absolute bottom-0 right-0 m-1 ">
-                    <p class="my-auto text-xs" v-text="'Live'"/>
+                    <p class="my-auto text-sm" v-text="'Live'"/>
                 </CornerInfo>
             </div>
             <div class="flex-grow my-auto">
                 <p class="text-sm font-semibold text-left line-clamp-2" v-text="props.item.title"></p>
-                <p class="text-xs text-left line-clamp-1" v-text="props.item.creator.name "></p>
+                <p class="text-sm text-left line-clamp-1" v-text="props.item.creator.name "></p>
             </div>
         </div>
         <div class="px-5 flex flex-row flex-shrink-0">

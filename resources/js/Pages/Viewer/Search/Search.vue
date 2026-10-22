@@ -1,6 +1,6 @@
 <script setup>
 import axios from "axios";
-import {onMounted, ref} from 'vue';
+import {computed, onMounted, onUnmounted, ref} from 'vue';
 import CreatorSearchCard from "@/Components/Cards/CreatorSearchCard/CreatorSearchCard.vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 import CreatorSearchSkeleton from "@/Components/Cards/CreatorSearchCard/CreatorSearchSkeleton.vue";
@@ -34,68 +34,64 @@ const videos = ref([]);
 const playlists = ref([]);
 const podcasts = ref([]);
 const streams = ref([]);
+// platform searches finished so far, from get_results
+const progress = ref({done: 0, total: 0, complete: false});
+const finished = ref(false);
+
+const hasResults = computed(() => creators.value.length > 0 || videos.value.length > 0);
 
 function startSearch(searchQuery) {
-    const url = route('api.search.start_query', {q: searchQuery.value});
-    axios.post(url)
-        .then(function (response) {
-            // handle success
-            console.log(response);
-        })
-        .catch(function (error) {
-            // handle error
-            console.log(error);
-        })
+    return axios.post(route('api.search.start_query', {q: searchQuery.value}))
+        .catch(error => console.log(error));
 }
 
-function retrieveResults(searchQuery) {
-    const url = route('api.search.get_results', {q: searchQuery.value});
-    axios.get(url)
-        .then(function (response) {
-            // handle success
-            console.log(response);
-            if (response.data.creators !== undefined) {
-                creators.value = response.data.creators.data;
-            } else {
-                visibleCreatorsCount.value = 0;
-            }
-            if (response.data.videos !== undefined) {
-                videos.value = response.data.videos.data;
-            }
-            if (response.data.playlists !== undefined) {
-                playlists.value = response.data.playlists.data;
-            }
-            if (response.data.podcasts !== undefined) {
-                podcasts.value = response.data.podcasts.data;
-            }
-            if (response.data.streams !== undefined) {
-                streams.value = response.data.streams.data;
-            }
-
-            // if any of the values aren't empty or undefined, set loading to false
-            if (creators.value.length > 0 || videos.value.length > 0 || playlists.value.length > 0 || podcasts.value.length > 0 || streams.value.length > 0) {
-                loading.value = false;
-            }
-
-        }).catch(function (error) {
-        // handle error
+async function retrieveResults(searchQuery) {
+    try {
+        const response = await axios.get(route('api.search.get_results', {q: searchQuery.value}));
+        const data = response.data;
+        creators.value = data.creators?.data ?? [];
+        videos.value = data.videos?.data ?? [];
+        playlists.value = data.playlists?.data ?? [];
+        podcasts.value = data.podcasts?.data ?? [];
+        streams.value = data.streams?.data ?? [];
+        if (data.progress) {
+            progress.value = data.progress;
+        }
+        // show results as soon as there are any, even while other platforms are still searching
+        if (hasResults.value) {
+            loading.value = false;
+        }
+        if (data.progress?.complete) {
+            finish();
+        }
+    } catch (error) {
         console.log(error);
-    })
+    }
 }
-const finished = ref(false);
-onMounted(() => {
-    startSearch(searchQuery);
-    retrieveResults(searchQuery);
 
-    // every second retrieve results, and stop after 10 seconds
-    const interval = setInterval(() => {
-        retrieveResults(searchQuery);
-    }, 4000);
-    setTimeout(() => {
-        clearInterval(interval);
-        finished.value = true;
-        loading.value = false;
-    }, 30000);
+let interval = null;
+let timeout = null;
+function finish() {
+    clearInterval(interval);
+    clearTimeout(timeout);
+    finished.value = true;
+    loading.value = false;
+}
+
+onMounted(async () => {
+    await startSearch(searchQuery);
+    await retrieveResults(searchQuery);
+    if (finished.value) return;
+
+    // poll quickly so each platform's results appear as soon as they are ready
+    interval = setInterval(() => retrieveResults(searchQuery), 1500);
+    // give up waiting after 25 seconds
+    timeout = setTimeout(finish, 25000);
+});
+
+onUnmounted(() => {
+    clearInterval(interval);
+    clearTimeout(timeout);
 });
 </script>
 <template>
@@ -112,7 +108,7 @@ onMounted(() => {
         <div v-show="false" class="text dark:textDark text-sm my-8 mt-5 ml-1">
             <div class="w-full grid grid-cols-3 gap-7 sm:flex sm:flex-row ">
                 <div class="flex flex-col gap-y-1">
-                    <p class="font-bold uppercase w-24 text-xs">Platform</p>
+                    <p class="font-bold uppercase w-24 text-sm">Platform</p>
                     <!--<x-hr class="my-3"/>-->
                     <p>YouTube</p>
                     <p>Dailymotion</p>
@@ -123,7 +119,7 @@ onMounted(() => {
 
                 </div>
                 <div class="flex flex-col gap-y-1">
-                    <p class="font-bold uppercase w-24 text-xs">Upload date</p>
+                    <p class="font-bold uppercase w-24 text-sm">Upload date</p>
                     <!--<x-hr class="my-3"/>-->
                     <p>Last hour</p>
                     <p>Today</p>
@@ -132,14 +128,14 @@ onMounted(() => {
                     <p>This year</p>
                 </div>
                 <div class="flex flex-col gap-y-1">
-                    <p class="font-bold uppercase w-24 text-xs">Type</p>
+                    <p class="font-bold uppercase w-24 text-sm">Type</p>
                     <!--<x-hr class="my-3"/>-->
                     <p>Video</p>
                     <p>Channel</p>
                     <p>Playlist</p>
                 </div>
                 <div class="flex flex-col gap-y-1">
-                    <p class="font-bold uppercase w-24 text-xs">Duration</p>
+                    <p class="font-bold uppercase w-24 text-sm">Duration</p>
                     <!--<x-hr class="my-3"/>-->
                     <p>Under 4 minutes</p>
                     <p>4 - 20 minutes</p>
@@ -147,7 +143,7 @@ onMounted(() => {
 
                 </div>
                 <div class="flex flex-col gap-y-1">
-                    <p class="font-bold uppercase w-24 text-xs">Sort by</p>
+                    <p class="font-bold uppercase w-24 text-sm">Sort by</p>
                     <!--<x-hr class="my-3"/>-->
                     <p>Relevance</p>
                     <p>Upload date</p>
@@ -165,7 +161,7 @@ onMounted(() => {
 
                 <div
                     class="flex flex-col flex-wrap gap-4 ">
-                    <CreatorSearchCard v-if="creators.length > 0" v-for="creator in creators.slice(0,visibleCreatorsCount)" :creator="creator"/>
+                    <CreatorSearchCard v-if="creators.length > 0" v-for="creator in creators.slice(0,visibleCreatorsCount)" :key="creator.id" :creator="creator"/>
                     <CreatorSearchSkeleton v-else v-for="i in 2" v-if="loading"/>
                 </div>
 
@@ -177,15 +173,22 @@ onMounted(() => {
 
                 <RowDivider v-else class="mt-4 mb-4" v-if="loading || (creators.length > 0 && creators.length < 3)"/>
 
-                <div class="px-0 relative w-full grid grid-cols-1 gap-4 ">
-                    <!--<x-search-video-card :video="$video"/>-->
-                    <VideoStreamSearchCard v-if="!loading && videos !== undefined && videos.length > 0" v-for="video in videos" :item="video"/>
-                    <VideoStreamSearchSkeleton v-else v-for="i in 8" v-if="loading"/>
-
+                <!--progress while platforms are still being searched-->
+                <div v-if="!finished" role="status" aria-live="polite"
+                     class="flex items-center gap-3 mb-4 text-base text-zinc-600 dark:text-zinc-300">
+                    <font-awesome-icon :icon="['fas', 'spinner']" class="h-4 animate-spin" aria-hidden="true"/>
+                    <span v-if="progress.total > 0">Searching sources ({{ progress.done }} of {{ progress.total }} done)</span>
+                    <span v-else>Searching</span>
+                    <span v-if="hasResults">, more results may appear</span>
                 </div>
 
-                <div class="mt-20" v-if="!loading && (videos === undefined || videos.length === 0) && creators.length === 0 && finished">
-                    <ErrorMessage :message="'Whoops we couldn\'t find any content'"/>
+                <div class="px-0 relative w-full grid grid-cols-1 gap-4 ">
+                    <VideoStreamSearchCard v-if="videos.length > 0" v-for="video in videos" :key="video.id" :item="video"/>
+                    <VideoStreamSearchSkeleton v-else-if="loading" v-for="i in 8"/>
+                </div>
+
+                <div class="mt-20" v-if="finished && !hasResults">
+                    <ErrorMessage :message="`No results for '${searchQuery}'. Try a different search.`"/>
                 </div>
 
             </section>

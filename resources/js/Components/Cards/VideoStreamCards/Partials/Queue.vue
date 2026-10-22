@@ -35,11 +35,13 @@ const addToQueue = () => {
 
 <template>
     <div  @mouseenter="QueueOpen = true" @mouseleave="QueueOpen = false" @click="addToQueue()" key="queue"
+         role="button" tabindex="0" @keydown.enter.prevent="addToQueue()"
+         :aria-label="inQueue ? 'Added to queue' : 'Add to queue'"
          class="h-7 w-max text-sm px-1.5 z-1 pointer-events-auto cursor-pointer flex flex-row gap-x-3
       group-hover:opacity-100 opacity-0 transition duration-300
        bg-zinc-900/90 rounded ">
         <div v-if="QueueOpen"
-             class="   text-white text-xs font-bold text-center my-auto pl-1 ">
+             class="   text-white text-sm font-bold text-center my-auto pl-1 ">
             <p  v-if="inQueue">Added to Queue</p>
             <p  v-if="!inQueue">Add to Queue</p>
         </div>

@@ -65,19 +65,19 @@ onUnmounted(() => {
 
 
     <div class="fixed top-0 left-0 h-screen w-screen z-0">
-        <img style="filter: brightness(0.6);" src="/images/logos/vidgaze/night_sky2.jpg" alt="very cool bg"
+        <img style="filter: brightness(0.6);" src="/images/logos/vidgaze/night_sky2.jpg" alt=""
              class="h-full w-full">
         <div class="absolute top-0 left-0 h-screen w-screen z-10  bg-gradient-to-b from-transparent to-gray-900"></div>
     </div>
     <div class="flex flex-col">
         <!-- Page header -->
-        <div class="relative h-screen w-screen     flex flex-col py-auto justify-center align-middle   px-4 sm:px-6 lg:px-8">
+        <div class="relative min-h-[70vh] w-full flex flex-col py-24 justify-center align-middle px-4 sm:px-6 lg:px-8">
 
             <div ref="welcomeMessageDiv" class=" transition duration-900 opacity-0 translate-y-52 ">
                 <div class="target max-w-7xl mx-auto text-center pb-12 md:pb-6 flex flex-col gap-y-3  ">
                     <h1 class="text-4xl lg:text-5xl text-white font-bold">Welcome to VidGaze</h1>
-                    <p class="text-2xl text-gray-300"> The ultimate video-streaming platform for both creators and
-                        viewers alike </p>
+                    <p class="text-2xl text-gray-200">Co-operative, open-source social media owned by its users.</p>
+                    <p class="text-lg text-gray-300 max-w-2xl mx-auto">Watch creators from YouTube, Rumble and more in one place, ranked by the community instead of an algorithm.</p>
                 </div>
                 <!--get started button-->
 
@@ -97,29 +97,14 @@ onUnmounted(() => {
 
 
         <!-- supported by -->
-        <div class="relative w-screen min-h-screen flex  bg-white dark:bg-vidgaze-blue">
-
-            <!--awards-->
-
-            <div class="  m-auto  py-8">
-                <div class="  mx-auto px-4">
-                    <h2 class="text-4xl font-bold mb-4 mx-auto text-center ">Kindly Supported By</h2>
-                    <div class="w-full mx-auto h-52 p-4 align-middle flex flex-row">
-                        <img class=" mx-auto" src="https://media.licdn.com/dms/image/C5616AQF_LI7LB3LmFg/profile-displaybackgroundimage-shrink_200_800/0/1649275790532?e=2147483647&v=beta&t=J4ZNWNzLfsEGFmFyiAdtA0tQ2Xyq1RqKZYHBBdr0kGc"/>
-                    </div>
-                    <div class="flex flex-wrap flex-row items-center justify-center ">
-                        <div class="   flex flex-row ">
-                            <img class="h-52   object-contain" src="https://images.squarespace-cdn.com/content/v1/631a0fdf324dc751c8d24b33/b2ea62b4-5c04-409e-b01a-0727d468d6f6/CoFo_WithNavyBG_RGB.png?format=1500w"/>
-
-                        </div>
-                        <div class="  p-4 align-middle flex flex-row">
-                            <img class="h-52   " src="https://www.scaleupinstitute.org.uk/wp-content/uploads/2019/11/techstart.png"/>
-                        </div>
-                    </div>
+        <div class="relative w-full flex bg-white dark:bg-vidgaze-blue">
+            <div class="m-auto py-16 px-4">
+                <h2 class="text-4xl font-bold mb-8 mx-auto text-center">Kindly Supported By</h2>
+                <div class="flex flex-wrap flex-row items-center justify-center gap-8">
+                    <img class="h-40 sm:h-52 object-contain" src="/images/supporters/cofounders.png" alt="Co-Founders by Catalyst"/>
+                    <img class="h-40 sm:h-52 object-contain" src="/images/supporters/techstart.png" alt="Techstart"/>
                 </div>
             </div>
-
-
         </div>
 
         <!-- explain the platform -->
@@ -177,7 +162,7 @@ onUnmounted(() => {
 
         <!-- testimonials -->
 
-        <div class="relative w-screen h-screen flex   ">
+        <div class="relative w-full flex py-16">
 
             <div class=" max-w-5xl w-full m-auto  p-4">
                 <h2 class="text-4xl font-bold mb-8 mx-auto text-center text-white ">Testimonials</h2>
@@ -189,7 +174,7 @@ onUnmounted(() => {
                                 <div class="mx-auto aspect-square w-full">
                                     <img
                                         src="https://pbs.twimg.com/profile_images/887313003246440448/FL2AZIi5_400x400.jpg"
-                                        alt=""
+                                        alt="Nick Brown"
                                         class="object-cover rounded-l-lg w-full"
                                     />
                                 </div>
@@ -216,7 +201,7 @@ onUnmounted(() => {
         </div>
 
 
-        <div class="relative w-screen  bg-white dark:bg-vidgaze-blue    ">
+        <div class="relative w-full bg-white dark:bg-vidgaze-blue">
          <Footer/>
         </div>
 

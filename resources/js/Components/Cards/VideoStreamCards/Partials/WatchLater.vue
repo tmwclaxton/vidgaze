@@ -37,10 +37,12 @@ const notInWatchLater = () => {
         <div :id="'toggleNotInWatchLater_' + item.id" @click="notInWatchLater" class="w-0 h-0 opacity-0 pointer-events-none  " key="watch_later_simple"></div>
     </div>
     <div  @mouseenter="open = true" @mouseleave="open = false" @click="toggleWatchLater()" key="watch_later"
+         role="button" tabindex="0" @keydown.enter.prevent="toggleWatchLater()"
+         :aria-label="inPlaylist ? 'Remove from Watch Later' : 'Add to Watch Later'"
          class="h-7 w-max text-sm px-1.5 z-1 pointer-events-auto cursor-pointer flex flex-row gap-x-3
       group-hover:opacity-100 opacity-0 transition duration-300 bg-zinc-900/90 rounded ">
         <div v-if="open"
-             class="   text-white text-xs font-bold text-center my-auto pl-1 ">
+             class="   text-white text-sm font-bold text-center my-auto pl-1 ">
             <p  v-if="inPlaylist">Added to Watch Later</p>
             <p  v-if="!inPlaylist">Add to Watch Later</p>
         </div>

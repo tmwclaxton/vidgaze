@@ -1,6 +1,6 @@
 <template>
 
-    <Head title="Terms" />
+    <Head title="Terms of Service" />
 
     <ConsistentPadding>
         <Terms class="prose prose-sky dark:prose-invert mx-auto "/>

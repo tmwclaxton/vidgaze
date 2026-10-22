@@ -100,7 +100,7 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
             }).catch(error => {
                 console.log(error);
             })
-            return response.data.streams.data;
+            return response?.data?.streams?.data ?? [];
 
         },
 
@@ -117,7 +117,7 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
                 .catch(error => {
                     console.log(error);
                 })
-            return response.data.categories.data;
+            return response?.data?.categories?.data ?? [];
         },
 
         // get category

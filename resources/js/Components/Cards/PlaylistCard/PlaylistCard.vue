@@ -41,7 +41,7 @@ const props = defineProps({
                             </span>
                         </Link>
                         <Link v-if="!channel" :href="route('channel', {channel: item.creator.slug})"
-                           class="w-max pt-1 without-ring pointer-events-auto line-clamp-1 leading-4  font-normal text-xs   text-vidgaze-blue  dark:text-zinc-200 hover:dark:text-zinc-500">
+                           class="w-max pt-1 without-ring pointer-events-auto line-clamp-1 leading-4  font-normal text-sm   text-vidgaze-blue  dark:text-zinc-200 hover:dark:text-zinc-500">
                             <p v-text="item.creator.name"></p>
 
                         </Link>

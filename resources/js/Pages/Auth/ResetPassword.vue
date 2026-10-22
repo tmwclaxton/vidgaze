@@ -55,6 +55,7 @@ const submit = () => {
 
                 <TextInput
                     id="email"
+                    name="email"
                     type="email"
                     class="mt-1 block w-full"
                     v-model="form.email"
@@ -71,6 +72,7 @@ const submit = () => {
 
                 <TextInput
                     id="password"
+                    name="password"
                     type="password"
                     class="mt-1 block w-full"
                     v-model="form.password"
@@ -86,6 +88,7 @@ const submit = () => {
 
                 <TextInput
                     id="password_confirmation"
+                    name="password_confirmation"
                     type="password"
                     class="mt-1 block w-full"
                     v-model="form.password_confirmation"

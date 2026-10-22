@@ -84,6 +84,7 @@ const submit = async () => {
 
                 <TextInput
                     id="username"
+                    name="username"
                     type="text"
                     class="mt-1 block w-full"
                     v-model="form.username"
@@ -100,6 +101,7 @@ const submit = async () => {
 
                 <TextInput
                     id="email"
+                    name="email"
                     type="email"
                     class="mt-1 block w-full"
                     v-model="form.email"
@@ -115,6 +117,7 @@ const submit = async () => {
 
                 <TextInput
                     id="password"
+                    name="password"
                     type="password"
                     class="mt-1 block w-full"
                     v-model="form.password"
@@ -130,6 +133,7 @@ const submit = async () => {
 
                 <TextInput
                     id="password_confirmation"
+                    name="password_confirmation"
                     type="password"
                     class="mt-1 block w-full"
                     v-model="form.password_confirmation"
@@ -142,15 +146,13 @@ const submit = async () => {
 
             <div class="mt-4  text-sm ">
                 <div class="flex items-center">
-                    <label class="flex items-center">
-                         <Checkbox v-model:checked="form.terms" name="terms" id="terms"/>
-                        <span class="ml-2 text-sm text-zinc-600 dark:text-zinc-400 ">
-                            I agree to the
-                            <Link :href="route('terms')" class="font-bold">Terms of Service</Link>
-                            and
-                            <Link :href="route('privacy')" class="font-bold">Privacy Policy</Link>
-                        </span>
-                    </label>
+                    <Checkbox v-model:checked="form.terms" name="terms" id="terms" required/>
+                    <span class="ml-2 text-sm text-zinc-600 dark:text-zinc-400">
+                        <label for="terms">I agree to the</label>
+                        <a :href="route('terms')" target="_blank" rel="noopener" class="ml-1 font-bold underline">Terms of Service</a>
+                        and
+                        <a :href="route('privacy')" target="_blank" rel="noopener" class="font-bold underline">Privacy Policy</a>
+                    </span>
 
 
                 </div>
