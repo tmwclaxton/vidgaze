@@ -8,6 +8,7 @@ use App\Helpers\ImageCheck;
 use App\Helpers\PlatformAPIs\Dailymotion;
 use App\Helpers\PlatformAPIs\Rumble;
 use App\Helpers\PlatformAPIs\Vimeo;
+use App\Helpers\PlatformAPIs\PlatformCredentials;
 use App\Helpers\PlatformAPIs\YouTube;
 use App\Helpers\ResultDTO;
 use App\Http\Controllers\Controller;
@@ -135,15 +136,32 @@ class CreatorApiController extends Controller
         if($creator->isGhostChannel()){
             $page = request()->page ?? null;
             $source = $creator->sources()->first();
-            $response = match(Platform::fromValue($source->source_name))
+            $platform = Platform::fromValue($source->source_name);
+            if (in_array($platform, [Platform::Dailymotion, Platform::Vimeo], true)
+                && !PlatformCredentials::ensure($platform, 'creator videos')) {
+                return ['next' => null, 'hasNext' => false, 'videos' => new VideoCollection([])];
+            }
+            $response = match($platform)
             {
                 Platform::YouTube => YouTube::getCreatorVideosBeforeDate($source->external_channel_id, $page == null ? null : Carbon::create($page), $perPage),
                 Platform::Dailymotion => Dailymotion::getCreatorVideosBeforeDate($source->external_channel_id, $page == null ? null : Carbon::createFromTimestamp($page), $perPage),
                 Platform::Vimeo => Vimeo::getCreatorVideos($creator->sources()->first()->external_channel_id, $page, $perPage),
-//                Platform::Rumble => Rumble::getCreatorVideos($creator->sources()->first()->external_channel_id, $page, $perPage),
+                Platform::Rumble => Rumble::getCreatorVideos($source->external_channel_id, $page == null ? null : (int) $page, min($perPage, 100)),
                 default => throw new \Exception('Platform not supported')
             };
             $videos = ContentDTO::saveAll($response['results'], $creator->id);
+            // Rumble creators found through search have no avatar or banner;
+            // fill them from the channel header the first time the page loads.
+            if (!empty($response['channel'])) {
+                $changed = false;
+                foreach (['avatar_url' => 'avatar', 'banner_url' => 'banner'] as $column => $key) {
+                    if (empty($creator->{$column}) && !empty($response['channel'][$key])) {
+                        $creator->{$column} = $response['channel'][$key];
+                        $changed = true;
+                    }
+                }
+                if ($changed) $creator->save();
+            }
             $next = $response['next'];
             $hasNext = $response['hasNext'];
 

@@ -4,7 +4,28 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 
-        <title inertia>{{ config('app.name', 'VidGaze') }}</title>
+        @php
+            $seo = array_merge([
+                'title' => null,
+                'description' => 'VidGaze is a co-operative video aggregator: watch YouTube, Rumble and other public videos, channels and shorts in one place, ranked by people rather than an algorithm.',
+                'image' => url('/images/og-default.jpg'),
+                'type' => 'website',
+            ], array_filter($page['props']['meta'] ?? []));
+            $seoTitle = $seo['title'] ? $seo['title'] . ' - VidGaze' : 'VidGaze';
+        @endphp
+        <title inertia>{{ $seoTitle }}</title>
+        <meta name="description" content="{{ $seo['description'] }}">
+        <link rel="canonical" href="{{ url()->current() }}">
+        <meta property="og:site_name" content="VidGaze">
+        <meta property="og:type" content="{{ $seo['type'] }}">
+        <meta property="og:title" content="{{ $seoTitle }}">
+        <meta property="og:description" content="{{ $seo['description'] }}">
+        <meta property="og:image" content="{{ $seo['image'] }}">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ $seoTitle }}">
+        <meta name="twitter:description" content="{{ $seo['description'] }}">
+        <meta name="twitter:image" content="{{ $seo['image'] }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

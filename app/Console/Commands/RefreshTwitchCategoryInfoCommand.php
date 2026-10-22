@@ -15,6 +15,10 @@ class RefreshTwitchCategoryInfoCommand extends Command
 
     public function handle()
     {
+        if (!\App\Helpers\PlatformAPIs\PlatformCredentials::ensure(\App\Enums\Platform::Twitch, $this->getName())) {
+            return 0;
+        }
+
         $twitch_categories = Category::where("twitch_category_id", "!=", "null")->oldest()->take(30)->get();
         $twitch_cat_ids = $twitch_categories->map(fn ($cat) => $cat->twitch_category_id)->toArray();
         $data = Twitch::getCategories($twitch_cat_ids);

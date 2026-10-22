@@ -12,6 +12,7 @@ class SearchWebController extends Controller
         $searchQuery = $request->q;
         return inertia('Viewer/Search/Search', [
             'searchQuery' => $searchQuery,
+            'meta' => \App\Helpers\Seo::make($searchQuery ? "Search: {$searchQuery}" : 'Search'),
         ]);
     }
 

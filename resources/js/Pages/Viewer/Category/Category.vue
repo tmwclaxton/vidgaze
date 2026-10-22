@@ -87,6 +87,7 @@ onUnmounted(() => {
 </script>
 
 <template>
+    <Head :title="category?.name || $page.props.meta?.title || 'Category'" />
     <ConsistentPadding>
         <div v-if="category !== null" class="flex flex-col">
             <!-- Category Header -->

@@ -39,7 +39,11 @@ return [
         ],
     ],
     'scraper' => ['key' => env('SCRAPER_KEY')],
-    'nanogpt' => ['key' => env('NANOGPT_API_KEY')],
+    'nanogpt' => [
+        'key' => env('NANOGPT_API_KEY'),
+        // gemini-2.0-flash-001 was disabled by NanoGPT (400 "Model is disabled")
+        'search_model' => env('NANOGPT_SEARCH_MODEL', 'qwen-plus'),
+    ],
 
 
     /*

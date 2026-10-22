@@ -29,7 +29,7 @@ if (localStorage.getItem('token')) {
 }
 
 
-const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
+const appName = 'VidGaze';
 
 const app = createInertiaApp({
     title: (title) => `${title ? `${title} - ` : ''}${appName ?? 'Laravel'}`,

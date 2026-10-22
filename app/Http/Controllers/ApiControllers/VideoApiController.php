@@ -271,6 +271,14 @@ class VideoApiController extends Controller
                 ->pluck('id')
                 ->toArray();
 
+            // VidGaze Picks is curated by hand, so top it up with pinned
+            // videos from any category until it has its own.
+            if ($category->slug === 'vidgaze_picks' && count($pinnedIds) + count($additionalIds) < $per_page) {
+                $additionalIds = array_merge($additionalIds, Video::where('pinned', true)
+                    ->whereNotIn('id', array_merge($pinnedIds, $additionalIds))
+                    ->pluck('id')
+                    ->toArray());
+            }
         }
         // Merge all IDs
         $allIds = array_merge($pinnedIds, $additionalIds);
@@ -280,6 +288,14 @@ class VideoApiController extends Controller
 
         // Take only what we need
         $selectedIds = array_slice($allIds, 0, $per_page);
+
+        // Nothing matched: FIELD(id, ) with an empty list is a SQL syntax error.
+        if (count($selectedIds) === 0) {
+            return response()->json([
+                'results' => 0,
+                'videos' => ['data' => []],
+            ]);
+        }
 
         // Get the videos in the specified order
         $videos = Video::whereIn('id', $selectedIds)

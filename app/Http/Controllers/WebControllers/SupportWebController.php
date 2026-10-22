@@ -18,15 +18,21 @@ class SupportWebController extends Controller
     }
     public function about()
     {
-        return Inertia::render('Viewer/Landing/Landing');
+        return Inertia::render('Viewer/Landing/Landing', [
+            'meta' => \App\Helpers\Seo::make('About', 'VidGaze is a co-operative video platform: one place to watch creators from YouTube, Rumble and more, ranked by the community.'),
+        ]);
     }
     public function terms()
     {
-        return Inertia::render('Legal/Terms');
+        return Inertia::render('Legal/Terms', [
+            'meta' => \App\Helpers\Seo::make('Terms of Service', 'The terms for using VidGaze, a video aggregator that embeds public videos from other platforms.'),
+        ]);
     }
     public function privacy()
     {
-        return Inertia::render('Legal/Policy');
+        return Inertia::render('Legal/Policy', [
+            'meta' => \App\Helpers\Seo::make('Privacy Policy', 'How VidGaze collects, uses and protects your personal data, and the cookies it uses.'),
+        ]);
     }
     public function support()
     {
