@@ -35,6 +35,10 @@ class getRumbleFeaturedVideos extends Command
 
         // iterate through and changed pinned to true and pin_expires_at to 1 week from now
         foreach ($savedResults as $result) {
+            // search also returns channels; only videos can be pinned
+            if (!$result instanceof \App\Models\VideoModels\Video) {
+                continue;
+            }
             $result->pinned = true;
             $result->pin_expires_at = now()->addDay();
             $result->save();
