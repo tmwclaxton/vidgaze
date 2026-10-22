@@ -64,6 +64,9 @@ Route::get('/privacy_policy', [SupportWebController::class,'privacy'])->name('pr
 Route::permanentRedirect('/terms', '/terms_of_service');
 Route::permanentRedirect('/privacy', '/privacy_policy');
 
+// public, anonymous site stats
+Route::get('/stats', [\App\Http\Controllers\WebControllers\StatsWebController::class, 'index'])->name('stats');
+
 // marketplace
 Route::get('/marketplace', [SupportWebController::class,'marketplace'])->name('marketplace');
 

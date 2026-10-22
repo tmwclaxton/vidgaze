@@ -35,7 +35,7 @@ jobs:
           php artisan config:clear
 
       - name: Scraper tests (crawl4ai primary, Apify fallback)
-        run: vendor/bin/phpunit tests/Unit/Scraping tests/Feature/Scraping tests/Feature/RemovedFeaturesTest.php tests/Feature/QaFixesTest.php tests/Unit/ChristianPicksTest.php tests/Unit/VideoRankerTest.php tests/Feature/RecommenderRoutesTest.php
+        run: vendor/bin/phpunit tests/Unit/Scraping tests/Feature/Scraping tests/Feature/RemovedFeaturesTest.php tests/Feature/QaFixesTest.php tests/Unit/ChristianPicksTest.php tests/Unit/VideoRankerTest.php tests/Feature/RecommenderRoutesTest.php tests/Feature/PublicStatsTest.php
 
       - uses: actions/setup-node@v4
         with:
