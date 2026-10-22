@@ -271,14 +271,6 @@ class VideoApiController extends Controller
                 ->pluck('id')
                 ->toArray();
 
-            // VidGaze Picks is curated by hand, so top it up with pinned
-            // videos from any category until it has its own.
-            if ($category->slug === 'vidgaze_picks' && count($pinnedIds) + count($additionalIds) < $per_page) {
-                $additionalIds = array_merge($additionalIds, Video::where('pinned', true)
-                    ->whereNotIn('id', array_merge($pinnedIds, $additionalIds))
-                    ->pluck('id')
-                    ->toArray());
-            }
         }
         // Merge all IDs
         $allIds = array_merge($pinnedIds, $additionalIds);

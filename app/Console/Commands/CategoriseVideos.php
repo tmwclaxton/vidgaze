@@ -35,8 +35,7 @@ class CategoriseVideos extends Command
         $categories = Category::all();
         $categoryNames = $categories->pluck('name')->toArray();
 
-        //remove "VidGaze Picks" from the list of categories
-        $categoryNames = array_diff($categoryNames, ['VidGaze Picks']);
+        // VidGaze Picks is the Christian row; the AI may only put Christian content there.
 
         // Create an instance of the NanoGPT service
         $nanoGPTService = new NanoController();
@@ -57,6 +56,7 @@ class CategoriseVideos extends Command
                     . "Description: {$video->description}\n"
                     . "Creator: {$video->creator()->first()->name}\n\n"
 //                    . "If the video is about Unionisation, Freedom of Speech or XMR please categorize it as 'VidGaze Picks'.\n\n"
+                    . "Use 'VidGaze Picks' only for " . \App\Helpers\ChristianPicks::DESCRIPTION . ".\n\n"
                     . "Return only the category name or 'null' if no category matches.";
 
                 // Generate AI response using NanoGPT
@@ -79,6 +79,15 @@ class CategoriseVideos extends Command
 
                 // Retrieve the category ID based on the category name
                 $category = $categories->firstWhere('name', $categoryName);
+                // Guard the Christian row against AI mistakes.
+                if ($category && $category->slug === \App\Helpers\ChristianPicks::SLUG
+                    && !\App\Helpers\ChristianPicks::isChristian($video->title, $video->description, optional($video->creator()->first())->name)) {
+                    $count['skipped']++;
+                    $video->categorised = true;
+                    $video->categorised_at = Carbon::now();
+                    $video->save();
+                    continue;
+                }
                 if ($category) {
                     // Update the video with the determined category_id
                     $video->update(['category_id' => $category->id]);
