@@ -1,5 +1,5 @@
 <script setup>
-// Sponsor banner for GrantGunner. Copy taken from https://www.grantgunner.org.
+// Sponsor banner for GrantGunner (https://www.grantgunner.org).
 defineProps({
     // true when rendered on its own (mobile), false when filling a carousel slot
     standalone: {type: Boolean, default: false},
@@ -15,10 +15,7 @@ defineProps({
         <div class="flex flex-col items-start min-w-0" :class="standalone ? 'gap-1.5' : 'gap-2'">
             <span class="text-sm font-semibold uppercase tracking-wider text-white/85">Sponsored by GrantGunner</span>
             <span class="font-bold leading-tight" :class="standalone ? 'text-lg' : 'text-2xl lg:text-3xl xl:text-4xl'">
-                Find grants, draft the form, send it when you approve
-            </span>
-            <span v-if="!standalone" class="hidden xl:block text-base text-white/90 max-w-2xl">
-                GrantGunner finds grants that fit your charity, drafts the application from your documents, and can send it once your team approves.
+                A collaboration tool for human and AI grantwriters
             </span>
             <span class="inline-block mt-1 px-4 py-1.5 rounded-full bg-white text-[#006644] text-sm lg:text-base font-semibold shadow">
                 Visit grantgunner.org
