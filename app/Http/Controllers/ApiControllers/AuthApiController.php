@@ -164,6 +164,14 @@ class AuthApiController extends Controller
 
         $token = $this->createToken($user, false);
 
+        // Send the verification email. Unverified users can still browse, and a mail
+        // outage must not stop the account being created, so failures are only logged.
+        try {
+            $user->sendEmailVerificationNotification();
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
         //if created successfully, return user and token and valid for in seconds
         if ($user && $user->creator) {
             return response()->json([
@@ -348,8 +356,6 @@ class AuthApiController extends Controller
      * Send email verification link
     */
     public function sendEmailVerificationLink(Request $request) {
-        $request->validate(['email' => 'required|email']);
-
         if ($request->user()->hasVerifiedEmail()) {
             return response()->json([
                 'toastType' => 'normal',
