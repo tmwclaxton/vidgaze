@@ -15,13 +15,11 @@ class VerificationEmailTest extends TestCase
     public function createApplication(): \Illuminate\Foundation\Application
     {
         // run against in-memory sqlite so CI needs no database service
-        foreach (['DB_CONNECTION' => 'sqlite', 'DB_DATABASE' => ':memory:'] as $k => $v) {
-            putenv("$k=$v");
-            $_ENV[$k] = $v;
-            $_SERVER[$k] = $v;
-        }
+        $app = parent::createApplication();
+        $app['config']->set('database.default', 'sqlite');
+        $app['config']->set('database.connections.sqlite.database', ':memory:');
 
-        return parent::createApplication();
+        return $app;
     }
 
     private function register(string $email = 'new-user@example.com')
