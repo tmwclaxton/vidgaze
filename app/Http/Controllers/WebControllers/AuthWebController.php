@@ -54,7 +54,8 @@ class AuthWebController extends Controller
      */
     public function verifyEmail(Request $request): RedirectResponse|Response
     {
-        return $request->user()->hasVerifiedEmail()
+        // the SPA authenticates with sanctum tokens, so the web request usually has no session user
+        return $request->user()?->hasVerifiedEmail()
             ? redirect()->intended(RouteServiceProvider::HOME.'?verified=1')
             : Inertia::render('Auth/VerifyEmail');
     }

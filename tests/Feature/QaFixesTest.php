@@ -49,4 +49,24 @@ class QaFixesTest extends TestCase
         $this->assertNotContains(Platform::Vimeo, $platforms);
         $this->assertNotContains(Platform::Dailymotion, $platforms);
     }
+
+    public function test_verify_email_page_renders_without_a_session_user(): void
+    {
+        $this->withoutVite();
+
+        $this->withCookie('auth_flag', 'true')
+            ->get('/verify-email')
+            ->assertOk();
+    }
+
+    public function test_guest_browsing_does_not_use_up_the_login_rate_limit(): void
+    {
+        for ($i = 0; $i < 12; $i++) {
+            $this->getJson('/api/v1/search/suggestions?query=a');
+        }
+
+        $this->postJson('/api/v1/auth/login', ['email' => 'nobody@example.com', 'password' => 'x'])
+            ->assertHeader('X-RateLimit-Limit', 10)
+            ->assertHeader('X-RateLimit-Remaining', 9);
+    }
 }
