@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 
 import Vue from '@vitejs/plugin-vue'
-import Markdown from 'vite-plugin-vue-markdown'
+import Markdown from 'unplugin-vue-markdown/vite'
 import * as path from "path";
 import svgLoader from 'vite-svg-loader';
 import {VitePWA} from "vite-plugin-pwa";
@@ -12,8 +12,11 @@ export default defineConfig({
             // injectManifest: false,
             injectRegister: 'auto',
             registerType: 'autoUpdate',
+            workbox: {
+                maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+            },
             devOptions: {
-                enabled: true
+                enabled: false
             },
             manifest: {
                 name: 'VidGaze',

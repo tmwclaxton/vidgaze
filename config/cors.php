@@ -19,14 +19,9 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => array_filter(array_map('trim', explode(',', env('CORS_ALLOWED_ORIGINS', env('APP_URL', 'http://localhost'))))),
 
-    'allowed_origins_patterns' => [
-        "https://play.google.com/log",
-        "https://www.google-analytics.com",
-        "https://googleads.g.doubleclick.net",
-
-    ],
+    'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
 

@@ -2,7 +2,7 @@
 import ToastListItem from "@/Components/Toast/ToastListItem.vue";
 import {onUnmounted, ref} from "vue";
 
-import {Inertia} from "@inertiajs/inertia";
+import { router as Inertia } from "@inertiajs/vue3";
 import {usePage} from "@inertiajs/vue3";
 import { useToastStore } from '@/Stores/ToastStore.js'
 

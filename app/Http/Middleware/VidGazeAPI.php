@@ -17,7 +17,9 @@ class VidGazeAPI
     public function handle(Request $request, Closure $next): Response
     {
         // check if header has config cron key
-        if (request()->header('VIDGAZE_API_KEY') === null || request()->header('VIDGAZE_API_KEY') !== Config::get('app.vidgaze_api_key')) {
+        $expected = (string) Config::get('app.vidgaze_api_key');
+        $given = (string) $request->header('VIDGAZE_API_KEY');
+        if ($expected === '' || $given === '' || !hash_equals($expected, $given)) {
             return response()->json([
                 'message' => 'unauthorized'
             ], 401);

@@ -101,7 +101,7 @@ class VideoApiController extends Controller
                 // Preserve order
                 if ($mostPopularVideoIds->count() > 0) {
                     //$query->whereIn('id', $mostPopularVideoIds)->orderByRaw(DB::raw("FIELD(id, ".implode(',', $mostPopularVideoIds->toArray()).")"));
-                    $query->whereIn('id', $mostPopularVideoIds)->orderByRaw("FIELD(id, ".implode(',', $mostPopularVideoIds->toArray()).")");
+                    $query->whereIn('id', $mostPopularVideoIds)->orderByRaw("FIELD(id, ".implode(',', array_map('intval', $mostPopularVideoIds->toArray())).")");
                 }
                 break;
             case 'new':
@@ -283,7 +283,7 @@ class VideoApiController extends Controller
 
         // Get the videos in the specified order
         $videos = Video::whereIn('id', $selectedIds)
-            ->orderByRaw("FIELD(id, " . implode(',', $selectedIds) . ")")
+            ->orderByRaw("FIELD(id, " . implode(',', array_map('intval', $selectedIds)) . ")")
             ->get();
 
         // return the collection

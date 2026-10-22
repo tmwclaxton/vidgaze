@@ -1,9 +1,9 @@
 name: "Production Deploy"
 
+# Legacy AWS ECR deploy. Production now runs on admin.grantgunner.org via
+# docker compose (compose.prod.yaml), so this only runs when started by hand.
 on:
   workflow_dispatch:
-  push:
-     branches: [ "master" ]
 
 env:
   AWS_REGION: "us-east-1"

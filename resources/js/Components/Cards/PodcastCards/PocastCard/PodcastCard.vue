@@ -1,5 +1,6 @@
 
 <script setup>
+import { sanitizeHtml } from "@/Helpers/sanitize.js";
 import HeartPodcastButton from "@/Components/Cards/PodcastCards/PocastCard/Partials/HeartPodcastButton.vue";
 import {usePage} from "@inertiajs/vue3";
 import axios from "axios";
@@ -54,7 +55,7 @@ const getPodcastInfo = async () => {
         </div>
         <a href="">
             <div class="p-2 px-2">
-                <h3 class="text dark:textDark font-bold text-md" v-html="podcast.title"></h3>
+                <h3 class="text dark:textDark font-bold text-md" v-html="sanitizeHtml(podcast.title)"></h3>
             </div>
         </a>
     </div>

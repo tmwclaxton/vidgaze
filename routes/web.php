@@ -72,3 +72,8 @@ if (config('app.env') == 'local') {
         return JoshPing::ping();
     });
 }
+
+// lightweight health check for docker
+Route::get('/up', function () {
+    return response('ok', 200)->header('Content-Type', 'text/plain');
+})->name('up');

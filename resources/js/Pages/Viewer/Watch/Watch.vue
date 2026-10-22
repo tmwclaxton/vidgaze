@@ -1,6 +1,7 @@
 
 
 <script setup>
+import { sanitizeHtml } from "@/Helpers/sanitize.js";
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -290,7 +291,7 @@ onUnmounted(() => {
                             </div>
                             <div class=" ml-14   pt-3   text dark:textDark text-sm">
                                 <p id="description" style="line-height: 20px;"
-                                   v-bind:class="{' line-clamp-3': isDescriptionCollapsed}" v-html="item.description"/>
+                                   v-bind:class="{' line-clamp-3': isDescriptionCollapsed}" v-html="sanitizeHtml(item.description)"/>
                                 <button v-if="showMoreDescriptionButton" class="font-bold mt-5 text-xs uppercase"
                                         @click="isDescriptionCollapsed = !isDescriptionCollapsed"
                                         v-text="!isDescriptionCollapsed ? 'Show less' : 'Show more'"

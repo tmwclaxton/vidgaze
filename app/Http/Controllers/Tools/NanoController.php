@@ -17,7 +17,7 @@ class NanoController
     public function __construct()
     {
         $this->baseUrl = 'https://nano-gpt.com/api/v1'; // Correct base URL
-        $this->apiKey = env('NANOGPT_API_KEY');        // Ensure you set this in your .env file
+        $this->apiKey = config('services.nanogpt.key');        // Ensure you set this in your .env file
         $this->client = new Client([
             'base_uri' => $this->baseUrl,
             'headers' => [

@@ -185,7 +185,7 @@ class CreatorApiController extends Controller
 
     public function updateProfilePicture(Request $request) {
         $request->validate([
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:4096||dimensions:min_width=98,min_height=98,max_width=1000,max_height=1000',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:4096||dimensions:min_width=98,min_height=98,max_width=1000,max_height=1000',
         ]);
 
         if ($request->hasFile('image')) {
@@ -218,7 +218,7 @@ class CreatorApiController extends Controller
 
     public function updateProfileBanner(Request $request) {
         $request->validate([
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,svg|nullable|max:6144||dimensions:min_width=1024,min_height=256,max_width=4096,max_height=4096',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|nullable|max:6144||dimensions:min_width=1024,min_height=256,max_width=4096,max_height=4096',
         ]);
 
         if ($request->hasFile('image')) {

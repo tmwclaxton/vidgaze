@@ -374,6 +374,11 @@ class AuthApiController extends Controller
 
         $user = User::find($request->id);
 
+        if (!$user) {
+            return response()->json([
+                'toastType' => 'warning',
+                'message' => 'Invalid verification link'], 400);
+        }
 
         if ($user->hasVerifiedEmail()) {
 //            return redirect()->intended(RouteServiceProvider::HOME)->with('status', 'Email already verified');

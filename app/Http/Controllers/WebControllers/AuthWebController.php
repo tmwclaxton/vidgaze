@@ -68,6 +68,12 @@ class AuthWebController extends Controller
         return Inertia::render('Auth/VerifyingEmail', [
             'id' => $id,
             'hash' => $hash,
+            // short lived signed API url, so the API cannot be called without a valid emailed link
+            'verifyUrl' => \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                'api.verification.email.confirm',
+                now()->addMinutes(15),
+                ['id' => $id, 'hash' => $hash]
+            ),
         ]);
     }
 

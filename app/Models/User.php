@@ -15,7 +15,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasApiTokens, HasFactory, Notifiable;
 
     //no mass assignment!
-    protected $guarded = [];
+    protected $guarded = ['id', 'role', 'email_verified_at', 'remember_token'];
 
     /**
      * The attributes that should be hidden for serialization.

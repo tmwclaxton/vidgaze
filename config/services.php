@@ -2,6 +2,11 @@
 
 return [
 
+    'apify' => ['token' => env('APIFY_TOKEN')],
+    'scraper' => ['key' => env('SCRAPER_KEY')],
+    'nanogpt' => ['key' => env('NANOGPT_API_KEY')],
+
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services

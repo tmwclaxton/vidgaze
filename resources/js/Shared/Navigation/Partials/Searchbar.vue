@@ -3,7 +3,7 @@ import SearchIcon from '~/images/icons/search.svg';
 import CloseNavSVG from '~/images/icons/exit.svg';
 import {Link, router} from '@inertiajs/vue3';
 import { defineProps, defineEmits, ref, watch, computed } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
+import { router as Inertia } from '@inertiajs/vue3';
 import SearchSuggestion from '@/Shared/Navigation/Partials/SearchSuggestion.vue';
 import {useNavStore} from "@/Stores/NavStore";
 const navStore = useNavStore();

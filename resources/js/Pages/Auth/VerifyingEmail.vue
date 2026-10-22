@@ -14,10 +14,14 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    verifyUrl: {
+        type: String,
+        required: true,
+    },
 });
 
 onMounted(() => {
-    axios.get(route('api.verification.email.confirm', {id: props.id, hash: props.hash})).then(() => {
+    axios.get(props.verifyUrl).then(() => {
         useToastStore().add({
             message: 'Your email has been verified.',
             type: 'success',
