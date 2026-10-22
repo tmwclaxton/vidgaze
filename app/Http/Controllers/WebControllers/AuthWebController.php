@@ -62,20 +62,25 @@ class AuthWebController extends Controller
 
 
     /**
-     * show verifying email page
+     * Verify the email straight from the signed link. The signed middleware already checks the
+     * signature and expiry, so no session or token is needed and the link works on any device.
      */
-    public function VerifyEmailRedirect($id,$hash): Response
+    public function VerifyEmailRedirect($id, $hash): Response
     {
-        return Inertia::render('Auth/VerifyingEmail', [
-            'id' => $id,
-            'hash' => $hash,
-            // short lived signed API url, so the API cannot be called without a valid emailed link
-            'verifyUrl' => \Illuminate\Support\Facades\URL::temporarySignedRoute(
-                'api.verification.email.confirm',
-                now()->addMinutes(15),
-                ['id' => $id, 'hash' => $hash]
-            ),
-        ]);
+        $user = \App\Models\User::find($id);
+
+        if (!$user || !hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            $status = 'invalid';
+        } elseif ($user->hasVerifiedEmail()) {
+            $status = 'already-verified';
+        } else {
+            if ($user->markEmailAsVerified()) {
+                event(new Verified($user));
+            }
+            $status = 'verified';
+        }
+
+        return Inertia::render('Auth/VerifyingEmail', ['status' => $status]);
     }
 
     /**
