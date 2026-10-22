@@ -38,18 +38,20 @@ class Crawl4AI
     /**
      * Fetch the rendered HTML of one page, or null on any failure.
      */
-    public function html(string $url): ?string
+    public function html(string $url, array $extra = []): ?string
     {
-        return $this->htmlMany([$url])[$url] ?? null;
+        return $this->htmlMany([$url], $extra)[$url] ?? null;
     }
 
     /**
      * Fetch several pages in one crawl4ai request.
      *
      * @param  string[]  $urls
+     * @param  array  $extra  extra top level request fields, for example
+     *                        ['site_profile' => 'youtube'] (opt in, youtube.com only)
      * @return array<string, string|null>  keyed by the requested url
      */
-    public function htmlMany(array $urls): array
+    public function htmlMany(array $urls, array $extra = []): array
     {
         $urls = array_values(array_unique($urls));
         $out = array_fill_keys($urls, null);
@@ -62,7 +64,7 @@ class Crawl4AI
             if ($this->token) {
                 $request = $request->withToken($this->token);
             }
-            $response = $request->post($this->baseUrl . '/crawl', [
+            $response = $request->post($this->baseUrl . '/crawl', $extra + [
                 'urls' => $urls,
                 'crawler_config' => [
                     'type' => 'CrawlerRunConfig',

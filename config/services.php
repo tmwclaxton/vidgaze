@@ -11,6 +11,8 @@ return [
         'page_timeout_ms' => (int) env('CRAWL4AI_PAGE_TIMEOUT_MS', 30000),
         'cache_mode' => env('CRAWL4AI_CACHE_MODE', 'bypass'),
         'retries' => (int) env('CRAWL4AI_RETRIES', 2),
+        // crawl4ai site_profile for YouTube channel pages (consent cookies). Empty disables.
+        'youtube_profile' => env('CRAWL4AI_YOUTUBE_PROFILE', 'youtube'),
         'rumble_banner_batch' => (int) env('CRAWL4AI_RUMBLE_BANNER_BATCH', 20),
     ],
 

@@ -325,6 +325,50 @@ class YouTube implements iSearchable, iIsPlatform
         }
     }
 
+    /** Recently fetched channel pages: id => ['at' => unix time, 'page' => array|null]. */
+    private static array $channelPages = [];
+
+    /**
+     * Channel /videos pages via crawl4ai with its opt in site_profile
+     * "youtube" (consent cookies, youtube.com only). Gives the banner, the
+     * first page of uploads (about 30) and their durations. A channel whose
+     * page fails or still shows the consent wall maps to null, and callers
+     * fall back to the RSS feed.
+     *
+     * @param  string[]  $ids
+     * @return array<string, array|null>
+     */
+    public static function channelPages(array $ids): array
+    {
+        $ids = array_values(array_unique($ids));
+        $now = time();
+        foreach (self::$channelPages as $k => $e) {
+            // keep a parsed page for 10 minutes and a failure for 1 minute
+            if ($now - $e['at'] > ($e['page'] ? 600 : 60)) unset(self::$channelPages[$k]);
+        }
+        $want = array_values(array_filter($ids, fn ($id) => !array_key_exists($id, self::$channelPages)));
+        if ($want && Crawl4AI::enabled() && config('services.crawl4ai.youtube_profile')) {
+            $urls = [];
+            foreach ($want as $id) $urls[$id] = "https://www.youtube.com/channel/$id/videos";
+            $pages = [];
+            foreach (array_chunk($urls, 10, true) as $chunk) {
+                $pages += (new Crawl4AI())->htmlMany(array_values($chunk), ['site_profile' => config('services.crawl4ai.youtube_profile')]);
+            }
+            foreach ($urls as $id => $url) {
+                $parsed = !empty($pages[$url]) ? YouTubeParser::parseChannel($pages[$url]) : null;
+                self::$channelPages[$id] = ['at' => $now, 'page' => ($parsed && $parsed['channelId'] === $id) ? $parsed : null];
+            }
+        }
+        $out = [];
+        foreach ($ids as $id) $out[$id] = self::$channelPages[$id]['page'] ?? null;
+        return $out;
+    }
+
+    public static function forgetChannelPages(): void
+    {
+        self::$channelPages = [];
+    }
+
     private static function creatorFromParsed(array $v): CreatorDTO
     {
         $creatorDTO = new CreatorDTO(Platform::YouTube, $v['channelId']);
@@ -365,9 +409,20 @@ class YouTube implements iSearchable, iIsPlatform
         }
 
         $creators = [];
+        foreach (self::channelPages($ids) as $id => $page) {
+            if (!$page) continue;
+            $creatorDTO = new CreatorDTO(Platform::YouTube, $id);
+            $creatorDTO->name = $page['name'];
+            $creatorDTO->avatar_url = $page['avatar'];
+            $creatorDTO->banner_url = $page['banner'];
+            $creatorDTO->description = $page['description'];
+            $creatorDTO->language = null;
+            $creators[$id] = $creatorDTO;
+        }
+
         if (Crawl4AI::enabled()) {
             $latest = [];
-            foreach (array_values(array_unique($ids)) as $id) {
+            foreach (array_values(array_diff(array_unique($ids), array_keys($creators))) as $id) {
                 $feed = self::feed($id);
                 if (!$feed || $feed['name'] === '') continue;
                 $creatorDTO = new CreatorDTO(Platform::YouTube, $id);
@@ -457,14 +512,40 @@ class YouTube implements iSearchable, iIsPlatform
     }
 
     /**
-     * Latest uploads from the public RSS feed (up to 15, no key needed).
-     * Durations are not in the feed, so they are left at 0.
+     * Uploads from the channel /videos page (about 30, with durations) when
+     * crawl4ai can render it, otherwise the newest 15 from the public RSS
+     * feed (no durations). Exact publish dates from the feed replace the
+     * page's relative "3 days ago" where both have the video.
      */
     public static function getCreatorVideosBeforeDate(string $id, ?Carbon $date = null, $maxResults = 50, bool $includeStreams = true, bool $onlyStreams = false): array
     {
         if ($maxResults > 50) throw new \Exception('Max results cannot be greater than 50');
 
+        $page = self::channelPages([$id])[$id] ?? null;
         $feed = self::feed($id);
+        if ($page && $page['videos']) {
+            $exact = [];
+            foreach ($feed['videos'] ?? [] as $f) $exact[$f['videoId']] = $f;
+            $videos = array_map(function ($v) use ($exact) {
+                if (isset($exact[$v['videoId']])) {
+                    $v['publish_time'] = $exact[$v['videoId']]['publish_time'];
+                    $v['description'] = $exact[$v['videoId']]['description'];
+                }
+                return $v;
+            }, $page['videos']);
+            if (!$includeStreams) $videos = array_filter($videos, fn ($v) => empty($v['is_live']));
+            if ($onlyStreams) $videos = array_filter($videos, fn ($v) => !empty($v['is_live']));
+            if ($date) $videos = array_filter($videos, fn ($v) => $v['publish_time']->lt($date));
+            $videos = array_slice(array_values($videos), 0, $maxResults);
+            $last = end($videos);
+            return [
+                'next' => $last ? $last['publish_time'] : null,
+                // only the first page of the channel grid is server rendered
+                'hasNext' => false,
+                'results' => array_map(fn ($v) => self::contentFromParsed($v), $videos),
+            ];
+        }
+
         if ((!$feed || !$feed['videos']) && self::hasScraperTech()) {
             return self::scraperTechGetCreatorVideosBeforeDate($id, $date, $maxResults, $includeStreams, $onlyStreams);
         }
