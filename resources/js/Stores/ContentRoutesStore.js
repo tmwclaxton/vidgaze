@@ -67,6 +67,17 @@ export const useContentRoutesStore = defineStore('ContentRoutesStore', {
             return response.data.videos.data;
         },
 
+        // ranked suggestions for the watch page (same channel, same category, similar titles)
+        async getRelatedVideos(video_id, per_page = 20) {
+            try {
+                const response = await axios.get(route('api.video.related', {video_id: video_id, per_page: per_page}));
+                return response.data.videos.data ?? [];
+            } catch (error) {
+                console.log(error);
+                return [];
+            }
+        },
+
         // get channel videos
         async getChannelVideos(creator, per_page = 50, page = null) {
             let videos = [];
