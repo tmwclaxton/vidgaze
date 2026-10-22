@@ -16,7 +16,7 @@ class SearchQueryDTO
     public string $category;
 
     public int $max_results;
-    public function __construct(string $query, int $max_results = 20, array $platforms = null)
+    public function __construct(string $query, int $max_results = 20, ?array $platforms = null)
     {
         if(!isset($platforms)){
             $platforms = Platform::getSupportedPlatforms(true)->toArray();
@@ -35,8 +35,10 @@ class SearchQueryDTO
     {
         // filter out unsupported platforms
         $supported_platforms = Platform::getSupportedPlatforms(true)->toArray();
-        $this->platforms = array_filter($platforms, function ($platform) use ($supported_platforms) {
+        $platforms = array_filter($platforms, function ($platform) use ($supported_platforms) {
             return in_array($platform, $supported_platforms);
         });
+        // skip platforms whose API credentials are not configured
+        $this->platforms = \App\Helpers\PlatformAPIs\PlatformCredentials::usable($platforms);
     }
 }

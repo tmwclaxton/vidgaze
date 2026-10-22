@@ -99,9 +99,7 @@ onMounted(() => {
 });
 </script>
 <template>
-    <Head>
-        <title>Search</title>
-    </Head>
+    <Head :title="searchQuery ? `Search: ${searchQuery}` : 'Search'" />
 
     <div class=" mx-auto pb-10 pt-4 px-6 lg:px-16">
         <!--filter button-->

@@ -48,6 +48,19 @@ class SearchApiController extends Controller
         $query = new SearchQueryDTO($searchQuery, 20);
 
         $results = Search::searchResults($query);
+        $progress = Search::progress($query);
+
+        // Videos already in our database show straight away, while the
+        // platform searches (several seconds each) are still running.
+        $known = collect($results['videos'] ?? [])->pluck('id')->all();
+        $local = Video::where('title', 'like', '%' . str_replace(['%', '_'], ['\\%', '\\_'], $searchQuery) . '%')
+            ->whereNotIn('id', $known ?: [0])
+            ->orderByDesc('time_published')
+            ->take(12)
+            ->get();
+        if ($local->isNotEmpty()) {
+            $results['videos'] = array_merge($results['videos'] ?? [], $local->all());
+        }
 
         // return the creators, videos, streams, playlists, podcasts in a collection
         $creators = array_key_exists("creators", $results) ? new CreatorCollection($results['creators']) : [];
@@ -101,7 +114,9 @@ class SearchApiController extends Controller
 
         // add 1 to impressions_count for each video in 1 query
         $video_ids = $videos->pluck('id');
-        Video::whereIn('id', $video_ids)->increment('impressions_count');
+        if ($video_ids->isNotEmpty()) {
+            Video::whereIn('id', $video_ids)->increment('impressions_count');
+        }
 
         //return the creators, videos, streams, playlists, podcasts
         return response()->json([
@@ -110,6 +125,7 @@ class SearchApiController extends Controller
             'streams' => $streams,
             'playlists' => $playlists,
             'podcasts' => $podcasts,
+            'progress' => $progress,
         ]);
     }
 

@@ -30,6 +30,10 @@ class RefreshTopCategories extends Command
      */
     public function handle()
     {
+        if (!\App\Helpers\PlatformAPIs\PlatformCredentials::ensure(\App\Enums\Platform::Twitch, $this->getName())) {
+            return 0;
+        }
+
         Twitch::updateTopCategories(8, 8);
         return Command::SUCCESS;
     }

@@ -23,6 +23,7 @@ class VideoWebController extends Controller
         return Inertia::render('Viewer/Watch/Watch', [
             'type' => 'video',
             'slug' => $slug,
+            'meta' => \App\Helpers\Seo::video($slug),
         ]);
     }
 
@@ -36,7 +37,9 @@ class VideoWebController extends Controller
 
     public function shorts()
     {
-        return Inertia::render('Viewer/Shorts/ShortsIndex');
+        $short = request('short');
+        $meta = $short ? \App\Helpers\Seo::video($short) : \App\Helpers\Seo::make('Shorts', 'Short videos from YouTube, Rumble and more, in one feed on VidGaze.');
+        return Inertia::render('Viewer/Shorts/ShortsIndex', ['meta' => $meta]);
     }
 
 }

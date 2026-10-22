@@ -179,7 +179,7 @@ onUnmounted(() => {
 <!--rerender everytime page reloads-->
 <template >
     <div>
-        <Head title="VidGaze Shorts" />
+        <Head title="Shorts" />
 
             <div id="customScrollDiv" class="max-h-[calc(100vh-4rem)] overflow-hidden duration-75  overflow-y-scroll  snap snap-y snap-mandatory ease-in-out">
                     <template v-if="shorts.length > 0">

@@ -30,6 +30,10 @@ class RefreshStreams extends Command
      */
     public function handle()
     {
+        if (!\App\Helpers\PlatformAPIs\PlatformCredentials::ensure(\App\Enums\Platform::Twitch, $this->getName())) {
+            return 0;
+        }
+
         Twitch::updateStreamerStatus();
         return Command::SUCCESS;
     }

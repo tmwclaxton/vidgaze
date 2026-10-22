@@ -26,6 +26,10 @@ class getVimeoFeaturedVideos extends Command
      */
     public function handle()
     {
+        if (!\App\Helpers\PlatformAPIs\PlatformCredentials::ensure(\App\Enums\Platform::Vimeo, $this->getName())) {
+            return 0;
+        }
+
         $platform = new \App\Helpers\PlatformAPIs\Vimeo();
         $results = $platform->getFeaturedVideos();
 

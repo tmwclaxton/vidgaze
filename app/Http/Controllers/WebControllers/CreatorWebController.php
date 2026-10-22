@@ -22,6 +22,7 @@ class CreatorWebController extends Controller
     {
         return Inertia::render('Viewer/Channel/Channel', [
             'slug' => $slug,
+            'meta' => \App\Helpers\Seo::creator($slug),
         ]);
     }
 }

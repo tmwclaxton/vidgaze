@@ -94,7 +94,7 @@ onMounted(() => {
                 // change url to short/slug
                 window.history.pushState(null, null, 'shorts?short=' + props.video.slug);
                 // change title
-                document.title = props.video.title;
+                document.title = `${(props.video.title || '').replace(/#\S+/g, '').trim() || 'Shorts'} - VidGaze Shorts`;
             } else {
                 // hide comment section
                 showCommentSection.value = false;

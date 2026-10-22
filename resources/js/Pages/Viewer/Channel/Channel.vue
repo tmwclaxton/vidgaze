@@ -89,9 +89,7 @@ const fetchVideos = async () => {
 
 
 <template>
-    <Head>
-        <title></title>
-    </Head>
+    <Head :title="channel?.name || $page.props.meta?.title || 'Channel'" />
 
         <div v-if="channel" class="flex flex-col flex-grow ">
             <div class="relative flex flex-row  bg-zinc-50  max-h-64 overflow-hidden">

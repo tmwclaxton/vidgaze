@@ -42,7 +42,8 @@ class Search
 
             // dispatch batch
             try {
-                $batch = Bus::batch($search_jobs)->onQueue('search')->onConnection('redis')->dispatch();
+                // allowFailures: one slow or failing platform must not cancel the others
+                $batch = Bus::batch($search_jobs)->allowFailures()->onQueue('search')->onConnection('redis')->dispatch();
             } catch (\Throwable $th) {
                 return [];
             }
@@ -83,6 +84,22 @@ class Search
         }
 
         return $sorted_results;
+    }
+
+    /**
+     * How many of the query's platforms have finished (have a cached result).
+     * @return array{done:int,total:int,complete:bool}
+     */
+    public static function progress(SearchQueryDTO $searchQuery): array
+    {
+        $platforms = $searchQuery->getPlatforms();
+        $done = 0;
+        foreach ($platforms as $platform) {
+            if (Redis::client()->exists(self::getRedisSearchKey($platform, $searchQuery))) {
+                $done++;
+            }
+        }
+        return ['done' => $done, 'total' => count($platforms), 'complete' => $done >= count($platforms)];
     }
 
     public static function getRedisExpire(): int

@@ -191,7 +191,7 @@ class Rumble implements iSearchable, iIsPlatform
             throw new \Exception('Max results cannot be greater than 100');
         }
         $page = $page ?? 1;
-        $empty = ['next' => $page + 1, 'hasNext' => false, 'results' => []];
+        $empty = ['next' => null, 'hasNext' => false, 'results' => [], 'channel' => null];
 
         $channel = null;
         $videos = [];
@@ -202,7 +202,8 @@ class Rumble implements iSearchable, iIsPlatform
             // server rendered layout.
             $attempts = 1 + max(0, (int) config('services.crawl4ai.retries', 2));
             for ($i = 0; $i < $attempts && !$videos; $i++) {
-                $html = (new Crawl4AI())->html("https://rumble.com/c/$id/videos");
+                $url = "https://rumble.com/c/$id/videos" . ($page > 1 ? "?page=$page" : '');
+                $html = (new Crawl4AI())->html($url);
                 if ($html) {
                     $channel = RumbleParser::parseChannel($html) ?? $channel;
                     $videos = RumbleParser::parseChannelVideos($html, $maxResults);
@@ -229,10 +230,14 @@ class Rumble implements iSearchable, iIsPlatform
         $creatorDTO = self::creatorResult($id, $channel ?? ['name' => $videos[0]['channel_name'] ?? $id])->creator;
         $results = array_values(array_filter(array_map(fn ($v) => self::videoResult($v, $creatorDTO), $videos)));
 
+        // A full Rumble channel page holds about 25 videos; fewer means last page.
+        $hasNext = count($videos) >= 20;
+
         return [
-            'next' => $page + 1,
-            'hasNext' => null,
+            'next' => $hasNext ? $page + 1 : null,
+            'hasNext' => $hasNext,
             'results' => Tools::validateDTOs($results),
+            'channel' => $channel,
         ];
     }
 

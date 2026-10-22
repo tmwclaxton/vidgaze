@@ -32,6 +32,10 @@ class RefreshOneCategory extends Command
      */
     public function handle()
     {
+        if (!\App\Helpers\PlatformAPIs\PlatformCredentials::ensure(\App\Enums\Platform::Twitch, $this->getName())) {
+            return 0;
+        }
+
         $category = Category::where([
             ['twitch_category_id', '!=', null],
             ['updated_at', '<=', Carbon::now()->subHours(1)->toDateTimeString()]

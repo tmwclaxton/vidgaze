@@ -60,7 +60,7 @@ onUnmounted(() => {
 </style>
 
 <template >
-    <Head title="Landing" />
+    <Head title="About" />
     <div class="-mt-16 "></div>
 
 

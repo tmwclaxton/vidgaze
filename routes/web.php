@@ -61,6 +61,8 @@ Route::get('/about', [SupportWebController::class, 'about'])->name('about');
 //policy and terms
 Route::get('/terms_of_service', [SupportWebController::class, 'terms'])->name('terms');
 Route::get('/privacy_policy', [SupportWebController::class,'privacy'])->name('privacy');
+Route::permanentRedirect('/terms', '/terms_of_service');
+Route::permanentRedirect('/privacy', '/privacy_policy');
 
 // marketplace
 Route::get('/marketplace', [SupportWebController::class,'marketplace'])->name('marketplace');
