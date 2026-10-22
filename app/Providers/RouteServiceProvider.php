@@ -44,5 +44,21 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+
+        // Auth endpoints get their own named buckets. A bare throttle:N,1 keys every
+        // route on the same domain|ip signature, so ordinary guest browsing used up the
+        // register and login allowance and visitors got 429s when signing up or in.
+        $authLimits = [
+            'auth-register' => 5,
+            'auth-login' => 10,
+            'auth-password' => 5,
+            'auth-verify-send' => 5,
+            'auth-sensitive' => 10,
+        ];
+        foreach ($authLimits as $name => $perMinute) {
+            RateLimiter::for($name, function (Request $request) use ($perMinute) {
+                return Limit::perMinute($perMinute)->by($request->user()?->id ?: $request->ip());
+            });
+        }
     }
 }
