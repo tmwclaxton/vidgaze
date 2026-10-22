@@ -17,9 +17,11 @@ services:
     stop_grace_period: 60s
     env_file: .env
     environment:
-      DB_HOST: mysql
+      # Use container names: the app also sits on crawl4ai's network, which
+      # has its own "redis" service, so the short service names would collide.
+      DB_HOST: vidgaze-mysql
       DB_PORT: "3306"
-      REDIS_HOST: redis
+      REDIS_HOST: vidgaze-redis
       REDIS_PORT: "6379"
       RUN_MIGRATIONS: "true"
     ports:
