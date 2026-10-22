@@ -37,11 +37,9 @@ require __DIR__ . '/WebsiteRoutes/categories.php';
 require __DIR__ . '/WebsiteRoutes/search.php';
 require __DIR__ . '/WebsiteRoutes/music.php';
 require __DIR__ . '/WebsiteRoutes/user.php';
-require __DIR__ . '/WebsiteRoutes/chatrooms.php';
+Route::permanentRedirect('/chatroom/{any?}', '/')->where('any', '.*');
 
-Route::get('/equity', function () {
-    return Inertia::render('Equity');
-})->name('equity');
+Route::permanentRedirect('/equity', '/');
 
 //admin routes
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
