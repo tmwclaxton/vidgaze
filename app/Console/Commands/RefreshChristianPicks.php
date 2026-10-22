@@ -40,7 +40,7 @@ class RefreshChristianPicks extends Command
                     continue;
                 }
                 try {
-                    $results = ResultDTO::convertArray($platform->getPlatformClass()::search($dto));
+                    $results = ResultDTO::convertArray(json_decode(json_encode($platform->getPlatformClass()::search($dto))));
                     $models = ResultDTO::saveAll($results);
                 } catch (\Throwable $e) {
                     Log::warning("Christian picks search '{$q}' on {$platform->name} failed: " . $e->getMessage());
