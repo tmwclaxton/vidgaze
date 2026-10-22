@@ -12,6 +12,9 @@ namespace App\Services\Recommendations;
  */
 class VideoRanker
 {
+    /** Title token overlap at which two videos count as the same thing. */
+    public const NEAR_DUPLICATE = 0.6;
+
     /** Half life of the freshness score, in days. */
     public const DEFAULT_HALF_LIFE_DAYS = 10.0;
 
@@ -188,7 +191,7 @@ class VideoRanker
             $tokens = self::tokens($c['title'] ?? '');
             if ($dedupeTitles) {
                 foreach ($titles as $t) {
-                    if (self::jaccard($tokens, $t) >= 0.7) {
+                    if (self::jaccard($tokens, $t) >= self::NEAR_DUPLICATE) {
                         continue 2;
                     }
                 }

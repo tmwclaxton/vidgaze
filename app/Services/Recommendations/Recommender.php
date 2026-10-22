@@ -138,7 +138,7 @@ class Recommender
     public function related(Video $video, int $size = 20, ?User $user = null): array
     {
         $seed = $this->seed();
-        $ids = Cache::remember("reco:related:{$video->id}:{$size}", 1800, function () use ($video, $size, $seed) {
+        $ids = Cache::remember("reco:related:v2:{$video->id}:{$size}", 1800, function () use ($video, $size, $seed) {
             return $this->computeRelated($video, $size, $seed);
         });
         if ($user) {
@@ -157,9 +157,13 @@ class Recommender
         // Same channel, newest first.
         $pool = $pool->concat($this->baseQuery()->where('creator_id', $video->creator_id)
             ->where('id', '!=', $video->id)->orderByDesc('time_published')->limit(15)->get());
-        // Same category.
-        if ($video->category_id) {
-            $pool = $pool->concat($this->baseQuery()->where('category_id', $video->category_id)
+        // Same category. An uncategorised video borrows its channel's usual category.
+        $categoryId = $video->category_id ?: Video::query()->without(['creator', 'category'])
+            ->where('creator_id', $video->creator_id)->whereNotNull('category_id')
+            ->groupBy('category_id')->orderByRaw('COUNT(*) DESC')->value('category_id');
+        if ($categoryId) {
+            $current['category_id'] = (int) $categoryId;
+            $pool = $pool->concat($this->baseQuery()->where('category_id', $categoryId)
                 ->where('id', '!=', $video->id)->orderByDesc('time_published')->limit(150)->get());
         }
         // Title text search.
@@ -178,11 +182,18 @@ class Recommender
         $pool = $pool->unique('id')->reject(fn ($v) => $v->id === $video->id);
 
         $maxFt = $fulltext ? max($fulltext) : 0;
+        $currentTokens = VideoRanker::tokens($current['title'] . ' ' . implode(' ', $current['tags']));
         $candidates = [];
         foreach ($pool as $row) {
             $c = $this->toCandidate($row);
             $ft = $maxFt > 0 ? (($fulltext[$c['id']] ?? 0) / $maxFt) : 0;
             $rel = VideoRanker::relatedness($current, $c, $ft);
+            // Outside the channel and category, one shared common word ("play",
+            // "Las Vegas") is not enough: demand two shared content words.
+            if ($c['creator_id'] !== $current['creator_id'] && $c['category_id'] !== $current['category_id']) {
+                $shared = count(array_intersect_key($currentTokens, VideoRanker::tokens($c['title'] . ' ' . implode(' ', $c['tags']))));
+                $rel *= $shared >= 2 ? 0.8 : 0.3;
+            }
             // Mostly relevance, a little freshness and quality, a tiny rotation.
             $c['score'] = (0.2 + $rel)
                 * (0.7 + 0.3 * VideoRanker::freshness($c['published'], $now, 30))
