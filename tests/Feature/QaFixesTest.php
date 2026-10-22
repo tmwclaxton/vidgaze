@@ -53,6 +53,10 @@ class QaFixesTest extends TestCase
     public function test_verify_email_page_renders_without_a_session_user(): void
     {
         $this->withoutVite();
+        // CI checkouts have no compiled view directory, the Inertia root view needs one
+        if (! is_dir(config('view.compiled'))) {
+            mkdir(config('view.compiled'), 0777, true);
+        }
 
         $this->withCookie('auth_flag', 'true')
             ->get('/verify-email')
