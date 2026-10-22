@@ -72,4 +72,69 @@ class VerificationEmailTest extends TestCase
 
         $this->withToken($token)->getJson('/api/v1/auth/user')->assertOk();
     }
+
+    private function verifyUrl(User $user, ?string $hash = null, int $minutes = 60): string
+    {
+        return \Illuminate\Support\Facades\URL::temporarySignedRoute('verification.verify', now()->addMinutes($minutes), [
+            'id' => $user->getKey(),
+            'hash' => $hash ?? sha1($user->getEmailForVerification()),
+        ]);
+    }
+
+    private function unverifiedUser(): User
+    {
+        $this->withoutVite();
+        config(['view.compiled' => sys_get_temp_dir()]);
+        $user = User::factory()->create(['email_verified_at' => null]);
+
+        return $user;
+    }
+
+    public function test_signed_link_verifies_without_session_or_token(): void
+    {
+        $user = $this->unverifiedUser();
+
+        $this->get($this->verifyUrl($user))->assertOk()
+            ->assertInertia(fn ($page) => $page->component('Auth/VerifyingEmail')->where('status', 'verified'));
+
+        $this->assertNotNull($user->fresh()->email_verified_at);
+        $this->assertGuest();
+    }
+
+    public function test_already_verified_link_reports_already_verified(): void
+    {
+        $user = $this->unverifiedUser();
+        $user->markEmailAsVerified();
+
+        $this->get($this->verifyUrl($user))->assertOk()
+            ->assertInertia(fn ($page) => $page->where('status', 'already-verified'));
+    }
+
+    public function test_wrong_hash_does_not_verify(): void
+    {
+        $user = $this->unverifiedUser();
+
+        $this->get($this->verifyUrl($user, sha1('someone-else@example.com')))->assertOk()
+            ->assertInertia(fn ($page) => $page->where('status', 'invalid'));
+
+        $this->assertNull($user->fresh()->email_verified_at);
+    }
+
+    public function test_tampered_signature_is_rejected(): void
+    {
+        $user = $this->unverifiedUser();
+
+        $this->get($this->verifyUrl($user).'x')->assertForbidden();
+        $this->assertNull($user->fresh()->email_verified_at);
+    }
+
+    public function test_expired_link_is_rejected(): void
+    {
+        $user = $this->unverifiedUser();
+        $url = $this->verifyUrl($user, null, 1);
+        $this->travel(2)->minutes();
+
+        $this->get($url)->assertForbidden();
+        $this->assertNull($user->fresh()->email_verified_at);
+    }
 }
