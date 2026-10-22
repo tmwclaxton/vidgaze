@@ -23,7 +23,7 @@ services:
       REDIS_PORT: "6379"
       RUN_MIGRATIONS: "true"
     ports:
-      - "127.0.0.1:${APP_HOST_PORT:-8099}:8080"
+      - "127.0.0.1:${APP_HOST_PORT:-8089}:8080"
     networks:
       - vidgaze
     depends_on:
