@@ -54,9 +54,11 @@ class QaFixesTest extends TestCase
     {
         $this->withoutVite();
         // CI checkouts have no compiled view directory, the Inertia root view needs one
-        if (! is_dir(config('view.compiled'))) {
-            mkdir(config('view.compiled'), 0777, true);
+        $compiled = storage_path('framework/views');
+        if (! is_dir($compiled)) {
+            mkdir($compiled, 0777, true);
         }
+        config(['view.compiled' => $compiled]);
 
         $this->withCookie('auth_flag', 'true')
             ->get('/verify-email')
