@@ -10,10 +10,16 @@ const name = 'SuggestionsScreen';
 let suggestions = ref([]);
 
 // grab suggestions using axios and ziggy
+const props = defineProps({item: {type: Object, required: false}});
+
+// end screen: the six best related videos, random ones only as a fallback
 onMounted(async () => {
-    await contentRoutesStore.getVideos("random", 6).then((response) => {
-            suggestions.value = response;
-        });
+    let related = props.item?.id ? await contentRoutesStore.getRelatedVideos(props.item.id, 6) : [];
+    if (!related || related.length < 6) {
+        const random = await contentRoutesStore.getVideos("random", 6);
+        related = (related ?? []).concat((random ?? []).filter(v => v.id !== props.item?.id)).slice(0, 6);
+    }
+    suggestions.value = related;
 });
 </script>
 <template>
