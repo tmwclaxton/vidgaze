@@ -76,7 +76,7 @@ onUnmounted(() => {
             <div ref="welcomeMessageDiv" class=" transition duration-900 opacity-0 translate-y-52 ">
                 <div class="target max-w-7xl mx-auto text-center pb-12 md:pb-6 flex flex-col gap-y-3  ">
                     <h1 class="text-4xl lg:text-5xl text-white font-bold">Welcome to VidGaze</h1>
-                    <p class="text-2xl text-gray-200">Co-operative, open-source social media owned by its users.</p>
+                    <p class="text-2xl text-gray-200">Open-source social media, built in the open with its community.</p>
                     <p class="text-lg text-gray-300 max-w-2xl mx-auto">Watch creators from YouTube, Rumble and more in one place, ranked by the community instead of an algorithm.</p>
                 </div>
                 <!--get started button-->
@@ -91,19 +91,6 @@ onUnmounted(() => {
                 </div>
 
 
-            </div>
-        </div>
-
-
-
-        <!-- supported by -->
-        <div class="relative w-full flex bg-white dark:bg-vidgaze-blue">
-            <div class="m-auto py-16 px-4">
-                <h2 class="text-4xl font-bold mb-8 mx-auto text-center">Kindly Supported By</h2>
-                <div class="flex flex-wrap flex-row items-center justify-center gap-8">
-                    <img class="h-40 sm:h-52 object-contain" src="/images/supporters/cofounders.png" alt="Co-Founders by Catalyst"/>
-                    <img class="h-40 sm:h-52 object-contain" src="/images/supporters/techstart.png" alt="Techstart"/>
-                </div>
             </div>
         </div>
 
@@ -133,11 +120,6 @@ onUnmounted(() => {
         <!--                             github="https://github.com/tmwclaxton"-->
         <!--                             linkedin="https://www.linkedin.com/in/toby-claxton/"-->
         <!--                             instagram="https://www.instagram.com/toby_claxton517/" />-->
-        <!--                <FounderCard img="/images/people/josh_3.jpg" fullname="Joshua Young"-->
-        <!--                             description="Founder & Developer"-->
-        <!--                             github="https://github.com/joshuasy10"-->
-        <!--                             linkedin="https://www.linkedin.com/in/joshua-young-8a97911a2/"-->
-        <!--                             instagram="https://www.instagram.com/joshuasy1o/" />-->
         <!--            </div>-->
         <!--        </div>-->
         <!--        <div id="support">-->

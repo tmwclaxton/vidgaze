@@ -7,7 +7,7 @@
         @php
             $seo = array_merge([
                 'title' => null,
-                'description' => 'VidGaze is a co-operative video aggregator: watch YouTube, Rumble and other public videos, channels and shorts in one place, ranked by people rather than an algorithm.',
+                'description' => 'VidGaze is an open-source video aggregator: watch YouTube, Rumble and other public videos, channels and shorts in one place, ranked by people rather than an algorithm.',
                 'image' => url('/images/og-default.jpg'),
                 'type' => 'website',
             ], array_filter($page['props']['meta'] ?? []));

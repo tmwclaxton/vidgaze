@@ -8,7 +8,7 @@ These terms explain the rules for using VidGaze (vidgaze.tv). By using the site 
 
 ## 1. Who we are
 
-VidGaze is run by **[OPERATOR LEGAL NAME]** ("VidGaze", "we", "us"). VidGaze is a co-operative, open-source project founded by Toby Claxton and Joshua Young. The source code is public at [github.com/tmwclaxton/vidgaze](https://github.com/tmwclaxton/vidgaze).
+VidGaze is run by **[OPERATOR LEGAL NAME]** ("VidGaze", "we", "us"). VidGaze is an open-source project founded by Toby Claxton. The source code is public at [github.com/tmwclaxton/vidgaze](https://github.com/tmwclaxton/vidgaze).
 
 You can contact us at [support@vidgaze.tv](mailto:support@vidgaze.tv).
 
