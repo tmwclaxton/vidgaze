@@ -34,7 +34,7 @@ const classes = computed(() => {
     if (navStore.getNavigationDropdown()) {
         classString += ' mr-4 w-full   flex-row text-base px-4 gap-x-3 ';
     } else {
-        classString += 'w-10 sm:flex-col sm:text-xs align-middle justify-left sm:gap-2 gap-2 px-3 ';
+        classString += 'w-10 sm:flex-col sm:text-sm align-middle justify-left sm:gap-2 gap-2 px-3 ';
     }
     classString += 'text-center py-2 items-center flex rounded text-md block w-full   text-left  font-medium transition duration-150 ease-in-out ';
     // ... rest of the CSS classes

@@ -26,7 +26,7 @@ onMounted(() => {
         <Dropdown align="right" width="96" distance="1.5">
             <template #trigger>
                 <span class="inline-flex rounded-md  ">
-                    <button
+                    <button aria-label="Notifications"
                         type="button"
                         class=" inline-flex items-center h-full  transition ease-in-out duration-150"
                     >

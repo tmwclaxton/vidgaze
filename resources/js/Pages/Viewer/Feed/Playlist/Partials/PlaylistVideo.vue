@@ -50,7 +50,7 @@ const deleteVideo = async () => {
                                     <div class="absolute rounded overflow-hidden w-min bottom-0 right-0 m-1">
                                         <div class="relative w-full text-white font-semibold bg-black
                                           px-auto flex flex-row   rounded-sm text-sm dark:text-zinc-200 justify-center">
-                                            <p class="text-center p-0.5 text-xs" v-text="video.duration"></p>
+                                            <p class="text-center p-0.5 text-sm" v-text="video.duration"></p>
                                         </div>
                                     </div>
 
@@ -60,7 +60,7 @@ const deleteVideo = async () => {
                             <div class="w-full ">
                                 <div class="w-full flex align-bottom flex-col leading-none pl-2 ">
                                     <p style="" class="text dark:textDark text-md font-bold leading-4 line-clamp-2 pr-2 mt-1" v-text="video.title"/>
-                                    <div  class="text-xs text dark:textDark w-max my-1" v-text="video.creator.name"/>
+                                    <div  class="text-sm text dark:textDark w-max my-1" v-text="video.creator.name"/>
                                 </div>
                             </div>
 

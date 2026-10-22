@@ -136,8 +136,8 @@ onUnmounted(() => {
                                         <p class="font-bold text-lg text-left " v-text="video.creator.name"></p>
                                         <SubscribeButton :channel="video.creator" />
                                     </div>
-                                    <p class="font-semibold text-xs text-left line-clamp-2 " v-text="video.description"></p>
-                                    <p class="font-bold text-xs text-left line-clamp-2 text-red-500 dark:text-red-500 mt-1 hover:shake " v-if="video.live_viewer_count !== '0'" v-text="video.live_viewer_count + ' Watching'"></p>
+                                    <p class="font-semibold text-sm text-left line-clamp-2 " v-text="video.description"></p>
+                                    <p class="font-bold text-sm text-left line-clamp-2 text-red-500 dark:text-red-500 mt-1 hover:shake " v-if="video.live_viewer_count !== '0'" v-text="video.live_viewer_count + ' Watching'"></p>
                                 </div>
                             </div>
                         </div>

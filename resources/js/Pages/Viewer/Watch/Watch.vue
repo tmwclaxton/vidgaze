@@ -1,6 +1,7 @@
 
 
 <script setup>
+import Avatar from "@/Components/General/Avatar.vue";
 import { sanitizeHtml } from "@/Helpers/sanitize.js";
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import RowDivider from "@/Components/General/RowDivider.vue";
@@ -37,6 +38,7 @@ import ExternalCommentSection from "@/Components/CommentSection/ExternalCommentS
 import AwardsBar from "@/Pages/Viewer/Watch/Partials/AwardsBar.vue";
 import AwardsDropdown from "@/Components/Dropdown/AwardsDropdown.vue";
 import {usePinModalStore} from "@/Stores/PinModalStore";
+import {knownCount} from "@/Helpers/counts";
 
 const playerStore = usePlayerStore();
 const queueStore = useQueueStore();
@@ -209,7 +211,7 @@ onUnmounted(() => {
                             <div  v-if="ready" class="flex flex-row lg:flex-col justify-between w-full lg:w-max">
                                 <div class="flex flex-col">
                                     <div v-if="item.type === 'video'" class="flex flex-row pr-3 gap-x-1">
-                                        <p v-text="item.view_count + ' · ' + item.time_published"/>
+                                        <p v-text="[knownCount(item.view_count), item.time_published].filter(Boolean).join(' · ')"/>
                                         <Link v-if="item.category !== null && item.category.slug !== undefined"
                                             class="flex flex-row gap-x-2"  :href="route('category.show',{slug:item.category.slug})">
                                             <span>·</span>
@@ -218,7 +220,7 @@ onUnmounted(() => {
                                     </div>
 
                                     <span
-                                        class="pr-3  pt-0.5 font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
+                                        class="pr-3  pt-0.5 font-bold text-sm text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600"
                                         v-text="item.live_viewer_count + ' Watching'"/>
 
 
@@ -273,15 +275,15 @@ onUnmounted(() => {
                                 <span class="flex flex-row   w-full overflow-hidden">
                                     <Link :href="route('channel.show', item.creator.slug)"
                                         class="flex-shrink-0">
-                                        <img class="hover:cursor-pointer my-auto object-cover w-11 h-11 mr-2 rounded-full flex-shrink-0"
-                                             v-bind:src="item.creator.avatar_url" alt="Profile image"/>
+                                        <Avatar class="hover:cursor-pointer my-auto w-11 h-11 mr-2 flex-shrink-0 text-lg"
+                                             :src="item.creator.avatar_url" :name="item.creator.name"/>
                                     </Link>
                                     <div class="pl-1 flex flex-col my-auto">
                                         <Link :href="route('channel.show', item.creator.slug)"
                                            class="text-sm font-bold hover:cursor-pointer text dark:textDark w-44 xs:w-full break-words">
                                             <span v-text="item.creator.name"></span>
                                         </Link>
-                                        <p class="text-xs text dark:textDark leading-4" v-text="item.creator.subscriber_count"/>
+                                        <p v-if="knownCount(item.creator.subscriber_count)" class="text-sm text dark:textDark leading-4" v-text="knownCount(item.creator.subscriber_count)"/>
                                     </div>
 
                                     <div class="ml-auto sm:ml-5 my-auto">
@@ -292,7 +294,7 @@ onUnmounted(() => {
                             <div class=" ml-14   pt-3   text dark:textDark text-sm">
                                 <p id="description" style="line-height: 20px;"
                                    v-bind:class="{' line-clamp-3': isDescriptionCollapsed}" v-html="sanitizeHtml(item.description)"/>
-                                <button v-if="showMoreDescriptionButton" class="font-bold mt-5 text-xs uppercase"
+                                <button v-if="showMoreDescriptionButton" class="font-bold mt-5 text-sm uppercase"
                                         @click="isDescriptionCollapsed = !isDescriptionCollapsed"
                                         v-text="!isDescriptionCollapsed ? 'Show less' : 'Show more'"
                                 ></button>

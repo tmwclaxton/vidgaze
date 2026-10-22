@@ -17,7 +17,7 @@ export default {
 };
 </script>
 <template>
-    <Head title="VidGaze Podcasts" />
+    <Head title="Podcasts" />
 
 
     <!--<PaddingLayout class="-mt-4">-->
@@ -32,7 +32,9 @@ export default {
                         <!--<font-awesome-icon :icon="['fas', 'wrench']" class="w-full h-full text-zinc-600 dark:text-zinc-400 animate-bounce"/>-->
                         <font-awesome-icon :icon="['fas', 'wrench']"  class="w-full h-full text-zinc-600 dark:text-vidgaze-blue"/>
                     </div>
-                    <p class="  text-zinc-600 dark:textDark font-bold text-4xl pt-8 text-center">VidGaze Podcasts is Under Construction</p>
+                    <h1 class="  text-zinc-600 dark:textDark font-bold text-4xl pt-8 text-center">Podcasts are coming soon</h1>
+                    <p class="text-lg text-zinc-500 dark:text-zinc-400 text-center max-w-md">There are no podcasts on VidGaze yet. In the meantime, explore videos from YouTube, Rumble and more.</p>
+                    <Link :href="route('landing')" class="text-base font-semibold underline">Browse videos</Link>
                     <!--<p class="text dark:textDark text-sm justify-center text-justify ">-->
                     <!--    VidGaze Music will be composed of ITunes, YouTube Music and SoundCloud and will be a feature of the next update!-->
                     <!--</p>-->

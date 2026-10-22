@@ -62,9 +62,9 @@ const dotsIconShow = computed(() => {
             </div>
         </div>
         <div  v-if="!hideItem" class="flex flex-row ">
-            <div class="group relative w-48 lg:w-96 aspect-[21/12] h-max overflow-hidden rounded-md flex-shrink-0">
+            <div class="group relative w-36 sm:w-48 lg:w-96 aspect-[21/12] h-max overflow-hidden rounded-md flex-shrink-0">
                 <Link :href="route('watch.show', {slug: item.slug})" class="">
-                    <img class="object-cover w-full h-full bg-zinc-900" v-bind:src="item.thumbnail_url"   alt=""/>
+                    <img class="object-cover w-full h-full bg-zinc-900" v-bind:src="item.thumbnail_url" :alt="item.title"/>
                 </Link>
 
                 <!--<Duration />-->
@@ -84,37 +84,37 @@ const dotsIconShow = computed(() => {
 
 
             </div>
-            <div class="pl-5 w-full" >
-                <div class="flex flex-row">
+            <div class="pl-3 sm:pl-5 flex-1 min-w-0" >
+                <div class="flex flex-row min-w-0">
 
 
-                    <div class=" flex flex-col overflow-hidden  ">
+                    <div class=" flex flex-col overflow-hidden min-w-0 flex-1">
 
 
                     <!-- title -->
                     <span
                         class="pt-1 line-clamp-2 overflow-hidden leading-5  font-bold text-md lg:text-2xl inline-flex">
-                        <Link :href="route('watch.show', {slug: item.slug})" v-text="item.title" :title="item.title" class="pr-2 line-clamp-2 mb-0.5 break-all"></Link>
+                        <Link :href="route('watch.show', {slug: item.slug})" v-text="item.title" :title="item.title" class="pr-2 line-clamp-2 mb-0.5 break-words"></Link>
                     </span>
 
-                        <div class=" flex flex-row pt-1">
+                        <div class=" flex flex-row pt-1 min-w-0">
                             <div class=" mt-1 flex-shrink-0">
                                 <!--profile picture-->
                                 <div v-if="!item.channel_page" class="flex-shrink-0 pr-2">
-                                    <Link class="without-ring " :href="route('channel.show', {slug: item.creator.slug})">
-                                        <img v-if="item.creator.avatar_url != null"
+                                    <Link class="without-ring " :href="route('channel.show', {slug: item.creator.slug})" :aria-label="`${item.creator.name} channel`">
+                                        <img v-if="item.creator.avatar_url"
                                              class=" pointer-events-auto w-9 aspect-square rounded-full bg-zinc-800 "
-                                             v-bind:src="item.creator.avatar_url">
+                                             v-bind:src="item.creator.avatar_url" :alt="`${item.creator.name} avatar`">
                                     </Link>
                                 </div>
                             </div>
-                            <div class="my-auto">
-                                <div class="  flex flex-col gap-y-1 ">
+                            <div class="my-auto min-w-0 flex-1">
+                                <div class="  flex flex-col gap-y-1 min-w-0 items-start">
 
                                     <!--channel name-->
                                     <Link v-if="!item.channel_page" :href="route('channel.show', {slug: item.creator.slug})"
-                                       class="w-max without-ring pointer-events-auto line-clamp-1 text-hover dark:text-hover-dark   ">
-                                        <p class="text-sm sm:text-lg font-bold " v-text="item.creator.name"></p>
+                                       class="max-w-full without-ring pointer-events-auto text-hover dark:text-hover-dark block min-w-0">
+                                        <p class="text-sm sm:text-lg font-bold truncate" :title="item.creator.name" v-text="item.creator.name"></p>
                                     </Link>
 
                                     <!--<div v-if="item.duration != null" class=" info-tag dark:info-tag-dark flex pb-0.5 ">-->
@@ -128,7 +128,7 @@ const dotsIconShow = computed(() => {
 
 
                                     <div v-if="item.live_viewer_count > 0" class="
-                                        capitalize flex flex-row items-center  text-xs font-semibold
+                                        capitalize flex flex-row items-center  text-sm font-semibold
                                         text text-red-600 dark:text-red-400   ">
                                         <FireIcon class="w-3 h-3 my-auto mr-1 "/>
                                         <p class="line-clamp-1 " v-text="item.live_viewer_count + ' Watching'"></p>
@@ -144,8 +144,8 @@ const dotsIconShow = computed(() => {
 
                     </div>
                     <!--3 dots button-->
-                    <div :id="'dotsButton_' + itemType + '_' + item.id" class="col-span-1 ml-auto pt-2 w-8 without-ring h-max" >
-                        <button @click="setContentModalValues()" class="flex without-ring m-0 mt-0 opacity-90 w-6 rounded-full text-zinc-500 ml-auto   pointer-events-auto">
+                    <div :id="'dotsButton_' + itemType + '_' + item.id" class="col-span-1 ml-auto pt-2 w-8 flex-shrink-0 without-ring h-max" >
+                        <button @click="setContentModalValues()" aria-label="More options" class="flex without-ring m-0 mt-0 opacity-90 w-6 rounded-full text-zinc-500 ml-auto   pointer-events-auto">
                             <DotsIcon class="w-6 h-6 opacity-0  duration-500 delay-500 group-hover:opacity-100 transition-none group-hover:transition-opacity" :class="{ 'opacity-100': dotsIconShow}" />
                         </button>
                     </div>

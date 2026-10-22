@@ -99,7 +99,7 @@ onUnmounted(() => {
                     <div class="flex flex-row flex-wrap gap-2">
                         <div
                             v-for="tag in category.tags"
-                            class="cursor-pointer px-3 p-1 rounded-full text-xs font-bold bg-zinc-200 dark:bg-zinc-700"
+                            class="cursor-pointer px-3 p-1 rounded-full text-sm font-bold bg-zinc-200 dark:bg-zinc-700"
                             :key="tag"
                         >
                             <p v-text="tag" />

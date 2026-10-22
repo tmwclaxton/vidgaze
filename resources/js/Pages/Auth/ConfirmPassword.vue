@@ -36,6 +36,7 @@ export default {
                 <InputLabel for="password" value="Password" />
                 <TextInput
                     id="password"
+                    name="password"
                     type="password"
                     class="mt-1 block w-full"
                     v-model="form.password"

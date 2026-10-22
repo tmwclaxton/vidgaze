@@ -19,7 +19,7 @@ export default {
 
 <template>
 
-    <Head title="Policy" />
+    <Head title="Privacy Policy" />
 
     <ConsistentPadding>
         <Policy class="prose prose-sky dark:prose-invert mx-auto "/>

@@ -58,7 +58,7 @@ const closeMiniPlayer = () => {
                     </Link>
                     <p v-else class="font-bold text-2xl" v-text="'Queue'"></p>
 
-                    <p class="font-bold text-xs opacity-80 inline-flex flex-row ">
+                    <p class="font-bold text-sm opacity-80 inline-flex flex-row ">
                         <Link v-if="useQueueStore().playlist" v-text="useQueueStore().playlist.creator.name" :href="route('channel.show', {slug: useQueueStore().playlist.creator.slug})"></Link>
                         <span v-if="useQueueStore().playlist" v-text=" ' · '" class="mx-1"/>
                         <span v-text="useQueueStore().positionText" class=" "/>

@@ -77,3 +77,13 @@ if (config('app.env') == 'local') {
 Route::get('/up', function () {
     return response('ok', 200)->header('Content-Type', 'text/plain');
 })->name('up');
+
+// branded 404 for any unknown web URL (API and asset paths keep the plain response)
+Route::fallback(function () {
+    if (request()->is('api/*') || request()->expectsJson()) {
+        return response()->json(['message' => 'Not Found'], 404);
+    }
+    return \Inertia\Inertia::render('Errors/NotFound', [
+        'meta' => \App\Helpers\Seo::make('Page not found'),
+    ])->toResponse(request())->setStatusCode(404);
+});

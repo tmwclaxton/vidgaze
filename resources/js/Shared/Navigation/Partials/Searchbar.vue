@@ -136,15 +136,21 @@ searchInput.value = query.get('q') || '';
                                             ' flex': navStore.getExpandedSearchBar(),
                                         }">
                 <!--Exit expanded search-->
-                <CloseNavSVG @click="navStore.toggleShowingNavigationDropdownOff()"
-                             class="ml-1 w-6 aspect-square flex-shrink-0 text-white   my-auto"/>
+                <button type="button" aria-label="Close search" @click="navStore.toggleShowingNavigationDropdownOff()" class="ml-1 flex-shrink-0 my-auto">
+                    <CloseNavSVG class="w-6 aspect-square text-white" aria-hidden="true"/>
+                </button>
             </div>
 
             <div  v-click-away="onClickAway" @click="navStore.toggleExpandedSearchBarOn()"
                   :class="{'w-full  ': navStore.getExpandedSearchBar(),' w-max sm:w-full max-w-md ': !navStore.getExpandedSearchBar(),
                 'rounded-t-md rounded-r-md  ': showSearchResultsDropdown ,' rounded-md ': !showSearchResultsDropdown}"
                  class="h-10 relative flex sm:gap-x-2 items-center text-zinc-500 px-3 bg-zinc-900 ">
-                <input type="text"
+                <label for="site-search" class="sr-only">Search videos and channels</label>
+                <input type="search"
+                       id="site-search"
+                       name="q"
+                       aria-label="Search videos and channels"
+                       autocomplete="off"
                        @click="navStore.toggleExpandedSearchResultsOn"
                        v-model.trim="searchInput"
                        @keydown.arrow-down="selectNextResult"
@@ -153,7 +159,9 @@ searchInput.value = query.get('q') || '';
                        class="bg-transparent p-0 m-0 without-ring placeholder-zinc-500 text-white font-bold text-sm"
                        :class="{'w-full': navStore.getExpandedSearchBar(),'w-0 sm:w-full': !navStore.getExpandedSearchBar(),' placeholder-zinc-400': navStore.getExpandedSearchResults()}"
                        placeholder="Search YouTube, Rumble, Twitch, Vimeo and more...">
-                <SearchIcon @click="searchEntered" class="w-5 h-5 flex-shrink-0"/>
+                <button type="button" aria-label="Search" @click.stop="searchEntered" class="flex-shrink-0 without-ring">
+                    <SearchIcon class="w-5 h-5" aria-hidden="true"/>
+                </button>
 
                 <!--Search dropdown-->
                 <div  :class="{'w-full': navStore.getExpandedSearchBar(),' w-max sm:w-full max-w-md': !navStore.getExpandedSearchBar(),

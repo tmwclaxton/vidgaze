@@ -46,6 +46,9 @@ function redirect(which) {
                     <div class="hidden sm:flex items-center"
                          :class="{'hidden sm:flex': navStore.getExpandedSearchBar(),  '': !navStore.getExpandedSearchBar() }">
                         <button
+                            type="button"
+                            aria-label="Toggle navigation menu"
+                            :aria-expanded="navStore.getNavigationDropdown() ? 'true' : 'false'"
                             @click="navStore.toggleShowingNavigationDropdown()"
                             :class="{
                                 'rotate-180 ': navStore.getNavigationDropdown(),

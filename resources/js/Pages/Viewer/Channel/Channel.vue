@@ -1,5 +1,6 @@
 
 <script setup>
+import Avatar from "@/Components/General/Avatar.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import {onMounted, ref} from "vue";
 import Badge from "@/Components/General/Badge.vue";
@@ -94,7 +95,8 @@ const fetchVideos = async () => {
         <div v-if="channel" class="flex flex-col flex-grow ">
             <div class="relative flex flex-row  bg-zinc-50  max-h-64 overflow-hidden">
                 <img class=" flex-grow object-cover"
-                     v-bind:src="channel.banner_url" alt="">
+                     v-if="channel.banner_url" v-bind:src="channel.banner_url" :alt="`${channel.name} banner`">
+                <div v-else class="flex-grow h-32 bg-gradient-to-r from-sky-900 to-zinc-800" aria-hidden="true"></div>
                     <div @click="share()"
                         class=" cursor-pointer absolute bg-zinc-900 border border-zinc-600 p-2 px-4 bg-opacity-70 rounded
                         top-5 right-5 font-bold gap-x-3 flex flex-row">
@@ -107,8 +109,8 @@ const fetchVideos = async () => {
             <div class="   py-5  px-5 lg:px-10 generic-background_2 dark:generic-background-dark_2  ">
                 <div class="flex flex-row justify-center sm:justify-start px-2 overflow-hidden h-max">
 
-                    <img class="bg-white   flex-shrink-0  h-20 aspect-square rounded-full "
-                        v-bind:src="channel.avatar_url" alt="">
+                    <Avatar class="bg-white flex-shrink-0 h-20 w-20 aspect-square text-3xl"
+                        :src="channel.avatar_url" :name="channel.name"/>
 
                     <div class="flex flex-col sm:flex-row  overflow-hidden w-full h-full ">
                         <div class=" flex flex-col w-full  sm:w-64 md:w-64  flex-shrink md:my-auto pl-5">

@@ -146,8 +146,7 @@ export const usePinModalStore = defineStore('PinModalStore', {
                     platform: platform,
                 }
             }).then(response => {
-                console.log(response.data);
-                pinnedVideos = response.data.videos.data;
+                pinnedVideos = response.data?.videos?.data ?? [];
             }).catch(error => {
                 console.log(error);
             });

@@ -1,9 +1,9 @@
 <template>
     <!-- Content will remain hidden until videos are loaded -->
-    <template v-if="isLoaded">
+    <template v-if="isLoaded && !(hideWhenEmpty && Array.isArray(videos) && videos.length === 0)">
         <div class="flex flex-row gap-2 my-4 mb-8">
             <slot></slot>
-            <p class="font-bold text-2xl" v-text="title"></p>
+            <h2 class="font-bold text-2xl" v-text="title"></h2>
         </div>
 
         <!-- Show a row of popular videos -->
@@ -11,6 +11,11 @@
             <template v-if="videos !== null && videos.length > 0" v-for="(video, index) in videos" :key="video.id">
                 <VideoStreamCard v-if="video != undefined" :item="video" :channel_page="channel_page" :category_page="showCategoryTag" />
             </template>
+
+            <!-- Loaded but nothing to show -->
+            <p v-else-if="emptyMessage && Array.isArray(videos) && videos.length === 0" class="col-span-full text-base text-zinc-500 dark:text-zinc-400 py-6">
+                {{ emptyMessage }}
+            </p>
 
             <!-- Skeleton loading -->
             <template v-else v-for="i in 6">
@@ -55,6 +60,18 @@ const props = defineProps({
         type: Boolean,
         required: false,
         default: false,
+    },
+    // hide the whole row once loading finished with no videos (or an error)
+    hideWhenEmpty: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
+    // or show this text instead of placeholders when there are no videos
+    emptyMessage: {
+        type: String,
+        required: false,
+        default: null,
     },
     waitTillLoaded: {
         type: Boolean,

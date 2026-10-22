@@ -12,8 +12,13 @@ const name = "StreamsIndex";
 const contentRoutesStore = useContentRoutesStore();
 
 const categories = ref([]);
+const categoriesLoaded = ref(false);
 const fetchCategories = async () => {
-    categories.value = await contentRoutesStore.getCategories(8, null, true)
+    try {
+        categories.value = (await contentRoutesStore.getCategories(8, null, true)) ?? [];
+    } finally {
+        categoriesLoaded.value = true;
+    }
 };
 
 const categoriesForRows = ref([]);
@@ -61,7 +66,7 @@ onUnmounted(() => {
 
             <TopStreamsRow/>
 
-            <CategoriesRow :categories="categories"/>
+            <CategoriesRow :categories="categories" :loaded="categoriesLoaded"/>
 
             <CategoryRowWithStreams v-for="(category, index) in categoriesForRows" :key="category.id" :category="category"/>
 

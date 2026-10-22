@@ -169,7 +169,7 @@ const formattedBody = computed(() => {
                                     <img
                                         class=" z-1 relative hover:cursor-pointer inline object-cover w-9 h-9  rounded-full"
                                         v-bind:src="props.comment.owner.avatar_url"
-                                        alt="Profile image"/>
+                                        :alt="`${props.comment.owner.name ?? 'User'} avatar`"/>
                                 </Link>
                             </div>
 
@@ -207,7 +207,7 @@ const formattedBody = computed(() => {
 
 
                                 <!--<div v-if="props.comment.edited && !editComment" class="">-->
-                                <!--    <span class="text-xs italic text-red-600 dark:text-red-400 font-semibold ">-->
+                                <!--    <span class="text-sm italic text-red-600 dark:text-red-400 font-semibold ">-->
                                 <!--        Edited-->
                                 <!--    </span>-->
                                 <!--</div>-->
@@ -218,7 +218,7 @@ const formattedBody = computed(() => {
                                 </div>
 
                                 <button v-if="comment.body.length > 250 || (simple && comment.body.length > 73)"
-                                        class="font-bold my-2 text-xs uppercase"
+                                        class="font-bold my-2 text-sm uppercase"
                                         @click="isCollapsed = !isCollapsed"
                                         v-text="isCollapsed ? 'Show less' : 'Show more'"
                                 ></button>
@@ -271,7 +271,7 @@ const formattedBody = computed(() => {
                                     </span>
 
 
-                                    <!--<p class="ml-auto mr-2  uppercase text-xs font-bold inline">Pinned</p>-->
+                                    <!--<p class="ml-auto mr-2  uppercase text-sm font-bold inline">Pinned</p>-->
 
 
                                 </div>

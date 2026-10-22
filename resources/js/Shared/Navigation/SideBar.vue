@@ -103,7 +103,7 @@ const keyRefresh = ref(0);
 
 
                     <!--                dark/light mode-->
-                    <div class="text-white cursor-pointer space-y-1 " @click="toggleDark()">
+                    <button type="button" :aria-label="isDark ? 'Dark mode on, switch to light mode' : 'Light mode on, switch to dark mode'" class="block w-full text-white cursor-pointer space-y-1 " @click="toggleDark()">
                         <span v-if="!isDark">
                             <ResponsiveNavLink :span="true">
                                     <SunIcon class="w-5 h-5 flex-shrink-0"/>
@@ -116,7 +116,7 @@ const keyRefresh = ref(0);
                                     <span class="">Dark</span>
                             </ResponsiveNavLink>
                         </span>
-                    </div>
+                    </button>
                 </div>
 
 

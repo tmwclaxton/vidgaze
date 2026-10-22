@@ -84,7 +84,7 @@ onMounted(() => {
 
             <SelectInput class=" ml-auto w-40"
                           :modelValue="category"
-                         v-model="category" @update:model-value="value => category = value" :options="categoryOptions" :title="'Order By'"/>
+                         v-model="category" @update:model-value="value => category = value" :options="categoryOptions" :title="'Order By'" name="comment_sort" aria-label="Sort comments"/>
 
 
         </div>
@@ -99,7 +99,7 @@ onMounted(() => {
                     <!--<p class="text-red-500 font-semibold text-center">{{$error}}</p>-->
 
                 </div>
-                <div class=" w-full text dark:textDark  text-xs font-semibold opacity-50 text-center mt-5">
+                <div class=" w-full text dark:textDark  text-sm font-semibold opacity-50 text-center mt-5">
 <!--                    This site is protected by reCAPTCHA. Google-->
 <!--                    <a href="https://policies.google.com/privacy">Privacy Policy</a> and-->
 <!--                    <a href="https://policies.google.com/terms">Terms of Service</a> apply.-->
