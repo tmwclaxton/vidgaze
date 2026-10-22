@@ -7,7 +7,7 @@
                     <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">VidGaze</span>
                 </Link>
             </div>
-            <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+            <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-4">
                 <div>
                     <h2 class="mb-6 text-sm font-semibold text-zinc-900 uppercase dark:text-white">App Stores</h2>
                     <ul class="text-zinc-600 dark:text-zinc-200">
@@ -27,6 +27,17 @@
                         </li>
                         <li>
                             <a href="https://discord.gg/5nvsYJPTcX" target="_blank" class="hover:underline">Discord</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h2 class="mb-6 text-sm font-semibold text-zinc-900 uppercase dark:text-white">VidGaze</h2>
+                    <ul class="text-zinc-600 dark:text-zinc-200">
+                        <li class="mb-4">
+                            <Link :href="route('stats')" class="hover:underline">Site stats</Link>
+                        </li>
+                        <li>
+                            <Link :href="route('about')" class="hover:underline">About</Link>
                         </li>
                     </ul>
                 </div>
