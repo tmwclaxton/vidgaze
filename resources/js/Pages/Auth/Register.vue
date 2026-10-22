@@ -149,7 +149,7 @@ const submit = async () => {
                     <Checkbox v-model:checked="form.terms" name="terms" id="terms" required/>
                     <span class="ml-2 text-sm text-zinc-600 dark:text-zinc-400">
                         <label for="terms">I agree to the</label>
-                        <a :href="route('terms')" target="_blank" rel="noopener" class="font-bold underline">Terms of Service</a>
+                        <a :href="route('terms')" target="_blank" rel="noopener" class="ml-1 font-bold underline">Terms of Service</a>
                         and
                         <a :href="route('privacy')" target="_blank" rel="noopener" class="font-bold underline">Privacy Policy</a>
                     </span>
