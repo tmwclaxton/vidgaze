@@ -51,4 +51,28 @@ class YouTubeParserTest extends TestCase
         $this->assertSame('Will this couple', $f['videos'][0]['description']);
         $this->assertNull(YouTubeParser::parseFeed('not xml'));
     }
+
+    public function test_parses_channel_videos_page(): void
+    {
+        Carbon::setTestNow('2026-10-22 12:00:00');
+        $c = YouTubeParser::parseChannel($this->fixture('youtube_channel_videos.html'));
+        $this->assertSame('UCHnyfMqiRRG1u-2MsSQLbXA', $c['channelId']);
+        $this->assertSame('Veritasium', $c['name']);
+        $this->assertStringStartsWith('https://yt3.googleusercontent.com/', $c['banner']);
+        $this->assertStringContainsString('=w', $c['banner']);
+        $this->assertStringStartsWith('https://yt3.googleusercontent.com/', $c['avatar']);
+        $this->assertCount(20, $c['videos']);
+        $v = $c['videos'][0];
+        $this->assertSame('NiCgcUTL9_Q', $v['videoId']);
+        $this->assertSame('The Insane Engineering of Fiber Optics', $v['title']);
+        $this->assertSame(2072, $v['duration']);
+        $this->assertFalse($v['is_live']);
+        $this->assertSame('2026-10-13', $v['publish_time']->format('Y-m-d'));
+        foreach ($c['videos'] as $video) $this->assertGreaterThan(0, $video['duration']);
+    }
+
+    public function test_consent_page_is_not_a_channel(): void
+    {
+        $this->assertNull(YouTubeParser::parseChannel('<html><form action="https://consent.youtube.com/save">Before you continue</form></html>'));
+    }
 }

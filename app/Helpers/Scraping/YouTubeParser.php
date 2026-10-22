@@ -139,6 +139,90 @@ class YouTubeParser
     }
 
     /**
+     * Channel /videos page (fetched with crawl4ai's site_profile "youtube" so
+     * the EU consent wall is skipped): channel details, banner and the first
+     * page of uploads with durations. Returns null when the page is not a
+     * channel page (for example the consent interstitial).
+     */
+    public static function parseChannel(string $html): ?array
+    {
+        $data = self::extractJson($html, 'ytInitialData');
+        $meta = $data['metadata']['channelMetadataRenderer'] ?? null;
+        if (!$meta || empty($meta['externalId'])) return null;
+        $channelId = $meta['externalId'];
+
+        $header = self::findAll($data['header'] ?? [], 'pageHeaderViewModel')[0] ?? [];
+        $bannerSources = self::findAll($header['banner'] ?? [], 'sources')[0] ?? [];
+        if (!$bannerSources) {
+            // older c4TabbedHeaderRenderer layout
+            $bannerSources = $data['header']['c4TabbedHeaderRenderer']['banner']['thumbnails'] ?? [];
+        }
+        $banner = $bannerSources ? self::largest($bannerSources) : null;
+        $avatars = $meta['avatar']['thumbnails'] ?? [];
+        $avatar = $avatars ? self::largest($avatars) : null;
+
+        $videos = [];
+        foreach (self::findAll($data['contents'] ?? [], 'lockupViewModel') as $l) {
+            $id = $l['contentId'] ?? null;
+            if (!$id || ($l['contentType'] ?? 'LOCKUP_CONTENT_TYPE_VIDEO') !== 'LOCKUP_CONTENT_TYPE_VIDEO' || isset($videos[$id])) continue;
+            $md = $l['metadata']['lockupMetadataViewModel'] ?? [];
+            $badges = self::findAll($l['contentImage'] ?? [], 'thumbnailBadgeViewModel');
+            $length = null;
+            foreach ($badges as $b) {
+                if (isset($b['text']) && preg_match('/^\d+(:\d{2}){1,2}$/', $b['text'])) { $length = $b['text']; break; }
+            }
+            $when = null;
+            foreach ($md['metadata']['contentMetadataViewModel']['metadataRows'] ?? [] as $row) {
+                foreach ($row['metadataParts'] ?? [] as $part) {
+                    $label = $part['accessibilityLabel'] ?? $part['text']['content'] ?? '';
+                    if (preg_match('/\bago\b/i', $label)) $when = $label;
+                }
+            }
+            $thumbs = self::findAll($l['contentImage'] ?? [], 'sources')[0] ?? [];
+            $videos[$id] = self::channelVideo($id, $md['title']['content'] ?? '', $length, $when, $thumbs ? self::largest($thumbs) : null, $channelId, $meta, $avatar);
+        }
+        // older layout: richItemRenderer > videoRenderer
+        foreach (self::findAll($data['contents'] ?? [], 'videoRenderer') as $v) {
+            $id = $v['videoId'] ?? null;
+            if (!$id || isset($videos[$id])) continue;
+            $thumbs = $v['thumbnail']['thumbnails'] ?? [];
+            $videos[$id] = self::channelVideo($id, self::runsText($v['title'] ?? null) ?? '', $v['lengthText']['simpleText'] ?? null,
+                $v['publishedTimeText']['simpleText'] ?? null, $thumbs ? end($thumbs)['url'] : null, $channelId, $meta, $avatar);
+        }
+
+        return [
+            'channelId' => $channelId,
+            'name' => $meta['title'] ?? $channelId,
+            'description' => $meta['description'] ?? '',
+            'avatar' => $avatar,
+            'banner' => $banner,
+            'videos' => array_values($videos),
+        ];
+    }
+
+    private static function channelVideo(string $id, string $title, ?string $length, ?string $when, ?string $thumb, string $channelId, array $meta, ?string $avatar): array
+    {
+        return [
+            'videoId' => $id,
+            'title' => $title,
+            'description' => '',
+            'duration' => $length ? RumbleParser::colonToSeconds($length) : 0,
+            'is_live' => $length === null,
+            'publish_time' => self::relativeTime($when),
+            'thumbnail' => $thumb ?: "https://i.ytimg.com/vi/$id/hqdefault.jpg",
+            'channelId' => $channelId,
+            'channelName' => $meta['title'] ?? $channelId,
+            'channelAvatar' => $avatar,
+        ];
+    }
+
+    private static function largest(array $sources): ?string
+    {
+        usort($sources, fn ($a, $b) => ($b['width'] ?? 0) <=> ($a['width'] ?? 0));
+        return $sources[0]['url'] ?? null;
+    }
+
+    /**
      * Public channel RSS feed (https://www.youtube.com/feeds/videos.xml?channel_id=...).
      * Returns ['name' => ..., 'videos' => [...]].
      */

@@ -17,6 +17,7 @@ class ScraperFallbackTest extends TestCase
     {
         parent::setUp();
         Cache::flush();
+        YouTube::forgetChannelPages();
         config([
             'services.crawl4ai.url' => 'http://crawl4ai:11235',
             'services.crawl4ai.token' => 'test-token',
@@ -148,12 +149,74 @@ class ScraperFallbackTest extends TestCase
 
     public function test_youtube_channel_videos_from_rss_feed(): void
     {
-        Http::fake(['www.youtube.com/feeds/*' => Http::response($this->fixture('youtube_feed.xml'))]);
+        Http::fake([
+            // crawl4ai answers with the consent wall, so the feed is used
+            'crawl4ai:11235/*' => Http::response($this->crawlOk('<html>Before you continue to YouTube</html>')),
+            'www.youtube.com/feeds/*' => Http::response($this->fixture('youtube_feed.xml')),
+        ]);
 
         $page = YouTube::getCreatorVideosBeforeDate('UCX6OQ3DkcsbYNE6H8uQQuVA', null, 3);
 
         $this->assertCount(2, $page['results']);
         $this->assertSame('UCX6OQ3DkcsbYNE6H8uQQuVA', $page['results'][0]->creator_id);
         $this->assertFalse($page['hasNext']);
+    }
+
+    public function test_youtube_channel_videos_from_channel_page_with_consent_profile(): void
+    {
+        Http::fake([
+            'crawl4ai:11235/*' => Http::response($this->crawlOk($this->fixture('youtube_channel_videos.html'))),
+            'www.youtube.com/feeds/*' => Http::response('', 404),
+        ]);
+
+        $page = YouTube::getCreatorVideosBeforeDate('UCHnyfMqiRRG1u-2MsSQLbXA', null, 50);
+
+        $this->assertCount(20, $page['results']);
+        $this->assertSame('NiCgcUTL9_Q', $page['results'][0]->id);
+        $this->assertSame('2072', $page['results'][0]->duration);
+        $this->assertSame('UCHnyfMqiRRG1u-2MsSQLbXA', $page['results'][0]->creator_id);
+        Http::assertSent(fn (Request $r) => str_contains($r->url(), 'crawl4ai:11235/crawl')
+            && $r['site_profile'] === 'youtube'
+            && $r['urls'] === ['https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA/videos']);
+    }
+
+    public function test_youtube_creator_gets_banner_from_channel_page(): void
+    {
+        Http::fake([
+            'crawl4ai:11235/*' => Http::response($this->crawlOk($this->fixture('youtube_channel_videos.html'))),
+            'www.youtube.com/feeds/*' => Http::response('', 404),
+        ]);
+
+        $creators = YouTube::getCreators(['UCHnyfMqiRRG1u-2MsSQLbXA']);
+
+        $this->assertCount(1, $creators);
+        $this->assertSame('Veritasium', $creators[0]->name);
+        $this->assertStringStartsWith('https://yt3.googleusercontent.com/', $creators[0]->banner_url);
+        $this->assertStringStartsWith('https://yt3.googleusercontent.com/', $creators[0]->avatar_url);
+    }
+
+    public function test_youtube_profile_is_not_sent_for_search_or_watch_pages(): void
+    {
+        Http::fake([
+            'crawl4ai:11235/*' => Http::response($this->crawlOk($this->fixture('youtube_search.html'))),
+        ]);
+
+        YouTube::searchVideos($this->query());
+
+        Http::assertNotSent(fn (Request $r) => str_contains($r->url(), 'crawl4ai') && isset($r['site_profile']));
+    }
+
+    public function test_youtube_profile_can_be_disabled(): void
+    {
+        config(['services.crawl4ai.youtube_profile' => '']);
+        Http::fake([
+            'crawl4ai:11235/*' => Http::response($this->crawlOk($this->fixture('youtube_channel_videos.html'))),
+            'www.youtube.com/feeds/*' => Http::response($this->fixture('youtube_feed.xml')),
+        ]);
+
+        $page = YouTube::getCreatorVideosBeforeDate('UCX6OQ3DkcsbYNE6H8uQQuVA', null, 3);
+
+        $this->assertCount(2, $page['results']);
+        Http::assertNotSent(fn (Request $r) => str_contains($r->url(), 'crawl4ai'));
     }
 }
