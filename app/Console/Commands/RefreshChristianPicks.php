@@ -16,6 +16,8 @@ class RefreshChristianPicks extends Command
 {
     protected $signature = 'app:refresh-christian-picks {--queries=4 : How many queries to run} {--all : Run every query}';
 
+    public const PINS_PER_PLATFORM = 6;
+
     protected $description = 'Fill VidGaze Picks with Christian videos from YouTube and Rumble';
 
     public function handle(): int
@@ -60,13 +62,20 @@ class RefreshChristianPicks extends Command
                     $model->category_id = $category->id;
                     $model->categorised = true;
                     $model->categorised_at = Carbon::now();
-                    if ($model->time_published && Carbon::parse($model->time_published)->diffInDays(now()) < 60) {
-                        $model->pinned = true;
-                        $model->pin_expires_at = now()->addDays(3);
-                    }
                     $model->save();
                 }
             }
+        }
+
+        // Pin the newest videos from each platform so the row mixes YouTube and Rumble.
+        Video::where('category_id', $category->id)->update(['pinned' => false]);
+        foreach ([Platform::YouTube, Platform::Rumble] as $platform) {
+            Video::where('category_id', $category->id)
+                ->where('preferred_source', $platform->value)
+                ->orderByDesc('time_published')
+                ->take(self::PINS_PER_PLATFORM)
+                ->get()
+                ->each(fn (Video $v) => $v->forceFill(['pinned' => true, 'pin_expires_at' => now()->addDays(7)])->save());
         }
 
         $total = Video::where('category_id', $category->id)->count();
