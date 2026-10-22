@@ -11,6 +11,7 @@ use App\Models\VideoModels\Video;
 use App\Models\VideoModels\VideoAward;
 use App\Models\VideoModels\VideoInteraction;
 use App\Models\VideoModels\VideoView;
+use App\Services\Recommendations\Recommender;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -245,41 +246,21 @@ class VideoApiController extends Controller
         }
 
         $per_page = $request->per_page ?? 6;
-//        $page = $request->page ?? 1;
 
-        $query = Video::query();
-        $query->where('pinned', true);
-
-// Apply your filters
-        if ($category) {
-            $query->where('category_id', $category->id);
+        // Category rows (the home page and the categories page) are ranked by
+        // the recommender: fresh, varied, deduplicated across home rows.
+        if ($category && !$request->platform) {
+            $selectedIds = app(Recommender::class)->homeRow($category->slug, auth('sanctum')->user(), $per_page);
+        } else {
+            $query = Video::query()->where('pinned', true);
+            if ($category) {
+                $query->where('category_id', $category->id);
+            }
+            if ($request->platform) {
+                $query->where('preferred_source', $request->platform);
+            }
+            $selectedIds = $query->inRandomOrder()->limit($per_page)->pluck('id')->toArray();
         }
-
-        if ($request->platform) {
-            $query->where('preferred_source', $request->platform);
-        }
-
-        // Get the IDs of all matching videos
-        $pinnedIds = $query->pluck('id')->toArray();
-
-        $additionalIds = [];
-        // If we need more videos
-        if (count($pinnedIds) < $per_page && $category) {
-            // Get additional video IDs
-            $additionalIds = Video::where('category_id', $category->id)
-                ->whereNotIn('id', $pinnedIds)
-                ->pluck('id')
-                ->toArray();
-
-        }
-        // Merge all IDs
-        $allIds = array_merge($pinnedIds, $additionalIds);
-
-        // Shuffle them
-        shuffle($allIds);
-
-        // Take only what we need
-        $selectedIds = array_slice($allIds, 0, $per_page);
 
         // Nothing matched: FIELD(id, ) with an empty list is a SQL syntax error.
         if (count($selectedIds) === 0) {
@@ -308,6 +289,7 @@ class VideoApiController extends Controller
             'per_page' => 'integer|min:1|max:50',
             'video_ids' => 'string|nullable',
             'slug' => 'string|exists:categories,slug',
+            'exclude_id' => 'nullable|integer',
         ]);
 
         $per_page = $request->per_page ?? 20;
@@ -320,23 +302,12 @@ class VideoApiController extends Controller
 
         $category = Category::where('slug', $category_slug)->first();
 
-        $query = Video::query();
-
-        $query->where('category_id', $category->id);
-
-        // Don't retrieve the same videos
-        if ( $video_ids != [] ) {
-            $query->whereNotIn('id', $video_ids);
+        $exclude = array_filter(array_map('intval', $video_ids));
+        if ($request->exclude_id) {
+            $exclude[] = (int) $request->exclude_id;
         }
-
-        // Only get public videos
-        $query->where('visibility', 'public');
-
-        // randomize the order
-        $query->inRandomOrder();
-
-        // get the videos
-        $videos = $query->take($per_page)->get();
+        $ids = app(Recommender::class)->categoryRanked($category, $per_page, $exclude);
+        $videos = Recommender::loadOrdered($ids);
 
         return response()->json([
             'results' => $videos->count(),
@@ -346,4 +317,23 @@ class VideoApiController extends Controller
 
     }
 
+    /**
+     * Suggestions for the watch page: same channel, same category and similar
+     * titles, never the video itself.
+     */
+    public function related(Request $request, int $video_id): JsonResponse
+    {
+        $request->validate(['per_page' => 'integer|min:1|max:40']);
+        $video = Video::find($video_id);
+        if (!$video) {
+            return response()->json(['message' => 'Not found'], 404);
+        }
+        $per_page = (int) ($request->per_page ?? 20);
+        $ids = array_slice(app(Recommender::class)->related($video, 30, auth('sanctum')->user()), 0, $per_page);
+
+        return response()->json([
+            'results' => count($ids),
+            'videos' => new VideoCollection(Recommender::loadOrdered($ids)),
+        ]);
+    }
 }
