@@ -156,9 +156,12 @@ class Rumble implements iSearchable, iIsPlatform
         $parsed = ['videos' => [], 'channels' => []];
 
         if (Crawl4AI::enabled()) {
-            $html = (new Crawl4AI())->html('https://rumble.com/search/all?q=' . urlencode($searchQueryDTO->query));
-            if ($html) {
-                $parsed = RumbleParser::parseSearch($html, $limit, 3);
+            $attempts = 1 + max(0, (int) config('services.crawl4ai.retries', 2));
+            for ($i = 0; $i < $attempts && !$parsed['videos']; $i++) {
+                $html = (new Crawl4AI())->html('https://rumble.com/search/all?q=' . urlencode($searchQueryDTO->query));
+                if ($html) {
+                    $parsed = RumbleParser::parseSearch($html, $limit, 3);
+                }
             }
         }
 
@@ -194,10 +197,16 @@ class Rumble implements iSearchable, iIsPlatform
         $videos = [];
 
         if (Crawl4AI::enabled()) {
-            $html = (new Crawl4AI())->html("https://rumble.com/c/$id/videos");
-            if ($html) {
-                $channel = RumbleParser::parseChannel($html);
-                $videos = RumbleParser::parseChannelVideos($html, $maxResults);
+            // Rumble A/B tests a channel layout that only renders the grid with
+            // client side JS. Retry, since the next response is usually the
+            // server rendered layout.
+            $attempts = 1 + max(0, (int) config('services.crawl4ai.retries', 2));
+            for ($i = 0; $i < $attempts && !$videos; $i++) {
+                $html = (new Crawl4AI())->html("https://rumble.com/c/$id/videos");
+                if ($html) {
+                    $channel = RumbleParser::parseChannel($html) ?? $channel;
+                    $videos = RumbleParser::parseChannelVideos($html, $maxResults);
+                }
             }
         }
 

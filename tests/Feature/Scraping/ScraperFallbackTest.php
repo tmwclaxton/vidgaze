@@ -98,7 +98,7 @@ class ScraperFallbackTest extends TestCase
         Rumble::search($this->query('b'));
         Rumble::search($this->query('c')); // over the cap of 2
         $this->assertSame(2, Apify::runsToday());
-        Http::assertSentCount(4 + 2); // 4 crawl4ai attempts, 2 Apify runs
+        Http::assertSentCount(4 * 3 + 2); // 4 searches x 3 crawl4ai attempts, 2 Apify runs
     }
 
     public function test_no_apify_call_without_token(): void
@@ -119,6 +119,17 @@ class ScraperFallbackTest extends TestCase
         $this->assertCount(2, $page['results']);
         $this->assertSame('The Dan Bongino Show', $page['results'][0]->creator->name);
         $this->assertSame('https://hugh.cdn.rumble.cloud/banner.png', $page['results'][0]->creator->banner_url);
+    }
+
+    public function test_rumble_channel_videos_retry_when_layout_has_no_grid(): void
+    {
+        Http::fakeSequence('crawl4ai:11235/*')
+            ->push($this->crawlOk('<html><body><div class="channel-header--title"><h1>X</h1></div></body></html>'))
+            ->push($this->crawlOk($this->fixture('rumble_channel_videos.html')));
+        Http::fake(['api.apify.com/*' => Http::response([], 500)]);
+
+        $this->assertCount(2, Rumble::getCreatorVideos('bongino')['results']);
+        Http::assertNotSent(fn (Request $r) => str_contains($r->url(), 'apify.com'));
     }
 
     public function test_youtube_search_uses_crawl4ai_without_scraper_tech(): void
