@@ -54,7 +54,7 @@ class SearchVideosForCategories extends Command
             $contextResponse = $nanoGPTService->getChatCompletion([
                 ['role' => 'system', 'content' => 'You are a creative and informative AI that provides unique overviews of topics'],
                 ['role' => 'user', 'content' => $contextPrompt],
-            ], config('services.nanogpt.search_model', 'qwen-plus'), [], true);
+            ], config('services.nanogpt.search_model'), [], true);
 
             // Extract AI-generated context
             $contextText = trim($contextResponse['choices'][0]['message']['content']);
@@ -71,7 +71,7 @@ class SearchVideosForCategories extends Command
             $queryResponse = $nanoGPTService->getChatCompletion([
                 ['role' => 'system', 'content' => 'You are a YouTube viewer who wants to watch a cool video and has to come up with a short search query.'],
                 ['role' => 'user', 'content' => $queryPrompt],
-            ], config('services.nanogpt.search_model', 'qwen-plus'),[], true);
+            ], config('services.nanogpt.search_model'),[], true);
 
             // Extract the AI-generated search query
             $query = trim($queryResponse['choices'][0]['message']['content']);

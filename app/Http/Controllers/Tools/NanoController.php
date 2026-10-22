@@ -37,8 +37,9 @@ class NanoController
      *
      * @throws \Exception Throws exception if the API request fails.
      */
-    public function getChatCompletion(array $messages, string $model = 'deepseek-r1-nano', array $options = [], bool $randomness = false)
+    public function getChatCompletion(array $messages, ?string $model = null, array $options = [], bool $randomness = false)
     {
+        $model = $model ?: config('services.nanogpt.model', 'deepseek/deepseek-v4-flash');
         $baseParams = [
             'max_tokens' => $options['max_tokens'] ?? 150,
             'temperature' => $options['temperature'] ?? 1.0,

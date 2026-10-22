@@ -15,7 +15,7 @@ class CategoriseVideos extends Command
      *
      * @var string
      */
-    protected $signature = 'app:categorise-videos';
+    protected $signature = 'app:categorise-videos {--limit= : How many videos to categorise this run}';
 
     /**
      * The console command description.
@@ -29,8 +29,8 @@ class CategoriseVideos extends Command
      */
     public function handle()
     {
-        // Grab 100 videos without a category_id
-        $videos = Video::whereNull('category_id')->where('categorised', '=', false)->inRandomOrder()->take(20)->get();
+        $limit = max(1, (int) ($this->option('limit') ?: config('services.nanogpt.categorise_batch', 50)));
+        $videos = Video::whereNull('category_id')->where('categorised', '=', false)->inRandomOrder()->take($limit)->get();
         // Grab all categories
         $categories = Category::all();
         $categoryNames = $categories->pluck('name')->toArray();
@@ -63,7 +63,7 @@ class CategoriseVideos extends Command
                 $response = $nanoGPTService->getChatCompletion([
                     ['role' => 'system', 'content' => 'You are a helpful AI assistant that accurately identifies the best category for videos.'],
                     ['role' => 'user', 'content' => $prompt],
-                ], 'qwen-plus');
+                ], config('services.nanogpt.categorise_model'), ['temperature' => 0, 'max_tokens' => 20]);
 
                 // Get category name from AI response
                 $categoryName = trim($response['choices'][0]['message']['content']);
@@ -113,9 +113,7 @@ class CategoriseVideos extends Command
             }
         }
 
-        // return cmd line info
-
-
-
+        $this->info(json_encode($count));
+        return self::SUCCESS;
     }
 }

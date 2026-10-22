@@ -41,8 +41,12 @@ return [
     'scraper' => ['key' => env('SCRAPER_KEY')],
     'nanogpt' => [
         'key' => env('NANOGPT_API_KEY'),
-        // gemini-2.0-flash-001 was disabled by NanoGPT (400 "Model is disabled")
-        'search_model' => env('NANOGPT_SEARCH_MODEL', 'qwen-plus'),
+        // gemini-2.0-flash-001 was disabled by NanoGPT (400 "Model is disabled").
+        // DeepSeek V4 Flash is the default for every NanoGPT call.
+        'model' => env('NANOGPT_MODEL', 'deepseek/deepseek-v4-flash'),
+        'categorise_model' => env('NANOGPT_CATEGORISE_MODEL', env('NANOGPT_MODEL', 'deepseek/deepseek-v4-flash')),
+        'search_model' => env('NANOGPT_SEARCH_MODEL', env('NANOGPT_MODEL', 'deepseek/deepseek-v4-flash')),
+        'categorise_batch' => (int) env('NANOGPT_CATEGORISE_BATCH', 50),
     ],
 
 
