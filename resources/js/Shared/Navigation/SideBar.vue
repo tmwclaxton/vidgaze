@@ -25,10 +25,6 @@ const toggleDark = useToggle(isDark);
 const name = 'SideBar';
 
 const keyRefresh = ref(0);
-const toggleShorts = () => {
-    useAuthStore().toggleShorts();
-    keyRefresh.value = Math.random();
-};
 
 
 // const isScreenLess = computed(() => {
@@ -121,14 +117,6 @@ const toggleShorts = () => {
                             </ResponsiveNavLink>
                         </span>
                     </div>
-
-                    <ResponsiveNavLink :span="true" @click="toggleShorts()">
-                        <font-awesome-icon v-if="useAuthStore().areShortsEnabled()"
-                                           :icon="['fas', 'toggle-on']" class="w-5 h-5 flex-shrink-0"/>
-                        <font-awesome-icon v-if="!useAuthStore().areShortsEnabled()"
-                                           :icon="['fas', 'toggle-off']" class="w-5 h-5 flex-shrink-0"/>
-                        <span>Toggle Shorts</span>
-                    </ResponsiveNavLink>
                 </div>
 
 

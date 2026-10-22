@@ -3,6 +3,7 @@
 <script setup>
 import {onMounted, onUnmounted, ref} from "vue";
 import CreatorCarousel from "@/Pages/Viewer/Home/CreatorCarousel.vue";
+import GrantGunnerBanner from "@/Components/Banners/GrantGunnerBanner.vue";
 import ConsistentPadding from "@/Layouts/Partials/ConsistentPadding.vue";
 import {debounce} from "lodash";
 
@@ -122,6 +123,10 @@ const fetchVideos = async (videoArray) => {
             <div class="flex-grow hidden md:flex">
                 <CreatorCarousel />
             </div>
+            <!--the carousel is hidden on small screens, so show the sponsor banner on its own there-->
+            <a href="https://www.grantgunner.org" target="_blank" rel="noopener sponsored" class="block md:hidden px-4 pt-4">
+                <GrantGunnerBanner :standalone="true" />
+            </a>
 <!--            <p class="px-16 mx-auto text-lg text-center w-full font-bold">-->
 <!--                "Just remember to ascribe fully to an ideology is to give up your autonomy"-->
 <!--            </p>-->
@@ -160,7 +165,7 @@ const fetchVideos = async (videoArray) => {
                 <font-awesome-icon :icon="['fas', 'newspaper']" class="my-auto h-6"/>
             </VideosRow>
 
-            <TopShortsRow v-if="useAuthStore().areShortsEnabled()"/>
+            <TopShortsRow/>
 
 
 

@@ -16,7 +16,7 @@ class CommentInteractionApiController extends Controller
     // validation rules for the comment interaction
     protected array $rules = [
         'item_id' => 'required|integer',
-        'item_type' => 'required|in:video,podcast,stream,creator,chatroom',
+        'item_type' => 'required|in:video,podcast,stream,creator',
         'comment_id' => 'required|integer',
     ];
 
@@ -134,7 +134,7 @@ class CommentInteractionApiController extends Controller
         $request->validate(
             [
                 'item_id' => 'required|integer',
-                'item_type' => 'required|in:video,podcast,stream,creator,chatroom',
+                'item_type' => 'required|in:video,podcast,stream,creator',
             ]
         );
 

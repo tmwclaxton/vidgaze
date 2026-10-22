@@ -26,7 +26,4 @@ Route::prefix('auth')->group(function () {
     // override email verification route names like remove the prefixes
     Route::post('/email/verify/', [AuthApiController::class, 'sendEmailVerificationLink'])->middleware(['auth:sanctum', 'throttle:5,1'])->name('verification.send');
     Route::get('/email/verify/', [AuthApiController::class, 'verifyEmail'])->middleware(['signed', 'throttle:10,1'])->name('verification.email.confirm');
-
-    // toggle shorts
-    Route::patch('/shorts/toggle', [AuthApiController::class, 'toggleShorts'])->middleware('auth:sanctum')->name('shorts.toggle');
 });

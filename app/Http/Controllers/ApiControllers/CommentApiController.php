@@ -31,7 +31,6 @@ class CommentApiController extends Controller
         Kind::PodcastEpisode->value,
         Kind::Stream->value,
         Kind::Creator->value,
-        Kind::Chatroom->value
     ];
 
     protected array $allowedCategories = [

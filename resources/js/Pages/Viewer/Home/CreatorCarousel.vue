@@ -2,6 +2,7 @@
 import {onMounted, ref} from "vue";
 import {usePage} from "@inertiajs/vue3";
 import {useAuthStore} from "@/Stores/AuthStore";
+import GrantGunnerBanner from "@/Components/Banners/GrantGunnerBanner.vue";
 
 const carouselItems = ref([]);
 
@@ -63,12 +64,8 @@ onMounted(() => {
         //     link: "/" // TODO: update this link to the freedom tech category page later
         // },
         {
-            imgSrc: '/images/banners/LAS-Banner.png',
-            link: "https://www.lightningarbitragesolutions.com/"
-        },
-        {
-            imgSrc: '/images/banners/Canvassr-Banner.png',
-            link: "https://www.canvassr.org/"
+            type: 'grantgunner',
+            link: "https://www.grantgunner.org"
         },
     );
 
@@ -111,8 +108,11 @@ onMounted(() => {
                  :key="index"
                  :class="{'    ': activeIndex !== index,'  ': activeIndex === index}"
                     :href="item.link"
+                    :target="item.type === 'grantgunner' ? '_blank' : null"
+                    :rel="item.type === 'grantgunner' ? 'noopener sponsored' : null"
             >
-                <img :src="item.imgSrc" class="block w-full h-full max-h-72 cursor-pointer" />
+                <GrantGunnerBanner v-if="item.type === 'grantgunner'" class="max-h-72 cursor-pointer" />
+                <img v-else :src="item.imgSrc" class="block w-full h-full max-h-72 cursor-pointer" />
 
                  <!--<div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/50 h-screen w-full"></div>-->
             </a>
