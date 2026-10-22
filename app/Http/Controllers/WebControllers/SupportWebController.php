@@ -19,7 +19,7 @@ class SupportWebController extends Controller
     public function about()
     {
         return Inertia::render('Viewer/Landing/Landing', [
-            'meta' => \App\Helpers\Seo::make('About', 'VidGaze is a co-operative video platform: one place to watch creators from YouTube, Rumble and more, ranked by the community.'),
+            'meta' => \App\Helpers\Seo::make('About', 'VidGaze is an open-source video platform: one place to watch creators from YouTube, Rumble and more, ranked by the community.'),
         ]);
     }
     public function terms()
