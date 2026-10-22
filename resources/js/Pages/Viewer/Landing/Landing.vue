@@ -71,7 +71,7 @@ onUnmounted(() => {
     </div>
     <div class="flex flex-col">
         <!-- Page header -->
-        <div class="relative min-h-[70vh] w-full flex flex-col py-24 justify-center align-middle px-4 sm:px-6 lg:px-8">
+        <div class="relative min-h-[60vh] w-full flex flex-col pt-24 pb-8 justify-center align-middle px-4 sm:px-6 lg:px-8">
 
             <div ref="welcomeMessageDiv" class=" transition duration-900 opacity-0 translate-y-52 ">
                 <div class="target max-w-7xl mx-auto text-center pb-12 md:pb-6 flex flex-col gap-y-3  ">
@@ -144,7 +144,7 @@ onUnmounted(() => {
 
         <!-- testimonials -->
 
-        <div class="relative w-full flex py-16">
+        <div class="relative w-full flex pt-4 pb-16 bg-gradient-to-b from-transparent via-gray-900 via-30% to-gray-900">
 
             <div class=" max-w-5xl w-full m-auto  p-4">
                 <h2 class="text-4xl font-bold mb-8 mx-auto text-center text-white ">Testimonials</h2>
@@ -157,7 +157,7 @@ onUnmounted(() => {
                                     <img
                                         src="https://pbs.twimg.com/profile_images/887313003246440448/FL2AZIi5_400x400.jpg"
                                         alt="Nick Brown"
-                                        class="object-cover rounded-l-lg w-full"
+                                        class="object-cover rounded-t-lg sm:rounded-t-none sm:rounded-l-lg w-full"
                                     />
                                 </div>
 
