@@ -14,6 +14,8 @@ use App\Helpers\Tools;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Helpers\Scraping\Crawl4AI;
+use App\Helpers\Scraping\YouTubeParser;
 use Laravel\Octane\Facades\Octane;
 
 class YouTube implements iSearchable, iIsPlatform
@@ -30,7 +32,7 @@ class YouTube implements iSearchable, iIsPlatform
         return Platform::YouTube;
     }
 
-    public static function getCreators(array $ids): array
+    public static function scraperTechGetCreators(array $ids): array
     {
         $yt = new self();
         if (!$ids) return [];
@@ -122,7 +124,7 @@ class YouTube implements iSearchable, iIsPlatform
         return Tools::validateDTOs($results);
     }
 
-    public static function searchVideos(SearchQueryDTO $searchQueryDTO)
+    public static function scraperTechSearchVideos(SearchQueryDTO $searchQueryDTO)
     {
         $yt = new self();
         $response = Http::withHeaders([
@@ -147,7 +149,7 @@ class YouTube implements iSearchable, iIsPlatform
         return Tools::validateDTOs($results);
     }
 
-    public static function getVideoOrStream(array $ids, bool $returnJustContentDTO = true): array
+    public static function scraperTechGetVideoOrStream(array $ids, bool $returnJustContentDTO = true): array
     {
         $yt = new self();
         if (!$ids) return [];
@@ -258,7 +260,7 @@ class YouTube implements iSearchable, iIsPlatform
     }
 
 
-    public static function getCreatorVideosBeforeDate(string $id, Carbon $date = null, $maxResults = 50, bool $includeStreams = true, bool $onlyStreams = false): array
+    public static function scraperTechGetCreatorVideosBeforeDate(string $id, ?Carbon $date = null, $maxResults = 50, bool $includeStreams = true, bool $onlyStreams = false): array
     {
         if ($maxResults > 50) throw new \Exception('Max results cannot be greater than 50');
         $yt = new self();
@@ -295,6 +297,195 @@ class YouTube implements iSearchable, iIsPlatform
         return [
             'next' => $lastDate,
             'hasNext' => count($items) >= $maxResults,
+            'results' => $results,
+        ];
+    }
+
+    /*
+     * Data sources, in order:
+     *  1. self hosted crawl4ai for search and watch pages (free), plus the
+     *     public channel RSS feed (free, no key).
+     *  2. scraper.tech, only when SCRAPER_KEY is set and the free path
+     *     returned nothing.
+     */
+
+    public static function hasScraperTech(): bool
+    {
+        return !empty(config('services.scraper.key'));
+    }
+
+    private static function feed(string $channelId): ?array
+    {
+        try {
+            $response = Http::timeout(20)->get('https://www.youtube.com/feeds/videos.xml', ['channel_id' => $channelId]);
+            return $response->successful() ? YouTubeParser::parseFeed($response->body()) : null;
+        } catch (\Throwable $e) {
+            Log::warning("YouTube feed failed for $channelId: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    private static function creatorFromParsed(array $v): CreatorDTO
+    {
+        $creatorDTO = new CreatorDTO(Platform::YouTube, $v['channelId']);
+        $creatorDTO->name = $v['channelName'];
+        $creatorDTO->avatar_url = $v['channelAvatar'] ?? null;
+        $creatorDTO->banner_url = null;
+        $creatorDTO->description = '';
+        $creatorDTO->language = null;
+        return $creatorDTO;
+    }
+
+    private static function contentFromParsed(array $v): ContentDTO
+    {
+        $kind = !empty($v['is_live']) ? Kind::Stream : Kind::Video;
+        $contentDTO = new ContentDTO(Platform::YouTube, $kind, $v['videoId']);
+        $contentDTO->creator_id = $v['channelId'];
+        $contentDTO->name = $v['title'];
+        $contentDTO->description = $v['description'] ?? '';
+        $contentDTO->duration = (string) ($v['duration'] ?? 0);
+        $contentDTO->publish_time = $v['publish_time'];
+        $contentDTO->thumbnail_url = $v['thumbnail'] ?? "https://i.ytimg.com/vi/{$v['videoId']}/hqdefault.jpg";
+        if ($kind === Kind::Stream) {
+            $contentDTO->is_live = true;
+        }
+        return $contentDTO;
+    }
+
+    /**
+     * Channel details. Channel pages are behind YouTube's EU consent wall for
+     * a headless browser on this server, so the name comes from the RSS feed
+     * and the avatar from the newest video's watch page.
+     */
+    public static function getCreators(array $ids): array
+    {
+        if (!$ids) return [];
+        if (count($ids) > 50) {
+            throw new \Exception('Too many ids, max 50');
+        }
+
+        $creators = [];
+        if (Crawl4AI::enabled()) {
+            $latest = [];
+            foreach (array_values(array_unique($ids)) as $id) {
+                $feed = self::feed($id);
+                if (!$feed || $feed['name'] === '') continue;
+                $creatorDTO = new CreatorDTO(Platform::YouTube, $id);
+                $creatorDTO->name = $feed['name'];
+                $creatorDTO->avatar_url = null;
+                $creatorDTO->banner_url = null;
+                $creatorDTO->description = '';
+                $creatorDTO->language = null;
+                $creators[$id] = $creatorDTO;
+                if (!empty($feed['videos'][0]['videoId'])) {
+                    $latest[$id] = 'https://www.youtube.com/watch?v=' . $feed['videos'][0]['videoId'];
+                }
+            }
+            if ($latest) {
+                $pages = (new Crawl4AI())->htmlMany(array_values($latest));
+                foreach ($latest as $id => $url) {
+                    $watch = !empty($pages[$url]) ? YouTubeParser::parseWatch($pages[$url]) : null;
+                    if ($watch && $watch['channelId'] === $id) {
+                        $creators[$id]->avatar_url = $watch['channelAvatar'];
+                    }
+                }
+            }
+        }
+
+        $missing = array_values(array_diff($ids, array_keys($creators)));
+        if ($missing && self::hasScraperTech()) {
+            foreach (self::scraperTechGetCreators($missing) as $c) {
+                $creators[$c->id] = $c;
+            }
+        }
+
+        return array_values($creators);
+    }
+
+    public static function searchVideos(SearchQueryDTO $searchQueryDTO)
+    {
+        $results = [];
+        if (Crawl4AI::enabled()) {
+            $html = (new Crawl4AI())->html('https://www.youtube.com/results?search_query=' . urlencode($searchQueryDTO->query));
+            foreach ($html ? YouTubeParser::parseSearch($html, 5) : [] as $v) {
+                $content = self::contentFromParsed($v);
+                $resultDTO = new ResultDTO(Platform::YouTube, $content->kind);
+                $resultDTO->content = $content;
+                $resultDTO->creator = self::creatorFromParsed($v);
+                $results[] = $resultDTO;
+            }
+        }
+
+        if (!$results && self::hasScraperTech()) {
+            return self::scraperTechSearchVideos($searchQueryDTO);
+        }
+
+        return Tools::validateDTOs($results);
+    }
+
+    public static function getVideoOrStream(array $ids, bool $returnJustContentDTO = true): array
+    {
+        if (!$ids) return [];
+        $out = [];
+        $missing = $ids;
+
+        if (Crawl4AI::enabled()) {
+            $urls = [];
+            foreach ($ids as $id) $urls[$id] = "https://www.youtube.com/watch?v=$id";
+            $pages = (new Crawl4AI())->htmlMany(array_values($urls));
+            $missing = [];
+            foreach ($urls as $id => $url) {
+                $v = !empty($pages[$url]) ? YouTubeParser::parseWatch($pages[$url]) : null;
+                if (!$v) { $missing[] = $id; continue; }
+                $content = self::contentFromParsed($v);
+                if ($returnJustContentDTO) {
+                    $out[] = $content;
+                } else {
+                    $resultDTO = new ResultDTO(Platform::YouTube, $content->kind);
+                    $resultDTO->content = $content;
+                    $resultDTO->creator = self::creatorFromParsed($v);
+                    $out[] = $resultDTO;
+                }
+            }
+        }
+
+        if ($missing && self::hasScraperTech()) {
+            $out = array_merge($out, self::scraperTechGetVideoOrStream($missing, $returnJustContentDTO));
+        }
+
+        return $out;
+    }
+
+    /**
+     * Latest uploads from the public RSS feed (up to 15, no key needed).
+     * Durations are not in the feed, so they are left at 0.
+     */
+    public static function getCreatorVideosBeforeDate(string $id, ?Carbon $date = null, $maxResults = 50, bool $includeStreams = true, bool $onlyStreams = false): array
+    {
+        if ($maxResults > 50) throw new \Exception('Max results cannot be greater than 50');
+
+        $feed = self::feed($id);
+        if ((!$feed || !$feed['videos']) && self::hasScraperTech()) {
+            return self::scraperTechGetCreatorVideosBeforeDate($id, $date, $maxResults, $includeStreams, $onlyStreams);
+        }
+
+        $videos = $feed['videos'] ?? [];
+        if ($date) {
+            $videos = array_values(array_filter($videos, fn ($v) => $v['publish_time']->lt($date)));
+        }
+        $videos = array_slice($videos, 0, $maxResults);
+
+        $results = array_map(function ($v) use ($id) {
+            $v['channelId'] = $id;
+            $v['duration'] = 0;
+            return self::contentFromParsed($v);
+        }, $videos);
+
+        $last = end($videos);
+        return [
+            'next' => $last ? $last['publish_time'] : null,
+            // the feed only exposes the newest 15 uploads, so there is no next page
+            'hasNext' => false,
             'results' => $results,
         ];
     }

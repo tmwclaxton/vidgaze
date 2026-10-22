@@ -26,6 +26,9 @@ services:
       - "127.0.0.1:${APP_HOST_PORT:-8089}:8080"
     networks:
       - vidgaze
+      # Join crawl4ai's existing network so the app reaches it at
+      # http://crawl4ai:11235. Nothing in crawl4ai's own stack changes.
+      - crawl4ai
     depends_on:
       mysql:
         condition: service_healthy
@@ -96,6 +99,9 @@ services:
 networks:
   vidgaze:
     driver: bridge
+  crawl4ai:
+    external: true
+    name: ${CRAWL4AI_NETWORK:-crawl4ai_default}
 
 volumes:
   vidgaze-storage:
