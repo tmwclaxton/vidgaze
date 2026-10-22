@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/" xmlns="http://www.w3.org/2005/Atom">
+ <title>MrBeast</title><author><name>MrBeast</name></author>
+ <entry><yt:videoId>RE3_PGwDwhw</yt:videoId><title>Lose 150 Lbs Together</title><published>2026-10-17T16:00:18+00:00</published><media:group><media:description>Will this couple</media:description></media:group></entry>
+ <entry><yt:videoId>older0001</yt:videoId><title>Older one</title><published>2026-09-01T10:00:00+00:00</published><media:group><media:description>old</media:description></media:group></entry>
+</feed>

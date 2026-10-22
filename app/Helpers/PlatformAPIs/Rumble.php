@@ -10,6 +10,8 @@ use App\Helpers\PlatformAPIs\PlatformInterfaces\iIsPlatform;
 use App\Helpers\PlatformAPIs\PlatformInterfaces\iSearchable;
 use App\Helpers\ResultDTO;
 use App\Helpers\SearchQueryDTO;
+use App\Helpers\Scraping\Crawl4AI;
+use App\Helpers\Scraping\RumbleParser;
 use App\Helpers\Tools;
 use Carbon\Carbon;
 use Exception;
@@ -26,219 +28,203 @@ class Rumble implements iSearchable, iIsPlatform
         return Platform::Rumble;
     }
 
+    /** Build a ResultDTO for a creator from parsed channel data. */
+    private static function creatorResult(string $slug, array $c): ResultDTO
+    {
+        $resultDTO = new ResultDTO(Platform::Rumble, Kind::Creator);
+        $creatorDTO = new CreatorDTO(Platform::Rumble, $slug);
+        $creatorDTO->kind = Kind::Creator;
+        $creatorDTO->name = $c['name'];
+        $creatorDTO->description = $c['description'] ?? '';
+        $creatorDTO->avatar_url = $c['avatar'] ?? null;
+        $creatorDTO->banner_url = $c['banner'] ?? null;
+        $resultDTO->creator = $creatorDTO;
+        return $resultDTO;
+    }
+
+    /** Build a video ResultDTO from a normalised video row. */
+    private static function videoResult(array $v, ?CreatorDTO $creator = null): ?ResultDTO
+    {
+        $slug = $creator?->id ?? ($v['channel_slug'] ?? null);
+        if (empty($v['id']) || empty($v['title']) || !$slug) {
+            return null;
+        }
+        if (!$creator) {
+            $creator = new CreatorDTO(Platform::Rumble, $slug);
+            $creator->kind = Kind::Creator;
+            $creator->name = $v['channel_name'] ?? $slug;
+            $creator->description = '';
+            $creator->avatar_url = $v['channel_avatar'] ?? null;
+        }
+        $resultDTO = new ResultDTO(Platform::Rumble, Kind::Video);
+        $contentDTO = new ContentDTO(Platform::Rumble, Kind::Video, $v['id']);
+        $contentDTO->kind = Kind::Video;
+        $contentDTO->name = $v['title'];
+        $contentDTO->duration = (string) ($v['duration'] ?? 0);
+        $contentDTO->publish_time = !empty($v['upload_date']) ? Carbon::make($v['upload_date']) : Carbon::now();
+        $contentDTO->thumbnail_url = $v['thumb'] ?? '';
+        $contentDTO->tags = $v['tags'] ?? [];
+        $contentDTO->description = $v['description'] ?? "This video was uploaded by {$creator->name} on Rumble.";
+        $contentDTO->creator_id = $slug;
+        $resultDTO->content = $contentDTO;
+        $resultDTO->creator = $creator;
+        return $resultDTO;
+    }
+
+    /**
+     * Map a memo23~rumble-scraper row (fetchDetails=false, flatten=false)
+     * into the normalised video shape.
+     */
+    public static function mapApifyVideoRow(array $row): ?array
+    {
+        if (($row['type'] ?? 'video') !== 'video') return null;
+        $embed = $row['embedId'] ?? RumbleParser::embedId($row['id'] ?? '');
+        return [
+            'id' => $embed,
+            'title' => $row['title'] ?? null,
+            'duration' => (int) ($row['durationSeconds'] ?? 0),
+            'upload_date' => $row['uploadedDate'] ?? null,
+            'thumb' => $row['thumbnail'] ?? null,
+            'channel_name' => $row['channelName'] ?? null,
+            'channel_slug' => RumbleParser::slugFromUrl($row['channelUrl'] ?? null),
+        ];
+    }
+
+    /** Cheapest input for the Rumble listing actor (see config/services.php). */
+    private static function apifyListingInput(array $extra): array
+    {
+        return array_merge([
+            'fetchDetails' => false,       // listing data is all vidgaze stores
+            'extractTranscript' => false,
+            'includeChannelInfo' => false,
+            'flatten' => false,
+            'maxPagesPerList' => 1,
+            'detailConcurrency' => 1,
+            'proxy' => Apify::proxyConfig(),
+        ], $extra);
+    }
+
     public static function getCreators(array $ids): array
     {
-        $startUrls = array_map(fn($id) => "https://rumble.com/c/$id", $ids);
-        $apify = new Apify('azzouzana~rumble-all-inclusive-scraper');
+        $ids = array_values(array_unique(array_filter(Arr::flatten($ids))));
+        if (!$ids) return [];
 
-        try {
-            $runId = $apify->runActor([
-                'startUrls' => $startUrls,
+        $results = [];
+        $missing = $ids;
+
+        if (Crawl4AI::enabled()) {
+            $urls = [];
+            foreach ($ids as $id) $urls[$id] = "https://rumble.com/c/$id";
+            $pages = (new Crawl4AI())->htmlMany(array_values($urls));
+            $missing = [];
+            foreach ($urls as $id => $url) {
+                $parsed = !empty($pages[$url]) ? RumbleParser::parseChannel($pages[$url]) : null;
+                if ($parsed) {
+                    $results[] = self::creatorResult($id, $parsed);
+                } else {
+                    $missing[] = $id;
+                }
+            }
+        }
+
+        if ($missing && Apify::enabled()) {
+            $max = (int) config('services.apify.rumble.creators_max', 10);
+            $batch = array_slice($missing, 0, $max);
+            $items = (new Apify(config('services.apify.rumble.creator_actor')))->run([
+                'startUrls' => array_map(fn ($id) => "https://rumble.com/c/$id", $batch),
                 'scrapeChannelVideos' => false,
                 'scrapeChannelPlaylists' => false,
-            ]);
-
-            $runData = $apify->waitForRunCompletion($runId);
-            $datasetId = $runData['defaultDatasetId'];
-            $data = $apify->getDatasetItems($datasetId);
-
-            $resultDTOs = array_map(function ($value) {
-                $resultDTO = new ResultDTO(Platform::Rumble, Kind::Creator);
-                $creatorDTO = new CreatorDTO(Platform::Rumble, $value['slug']);
-                $creatorDTO->name = $value['name'];
-                $creatorDTO->description = $value['description'];
-                $creatorDTO->avatar_url = $value['thumb'];
-                $creatorDTO->banner_url = $value['backsplash'] ?? null;
-                $resultDTO->creator = $creatorDTO;
-                return $resultDTO;
-            }, $data);
-
-            return Tools::validateDTOs($resultDTOs);
-        } catch (Exception $e) {
-            Log::error('Error in Rumble getCreators: ' . $e->getMessage());
-            return [];
+                'maxVideoToScrapeFromChannel' => 1,
+            ], count($batch), 'rumble getCreators: crawl4ai failed for ' . count($missing) . ' channel(s)');
+            foreach ($items ?? [] as $value) {
+                if (empty($value['slug']) || empty($value['name'])) continue;
+                $results[] = self::creatorResult($value['slug'], [
+                    'name' => $value['name'],
+                    'description' => $value['description'] ?? '',
+                    'avatar' => $value['thumb'] ?? null,
+                    'banner' => $value['backsplash'] ?? null,
+                ]);
+            }
         }
+
+        return Tools::validateDTOs($results);
     }
 
     public static function search(SearchQueryDTO $searchQueryDTO): array
     {
-        $apify = new Apify('azzouzana~rumble-all-inclusive-scraper');
+        $limit = (int) config('services.apify.rumble.search_max', 20);
+        $parsed = ['videos' => [], 'channels' => []];
 
-        try {
-            $runId = $apify->runActor([
-                'startUrls' => ["https://rumble.com/search/all?q=" . urlencode($searchQueryDTO->query)],
-            ]);
-
-            $runData = $apify->waitForRunCompletion($runId);
-            $datasetId = $runData['defaultDatasetId'];
-            $items = $apify->getDatasetItems($datasetId);
-
-            // Processing search results
-            $channelsWanted = 3;
-            // Filter items
-            $items = array_filter($items, function ($item) use (&$channelsWanted) {
-                if (isset($item['type']) && $item['type'] === 'user') {
-                    return false;
-                }
-                if (isset($item['type']) && $item['type'] === 'channel') {
-                    if ($channelsWanted > 0) {
-                        $channelsWanted -= 1;
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-
-                return true;
-            });
-
-            // Limit the results to 20
-            $items = array_slice($items, 0, 20);
-
-            return Tools::validateDTOs(Arr::map($items, function ($value) {
-                if (!isset($value['object_type']) && !isset($value['type'])) {
-                    return null;
-                }
-
-                $type = $value['object_type'] ?? $value['type'];
-
-                switch ($type) {
-                    case "video":
-                        // Setup resultDTO
-                        $resultDTO = new ResultDTO(Platform::Rumble, Kind::Video);
-                        $resultDTO->platform = Platform::Rumble;
-
-                        try {
-                            $view = $value['log']['view'];
-                            $videoId = explode('...', $view)[1];
-                            $videoId = explode('.', $videoId)[0];
-                            $videoId = 'v' . $videoId;
-                        } catch (Exception $e) {
-                            Log::info("Failed to get videoId from rumble search result: " . $e->getMessage());
-                            return null;
-                        }
-
-                        $contentDTO = new ContentDTO(Platform::Rumble, Kind::Video, $videoId);
-
-                        // Setup creatorDTO
-                        $creator = $value['by'];
-                        $id = explode('/', $creator['relative_url'])[2]; // AlexJonesTV
-                        $creatorDTO = new CreatorDTO(Platform::Rumble, $id);
-
-                        $creatorDTO->name = $value['by']['title'];
-                        $creatorDTO->description = "";
-                        $creatorDTO->avatar_url = $value['by']['thumb'];
-
-                        $contentDTO->kind = Kind::Video;
-                        $contentDTO->publish_time = Carbon::make($value['upload_date']);
-                        $contentDTO->name = $value['title'];
-                        $contentDTO->duration = $value['duration'];
-                        $contentDTO->thumbnail_url = $value['thumb'];
-                        $contentDTO->tags = $value['tags'] ?? [];
-                        $contentDTO->description = "This video was uploaded by {$creator['name']} on Rumble.";
-                        $contentDTO->creator_id = $id;
-
-                        $resultDTO->content = $contentDTO;
-                        $resultDTO->creator = $creatorDTO;
-                        return $resultDTO;
-                    case "channel":
-                        $resultDTO = new ResultDTO(Platform::Rumble, Kind::Creator);
-                        $resultDTO->platform = Platform::Rumble;
-
-                        $creatorDTO = new CreatorDTO(Platform::Rumble, $value['slug']);
-                        $creatorDTO->kind = Kind::Creator;
-                        $creatorDTO->name = $value['name'];
-                        $creatorDTO->description = $value['description'];
-                        $creatorDTO->avatar_url = $value['thumb'];
-                        $creatorDTO->banner_url = $value['backsplash'] ?? null;
-
-                        $resultDTO->creator = $creatorDTO;
-                        return $resultDTO;
-                    default:
-                        Log::info("Rumble search result type not supported: $type");
-                }
-
-                return null;
-            }));
-        } catch (Exception $e) {
-            Log::error('Error in Rumble search: ' . $e->getMessage());
-            return [];
+        if (Crawl4AI::enabled()) {
+            $html = (new Crawl4AI())->html('https://rumble.com/search/all?q=' . urlencode($searchQueryDTO->query));
+            if ($html) {
+                $parsed = RumbleParser::parseSearch($html, $limit, 3);
+            }
         }
+
+        if (!$parsed['videos'] && Apify::enabled()) {
+            $items = (new Apify(config('services.apify.rumble.actor')))->run(self::apifyListingInput([
+                'searchQueries' => [$searchQueryDTO->query],
+                'searchType' => 'video',
+                'maxItems' => $limit,
+            ]), $limit, 'rumble search: crawl4ai returned no videos');
+            $parsed['videos'] = array_values(array_filter(array_map([self::class, 'mapApifyVideoRow'], $items ?? [])));
+        }
+
+        $results = [];
+        foreach ($parsed['channels'] as $c) {
+            $results[] = self::creatorResult($c['slug'], ['name' => $c['name'], 'description' => '']);
+        }
+        foreach ($parsed['videos'] as $v) {
+            if ($r = self::videoResult($v)) $results[] = $r;
+        }
+
+        return Tools::validateDTOs(array_slice($results, 0, $limit + 3));
     }
 
-    public static function getCreatorVideos(string $id, int $page = null, $maxResults = 100): array
+    public static function getCreatorVideos(string $id, ?int $page = null, $maxResults = 100): array
     {
-        $apify = new Apify('azzouzana~rumble-all-inclusive-scraper');
-
         if ($maxResults > 100) {
             throw new \Exception('Max results cannot be greater than 100');
         }
-
         $page = $page ?? 1;
+        $empty = ['next' => $page + 1, 'hasNext' => false, 'results' => []];
 
-        try {
-            $runId = $apify->runActor([
-                'startUrls' => ["https://rumble.com/c/$id"],
-                'scrapeChannelVideos' => true,
-                'scrapeChannelPlaylists' => false,
-            ]);
+        $channel = null;
+        $videos = [];
 
-            $runData = $apify->waitForRunCompletion($runId);
-            $datasetId = $runData['defaultDatasetId'];
-            $data = $apify->getDatasetItems($datasetId);
-
-            if (!isset($data[0]['videosList'])) {
-                return [
-                    'next' => $page + 1,
-                    'hasNext' => false,
-                    'results' => [],
-                ];
+        if (Crawl4AI::enabled()) {
+            $html = (new Crawl4AI())->html("https://rumble.com/c/$id/videos");
+            if ($html) {
+                $channel = RumbleParser::parseChannel($html);
+                $videos = RumbleParser::parseChannelVideos($html, $maxResults);
             }
-
-            $creatorDTO = new CreatorDTO(Platform::Rumble, $id);
-            $creatorDTO->name = $data[0]['title'];
-            $creatorDTO->description = $data[0]['description'];
-            $creatorDTO->avatar_url = $data[0]['thumb'];
-            $creatorDTO->banner_url = $data[0]['backsplash'] ?? null;
-            $creatorDTO->kind = Kind::Creator;
-            $id = explode('/', $data[0]['url'])[4]; // AlexJonesTV
-            $creatorDTO->id = $id;
-            $creatorDTO->platform = Platform::Rumble;
-
-
-            $results = Tools::validateDTOs(array_map(function ($value) use ($creatorDTO) {
-
-                $resultDTO = new ResultDTO(Platform::Rumble, Kind::Video);
-                $contentDTO = new ContentDTO(Platform::Rumble, Kind::Video, $value['id']);
-
-                $contentDTO->kind = Kind::Video;
-                $contentDTO->name = $value['title'];
-                $contentDTO->duration = $value['duration'];
-                $contentDTO->publish_time = Carbon::make($value['upload_date']);
-                $contentDTO->thumbnail_url = $value['thumb'];
-                $contentDTO->creator_id = $creatorDTO->id;
-                $contentDTO->tags = $value['tags'] ?? [];
-                $contentDTO->description = $value['description'] ?? '';
-
-                $resultDTO->content = $contentDTO;
-                $resultDTO->creator = $creatorDTO;
-
-                return $resultDTO;
-            }, $data[0]['videosList']));
-
-            return [
-                'next' => $page + 1,
-                'hasNext' => null,
-                'results' => $results,
-            ];
-        } catch (Exception $e) {
-            Log::error('Error in Rumble getCreatorVideos: ' . $e->getMessage());
-            return [
-                'next' => $page + 1,
-                'hasNext' => false,
-                'results' => [],
-            ];
         }
+
+        if (!$videos && Apify::enabled()) {
+            $limit = min($maxResults, (int) config('services.apify.rumble.channel_videos_max', 30));
+            $items = (new Apify(config('services.apify.rumble.actor')))->run(self::apifyListingInput([
+                'startUrls' => [['url' => "https://rumble.com/c/$id"]],
+                'maxItems' => $limit,
+            ]), $limit, "rumble getCreatorVideos($id): crawl4ai returned no videos");
+            $videos = array_values(array_filter(array_map([self::class, 'mapApifyVideoRow'], $items ?? [])));
+            if ($videos) {
+                $channel = ['name' => $videos[0]['channel_name'] ?? $id, 'description' => ''];
+            }
+        }
+
+        if (!$videos) {
+            return $empty;
+        }
+
+        $creatorDTO = self::creatorResult($id, $channel ?? ['name' => $videos[0]['channel_name'] ?? $id])->creator;
+        $results = array_values(array_filter(array_map(fn ($v) => self::videoResult($v, $creatorDTO), $videos)));
+
+        return [
+            'next' => $page + 1,
+            'hasNext' => null,
+            'results' => Tools::validateDTOs($results),
+        ];
     }
 
 }

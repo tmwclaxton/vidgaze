@@ -39,6 +39,7 @@ class getRumbleBanners extends Command
             ->whereNull('banner_url')
             ->where('updated_at', '<', now()->subDay())
             ->orderBy('updated_at')
+            ->limit((int) config('services.crawl4ai.rumble_banner_batch', 20))
             ->get();
 
         // make sure the last_updated_at is updated
@@ -57,8 +58,6 @@ class getRumbleBanners extends Command
 
 
         $creatorIds = $creators->pluck('external_channel_id')->toArray();
-        // grab 20 creators at a time
-        $creatorIds = array_chunk($creatorIds, 50);
 
         if (count($creatorIds) === 0) {
             return 0;

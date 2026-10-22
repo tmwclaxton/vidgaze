@@ -34,6 +34,9 @@ jobs:
           php artisan config:cache
           php artisan config:clear
 
+      - name: Scraper tests (crawl4ai primary, Apify fallback)
+        run: vendor/bin/phpunit tests/Unit/Scraping tests/Feature/Scraping
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22

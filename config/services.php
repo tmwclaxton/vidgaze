@@ -2,7 +2,39 @@
 
 return [
 
-    'apify' => ['token' => env('APIFY_TOKEN')],
+    // Self hosted crawl4ai is the primary scraper for Rumble and YouTube.
+    'crawl4ai' => [
+        'enabled' => env('CRAWL4AI_ENABLED', true),
+        'url' => env('CRAWL4AI_URL'),                 // e.g. http://crawl4ai:11235
+        'token' => env('CRAWL4AI_API_TOKEN'),
+        'timeout' => (int) env('CRAWL4AI_TIMEOUT', 90),
+        'page_timeout_ms' => (int) env('CRAWL4AI_PAGE_TIMEOUT_MS', 30000),
+        'cache_mode' => env('CRAWL4AI_CACHE_MODE', 'bypass'),
+        'rumble_banner_batch' => (int) env('CRAWL4AI_RUMBLE_BANNER_BATCH', 20),
+    ],
+
+    // Apify is only a fallback when crawl4ai fails. Defaults are the cheapest
+    // settings that work for each actor.
+    'apify' => [
+        'token' => env('APIFY_TOKEN'),
+        'fallback_enabled' => env('APIFY_FALLBACK_ENABLED', true),
+        'daily_cap' => (int) env('APIFY_DAILY_RUN_CAP', 20),
+        'cache_minutes' => (int) env('APIFY_CACHE_MINUTES', 360),
+        'memory_mb' => (int) env('APIFY_MEMORY_MB', 512),
+        'timeout_secs' => (int) env('APIFY_TIMEOUT_SECS', 90),
+        'max_charge_usd' => env('APIFY_MAX_CHARGE_USD', 0.05),
+        'use_proxy' => env('APIFY_USE_PROXY', false),
+        'proxy_groups' => env('APIFY_PROXY_GROUPS', ''),  // empty = datacenter when use_proxy is on
+        'rumble' => [
+            // pay per result: $0.001 per video + $0.005 start
+            'actor' => env('APIFY_RUMBLE_ACTOR', 'memo23~rumble-scraper'),
+            // returns channel avatar and banner, which memo23 does not: $0.0015 per channel + $0.005 start
+            'creator_actor' => env('APIFY_RUMBLE_CREATOR_ACTOR', 'azzouzana~rumble-all-inclusive-scraper'),
+            'search_max' => (int) env('APIFY_RUMBLE_SEARCH_MAX', 20),
+            'channel_videos_max' => (int) env('APIFY_RUMBLE_CHANNEL_VIDEOS_MAX', 30),
+            'creators_max' => (int) env('APIFY_RUMBLE_CREATORS_MAX', 10),
+        ],
+    ],
     'scraper' => ['key' => env('SCRAPER_KEY')],
     'nanogpt' => ['key' => env('NANOGPT_API_KEY')],
 
