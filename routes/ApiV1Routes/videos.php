@@ -12,6 +12,8 @@ Route::prefix('/video')->name('video.')->group(function () {
     Route::get('/category-videos', [VideoApiController::class, 'getVideosByCategory'])->name('category-videos');
 
 
+    Route::get('/{video_id}/related', [VideoApiController::class, 'related'])->whereNumber('video_id')->name('related');
+
     Route::get('{slug}', [VideoApiController::class, 'show'])->middleware('auth.sanctum.switch')->name('show');
 
     Route::middleware(['auth:sanctum'])->group(function () {

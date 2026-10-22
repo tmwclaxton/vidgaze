@@ -32,6 +32,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:delete-old-pins')->daily()->withoutOverlapping();
         $schedule->command('app:categorise-videos')->everyTwoMinutes()->withoutOverlapping();
         $schedule->command('app:get-rumble-banners')->everyTwoHours()->withoutOverlapping();
+        $schedule->command('app:check-video-health')->hourly()->withoutOverlapping();
         $schedule->command('app:refresh-christian-picks')->everySixHours()->withoutOverlapping();
         $schedule->command('app:search-videos-for-categories')->hourly()->withoutOverlapping();
     }
